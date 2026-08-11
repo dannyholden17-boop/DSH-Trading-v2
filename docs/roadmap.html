@@ -1,0 +1,474 @@
+<title>DSH Alpha Insight — State of the Terminal & Roadmap</title>
+<style>
+  :root {
+    /* Light theme (deliberately chosen warm-paper terminal print-out) */
+    --ground: #F6F4EF;
+    --surface: #FFFFFF;
+    --surface-2: #EFEBE2;
+    --border: #DcD5C7;
+    --border-strong: #C7BFAD;
+    --text: #1A1D22;
+    --muted: #5E6470;
+    --faint: #8A8F9A;
+    --accent: #C2701C;
+    --accent-soft: #F0E2CE;
+    --up: #2E9E4B;
+    --down: #CC3B3B;
+    --warn: #B8842A;
+    --shadow: 0 1px 2px rgba(26,29,34,.06), 0 8px 24px rgba(26,29,34,.06);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #0C0E12;
+      --surface: #14171D;
+      --surface-2: #1B1F27;
+      --border: #272C36;
+      --border-strong: #39414F;
+      --text: #E6E9EF;
+      --muted: #9AA3B2;
+      --faint: #6B7382;
+      --accent: #E8913C;
+      --accent-soft: #2A2015;
+      --up: #46C46A;
+      --down: #EF5350;
+      --warn: #E0B24A;
+      --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0C0E12;
+    --surface: #14171D;
+    --surface-2: #1B1F27;
+    --border: #272C36;
+    --border-strong: #39414F;
+    --text: #E6E9EF;
+    --muted: #9AA3B2;
+    --faint: #6B7382;
+    --accent: #E8913C;
+    --accent-soft: #2A2015;
+    --up: #46C46A;
+    --down: #EF5350;
+    --warn: #E0B24A;
+    --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    font-size: 16px;
+    letter-spacing: -0.003em;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- Terminal status header ---- */
+  .topbar {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 12px 24px; max-width: 1000px; margin: 0 auto;
+    font-family: var(--mono); font-size: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: .02em; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--up); box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 22%, transparent); }
+  .topbar .meta { color: var(--faint); letter-spacing: .04em; }
+
+  /* ---- Hero ---- */
+  header.hero { padding: 64px 0 36px; border-bottom: 1px solid var(--border); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 20px;
+  }
+  h1 {
+    font-family: var(--mono); font-weight: 600;
+    font-size: clamp(30px, 5.4vw, 52px); line-height: 1.04;
+    letter-spacing: -0.02em; margin: 0 0 20px; text-wrap: balance;
+  }
+  h1 .amp { color: var(--accent); }
+  .lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--muted); max-width: 62ch; margin: 0; }
+
+  /* ---- Ticker metric row ---- */
+  .ticker {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin: 36px 0 0;
+  }
+  .ticker .cell { background: var(--surface); padding: 16px 18px; }
+  .ticker .k { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin: 0 0 8px; }
+  .ticker .v { font-family: var(--mono); font-size: clamp(19px, 3vw, 26px); font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .ticker .v.crit { color: var(--down); }
+  .ticker .v.ok { color: var(--up); }
+  .ticker .v.warn { color: var(--warn); }
+  .ticker .sub { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+
+  /* ---- Sections ---- */
+  section { padding: 52px 0; border-bottom: 1px solid var(--border); }
+  .sec-label {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--faint); margin: 0 0 6px; display: flex; align-items: center; gap: 10px;
+  }
+  .sec-label::before { content: ""; width: 22px; height: 1px; background: var(--accent); display: inline-block; }
+  h2 { font-family: var(--mono); font-size: clamp(22px, 3.4vw, 30px); font-weight: 600; letter-spacing: -.015em; margin: 0 0 24px; text-wrap: balance; }
+  h3 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
+  p { margin: 0 0 16px; }
+  p:last-child { margin-bottom: 0; }
+  strong { font-weight: 650; color: var(--text); }
+  code { font-family: var(--mono); font-size: .86em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--accent); }
+
+  .callout {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+    padding: 22px 24px; box-shadow: var(--shadow);
+  }
+  .callout.crit { border-left-color: var(--down); }
+  .callout p { color: var(--muted); }
+  .callout strong { color: var(--text); }
+
+  /* ---- Assessment cards ---- */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-head .num { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+  .grade {
+    font-family: var(--mono); font-weight: 700; font-size: 13px;
+    padding: 3px 9px; border-radius: 6px; letter-spacing: .02em; white-space: nowrap;
+  }
+  .grade.good { color: var(--up); background: color-mix(in srgb, var(--up) 14%, transparent); border: 1px solid color-mix(in srgb, var(--up) 30%, transparent); }
+  .grade.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent); }
+  .grade.crit { color: var(--down); background: color-mix(in srgb, var(--down) 14%, transparent); border: 1px solid color-mix(in srgb, var(--down) 30%, transparent); }
+  .card ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .card li { position: relative; padding-left: 20px; font-size: 14.5px; color: var(--muted); }
+  .card li::before { content: ""; position: absolute; left: 3px; top: 9px; width: 6px; height: 6px; border-radius: 1px; background: var(--border-strong); }
+  .card li.plus::before { background: var(--up); }
+  .card li.minus::before { background: var(--down); }
+  .card li strong { color: var(--text); font-weight: 600; }
+
+  /* ---- Priority list ---- */
+  .prio { display: flex; flex-direction: column; gap: 12px; }
+  .prio-row {
+    display: grid; grid-template-columns: 76px 1fr; gap: 18px; align-items: start;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .tier { font-family: var(--mono); font-weight: 700; font-size: 13px; padding: 5px 0; text-align: center; border-radius: 6px; }
+  .tier.p0 { color: var(--down); background: color-mix(in srgb, var(--down) 13%, transparent); border: 1px solid color-mix(in srgb, var(--down) 32%, transparent); }
+  .tier.p1 { color: var(--warn); background: color-mix(in srgb, var(--warn) 13%, transparent); border: 1px solid color-mix(in srgb, var(--warn) 32%, transparent); }
+  .tier.p2 { color: var(--muted); background: var(--surface-2); border: 1px solid var(--border); }
+  .prio-row h3 { font-family: var(--sans); font-size: 15.5px; margin: 0 0 5px; }
+  .prio-row p { font-size: 14px; color: var(--muted); margin: 0; }
+  .prio-row .files { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 7px; }
+
+  /* ---- Roadmap phases ---- */
+  .phases { display: flex; flex-direction: column; gap: 0; }
+  .phase {
+    display: grid; grid-template-columns: 120px 1fr; gap: 28px;
+    padding: 26px 0; border-top: 1px solid var(--border);
+  }
+  .phase:first-child { border-top: none; }
+  .phase-idx { font-family: var(--mono); }
+  .phase-idx .n { font-size: 30px; font-weight: 700; color: var(--accent); letter-spacing: -.02em; }
+  .phase-idx .t { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-top: 4px; }
+  .phase-body h3 { font-size: 19px; margin: 2px 0 8px; }
+  .phase-body p { color: var(--muted); font-size: 15px; margin: 0 0 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .01em;
+    padding: 4px 10px; border-radius: 20px; background: var(--surface-2);
+    border: 1px solid var(--border); color: var(--muted);
+  }
+
+  /* ---- iPhone track ---- */
+  .track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .stage { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .stage .when { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .stage h3 { font-size: 16px; margin: 10px 0 8px; }
+  .stage p { font-size: 13.5px; color: var(--muted); margin: 0; }
+  .stage .effort { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+  /* ---- Decision footer ---- */
+  .decision { padding: 52px 0 72px; }
+  .decision .callout { border-left-color: var(--up); }
+  .qopts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .qopt { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .qopt .q { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .04em; }
+  .qopt p { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+
+  footer { padding: 28px 0 60px; }
+  .foot-line { font-family: var(--mono); font-size: 12px; color: var(--faint); letter-spacing: .03em; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+  @media (max-width: 720px) {
+    .ticker { grid-template-columns: repeat(2, 1fr); }
+    .cards, .qopts, .track { grid-template-columns: 1fr; }
+    .phase { grid-template-columns: 1fr; gap: 12px; }
+    .phase-idx { display: flex; align-items: baseline; gap: 10px; }
+    .phase-idx .t { margin-top: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .card, .prio-row, .stage { transition: border-color .2s ease, transform .2s ease; }
+    .card:hover, .prio-row:hover, .stage:hover { border-color: var(--border-strong); }
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+</style>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><span class="dot"></span>DSH&nbsp;·&nbsp;ALPHA&nbsp;INSIGHT</span>
+    <span class="meta">CODE AUDIT + ROADMAP · REV 2026-08-11 · CONFIDENTIAL</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">State of the Terminal</p>
+    <h1>What you've built, what's real, <span class="amp">&</span> the path to making it great.</h1>
+    <p class="lede">A code-grounded assessment of <strong>dsh-alpha-insight</strong> — a multi-user AI trading terminal — across security, multi-user reporting, live trading, and backtesting, plus a phased plan to production and onto iPhone.</p>
+
+    <div class="ticker">
+      <div class="cell"><p class="k">Routes</p><div class="v">35</div><div class="sub">pages built</div></div>
+      <div class="cell"><p class="k">DB migrations</p><div class="v">24</div><div class="sub">RLS enabled</div></div>
+      <div class="cell"><p class="k">Live execution</p><div class="v crit">0</div><div class="sub">paper only</div></div>
+      <div class="cell"><p class="k">Data tenancy</p><div class="v crit">1</div><div class="sub">shared, not per-user</div></div>
+      <div class="cell"><p class="k">Foundation</p><div class="v ok">Strong</div><div class="sub">real, not mocked</div></div>
+    </div>
+  </header>
+
+  <section>
+    <p class="sec-label">Executive summary</p>
+    <h2>You're ~75% of the way to the product you described — but two structural gaps must close first.</h2>
+    <div class="callout">
+      <p><strong>The good news:</strong> this is a real, substantial application, not a demo. Thirty-five routes, a proper Supabase backend with Row-Level Security on every table, live market data (Finnhub + Yahoo), read-only brokerage linking through SnapTrade, AI research and paper-trading "funds," and a backtesting engine wired to real historical prices. The bones of a serious trading terminal are here.</p>
+      <p style="margin-top:16px"><strong>The two gaps that define the work ahead:</strong> (1) the core screens are <strong>single-tenant</strong> — everyone shares one portfolio and watchlist — so "multiple people, each with their own reports" isn't true yet; and (2) <strong>nothing places a live trade</strong> — every "trade" is simulated. Neither is a flaw in the vision; both are the natural next build phase, and both are very achievable.</p>
+    </div>
+    <div class="callout" style="margin-top:16px;border-left-color:var(--warn)">
+      <p><strong>Correction to my first read:</strong> I initially warned that the committed <code>.env</code> meant "rotate every key." After reading it, that was an over-alarm. The committed <code>.env</code> holds <strong>only public values</strong> (Supabase URL, project ref, and the publishable/anon key that ships to the browser anyway). <strong>No service-role key and no third-party API keys are committed</strong> — those stay server-side at runtime. It's still worth untracking, but it is not an emergency.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">Assessment · four domains</p>
+    <h2>Graded against what a production version needs.</h2>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-head">
+          <div><span class="num">01</span><h3>Multi-user & reports</h3></div>
+          <span class="grade crit">NEEDS WORK</span>
+        </div>
+        <ul>
+          <li class="minus"><strong>Single-tenant bug (top priority).</strong> Dashboard, Portfolio, Watchlist, Settings & AI Reports run on the RLS-bypassing service-role client and read one <em>global</em> row — every user shares the same data.</li>
+          <li class="minus"><strong>No auth gate</strong> on those endpoints — effectively reachable without a token.</li>
+          <li class="minus"><strong>No roles / teams / orgs.</strong> No structure yet for "multiple people collaborating."</li>
+          <li class="plus">Auth itself is sound: Supabase email/password + Google, tokens verified server-side.</li>
+          <li class="plus">Notes, chat, accounts, managed portfolios <em>are</em> correctly per-user.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><span class="num">02</span><h3>Live trading</h3></div>
+          <span class="grade warn">READ-ONLY TODAY</span>
+        </div>
+        <ul>
+          <li class="minus"><strong>No real order execution anywhere.</strong> SnapTrade is linked as <code>connectionType: "read"</code> — positions sync in, nothing goes out.</li>
+          <li class="minus"><strong>"Managed," "AI Funds," "Day Trader" are paper.</strong> Fills book against database rows at the last quote — no spread, slippage, or market-hours checks.</li>
+          <li class="plus">The safe architecture is already chosen: users link <em>their own</em> broker; the app never custodies money.</li>
+          <li class="plus">Clean, disclosed separation — the honest base to build real execution on, deliberately.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><span class="num">03</span><h3>Backtesting engine</h3></div>
+          <span class="grade warn">SOLID CORE</span>
+        </div>
+        <ul>
+          <li class="plus"><strong>Real data, correct mechanics.</strong> Runs on real Yahoo daily bars; equity curve, drawdown, Wilder-smoothed RSI and rolling SMA are all correct.</li>
+          <li class="minus"><strong>No transaction costs or slippage</strong> — flatters high-frequency configs.</li>
+          <li class="minus"><strong>Stop-losses fill at the close, not intrabar</strong> — the single biggest result distortion.</li>
+          <li class="minus"><strong>No Sharpe, no benchmark.</strong> "3 strategies" is really one strategy with three presets.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><span class="num">04</span><h3>Security & secrets</h3></div>
+          <span class="grade good">MOSTLY SOUND</span>
+        </div>
+        <ul>
+          <li class="plus"><strong>RLS enabled on every table</strong>, per-user tables scoped to <code>auth.uid()</code>.</li>
+          <li class="plus">No catastrophic secrets committed; third-party & service-role keys stay server-side.</li>
+          <li class="minus"><strong>Public cron hooks gated only by the public anon key</strong> — anyone could trigger expensive LLM/trading jobs. Top fix.</li>
+          <li class="minus"><strong>SnapTrade <code>user_secret</code> is browser-readable</strong> — should never leave the server.</li>
+          <li class="minus"><code>.env</code> is tracked in git (public values only) — untrack it.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">What I'd do first</p>
+    <h2>Ordered by leverage, not by area.</h2>
+    <div class="prio">
+      <div class="prio-row">
+        <div class="tier p0">P0</div>
+        <div>
+          <h3>Make the app truly multi-user</h3>
+          <p>Route the core screens through the authenticated, per-user client and stamp <code>user_id</code> on every read and write. This is what turns "one shared terminal" into "everyone has their own." Nothing else matters until this is true.</p>
+          <div class="files">terminal.functions.ts · terminal.server.ts · +requireSupabaseAuth</div>
+        </div>
+      </div>
+      <div class="prio-row">
+        <div class="tier p0">P0</div>
+        <div>
+          <h3>Lock the public hooks</h3>
+          <p>Swap the anon-key gate for a dedicated server-only secret with a constant-time compare, and rotate it into the cron config. Small change, closes a real cost-abuse hole.</p>
+          <div class="files">src/routes/api/public/hooks/*.ts</div>
+        </div>
+      </div>
+      <div class="prio-row">
+        <div class="tier p1">P1</div>
+        <div>
+          <h3>Tenancy hygiene: <code>.env</code> + SnapTrade secret</h3>
+          <p>Untrack <code>.env</code> (add <code>.env.example</code>); revoke browser <code>SELECT</code> on <code>snaptrade_users.user_secret</code> so the brokerage credential stays server-only.</p>
+          <div class="files">.gitignore · migration (REVOKE SELECT)</div>
+        </div>
+      </div>
+      <div class="prio-row">
+        <div class="tier p1">P1</div>
+        <div>
+          <h3>Backtest credibility pass</h3>
+          <p>Add transaction costs + slippage, adjusted-close prices, and intrabar stop fills; add Sharpe and a buy-&-hold benchmark. Makes reported numbers trustworthy.</p>
+          <div class="files">src/lib/trading-algorithms/*</div>
+        </div>
+      </div>
+      <div class="prio-row">
+        <div class="tier p2">P2</div>
+        <div>
+          <h3>Roles, teams & report sharing</h3>
+          <p>Add a <code>user_roles</code> / teams model and a per-report visibility scope (private / team / public) so collaboration and shareable reports become first-class.</p>
+          <div class="files">new migrations · RLS policies</div>
+        </div>
+      </div>
+      <div class="prio-row">
+        <div class="tier p2">P2</div>
+        <div>
+          <h3>Real trade execution (gated, deliberate)</h3>
+          <p>Only after the above: build the SnapTrade execution layer (impact-preview → place → status → cancel), an order-ticket UI, and hard safety gates. This is the regulated frontier — design review before code.</p>
+          <div class="files">snaptrade.server.ts · new order UI</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">Roadmap · phased</p>
+    <h2>From shared demo to production platform.</h2>
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-idx"><span class="n">00</span><span class="t">Harden</span></div>
+        <div class="phase-body">
+          <h3>Security & tenancy foundation</h3>
+          <p>Close the two P0s and the P1 hygiene items. After this phase, each person logs in and sees only their own portfolio, watchlist, settings, and reports — and no endpoint runs unauthenticated. This is the gate to everything else.</p>
+          <div class="chips"><span class="chip">per-user data layer</span><span class="chip">hook auth</span><span class="chip">.env untrack</span><span class="chip">secret revoke</span></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-idx"><span class="n">01</span><span class="t">Reports</span></div>
+        <div class="phase-body">
+          <h3>A real multi-user reporting product</h3>
+          <p>Replace the remaining seeded/"demo" panels with live data, add per-report ownership and visibility, and give the dashboard honest per-user analytics. This is the "multiple people look at it and see reports" milestone.</p>
+          <div class="chips"><span class="chip">retire DemoTag mocks</span><span class="chip">report visibility</span><span class="chip">real risk analytics</span><span class="chip">notifications</span></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-idx"><span class="n">02</span><span class="t">Collaborate</span></div>
+        <div class="phase-body">
+          <h3>Teams, roles & sharing</h3>
+          <p>Introduce teams/orgs, admin vs member roles, and shareable report links. Turns individual accounts into a group that can work off the same research while keeping personal portfolios private.</p>
+          <div class="chips"><span class="chip">user_roles</span><span class="chip">teams</span><span class="chip">share links</span><span class="chip">RLS by membership</span></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-idx"><span class="n">03</span><span class="t">Rigor</span></div>
+        <div class="phase-body">
+          <h3>Serious backtesting & signals</h3>
+          <p>Cost/slippage modeling, intrabar stops, risk-adjusted metrics, benchmark comparison, and genuinely distinct strategies with out-of-sample validation. Makes the "alpha" in Alpha Insight defensible.</p>
+          <div class="chips"><span class="chip">costs + slippage</span><span class="chip">Sharpe / Sortino</span><span class="chip">benchmark</span><span class="chip">walk-forward</span></div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-idx"><span class="n">04</span><span class="t">Execute</span></div>
+        <div class="phase-body">
+          <h3>Live trading (regulated frontier)</h3>
+          <p>The SnapTrade execution layer, order-ticket UI, and safety gating — plus the compliance conversation that comes with routing real orders and AI-driven allocation. Deliberately last, and gated behind a design review.</p>
+          <div class="chips"><span class="chip">order impact + place</span><span class="chip">order UI</span><span class="chip">safety gates</span><span class="chip">compliance review</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">iPhone · phased track</p>
+    <h2>Onto your phone — reusing what's already built.</h2>
+    <p style="color:var(--muted);max-width:64ch;margin-bottom:24px">Because the app is React with a clean Supabase backend, the phone path is progressive: each stage reuses the last, and the architecture from Phase 00 (shared logic + a clean API) is what makes it painless later.</p>
+    <div class="track">
+      <div class="stage">
+        <div class="when">Now</div>
+        <h3>Installable PWA</h3>
+        <p>Add a manifest + service worker so the existing site installs to the iPhone home screen with an app icon, splash, and offline shell. Zero App Store friction.</p>
+        <div class="effort">Effort: low · Reuses: everything</div>
+      </div>
+      <div class="stage">
+        <div class="when">Next</div>
+        <h3>Capacitor wrapper</h3>
+        <p>Wrap the same web app in a native shell for a real App Store listing plus Face ID login and native push notifications. Minimal new code.</p>
+        <div class="effort">Effort: medium · Reuses: full web app</div>
+      </div>
+      <div class="stage">
+        <div class="when">Later</div>
+        <h3>React Native / Expo</h3>
+        <p>A fully native client that reuses your Supabase backend and shared <code>trading-algorithms</code> logic. Best UX — worth it only once the product is proven.</p>
+        <div class="effort">Effort: high · Reuses: backend + core logic</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="decision">
+    <p class="sec-label">Your call</p>
+    <h2>Where should I point first?</h2>
+    <div class="callout">
+      <p>My recommendation: <strong>start with Phase 00</strong> — specifically the per-user data layer. It's the highest-leverage change, it's what makes the app genuinely multi-user, and it unblocks everything else on the roadmap. It's also a contained, well-scoped piece of work.</p>
+      <p style="margin-top:14px">One logistics note before I write code: I currently have <strong>read-only</strong> access to <code>dsh-alpha-insight</code>, and it's a <strong>Lovable-connected</strong> repo (pushes sync into your Lovable editor and its history shouldn't be rewritten). To commit fixes there I'll need push access — or we decide together how you want changes delivered.</p>
+    </div>
+    <div class="qopts">
+      <div class="qopt"><div class="q">OPTION A</div><p>Start Phase 00 — make it truly multi-user + lock the hooks. (Recommended)</p></div>
+      <div class="qopt"><div class="q">OPTION B</div><p>Start with the backtesting credibility pass — it's self-contained and visible.</p></div>
+      <div class="qopt"><div class="q">OPTION C</div><p>Ship the PWA first, so you can put it on your phone this week.</p></div>
+      <div class="qopt"><div class="q">OPTION D</div><p>Go deeper on any one domain before we touch code.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-line">
+      <span>DSH ALPHA INSIGHT</span><span>·</span><span>CODE AUDIT + ROADMAP</span><span>·</span><span>4 DOMAINS REVIEWED</span><span>·</span><span>GENERATED FROM SOURCE, NOT ASSUMPTIONS</span>
+    </div>
+  </footer>
+
+</div>

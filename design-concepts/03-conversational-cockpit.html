@@ -1,0 +1,157 @@
+<title>DSH — conversational cockpit</title>
+<style>
+  :root{
+    --bg:#07090F; --tx:#EEF0F8; --mut:#9BA2BE; --faint:#5E6588;
+    --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.028);
+    --brd:rgba(255,255,255,.09); --brd2:rgba(255,255,255,.16);
+    --violet:#9B87FF; --blue:#5C8DFF; --cyan:#58DDE7; --up:#41E2A2; --down:#FF6E92; --amber:#FFC46B;
+    --g1:linear-gradient(120deg,#9B87FF,#5C8DFF 55%,#58DDE7);
+    --gsoft:linear-gradient(135deg,rgba(155,135,255,.20),rgba(92,141,255,.08));
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(50% 42% at 50% -12%,rgba(155,135,255,.28),transparent 62%),
+      radial-gradient(40% 40% at 6% 8%,rgba(88,221,231,.12),transparent 60%),
+      radial-gradient(46% 42% at 96% 12%,rgba(92,141,255,.16),transparent 60%),
+      radial-gradient(60% 44% at 50% 116%,rgba(92,141,255,.12),transparent 60%);}
+
+  header{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:20px 30px;max-width:1080px;margin:0 auto}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}
+  .logo .m{width:30px;height:30px;border-radius:10px;background:var(--g1);display:grid;place-items:center;color:#07090F;font-size:14px;box-shadow:0 6px 18px -5px rgba(92,141,255,.7)}
+  .hr{display:flex;align-items:center;gap:11px}
+  .pill{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:12px;background:var(--glass);border:1px solid var(--brd);font-size:12px;color:var(--mut);font-family:var(--mono)}
+  .pill .d{width:6px;height:6px;border-radius:50%;background:var(--up);box-shadow:0 0 8px var(--up)}
+  .avatar{width:33px;height:33px;border-radius:11px;background:linear-gradient(135deg,#5C8DFF,#9B87FF);display:grid;place-items:center;font-weight:700;font-size:12px}
+
+  main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:46px 26px 90px}
+  .greet{text-align:center;margin-bottom:26px}
+  .greet .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet)}
+  .greet h1{font-size:38px;font-weight:800;letter-spacing:-.03em;margin:12px 0 6px;text-wrap:balance}
+  .greet h1 .c{background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .greet p{color:var(--mut);font-size:15px;margin:0}
+
+  /* Command bar */
+  .cmd{display:flex;align-items:center;gap:12px;padding:9px 9px 9px 20px;border:1px solid var(--brd2);border-radius:20px;
+    background:rgba(255,255,255,.05);backdrop-filter:blur(20px) saturate(1.2);
+    box-shadow:0 30px 70px -34px #000,0 0 0 4px rgba(155,135,255,.06)}
+  .cmd svg{color:var(--faint);flex:none}
+  .cmd input{flex:1;background:transparent;border:0;outline:none;color:var(--tx);font-size:16px;font-family:var(--sans)}
+  .cmd input::placeholder{color:var(--faint)}
+  .cmd .send{width:44px;height:44px;border-radius:14px;border:0;background:var(--g1);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 24px -10px rgba(92,141,255,.8)}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:16px 0 8px}
+  .chip{padding:8px 14px;border-radius:20px;background:var(--glass);border:1px solid var(--brd);color:var(--mut);font-size:13px;cursor:pointer}
+  .chip:hover{color:var(--tx);border-color:var(--brd2)}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:40px 0 22px;color:var(--faint);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .divider::before,.divider::after{content:"";height:1px;flex:1;background:var(--brd)}
+
+  /* Conversation thread */
+  .q{display:flex;justify-content:flex-end;margin-bottom:16px}
+  .q span{background:var(--gsoft);border:1px solid rgba(155,135,255,.3);padding:11px 17px;border-radius:18px 18px 6px 18px;font-size:14.5px;max-width:80%}
+  .ans{border:1px solid var(--brd);border-radius:22px;background:var(--glass);backdrop-filter:blur(16px);overflow:hidden;box-shadow:0 30px 60px -42px #000}
+  .ans .head{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--brd)}
+  .ans .head .ai{width:26px;height:26px;border-radius:8px;background:var(--g1);display:grid;place-items:center;color:#07090F;font-size:12px;font-weight:800}
+  .ans .head b{font-size:13.5px}
+  .ans .head .tag{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .ans .body{padding:20px}
+  .ans p{margin:0 0 16px;color:#cdd2e6;font-size:14.5px;line-height:1.6}
+  .ans p b{color:#fff}
+
+  .statrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .stat{flex:1;min-width:120px;border:1px solid var(--brd);border-radius:14px;padding:12px 14px;background:var(--glass2)}
+  .stat .l{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .stat .v{font-family:var(--mono);font-size:19px;font-weight:700;margin-top:5px;font-variant-numeric:tabular-nums}
+  .stat .v.u{color:var(--up)}
+
+  .chartwrap{border:1px solid var(--brd);border-radius:16px;padding:14px 8px 6px;background:var(--glass2);margin-bottom:18px}
+  .chartwrap .cap{display:flex;justify-content:space-between;padding:0 10px 8px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .act{display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:13px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid var(--brd);background:var(--glass);color:var(--tx)}
+  .act.prime{border:0;background:var(--g1);color:#07090F;box-shadow:0 10px 24px -12px rgba(92,141,255,.8)}
+  .act svg{width:16px;height:16px}
+
+  .followups{display:flex;flex-direction:column;gap:1px;margin-top:16px;border-top:1px solid var(--brd);padding-top:8px}
+  .fu{display:flex;align-items:center;gap:10px;padding:11px 6px;color:var(--mut);font-size:14px;cursor:pointer;border-radius:10px}
+  .fu:hover{color:var(--tx);background:var(--glass2)}
+  .fu svg{color:var(--violet)}
+
+  @media(max-width:640px){.greet h1{font-size:30px}.statrow{flex-direction:column}}
+</style>
+
+<header>
+  <div class="logo"><span class="m">◆</span>DSH</div>
+  <div class="hr">
+    <span class="pill"><span class="d"></span>MARKET OPEN · 14:21 ET</span>
+    <div class="avatar">DH</div>
+  </div>
+</header>
+
+<main>
+  <div class="greet">
+    <div class="k">DSH Cockpit</div>
+    <h1>Good morning, Danny. <span class="c">What are we trading?</span></h1>
+    <p>Ask about any market, place a paper trade, or run a backtest — DSH answers with live data.</p>
+  </div>
+
+  <div class="cmd">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+    <input placeholder="Ask anything —  “How is NVDA set up into earnings?”" value="">
+    <button class="send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#07090F" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </div>
+  <div class="chips">
+    <span class="chip">📈 Scan for breakouts</span>
+    <span class="chip">🤖 Today's AI signals</span>
+    <span class="chip">🧪 Backtest a strategy</span>
+    <span class="chip">💼 How's my portfolio?</span>
+    <span class="chip">📰 What moved markets?</span>
+  </div>
+
+  <div class="divider">Earlier today</div>
+
+  <!-- Sample thread -->
+  <div class="q"><span>How is NVDA setting up into earnings?</span></div>
+
+  <div class="ans">
+    <div class="head"><span class="ai">◆</span><b>DSH</b><span class="tag">Live · Finnhub + AI by Foundry</span></div>
+    <div class="body">
+      <p><b>NVDA looks constructive into the print.</b> It's up <b>+3.1% today</b> to $174.62, riding a 5-day momentum push as semis lead. Earnings-revision breadth has turned positive and implied volatility is elevated — the market is pricing a ~8% move.</p>
+
+      <div class="statrow">
+        <div class="stat"><div class="l">Last</div><div class="v">$174.62</div></div>
+        <div class="stat"><div class="l">Today</div><div class="v u">+3.1%</div></div>
+        <div class="stat"><div class="l">Implied move</div><div class="v">±8.2%</div></div>
+        <div class="stat"><div class="l">AI conviction</div><div class="v u">84%</div></div>
+      </div>
+
+      <div class="chartwrap">
+        <div class="cap"><span>NVDA · 20 sessions</span><span>174.62 ▲</span></div>
+        <svg viewBox="0 0 640 120" preserveAspectRatio="none" style="width:100%;height:120px">
+          <defs>
+            <linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#41E2A2" stop-opacity=".4"/><stop offset="1" stop-color="#41E2A2" stop-opacity="0"/></linearGradient>
+            <linearGradient id="l" x1="0" x2="1"><stop offset="0" stop-color="#9B87FF"/><stop offset="1" stop-color="#58DDE7"/></linearGradient>
+          </defs>
+          <path d="M0,96 C50,100 80,84 130,86 C190,88 220,70 280,64 C340,58 380,66 440,44 C500,26 540,36 640,18 L640,120 L0,120 Z" fill="url(#f)"/>
+          <path d="M0,96 C50,100 80,84 130,86 C190,88 220,70 280,64 C340,58 380,66 440,44 C500,26 540,36 640,18" fill="none" stroke="url(#l)" stroke-width="2.5"/>
+          <circle cx="640" cy="18" r="4" fill="#58DDE7"/>
+        </svg>
+      </div>
+
+      <div class="actions">
+        <span class="act prime"><svg viewBox="0 0 24 24" fill="none" stroke="#07090F" stroke-width="2.2"><path d="M4 18V9M9 18V5M14 18v-7M19 18v-11"/></svg>Paper trade NVDA</span>
+        <span class="act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z"/></svg>Backtest a strategy</span>
+        <span class="act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Add to watchlist</span>
+      </div>
+
+      <div class="followups">
+        <div class="fu"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>What's the options-implied range for earnings week?</div>
+        <div class="fu"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Compare NVDA vs AMD momentum</div>
+        <div class="fu"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Backtest "buy 3 days before earnings, sell after"</div>
+      </div>
+    </div>
+  </div>
+</main>
