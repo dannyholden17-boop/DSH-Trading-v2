@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DSH Sentinel — Autonomous trading desk</title>
 <meta name="description" content="DSH Sentinel is an autonomous AI trading desk. Six engines scan every tick around the clock and surface only the moves worth acting on — while you sleep.">
+<meta name="theme-color" content="#070b14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2338e0be'/%3E%3Cstop offset='1' stop-color='%237b6cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%23070b14'/%3E%3Ccircle cx='16' cy='16' r='3.6' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='8.5' fill='none' stroke='url(%23g)' stroke-width='1.5' opacity='.6'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='none' stroke='url(%23g)' stroke-width='1' opacity='.3'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DSH Sentinel — The autonomous trading desk">
+<meta property="og:description" content="Six engines scan every tick around the clock. An AI turns the noise into moves you can act on — while you sleep.">
+<meta property="og:image" content="./assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DSH Sentinel — The autonomous trading desk">
+<meta name="twitter:description" content="Six engines that never sleep. The research is done before your first coffee.">
+<meta name="twitter:image" content="./assets/og.png">
 <link rel="stylesheet" href="./assets/dsh.css">
 <style>
   /* ---------- page-specific layout ---------- */
@@ -135,6 +145,31 @@
     .hero-note{gap:14px}
   }
   .demo,.demo *{max-width:100%}
+
+  /* comparison */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:44px}
+  @media(max-width:760px){.compare{grid-template-columns:1fr}}
+  .cq{border:1px solid var(--border);border-radius:var(--radius);padding:26px 26px 12px;background:var(--surface);box-shadow:var(--card-shadow)}
+  .cq.new{border-color:color-mix(in srgb,var(--mint) 42%,transparent);box-shadow:0 0 0 1px var(--glow),var(--card-shadow);
+    background:linear-gradient(180deg,color-mix(in srgb,var(--mint) 7%,var(--surface)),var(--surface))}
+  .cq-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:var(--f-display);font-size:1.16rem;font-weight:620}
+  .cq-head .lbl{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:6px}
+  .cq.old .lbl{background:var(--surface-2);color:var(--text-faint)}
+  .cq.new .lbl{background:var(--glow);color:var(--mint)}
+  .crow{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--border);color:var(--text-dim);font-size:.93rem;align-items:flex-start}
+  .crow .m{flex:none;width:18px;font-weight:800}
+  .cq.old .m{color:var(--text-faint)}
+  .cq.new .m{color:var(--mint)}
+  .cq.new .crow{color:var(--text)}
+
+  /* trust band */
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:8px}
+  @media(max-width:720px){.trust{grid-template-columns:1fr}}
+  .trust .t{display:flex;gap:14px}
+  .trust .ic{width:42px;height:42px;flex:none;border-radius:11px;background:var(--glow);color:var(--mint);
+    display:grid;place-items:center;font-size:18px}
+  .trust .t b{display:block;margin-bottom:4px}
+  .trust .t p{color:var(--text-dim);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -320,6 +355,52 @@
     <div class="metric reveal"><div class="v"><span data-count="24" data-suffix="/7">0</span></div><div class="k">Always scanning</div></div>
     <div class="metric reveal"><div class="v"><span data-count="127" >0</span></div><div class="k">Findings / day</div></div>
     <div class="metric reveal"><div class="v"><span data-count="71" data-suffix="%">0</span></div><div class="k">Signal hit-rate*</div></div>
+  </div>
+</section>
+
+<!-- ===================== COMPARISON ===================== -->
+<section class="section band" id="compare">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">The difference</span>
+      <h2>Retail tools give you more to watch. Sentinel does the watching.</h2>
+    </div>
+    <div class="compare reveal">
+      <div class="cq old">
+        <div class="cq-head"><span class="lbl">The old way</span> A wall of screens</div>
+        <div class="crow"><span class="m">✕</span> You babysit scanners, chains, filings and news across a dozen tabs.</div>
+        <div class="crow"><span class="m">✕</span> Thousands of alerts a day — the real signal is buried in the noise.</div>
+        <div class="crow"><span class="m">✕</span> No time to backtest, so conviction shows up late or never.</div>
+        <div class="crow"><span class="m">✕</span> Miss the setup the moment you step away from the desk.</div>
+        <div class="crow"><span class="m">✕</span> Every tool wants your attention. None of them think.</div>
+      </div>
+      <div class="cq new">
+        <div class="cq-head"><span class="lbl">With Sentinel</span> One desk that thinks</div>
+        <div class="crow"><span class="m">✓</span> Six engines watch all of it for you, continuously, in one place.</div>
+        <div class="crow"><span class="m">✓</span> The AI core scores and filters — only the handful that matter surface.</div>
+        <div class="crow"><span class="m">✓</span> Every setup is backtested before it reaches you. Conviction included.</div>
+        <div class="crow"><span class="m">✓</span> The feed fills itself while you're away. Nothing slips past.</div>
+        <div class="crow"><span class="m">✓</span> Ask it anything in plain English and get an answer, not another tab.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRUST ===================== -->
+<section class="section-sm">
+  <div class="wrap">
+    <div class="shead reveal" style="max-width:52ch">
+      <span class="eyebrow">Built to be trusted</span>
+      <h2 style="font-size:var(--step-2)">You stay in control. Always.</h2>
+    </div>
+    <div class="trust reveal" style="margin-top:36px">
+      <div class="t"><span class="ic">🔑</span><div><b>Your keys, your funds</b>
+        <p>Sentinel connects to your broker with your credentials. We never take custody of your money.</p></div></div>
+      <div class="t"><span class="ic">🧪</span><div><b>Paper-first by default</b>
+        <p>Every idea can be simulated before a cent is at risk. Go live only when you decide to.</p></div></div>
+      <div class="t"><span class="ic">🛡</span><div><b>Risk-gated orders</b>
+        <p>The Risk engine checks every live order against your stops and exposure limits first.</p></div></div>
+    </div>
   </div>
 </section>
 

@@ -178,9 +178,8 @@ p{margin:0}
 .nav.scrolled{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(16px);border-color:var(--border)}
 .nav-inner{display:flex;align-items:center;gap:28px;height:66px;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
 .brand{display:flex;align-items:center;gap:11px;font-family:var(--f-display);font-weight:680;font-size:1.06rem;letter-spacing:-.01em}
-.brand .glyph{width:26px;height:26px;border-radius:8px;background:var(--brand-grad);position:relative;
-  box-shadow:0 0 18px -2px var(--glow)}
-.brand .glyph::after{content:"";position:absolute;inset:6px;border-radius:4px;background:var(--bg);opacity:.35}
+.brand .glyph{width:28px;height:28px;border-radius:8px;position:relative;box-shadow:0 0 18px -3px var(--glow);
+  background:#070b14 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2338e0be'/%3E%3Cstop offset='1' stop-color='%237b6cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='3.6' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='8.5' fill='none' stroke='url(%23g)' stroke-width='1.6' opacity='.65'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='none' stroke='url(%23g)' stroke-width='1' opacity='.32'/%3E%3C/svg%3E") center/cover no-repeat}
 .nav-links{display:flex;gap:26px;margin-left:8px}
 .nav-links a{color:var(--text-dim);font-size:.94rem;font-weight:500;transition:color .15s}
 .nav-links a:hover{color:var(--text)}
