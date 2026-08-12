@@ -27,6 +27,12 @@ A cohesive, production-quality front end built on one design system.
 dependencies, works offline. Click **Open app** to reach the cockpit; both
 pages support light and dark themes (toggle in the top bar).
 
+**Live preview:** the site auto-deploys to GitHub Pages on every push to
+`main` (enable it once under *Settings → Pages → Source: GitHub Actions*).
+Self-contained hosted demos are also published here:
+- Landing — https://claude.ai/code/artifact/78218c43-3271-45b5-8d83-fe04fde639e6
+- Product app — https://claude.ai/code/artifact/ad7354a8-933c-4ea9-8933-7f492048a5aa
+
 ### Design system at a glance
 - **Identity:** premium fintech — deep blue-black cockpit, a bioluminescent
   mint→violet brand gradient, semantic green/red/amber for market state.
