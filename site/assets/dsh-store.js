@@ -56,11 +56,14 @@
   function emit(evt){ listeners.forEach(fn => { try{ fn(evt, state); }catch(e){} }); }
 
   /* -------- price engine -------- */
+  let live = false;               // true when a real feed is driving prices
+  let lastPersist = 0;
   function priceOf(sym){
     if(state.prices[sym] == null) state.prices[sym] = BASE_PRICES[sym] || (50 + Math.random()*200);
     return state.prices[sym];
   }
   function tick(){
+    if(live) return;              // a real feed is in control; don't simulate
     // gentle random walk on every known price
     Object.keys(state.prices).forEach(s=>{
       const p = state.prices[s];
@@ -69,6 +72,15 @@
       state.prices[s] = Math.max(0.5, +(p + drift).toFixed(2));
     });
     persist();
+    emit("prices");
+  }
+  // A real feed calls this with each new print. Persist is throttled so a
+  // fast tape doesn't hammer localStorage; prices always emit immediately.
+  function setPrice(sym, px){
+    if(!(px > 0)) return;
+    state.prices[sym] = +px;
+    const now = Date.now();
+    if(now - lastPersist > 2000){ lastPersist = now; persist(); }
     emit("prices");
   }
 
@@ -106,7 +118,11 @@
     subscribe(fn){ listeners.add(fn); return ()=>listeners.delete(fn); },
     state(){ return state; },
     price: priceOf,
+    setPrice: setPrice,
     startPriceEngine(ms){ setInterval(tick, ms||3000); },
+    setLive(b){ live = !!b; emit("feed"); },
+    isLive(){ return live; },
+    knownSymbols(){ return Object.keys(state.prices); },
     fmt$(n){ return (n<0?"-":"") + "$" + Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); },
     fmtSigned(n){ return (n>=0?"+":"-") + "$" + Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); },
 

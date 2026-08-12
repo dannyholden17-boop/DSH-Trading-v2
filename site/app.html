@@ -9,6 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2338e0be'/%3E%3Cstop offset='1' stop-color='%237b6cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%23070b14'/%3E%3Ccircle cx='16' cy='16' r='3.6' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='8.5' fill='none' stroke='url(%23g)' stroke-width='1.5' opacity='.6'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='none' stroke='url(%23g)' stroke-width='1' opacity='.3'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/dsh.css">
 <script src="./assets/dsh-store.js"></script>
+<script src="./assets/dsh-feed.js"></script>
 <script src="./assets/dsh.js" defer></script>
 <style>
   html,body{height:100%}
@@ -191,6 +192,21 @@
   .toast{background:var(--elev);border:1px solid var(--border-lit);border-radius:11px;padding:11px 16px;box-shadow:var(--shadow);
     font-size:.86rem;display:flex;align-items:center;gap:10px;animation:slidein .3s both}
   .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+
+  /* feed status pill */
+  #feedPill{transition:color .2s,border-color .2s}
+  #feedPill.sim{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+  #feedPill.sim #feedDot{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+  #feedPill.live{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+  #feedPill.live #feedDot{background:var(--good);box-shadow:0 0 8px var(--good)}
+  #feedPill.connecting #feedDot{background:var(--mint);animation:blink 1s infinite}
+  #feedPill.error{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+  #feedPill.error #feedDot{background:var(--bad)}
+  .steps-list{counter-reset:n;display:flex;flex-direction:column;gap:10px;margin:14px 0}
+  .steps-list li{list-style:none;display:flex;gap:10px;font-size:.86rem;color:var(--text-dim)}
+  .steps-list li::before{counter-increment:n;content:counter(n);flex:none;width:20px;height:20px;border-radius:50%;
+    background:var(--glow);color:var(--mint);font-size:.7rem;font-weight:700;display:grid;place-items:center}
+  .steps-list a{color:var(--mint)}
 </style>
 </head>
 <body>
@@ -198,7 +214,7 @@
 <!-- ===== app bar ===== -->
 <div class="appbar">
   <a class="brand" href="./index.html"><span class="glyph"></span>DSH Sentinel</a>
-  <span class="pill pill-live"><span class="dot"></span> Live</span>
+  <button class="pill" id="feedPill" title="Market data source" style="cursor:pointer"><span class="dot" id="feedDot"></span> <span id="feedLabel">Simulated</span></button>
   <span class="spacer"></span>
   <div class="clock"><span id="mkt">● Market open</span><span>uptime <b id="uptime">04:12:00</b></span><span id="wall">—</span></div>
   <div class="equity">
@@ -723,6 +739,42 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(function(){ var up=Math.floor((Date.now()-start)/1000);
     $("#uptime").textContent=pad(Math.floor(up/3600))+":"+pad(Math.floor(up/60)%60)+":"+pad(up%60);
     var d=new Date(); $("#wall").textContent=pad(d.getHours())+":"+pad(d.getMinutes())+" ET"; },1000);
+
+  /* ---------------- live feed wiring ---------------- */
+  var feedPill=$("#feedPill"), lastFeed="sim";
+  var FEED_LABEL={sim:"Simulated",connecting:"Connecting…",live:"Live data",error:"Feed error"};
+  function updateFeedPill(s){ feedPill.className="pill "+s; $("#feedLabel").textContent=FEED_LABEL[s]||s; }
+  function openFeedModal(){
+    var connected = window.DSHFeed && DSHFeed.hasKey();
+    openModal(
+      '<div class="sheet-head"><b>Market data</b> <span class="mono" style="color:var(--text-faint)">'+(connected?"Finnhub · connected":"Finnhub")+'</span><button class="x" data-close>✕</button></div>'+
+      '<div class="sheet-body">'+
+        '<p style="font-size:.9rem;color:var(--text-dim);margin-bottom:4px">Connect a real-time feed to drive live prices, P&amp;L and your watchlist. It’s free and takes about 20 seconds:</p>'+
+        '<ol class="steps-list">'+
+          '<li>Open <a href="https://finnhub.io/register" target="_blank" rel="noopener">finnhub.io/register</a> and sign up (free).</li>'+
+          '<li>Copy your API key from the dashboard.</li>'+
+          '<li>Paste it below and hit Connect.</li>'+
+        '</ol>'+
+        '<div class="field"><label>Finnhub API key</label><input id="fhkey" type="text" placeholder="paste your key…" autocomplete="off" spellcheck="false"></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="btn btn-primary" style="flex:1" id="fhConnect">'+(connected?"Reconnect":"Connect live data")+'</button>'+
+          (connected?'<button class="btn btn-ghost" id="fhDisc">Disconnect</button>':'')+
+        '</div>'+
+        '<p class="mono" style="text-align:center;color:var(--text-faint);font-size:.64rem;margin-top:12px">Runs entirely in your browser. Not connected = realistic simulation.</p>'+
+      '</div>');
+    modal.querySelector("[data-close]").addEventListener("click", closeOverlays);
+    var inp=$("#fhkey");
+    $("#fhConnect").addEventListener("click", function(){ var k=inp.value.trim(); if(!k){ inp.focus(); return; } DSHFeed.setKey(k); toast("Connecting to live data…"); closeOverlays(); });
+    var disc=$("#fhDisc"); if(disc) disc.addEventListener("click", function(){ DSHFeed.clearKey(); toast("Switched to simulation"); closeOverlays(); });
+  }
+  feedPill.addEventListener("click", openFeedModal);
+  if(window.DSHFeed){
+    DSHFeed.onStatus(function(s){
+      updateFeedPill(s);
+      if(s!==lastFeed){ if(s==="live") toast("Live market data connected"); else if(s==="error") toast("Live feed error — using simulation"); lastFeed=s; }
+    });
+    DSHFeed.init();
+  } else { updateFeedPill("sim"); }
 
   /* boot */
   renderMini(); refreshChrome();
