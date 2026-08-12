@@ -1,35 +1,66 @@
-# DSH-Trading-v2
+# DSH Sentinel
 
-Design concepts, UI mockups, and planning docs for the next version of the DSH
-trading terminal. Everything here is a self-contained HTML file — open any of
-them directly in a browser, no build step or dependencies required.
+**The autonomous trading desk. Six engines that never sleep.**
 
-## Design concepts
+DSH Sentinel is an autonomous AI trading-desk concept: six background engines
+scan the market around the clock, an AI core reasons over the noise, and only
+the moves worth acting on reach you — with the research already done.
 
-Three progressively bolder reimaginings of the DSH front end. Each explores a
-different interaction paradigm for the same underlying goal: research, trade,
-report, and backtest.
+This repository holds the **product**: a high-end marketing site, a working
+product-app prototype, a shared design system, and the supporting design &
+planning material.
 
-| # | Concept | What it explores |
-|---|---------|------------------|
-| 01 | [Aurora](design-concepts/01-aurora.html) | A polished restyle of the classic terminal — dark "aurora" theme, cleaner dashboard, modern layout. |
-| 02 | [Aurora v2](design-concepts/02-aurora-v2.html) | A more thorough rethink of the layout and information hierarchy. |
-| 03 | [Conversational cockpit](design-concepts/03-conversational-cockpit.html) | The furthest departure: no dashboard or sidebar. A single "Ask DSH anything" command bar assembles live answers — analysis, stats, inline charts, and action buttons (Paper trade · Backtest · Watch) inside the reply. Perplexity/ChatGPT, but for trading. |
+---
 
-## Docs
+## ▶ The product (`site/`)
 
-| Doc | Contents |
-|-----|----------|
-| [Roadmap](docs/roadmap.html) | State of the terminal and the roadmap forward. |
-| [Live trading blueprint](docs/live-trading-blueprint.html) | Architecture and key decisions for live trading. |
+A cohesive, production-quality front end built on one design system.
 
-## Viewing
+| File | What it is |
+|------|-----------|
+| **`site/index.html`** | The marketing / landing page — hero with a live demo, the six-engine story, how it works, features, pricing, FAQ, CTA. This is the page you sell. |
+| **`site/app.html`** | The product itself — the Sentinel cockpit: living AI core, six live engines, an "ask anything" bar, a streaming findings feed, and a live risk/watch rail. |
+| **`site/assets/dsh.css`** | The design system — tokens, typography, light + dark themes, and every shared component. |
+| **`site/assets/dsh.js`** | Shared behavior — nav, theme toggle, scroll reveals, and the live Sentinel feed engine both pages use. |
 
-Clone the repo and open any `.html` file in your browser:
+**To view:** open `site/index.html` in any browser. No build step, no
+dependencies, works offline. Click **Open app** to reach the cockpit; both
+pages support light and dark themes (toggle in the top bar).
 
-```bash
-git clone https://github.com/dannyholden17-boop/dsh-trading-v2.git
-cd dsh-trading-v2
-open design-concepts/03-conversational-cockpit.html   # macOS
-# or: xdg-open design-concepts/03-conversational-cockpit.html   # Linux
-```
+### Design system at a glance
+- **Identity:** premium fintech — deep blue-black cockpit, a bioluminescent
+  mint→violet brand gradient, semantic green/red/amber for market state.
+- **Type:** a display face for headlines, a clean sans for body, and monospace
+  for data/telemetry, all on a fluid type scale.
+- **Themes:** fully designed light *and* dark, driven entirely by CSS tokens.
+- **Responsive & accessible:** fluid layouts, visible focus states, and
+  `prefers-reduced-motion` respected throughout.
+
+---
+
+## The thinking behind it
+
+- **`obsidian-vault/`** — the whole project as a linked Obsidian vault: the
+  Sentinel concept, the six engines, the architecture, and the roadmap, plus a
+  `.base` engine registry and a `.canvas` system map.
+- **`docs/`** — the roadmap and the live-trading blueprint.
+
+## Early exploration (archive)
+
+The original mockups that led here, kept for reference:
+
+- **`design-concepts/`** — Aurora, Aurora v2, and the Conversational Cockpit.
+- **`dsh-living-bot.html`** — the first Sentinel prototype.
+- **`dsh-all-work.html`** — a combined single-file view of the early work.
+
+---
+
+## Status & disclaimer
+
+This is a **product prototype**. The live data in the app is a realistic
+simulation used to demonstrate the experience; wiring it to real market data
+and a broker is the next phase (see `obsidian-vault/Architecture`).
+
+DSH Sentinel is research and automation tooling, **not investment advice**.
+Trading involves risk of loss, including loss of principal. Backtested and
+illustrative results do not guarantee future outcomes.
