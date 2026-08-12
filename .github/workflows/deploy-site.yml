@@ -1,12 +1,12 @@
 name: Deploy site to GitHub Pages
 
 # Publishes the static product site in `site/` to GitHub Pages.
-# Runs on pushes to the default branch, or on demand. Enable Pages
-# for the repo (Settings → Pages → Source: GitHub Actions) once, and
-# every push to main redeploys automatically.
+# `configure-pages` with `enablement: true` turns Pages on automatically,
+# so no manual Settings step is needed. Runs on pushes to the site (from
+# main or the active dev branch) and on demand.
 on:
   push:
-    branches: [main]
+    branches: [main, claude/project-code-review-qtmeuo]
     paths: ["site/**", ".github/workflows/deploy-site.yml"]
   workflow_dispatch:
 
@@ -27,7 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - name: Configure Pages (auto-enable)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload site/ as the Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
