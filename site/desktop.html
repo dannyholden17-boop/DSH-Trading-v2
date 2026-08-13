@@ -156,6 +156,68 @@
     border-radius:5px;padding:1px 6px;cursor:pointer}
   .newsrow.hot .tag{color:var(--am);border-color:rgba(245,181,68,.4)}
 
+  /* ===== AI: chat / agents / reports ===== */
+  .dock.tall{height:330px}
+  .chatwrap{display:flex;height:100%;min-height:0}
+  .chatlog{flex:1;overflow:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+  .msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:12.5px;line-height:1.55}
+  .msg.user{align-self:flex-end;background:rgba(0,242,255,.1);border:1px solid rgba(0,242,255,.25)}
+  .msg.ai{align-self:flex-start;background:var(--well);border:1px solid var(--line-2)}
+  .msg.ai b{color:var(--cyan)}
+  .msg .mrow2{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .msg .think{display:inline-flex;gap:3px}
+  .msg .think i{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:blink 1s infinite}
+  .msg .think i:nth-child(2){animation-delay:.2s}.msg .think i:nth-child(3){animation-delay:.4s}
+  .chatside{width:230px;border-left:1px solid var(--line-2);padding:10px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+  .chatside .h{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .qq{font-size:11.5px;text-align:left;padding:7px 10px;border-radius:8px;border:1px solid var(--line-2);background:var(--well);color:var(--dim);cursor:pointer}
+  .qq:hover{border-color:rgba(0,242,255,.4);color:var(--text)}
+  .chatbar{display:flex;gap:8px;padding:8px 10px;border-top:1px solid var(--line-2);background:var(--panel)}
+  .chatbar input{flex:1;background:var(--well);border:1px solid var(--line);border-radius:9px;color:var(--text);
+    padding:9px 12px;font-size:12.5px;outline:none;font-family:var(--sans)}
+  .chatbar input:focus{border-color:rgba(0,242,255,.5)}
+  .chatbar button{border:none;border-radius:9px;padding:0 16px;font-weight:700;cursor:pointer;color:#03202a;background:var(--grad)}
+
+  .agents{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px}
+  @media(max-width:1200px){.agents{grid-template-columns:repeat(2,1fr)}}
+  .agent{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+  .agent .top2{display:flex;align-items:center;gap:8px}
+  .agent .st{width:8px;height:8px;border-radius:50%;background:var(--em);box-shadow:0 0 8px var(--em);animation:blink 1.6s infinite}
+  .agent.off .st{background:var(--faint);box-shadow:none;animation:none}
+  .agent b{font-size:12.5px}
+  .agent .mdl{font-family:var(--mono);font-size:9px;color:var(--violet);border:1px solid rgba(139,92,246,.35);border-radius:5px;padding:1px 6px;margin-left:auto}
+  .agent .ds{font-size:11px;color:var(--faint);line-height:1.4}
+  .agent .prog{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}
+  .agent .prog i{display:block;height:100%;background:var(--grad);transition:width .45s linear}
+  .agent .out{font-family:var(--mono);font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .agent .foot2{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--faint)}
+  .switch{width:30px;height:17px;border-radius:10px;background:var(--well);border:1px solid var(--line);position:relative;cursor:pointer}
+  .switch i{position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--faint);transition:.15s}
+  .switch.on{background:rgba(0,242,255,.2);border-color:rgba(0,242,255,.5)}
+  .switch.on i{left:15px;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+
+  .replist .newsrow{cursor:pointer}
+  .replist .newsrow:hover{background:rgba(0,242,255,.04)}
+
+  .repview{position:fixed;top:0;right:0;bottom:0;width:min(600px,92vw);z-index:70;background:#050b1a;
+    border-left:1px solid var(--line);box-shadow:-30px 0 80px -30px #000;transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.7,.2,1);
+    display:flex;flex-direction:column}
+  .repview.on{transform:none}
+  .repview .rhead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+  .repview .rhead b{font-size:14px}
+  .repview .rhead .x{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--well);color:var(--dim);cursor:pointer}
+  .repbody{flex:1;overflow:auto;padding:20px 22px;font-size:13px;line-height:1.65}
+  .repbody h3{margin:18px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);font-family:var(--mono)}
+  .repbody h3:first-child{margin-top:0}
+  .repbody p{margin:0 0 10px;color:var(--dim)}
+  .repbody b{color:var(--text)}
+  .repbody table{margin:6px 0 12px}
+  .repbody td,.repbody th{padding:5px 8px}
+  .repbody .sig-line{font-family:var(--mono);font-size:11px;color:var(--dim);padding:3px 0}
+  .aibtn{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(139,92,246,.45);border-radius:100px;
+    background:rgba(139,92,246,.1);color:#c4abff;font-size:11px;font-weight:600;padding:4px 12px;cursor:pointer}
+  .aibtn .st{width:7px;height:7px;border-radius:50%;background:var(--violet);box-shadow:0 0 8px var(--violet);animation:blink 1.4s infinite}
+
   /* toasts */
   .toasts{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none}
   .toasts *{pointer-events:none}
@@ -184,6 +246,7 @@
     <div class="search"><span style="color:var(--faint)">⌕</span><input id="symSearch" placeholder="Symbol…" maxlength="6"><kbd>/</kbd></div>
     <div class="indices" id="indices"></div>
     <span class="spacer"></span>
+    <button class="aibtn" id="aiBtn"><span class="st"></span>Flux AI · <span id="agentCount">6</span> agents</button>
     <span class="acct">Equity <b class="mono" id="acctEq">$100,000.00</b> · P&amp;L <b class="mono" id="acctPnl">+$0.00</b></span>
     <button class="pill" id="feedPill"><span class="dot"></span><span id="feedLbl">Sim</span></button>
     <a class="mob" href="./app.html">Mobile app →</a>
@@ -261,9 +324,19 @@
       <button data-dt="alerts">Alerts <span class="cnt" id="cAl">0</span></button>
       <button data-dt="screener">Screener</button>
       <button data-dt="news">News</button>
+      <button data-dt="chat" style="color:#c4abff">◈ Flux AI</button>
+      <button data-dt="agents">Agents <span class="cnt" id="cAg">6</span></button>
+      <button data-dt="reports">Reports <span class="cnt" id="cRep">0</span></button>
     </div>
     <div class="scroll" id="dockBody"></div>
   </div>
+</div>
+
+<!-- report viewer -->
+<div class="repview" id="repview">
+  <div class="rhead"><span class="aibtn" style="cursor:default"><span class="st"></span>Flux AI</span><b id="repTitle">Report</b>
+    <button class="x" id="repClose">✕</button></div>
+  <div class="repbody" id="repBody"></div>
 </div>
 
 <div class="toasts" id="toasts"></div>
@@ -556,6 +629,10 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   function renderDock(){
     var host=$("#dockBody"),st=S.state(),pf=S.portfolio();
+    document.querySelector(".dock").classList.toggle("tall",["chat","agents","reports"].indexOf(dockTab)>=0);
+    if(dockTab==="chat"){renderChat();return;}
+    if(dockTab==="agents"){renderAgents(true);return;}
+    if(dockTab==="reports"){renderReports();return;}
     if(dockTab==="positions"){
       if(!pf.open.length){host.innerHTML='<div class="empty">No open positions — place an order above.</div>';return;}
       host.innerHTML='<table><thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Last</th><th>P&amp;L $</th><th>P&amp;L %</th><th></th></tr></thead><tbody>'+
@@ -628,6 +705,8 @@ document.addEventListener("DOMContentLoaded", function(){
     var cl=e.target.closest("[data-close]");if(cl){S.closePosition(cl.dataset.close);toast("Position closed");return;}
     var cc=e.target.closest("[data-cancel]");if(cc){S.cancelOrder(cc.dataset.cancel);toast("Order canceled");return;}
     var ra=e.target.closest("[data-rmal]");if(ra){S.removeAlert(ra.dataset.rmal);renderDock();return;}
+    var sw=e.target.closest("[data-sw]");if(sw){var ag=AGENTS.find(function(a){return a.id===sw.dataset.sw});
+      if(ag){ag.on=!ag.on;toast(ag.name+(ag.on?" resumed":" paused"));renderAgents(true);}return;}
     var r=e.target.closest("tr.row[data-sym], .newsrow[data-sym]");if(r&&!e.target.closest("button"))selectSym(r.dataset.sym);
   });
 
@@ -691,6 +770,216 @@ document.addEventListener("DOMContentLoaded", function(){
     if(evt==="alert-fired"){var a=S.state().alerts.find(function(x){return x.triggered&&!x.seen});
       if(a){a.seen=true;toast("⚠ Alert: "+a.sym+" crossed "+(a.dir==="above"?"above":"below")+" $"+a.px.toFixed(2),"alert");}}
     if(evt==="watchlist")renderLeft();
+  });
+
+  /* ============================================================
+     FLUX AI — agents, models, reports, chat
+     ============================================================ */
+
+  /* ---- model helpers ---- */
+  function daySeed(sym){var d=new Date();return seedOf(sym+"|"+d.getFullYear()+d.getMonth()+d.getDate())}
+  function forecast(sym){
+    var cs=candles(sym,"1D"),cl=cs.map(function(k){return k.c}),r=rsiCalc(cl),lastR=r[r.length-1];
+    var s=daySeed(sym),pct=((s%400)-180)/100 + (lastR<35?0.6:lastR>70?-0.5:0);
+    var conf=55+(s%38);
+    return {pct:pct,conf:conf,rsi:lastR};
+  }
+  function varCalc(){var pf=S.portfolio();var expo=pf.marketValue||0;return Math.max(0,expo*0.031)}
+
+  /* ---- agents ---- */
+  var AGENTS=[
+    {id:"pricenet",name:"PriceNet",mdl:"LSTM v4",desc:"Sequence model forecasting next-session moves for your watchlist.",int:22,
+      run:function(){var wl=S.state().watchlist;if(!wl.length)return "idle — watchlist empty";
+        var s=wl[ri(0,wl.length-1)],f=forecast(s);
+        return s+" next-session "+(f.pct>=0?"+":"")+f.pct.toFixed(2)+"% · conf "+f.conf+"%";}},
+    {id:"volregime",name:"VolRegime",mdl:"HMM-3",desc:"Hidden-Markov regime classifier on realized volatility.",int:31,
+      run:function(){var r=["low-vol grind","normal","elevated · squeeze risk"][ri(0,2)];return "market regime: "+r+" (p="+(0.62+Math.random()*0.3).toFixed(2)+")";}},
+    {id:"newssense",name:"NewsSense",mdl:"FinBERT",desc:"Sentiment model scoring every headline on the wire.",int:16,
+      run:function(){var n=newsLog[0];if(!n)return "no headlines yet";
+        var sc=(n.hot? -0.2:0.3)+((seedOf(n.txt)%60)-20)/100;
+        return n.sym+" sentiment "+(sc>=0?"+":"")+sc.toFixed(2)+" — "+(sc>0.15?"bullish":sc<-0.1?"bearish":"neutral");}},
+    {id:"montecarlo",name:"MonteCarlo",mdl:"10k paths",desc:"Portfolio simulation — daily VaR and drawdown odds.",int:38,
+      run:function(){var v=varCalc();return "1-day VaR(95): "+S.fmt$(v)+" · P(dd>5%) "+(4+ri(0,9))+"%";}},
+    {id:"alpharank",name:"AlphaRank",mdl:"GBM ensemble",desc:"Re-scores every live signal against 5y of outcomes.",int:26,
+      run:function(){var fs=(D&&D.FINDINGS)||[];var f=fs[ri(0,fs.length-1)];if(!f)return "no signals";
+        return "top signal: "+f.t+" ("+f.e+") re-scored "+Math.min(97,(f.c||60)+ri(-4,6))+"%";}},
+    {id:"reporter",name:"Reporter",mdl:"Flux-LM",desc:"Writes scheduled desk reports: briefs, pulses, portfolio reviews.",int:120,
+      run:function(){var r=makeReport();return "published: "+r.title;}}
+  ];
+  AGENTS.forEach(function(a){a.on=true;a.p=Math.random()*0.7;a.last="warming up…";a.runs=0;});
+  var agentOutputs=[];
+  function agentTick(){
+    var dt=0.6;
+    AGENTS.forEach(function(a){
+      if(!a.on)return;
+      a.p+=dt/a.int;
+      if(a.p>=1){a.p=0;a.runs++;
+        try{a.last=a.run();}catch(e){a.last="—";}
+        agentOutputs.unshift({ts:new Date(),agent:a.name,mdl:a.mdl,txt:a.last});
+        if(agentOutputs.length>40)agentOutputs.length=40;
+        if(a.id==="reporter")toast("◈ Reporter published a new report");
+      }
+    });
+    if(dockTab==="agents")renderAgents(false);
+    $("#agentCount").textContent=AGENTS.filter(function(a){return a.on}).length;
+    $("#cAg").textContent=AGENTS.filter(function(a){return a.on}).length;
+  }
+  setInterval(agentTick,600);
+
+  /* ---- reports ---- */
+  var reports=[];
+  var REPORT_NAMES=["Morning Brief","Midday Pulse","Portfolio Review","Risk Check","Closing Wrap"];
+  var repIdx=0;
+  function makeReport(){
+    var pf=S.portfolio(),st=S.state();
+    var title=REPORT_NAMES[repIdx%REPORT_NAMES.length];repIdx++;
+    var movers=S.knownSymbols().map(function(s){return{s:s,c:chg(s)}}).sort(function(a,b){return Math.abs(b.c.pct)-Math.abs(a.c.pct)}).slice(0,5);
+    var fs=(D&&D.FINDINGS||[]).slice(0,4);
+    var wl=st.watchlist.slice(0,5);
+    var html='<h3>Desk summary</h3><p>Equity <b>'+S.fmt$(pf.equity)+'</b> · total P&L <b class="'+(pf.totalPnl>=0?'up':'down')+'">'+S.fmtSigned(pf.totalPnl)+'</b> · cash <b>'+S.fmt$(pf.cash)+'</b>. '+
+      pf.open.length+' open position'+(pf.open.length===1?'':'s')+', '+st.orders.length+' resting order'+(st.orders.length===1?'':'s')+', '+
+      st.alerts.filter(function(a){return !a.triggered}).length+' armed alert'+(st.alerts.length===1?'':'s')+'.</p>';
+    if(pf.open.length){
+      html+='<h3>Positions</h3><table><thead><tr><th>Sym</th><th>Side</th><th>Qty</th><th>Entry</th><th>Last</th><th>P&L</th></tr></thead><tbody>'+
+        pf.open.map(function(p){var m=S.positionPnl(p);
+          return '<tr><td>'+p.sym+'</td><td class="'+(p.side==="buy"?'up':'down')+'">'+p.side+'</td><td>'+p.qty+'</td><td>'+p.entry.toFixed(2)+'</td><td>'+m.cur.toFixed(2)+'</td>'+
+          '<td class="'+(m.pnl>=0?'up':'down')+'">'+S.fmtSigned(m.pnl)+'</td></tr>'}).join("")+'</tbody></table>';
+      var worst=pf.open.map(function(p){return{p:p,m:S.positionPnl(p)}}).sort(function(a,b){return a.m.pnl-b.m.pnl})[0];
+      html+='<p>Largest drag: <b>'+worst.p.sym+'</b> at '+S.fmtSigned(worst.m.pnl)+' ('+worst.m.pct.toFixed(1)+'%). 1-day VaR(95) est. <b>'+S.fmt$(varCalc())+'</b>.</p>';
+    } else html+='<p>No open positions — the book is flat. Buying power '+S.fmt$(pf.cash)+'.</p>';
+    html+='<h3>Model forecasts</h3>'+wl.map(function(s){var f=forecast(s);
+      return '<div class="sig-line">'+s+' — PriceNet '+(f.pct>=0?"+":"")+f.pct.toFixed(2)+'% next session · RSI '+f.rsi.toFixed(0)+' · conf '+f.conf+'%</div>'}).join("");
+    html+='<h3>Top movers</h3>'+movers.map(function(x){
+      return '<div class="sig-line">'+x.s+' $'+x.c.p.toFixed(2)+' <span class="'+(x.c.pct>=0?'up':'down')+'">'+fmtChg(x.c.pct)+'</span></div>'}).join("");
+    html+='<h3>Live signals</h3>'+fs.map(function(f){
+      return '<div class="sig-line">'+f.t+' · '+f.e+' · conf '+(f.c||'—')+'% — '+f.i.replace(/<[^>]+>/g,'').slice(0,70)+'…</div>'}).join("");
+    html+='<h3>Agent activity</h3>'+agentOutputs.slice(0,5).map(function(o){
+      return '<div class="sig-line">'+o.agent+' ('+o.mdl+'): '+o.txt+'</div>'}).join("")||'<p>Agents warming up.</p>';
+    html+='<p style="margin-top:16px;font-size:10.5px;color:var(--faint)">Generated by Flux AI on your desk state. Simulated research — not investment advice.</p>';
+    var rep={id:Date.now()+""+ri(100,999),ts:new Date(),title:title,html:html};
+    reports.unshift(rep);if(reports.length>20)reports.length=20;
+    $("#cRep").textContent=reports.length;
+    if(dockTab==="reports")renderReports();
+    return rep;
+  }
+  function openReport(rep){
+    $("#repTitle").textContent=rep.title+" — "+rep.ts.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+    $("#repBody").innerHTML=rep.html;
+    $("#repview").classList.add("on");
+  }
+  $("#repClose").addEventListener("click",function(){$("#repview").classList.remove("on")});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")$("#repview").classList.remove("on")});
+  setTimeout(makeReport,5000); // first brief shortly after open
+
+  function renderReports(){
+    var host=$("#dockBody");
+    host.innerHTML='<div class="toolrow"><span style="font-size:11.5px;color:var(--faint)">The Reporter agent publishes on schedule — or on demand.</span>'+
+      '<span style="flex:1"></span><button class="btn-sm" id="repNow">◈ Generate report now</button></div>'+
+      '<div class="replist">'+(reports.length?reports.map(function(r){
+        return '<div class="newsrow" data-rep="'+r.id+'"><span class="t">'+r.ts.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+'</span>'+
+        '<span class="tag">REPORT</span><span style="flex:1;font-weight:600">'+r.title+'</span>'+
+        '<span class="mono" style="color:var(--faint);font-size:10px">Flux-LM</span></div>'}).join("")
+      :'<div class="empty">No reports yet — the Reporter runs on schedule, or generate one now.</div>')+'</div>';
+    var b=$("#repNow");if(b)b.addEventListener("click",function(){openReport(makeReport())});
+    $$(".replist [data-rep]").forEach(function(r){r.addEventListener("click",function(){
+      var rep=reports.find(function(x){return x.id===r.dataset.rep});if(rep)openReport(rep);})});
+  }
+
+  function renderAgents(full){
+    var host=$("#dockBody");
+    if(full!==false||!host.querySelector(".agents")){
+      host.innerHTML='<div class="agents">'+AGENTS.map(function(a){
+        return '<div class="agent'+(a.on?'':' off')+'" data-ag="'+a.id+'">'+
+          '<div class="top2"><span class="st"></span><b>'+a.name+'</b><span class="mdl">'+a.mdl+'</span></div>'+
+          '<div class="ds">'+a.desc+'</div>'+
+          '<div class="prog"><i style="width:'+(a.p*100).toFixed(0)+'%"></i></div>'+
+          '<div class="out">'+a.last+'</div>'+
+          '<div class="foot2"><span>'+a.runs+' runs · every '+a.int+'s</span><span class="switch'+(a.on?' on':'')+'" data-sw="'+a.id+'"><i></i></span></div>'+
+        '</div>'}).join("")+'</div>';
+    } else {
+      AGENTS.forEach(function(a){
+        var el=host.querySelector('[data-ag="'+a.id+'"]');if(!el)return;
+        el.classList.toggle("off",!a.on);
+        el.querySelector(".prog i").style.width=(a.p*100).toFixed(0)+"%";
+        el.querySelector(".out").textContent=a.last;
+        el.querySelector(".foot2 span").textContent=a.runs+" runs · every "+a.int+"s";
+      });
+    }
+  }
+
+  /* ---- chat ---- */
+  var chatLog=[{who:"ai",txt:"Desk copilot online. I can read your <b>portfolio</b>, run <b>models</b>, screen <b>movers</b>, and write <b>reports</b>. Try: <i>what's my biggest risk?</i>"}];
+  function chatPush(who,txt,actions){chatLog.push({who:who,txt:txt,actions:actions});if(chatLog.length>60)chatLog.shift();renderChat();}
+  function renderChat(){
+    var host=$("#dockBody");
+    if(!host.querySelector(".chatwrap")){
+      host.innerHTML='<div class="chatwrap"><div style="flex:1;display:flex;flex-direction:column;min-width:0">'+
+        '<div class="chatlog" id="chatlog"></div>'+
+        '<form class="chatbar" id="chatform"><input id="chatin" placeholder="Ask Flux — portfolio, forecasts, screens, reports…" autocomplete="off"><button>Ask</button></form></div>'+
+        '<div class="chatside"><div class="h">Quick asks</div>'+
+        ['What’s my biggest risk?','Forecast NVDA','Top movers right now','Run a portfolio report','Is TSLA oversold?','How are my positions?'].map(function(q){
+          return '<button class="qq">'+q+'</button>'}).join("")+'</div></div>';
+      $("#chatform").addEventListener("submit",function(e){e.preventDefault();var v=$("#chatin").value.trim();if(!v)return;$("#chatin").value="";askAI(v);});
+      $$(".chatside .qq").forEach(function(b){b.addEventListener("click",function(){askAI(b.textContent)})});
+    }
+    var log=$("#chatlog");
+    log.innerHTML=chatLog.map(function(m,i){
+      return '<div class="msg '+m.who+'">'+(m.who==="ai"?'':'')+m.txt+
+        (m.actions?'<div class="mrow2">'+m.actions.map(function(a){return '<button class="btn-sm" data-ca="'+a[0]+'" data-cv="'+a[1]+'">'+a[2]+'</button>'}).join("")+'</div>':'')+
+      '</div>'}).join("");
+    log.scrollTop=log.scrollHeight;
+    $$("#chatlog [data-ca]").forEach(function(b){b.addEventListener("click",function(){
+      var a=b.dataset.ca,v=b.dataset.cv;
+      if(a==="chart")selectSym(v);
+      else if(a==="flag"){var f=sigOf(v)||{t:v,e:"",s:"info",u:1,mv:"",i:"",st:[],c:0};S.flag(f);toast("★ Flagged "+v);}
+      else if(a==="report"){var rep=reports[0]||makeReport();openReport(rep);}
+      else if(a==="buy"){selectSym(v);setSide("buy");}
+    })});
+  }
+  function symIn(q){var m=q.toUpperCase().match(/\b[A-Z]{2,5}\b/g);if(!m)return null;
+    var known=S.knownSymbols();for(var i=0;i<m.length;i++){if(known.indexOf(m[i])>=0)return m[i];}
+    var skip={"WHAT":1,"THE":1,"AND":1,"FOR":1,"HOW":1,"ARE":1,"RUN":1,"TOP":1,"NOW":1,"RISK":1,"REPORT":1,"IS":1,"MY":1};
+    for(i=0;i<m.length;i++){if(!skip[m[i]]&&m[i].length<=5)return m[i];}
+    return null;}
+  function askAI(q){
+    chatPush("user",q);
+    chatPush("ai",'<span class="think"><i></i><i></i><i></i></span>');
+    setTimeout(function(){
+      chatLog.pop();
+      var ql=q.toLowerCase(),pf=S.portfolio(),ans,acts;
+      if(/risk|drawdown|exposure|var\b/.test(ql)){
+        if(pf.open.length){var w=pf.open.map(function(p){return{p:p,m:S.positionPnl(p)}}).sort(function(a,b){return a.m.pnl-b.m.pnl})[0];
+          ans="Biggest risk is <b>"+w.p.sym+"</b> — "+w.p.side+" "+w.p.qty+" at "+S.fmtSigned(w.m.pnl)+" ("+w.m.pct.toFixed(1)+"%). MonteCarlo puts 1-day VaR(95) at <b>"+S.fmt$(varCalc())+"</b>. Consider a stop or trimming size.";
+          acts=[["chart",w.p.sym,"Load "+w.p.sym],["report","", "Open risk report"]];
+        } else ans="Book is flat — no position risk. Buying power "+S.fmt$(pf.cash)+". VolRegime reads the tape as "+(AGENTS[1].last||"normal")+".";
+      }
+      else if(/report|brief|summary|wrap/.test(ql)){var rep=makeReport();ans="Done — <b>"+rep.title+"</b> is published with your live positions, model forecasts and movers.";acts=[["report","","Open it"]];}
+      else if(/forecast|predict|model|target/.test(ql)&&symIn(q)){var s1=symIn(q),f1=forecast(s1);
+        ans="<b>PriceNet</b> (LSTM v4) on <b>"+s1+"</b>: next session "+(f1.pct>=0?"<b class='up'>+":"<b class='down'>")+f1.pct.toFixed(2)+"%</b> · RSI "+f1.rsi.toFixed(0)+" · confidence "+f1.conf+"%. Not advice — validate with a backtest.";
+        acts=[["chart",s1,"Load chart"],["buy",s1,"Trade "+s1]];}
+      else if(/oversold|overbought|rsi|macd|technical/.test(ql)&&symIn(q)){var s2=symIn(q),cs2=candles(s2,"1D"),r2=rsiCalc(cs2.map(function(k){return k.c})),lr=r2[r2.length-1];
+        ans="<b>"+s2+"</b> daily RSI is <b>"+lr.toFixed(0)+"</b> — "+(lr<30?"<b class='up'>oversold</b>; mean-reversion setups historically favor longs here":lr>70?"<b class='down'>overbought</b>; chasing here has negative expectancy":"neutral territory; no edge from RSI alone")+".";
+        acts=[["chart",s2,"Load chart"]];}
+      else if(/gainer|loser|mover|screen|volume/.test(ql)){
+        var mv=S.knownSymbols().map(function(s){return{s:s,c:chg(s)}}).sort(function(a,b){return Math.abs(b.c.pct)-Math.abs(a.c.pct)}).slice(0,3);
+        ans="Top movers: "+mv.map(function(x){return "<b>"+x.s+"</b> "+fmtChg(x.c.pct)}).join(" · ")+". The Screener tab can slice deeper.";
+        acts=mv.slice(0,2).map(function(x){return ["chart",x.s,"Load "+x.s]});}
+      else if(/position|portfolio|pnl|p&l|how am i|doing/.test(ql)){
+        ans="Equity <b>"+S.fmt$(pf.equity)+"</b> · total P&L "+(pf.totalPnl>=0?"<b class='up'>":"<b class='down'>")+S.fmtSigned(pf.totalPnl)+"</b> · "+pf.open.length+" open, "+S.state().orders.length+" resting. Open P&L "+S.fmtSigned(pf.openPnl)+", realized "+S.fmtSigned(pf.realized)+".";
+        acts=[["report","","Full report"]];}
+      else if(/should i buy|should i sell|buy\?|good buy/.test(ql)){var s3=symIn(q);
+        ans="I don't give advice — but I'll stack the evidence"+(s3?" on <b>"+s3+"</b>":"")+": model forecast, RSI, live signal and a 5-year backtest, then you decide."+(s3?"":" Name a symbol.");
+        if(s3)acts=[["chart",s3,"Load "+s3]];}
+      else if(symIn(q)){var s4=symIn(q),c4=chg(s4),f4=forecast(s4),sg=sigOf(s4);
+        ans="<b>"+s4+"</b> $"+c4.p.toFixed(2)+" ("+fmtChg(c4.pct)+"). PriceNet sees "+(f4.pct>=0?"+":"")+f4.pct.toFixed(2)+"% next session ("+f4.conf+"% conf)."+(sg?" Live signal: "+sg.e+" — "+sg.i.replace(/<[^>]+>/g,'').slice(0,60)+"… ("+(sg.c||"—")+"%).":"");
+        acts=[["chart",s4,"Load chart"],["flag",s4,"☆ Flag"],["buy",s4,"Trade"]];}
+      else ans="Desk status: <b>"+AGENTS.filter(function(a){return a.on}).length+" agents</b> running, "+reports.length+" reports published, "+(D&&D.FINDINGS?D.FINDINGS.length:0)+" live signals. Ask about a symbol, your risk, or say <i>run a report</i>.";
+      chatPush("ai",ans,acts);
+    },700+Math.random()*500);
+  }
+  $("#aiBtn").addEventListener("click",function(){
+    dockTab="chat";$$("#dockTabs > button").forEach(function(x){x.classList.toggle("on",x.dataset.dt==="chat")});renderDock();
+    setTimeout(function(){var i=$("#chatin");if(i)i.focus()},80);
   });
 
   /* ============ boot ============ */
