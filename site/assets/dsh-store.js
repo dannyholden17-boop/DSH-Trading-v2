@@ -30,7 +30,10 @@
       positions: [],   // {id, sym, side, qty, entry, ts, status:'open'|'closed', exit?, closedTs?}
       activity: [],    // {id, ts, kind, text, sym?}
       prices,
-      dismissed: []    // finding signatures the user dismissed this session
+      dismissed: [],   // finding signatures the user dismissed this session
+      orders: [],      // open orders: {id, ts, sym, side, type:'limit'|'stop', qty, px, tif}
+      fills: [],       // order history: {id, ts, sym, side, type, qty, px, note}
+      alerts: []       // {id, ts, sym, dir:'above'|'below', px, triggered:false, triggeredTs?}
     };
   }
 
@@ -71,14 +74,46 @@
       const drift = (Math.random()-0.5) * 2 * vol;
       state.prices[s] = Math.max(0.5, +(p + drift).toFixed(2));
     });
+    checkOrdersAndAlerts();
     persist();
     emit("prices");
+  }
+
+  /* -------- order engine: fill open orders / trigger alerts on price -------- */
+  function fillOrder(o, px){
+    state.orders = state.orders.filter(x=>x.id!==o.id);
+    const pos = { id:uid(), ts:nowISO(), sym:o.sym, side:o.side, qty:o.qty, entry:px, status:"open" };
+    state.positions.unshift(pos);
+    if(o.side==="buy") state.cash -= px*o.qty;
+    state.fills.unshift({ id:uid(), ts:nowISO(), sym:o.sym, side:o.side, type:o.type, qty:o.qty, px:px, note:o.type+" filled" });
+    log("trade", o.type.toUpperCase()+" "+o.side+" filled: "+o.qty+" "+o.sym+" @ $"+px.toFixed(2), o.sym);
+    emit("positions"); emit("orders"); emit("activity");
+  }
+  function checkOrdersAndAlerts(){
+    // open orders
+    state.orders.slice().forEach(o=>{
+      const px = priceOf(o.sym);
+      const buy = o.side==="buy";
+      if(o.type==="limit" && ((buy && px<=o.px) || (!buy && px>=o.px))) fillOrder(o, o.px);
+      else if(o.type==="stop" && ((buy && px>=o.px) || (!buy && px<=o.px))) fillOrder(o, px);
+    });
+    // alerts
+    state.alerts.forEach(a=>{
+      if(a.triggered) return;
+      const px = priceOf(a.sym);
+      if((a.dir==="above" && px>=a.px) || (a.dir==="below" && px<=a.px)){
+        a.triggered = true; a.triggeredTs = nowISO();
+        log("alert", a.sym+" crossed "+(a.dir==="above"?"above":"below")+" $"+a.px.toFixed(2), a.sym);
+        emit("alert-fired"); emit("alerts"); emit("activity");
+      }
+    });
   }
   // A real feed calls this with each new print. Persist is throttled so a
   // fast tape doesn't hammer localStorage; prices always emit immediately.
   function setPrice(sym, px){
     if(!(px > 0)) return;
     state.prices[sym] = +px;
+    checkOrdersAndAlerts();
     const now = Date.now();
     if(now - lastPersist > 2000){ lastPersist = now; persist(); }
     emit("prices");
@@ -159,8 +194,39 @@
       const pos = { id:uid(), ts:nowISO(), sym, side, qty, entry, status:"open" };
       state.positions.unshift(pos);
       if(side==="buy") state.cash -= cost;
+      state.fills.unshift({ id:uid(), ts:nowISO(), sym, side, type:"market", qty, px:entry, note:"market filled" });
       log("trade", (side==="buy"?"Bought ":"Sold short ") + qty + " " + sym + " @ " + this.fmt$(entry), sym);
-      persist(); emit("positions"); emit("activity"); return pos;
+      persist(); emit("positions"); emit("orders"); emit("activity"); return pos;
+    },
+
+    /* advanced orders */
+    placeOrder({sym, side, type, qty, px, tif}){
+      priceOf(sym);
+      if(type==="market") return this.openPosition({sym, side, qty});
+      const o = { id:uid(), ts:nowISO(), sym, side, type, qty, px:+px, tif:tif||"Day" };
+      state.orders.unshift(o);
+      log("order", type.toUpperCase()+" "+side+" placed: "+qty+" "+sym+" @ $"+(+px).toFixed(2)+" ("+o.tif+")", sym);
+      persist(); emit("orders"); emit("activity"); return o;
+    },
+    cancelOrder(id){
+      const o = state.orders.find(x=>x.id===id); if(!o) return;
+      state.orders = state.orders.filter(x=>x.id!==id);
+      state.fills.unshift({ id:uid(), ts:nowISO(), sym:o.sym, side:o.side, type:o.type, qty:o.qty, px:o.px, note:"canceled" });
+      log("order","Canceled "+o.type+" "+o.side+" "+o.qty+" "+o.sym, o.sym);
+      persist(); emit("orders"); emit("activity");
+    },
+
+    /* price alerts */
+    addAlert(sym, dir, px){
+      priceOf(sym);
+      const a = { id:uid(), ts:nowISO(), sym, dir, px:+px, triggered:false };
+      state.alerts.unshift(a);
+      log("alert","Alert set: "+sym+" "+dir+" $"+(+px).toFixed(2), sym);
+      persist(); emit("alerts"); emit("activity"); return a;
+    },
+    removeAlert(id){
+      state.alerts = state.alerts.filter(a=>a.id!==id);
+      persist(); emit("alerts");
     },
     closePosition(id){
       const pos = state.positions.find(p=>p.id===id);
