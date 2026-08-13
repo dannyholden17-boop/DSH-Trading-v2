@@ -1,0 +1,25 @@
+# Netlify deploy config for Flux.
+# No build step — the site is static HTML/CSS/JS in `site/`.
+# Connect this repo in Netlify and it deploys on every push to main.
+
+[build]
+  publish = "site"
+  command = ""
+
+# Long-cache the fingerprint-free assets but always revalidate HTML,
+# so a redeploy is visible immediately.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Serve the branded 404 page.
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
