@@ -1,0 +1,38 @@
+filters:
+  and:
+    - 'type == "engine"'
+    - file.hasTag("engine")
+
+formulas:
+  health: 'if(status == "online", "🟢 online", "🔴 offline")'
+  speed: 'if(latency_ms, latency_ms + " ms", "")'
+
+properties:
+  formula.health:
+    displayName: "Health"
+  cadence:
+    displayName: "Cadence"
+  formula.speed:
+    displayName: "Latency"
+  status:
+    displayName: "Status"
+
+views:
+  - type: table
+    name: "Engine registry"
+    order:
+      - file.name
+      - formula.health
+      - cadence
+      - formula.speed
+      - outputs
+    summaries:
+      latency_ms: Average
+
+  - type: cards
+    name: "Engine board"
+    order:
+      - file.name
+      - formula.health
+      - cadence
+      - outputs

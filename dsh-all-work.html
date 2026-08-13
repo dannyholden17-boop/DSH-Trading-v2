@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSH v2 — All saved work</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html,body { height:100%; margin:0; }
+  body { display:flex; flex-direction:column; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         background:#0b0f17; color:#e6edf3; }
+  header { padding:14px 20px 0; border-bottom:1px solid #1c2432; background:#0d1220; }
+  header h1 { margin:0 0 2px; font-size:16px; font-weight:650; letter-spacing:.2px; }
+  header p { margin:0 0 12px; font-size:12.5px; color:#8b98a9; }
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; }
+  .tab { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1px solid #1c2432; border-bottom:none;
+          border-radius:9px 9px 0 0; background:#111827; color:#aeb9c7; font-size:13px; cursor:pointer; }
+  .tab:hover { color:#e6edf3; }
+  .tab.active { background:#0b0f17; color:#fff; border-color:#2b3648; position:relative; top:1px; }
+  .kind { font-size:9.5px; text-transform:uppercase; letter-spacing:.6px; padding:2px 6px; border-radius:5px; font-weight:700; }
+  .kind.concept { background:#132a3a; color:#5ec8ff; }
+  .kind.doc { background:#2a1f3a; color:#c39bff; }
+  main { flex:1; position:relative; }
+  .pane { position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff; display:none; }
+  .pane.active { display:block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DSH-Trading-v2 — all saved work</h1>
+  <p>Every design concept and planning doc in one place. Click a tab to switch.</p>
+  <div class="tabs"><button class="tab active" data-i="0"><span class="kind concept">Concept</span>Aurora</button><button class="tab" data-i="1"><span class="kind concept">Concept</span>Aurora v2</button><button class="tab" data-i="2"><span class="kind concept">Concept</span>Conversational cockpit</button><button class="tab" data-i="3"><span class="kind doc">Doc</span>Roadmap</button><button class="tab" data-i="4"><span class="kind doc">Doc</span>Live trading blueprint</button></div>
+</header>
+<main><iframe class="pane active" data-i="0" srcdoc="&lt;title&gt;DSH Terminal — Aurora redesign&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --bg:#0B0D16;
+    --bg-2:#0E1120;
+    --panel:rgba(255,255,255,.045);
+    --panel-2:rgba(255,255,255,.03);
+    --panel-brd:rgba(255,255,255,.09);
+    --panel-brd-strong:rgba(255,255,255,.16);
+    --text:#EAECF5;
+    --muted:#9BA1B8;
+    --faint:#6D7391;
+    --violet:#8B7BFF;
+    --blue:#4F86FF;
+    --cyan:#4CD6E6;
+    --up:#39D98A;
+    --down:#FF6E8A;
+    --amber:#F5B65A;
+    --grad:linear-gradient(120deg,#8B7BFF 0%,#4F86FF 55%,#4CD6E6 120%);
+    --grad-soft:linear-gradient(120deg,rgba(139,123,255,.18),rgba(79,134,255,.14));
+    --radius:18px;
+    --radius-sm:12px;
+    --sans:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,system-ui,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,&quot;SF Mono&quot;,&quot;JetBrains Mono&quot;,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5;overflow-x:hidden}
+  /* Aurora ambient background */
+  body::before{content:&quot;&quot;;position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(70% 55% at 12% -8%,rgba(139,123,255,.28),transparent 60%),
+      radial-gradient(60% 50% at 92% 4%,rgba(76,214,230,.16),transparent 62%),
+      radial-gradient(80% 60% at 60% 108%,rgba(79,134,255,.16),transparent 60%);
+    filter:saturate(1.05)}
+  .app{position:relative;z-index:1;display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+
+  /* ---- Sidebar ---- */
+  .side{border-right:1px solid var(--panel-brd);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008));backdrop-filter:blur(18px);padding:20px 14px;display:flex;flex-direction:column;gap:22px}
+  .brand{display:flex;align-items:center;gap:11px;padding:4px 8px}
+  .brand .logo{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;font-weight:800;color:#0B0D16;font-size:15px;box-shadow:0 6px 20px rgba(79,134,255,.4)}
+  .brand .t{font-weight:700;letter-spacing:.2px;font-size:15px}
+  .brand .s{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .nav{display:flex;flex-direction:column;gap:3px}
+  .nav .grp{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding:12px 10px 5px}
+  .nav a{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:11px;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .15s}
+  .nav a:hover{background:var(--panel);color:var(--text)}
+  .nav a.on{background:var(--grad-soft);color:#fff;border:1px solid rgba(139,123,255,.3)}
+  .nav a.on .ic{color:var(--violet)}
+  .nav .ic{width:17px;height:17px;flex:none;color:var(--faint)}
+  .nav .pill{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:rgba(139,123,255,.16);color:var(--violet);border:1px solid rgba(139,123,255,.28)}
+  .side .foot{margin-top:auto;font-size:11px;color:var(--faint);font-family:var(--mono);display:flex;align-items:center;gap:7px;padding:8px 10px}
+  .side .foot .dot{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 10px var(--up)}
+
+  /* ---- Main ---- */
+  .main{min-width:0;display:flex;flex-direction:column}
+  .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;border-bottom:1px solid var(--panel-brd);position:sticky;top:0;backdrop-filter:blur(14px);background:rgba(11,13,22,.55);z-index:5}
+  .search{flex:1;max-width:440px;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--panel-brd);border-radius:12px;padding:9px 14px;color:var(--faint);font-size:13px}
+  .search .k{margin-left:auto;font-family:var(--mono);font-size:11px;border:1px solid var(--panel-brd);border-radius:6px;padding:1px 6px}
+  .clock{margin-left:auto;display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .clock .live{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;background:rgba(57,217,138,.1);border:1px solid rgba(57,217,138,.25);color:var(--up);font-size:11px;letter-spacing:.04em}
+  .clock .live .d{width:6px;height:6px;border-radius:50%;background:var(--up);box-shadow:0 0 8px var(--up)}
+  .btn-ghost{padding:8px 14px;border-radius:11px;border:1px solid var(--panel-brd);background:var(--panel);color:var(--text);font-size:13px;font-weight:600}
+
+  .content{padding:30px 28px;max-width:1200px;width:100%}
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:8px}
+  h1{font-size:30px;font-weight:750;letter-spacing:-.02em;margin:0}
+  .sub{color:var(--muted);font-size:14px;margin:6px 0 0}
+  .acct{display:flex;align-items:center;gap:8px;padding:9px 15px;border-radius:12px;background:var(--panel);border:1px solid var(--panel-brd-strong);font-size:12.5px;font-weight:600}
+  .acct .g{width:8px;height:8px;border-radius:50%;background:var(--grad)}
+
+  .notice{display:flex;align-items:center;gap:11px;margin:20px 0 24px;padding:13px 17px;border-radius:14px;background:var(--grad-soft);border:1px solid rgba(139,123,255,.24);font-size:13px;color:#cfd3ea}
+  .notice b{color:#fff;font-weight:650}
+  .notice .i{width:20px;height:20px;flex:none;color:var(--violet)}
+
+  .grid{display:grid;grid-template-columns:1.05fr 1.35fr;gap:18px}
+  .card{background:var(--panel);border:1px solid var(--panel-brd);border-radius:var(--radius);backdrop-filter:blur(10px);box-shadow:0 20px 50px -30px rgba(0,0,0,.8);overflow:hidden}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-bottom:1px solid var(--panel-brd)}
+  .card-h .ttl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .card-h .ttl b{display:block;color:var(--text);font-size:15px;letter-spacing:-.01em;text-transform:none;margin-top:3px;font-weight:650}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--panel-brd-strong);color:var(--muted)}
+  .tag.buy{background:rgba(57,217,138,.12);border-color:rgba(57,217,138,.3);color:var(--up)}
+  .card-b{padding:20px}
+
+  label{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 8px;font-weight:600}
+  .field{margin-bottom:18px}
+  .input{width:100%;background:var(--panel-2);border:1px solid var(--panel-brd);border-radius:12px;padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--mono)}
+  .input.ph{color:var(--faint)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:var(--panel-2);border:1px solid var(--panel-brd);border-radius:13px}
+  .seg button{border:0;border-radius:9px;padding:11px;font-weight:700;font-size:14px;color:var(--muted);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+  .seg button.buy{background:linear-gradient(120deg,rgba(57,217,138,.9),rgba(76,214,230,.85));color:#04140d;box-shadow:0 8px 24px -8px rgba(57,217,138,.6)}
+  .select{position:relative}
+  .select::after{content:&quot;&quot;;position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:translateY(-70%) rotate(45deg)}
+  .cta{width:100%;border:0;border-radius:13px;padding:14px;font-weight:700;font-size:14.5px;color:#0a0d18;background:var(--grad);cursor:pointer;box-shadow:0 12px 30px -10px rgba(79,134,255,.6);letter-spacing:.01em}
+  .signin{text-align:center;color:var(--faint);font-size:12px;margin-top:11px}
+
+  /* impact review populated */
+  .impact{display:flex;flex-direction:column;gap:2px}
+  .imp-row{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--panel-brd)}
+  .imp-row:last-child{border-bottom:0}
+  .imp-row .l{color:var(--muted);font-size:13.5px}
+  .imp-row .v{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;font-weight:600}
+  .imp-row.total .l{color:var(--text);font-weight:600}
+  .imp-row.total .v{font-size:19px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:750}
+  .imp-note{margin-top:16px;display:flex;gap:9px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:rgba(245,182,90,.08);border:1px solid rgba(245,182,90,.22);font-size:12.5px;color:#e9d6b3}
+
+  /* blotter */
+  .blot{margin-top:18px}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:10px 16px;border-bottom:1px solid var(--panel-brd)}
+  td{padding:14px 16px;border-bottom:1px solid var(--panel-brd);font-size:13.5px;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:0}
+  .sym{font-weight:700;font-family:var(--mono)}
+  .side-b{color:var(--up);font-weight:650}
+  .side-s{color:var(--down);font-weight:650}
+  .mono{font-family:var(--mono)}
+  .st{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:20px;display:inline-block}
+  .st.filled{background:rgba(57,217,138,.13);color:var(--up);border:1px solid rgba(57,217,138,.28)}
+  .st.working{background:rgba(245,182,90,.13);color:var(--amber);border:1px solid rgba(245,182,90,.28)}
+  .st.cancel{background:rgba(255,110,138,.12);color:var(--down);border:1px solid rgba(255,110,138,.26)}
+  .x{color:var(--faint);cursor:pointer;font-size:15px}
+
+  @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.grid{grid-template-columns:1fr}}
+&lt;/style&gt;
+
+&lt;div class=&quot;app&quot;&gt;
+  &lt;!-- Sidebar --&gt;
+  &lt;aside class=&quot;side&quot;&gt;
+    &lt;div class=&quot;brand&quot;&gt;
+      &lt;div class=&quot;logo&quot;&gt;◆&lt;/div&gt;
+      &lt;div&gt;&lt;div class=&quot;t&quot;&gt;DSH Terminal&lt;/div&gt;&lt;div class=&quot;s&quot;&gt;Market Intelligence&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;nav class=&quot;nav&quot;&gt;
+      &lt;div class=&quot;grp&quot;&gt;Overview&lt;/div&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M3 12l9-9 9 9M5 10v10h14V10&quot;/&gt;&lt;/svg&gt;Dashboard&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M3 3v18h18M7 14l4-4 3 3 5-6&quot;/&gt;&lt;/svg&gt;Markets&lt;/a&gt;
+      &lt;div class=&quot;grp&quot;&gt;AI Desk&lt;/div&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;rect x=&quot;4&quot; y=&quot;7&quot; width=&quot;16&quot; height=&quot;12&quot; rx=&quot;3&quot;/&gt;&lt;path d=&quot;M9 3v4M15 3v4&quot;/&gt;&lt;/svg&gt;AI Funds&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z&quot;/&gt;&lt;/svg&gt;Strategy Lab&lt;/a&gt;
+      &lt;div class=&quot;grp&quot;&gt;My Desk&lt;/div&gt;
+      &lt;a href=&quot;#&quot; class=&quot;on&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M4 18V9M9 18V4M14 18v-7M19 18v-11&quot;/&gt;&lt;/svg&gt;Trade&lt;span class=&quot;pill&quot;&gt;Paper&lt;/span&gt;&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot;/&gt;&lt;path d=&quot;M12 3v9l6 3&quot;/&gt;&lt;/svg&gt;Portfolio&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z&quot;/&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;/svg&gt;Watchlist&lt;/a&gt;
+      &lt;a href=&quot;#&quot;&gt;&lt;svg class=&quot;ic&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;rect x=&quot;4&quot; y=&quot;4&quot; width=&quot;16&quot; height=&quot;16&quot; rx=&quot;3&quot;/&gt;&lt;path d=&quot;M8 4v16&quot;/&gt;&lt;/svg&gt;Accounts&lt;/a&gt;
+    &lt;/nav&gt;
+    &lt;div class=&quot;foot&quot;&gt;&lt;span class=&quot;dot&quot;&gt;&lt;/span&gt;Live · Finnhub feed&lt;/div&gt;
+  &lt;/aside&gt;
+
+  &lt;!-- Main --&gt;
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div class=&quot;topbar&quot;&gt;
+      &lt;div class=&quot;search&quot;&gt;&lt;svg width=&quot;15&quot; height=&quot;15&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;7&quot;/&gt;&lt;path d=&quot;M21 21l-4-4&quot;/&gt;&lt;/svg&gt;Search ticker, company or page…&lt;span class=&quot;k&quot;&gt;⌘K&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;clock&quot;&gt;&lt;span class=&quot;live&quot;&gt;&lt;span class=&quot;d&quot;&gt;&lt;/span&gt;LIVE · FINNHUB&lt;/span&gt;13:12:51 ET · OPEN&lt;/div&gt;
+      &lt;button class=&quot;btn-ghost&quot;&gt;Sign in&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;content&quot;&gt;
+      &lt;div class=&quot;page-head&quot;&gt;
+        &lt;div&gt;
+          &lt;h1&gt;Trade&lt;/h1&gt;
+          &lt;p class=&quot;sub&quot;&gt;Simulated paper trading — practice order entry against your own book with realistic fills.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;acct&quot;&gt;&lt;span class=&quot;g&quot;&gt;&lt;/span&gt;Paper account · $100,000.00&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;notice&quot;&gt;
+        &lt;svg class=&quot;i&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;9&quot;/&gt;&lt;path d=&quot;M12 8h.01M11 12h1v4h1&quot;/&gt;&lt;/svg&gt;
+        &lt;span&gt;&lt;b&gt;This is a simulation.&lt;/b&gt; Orders fill against live quotes with a modeled spread &amp;amp; fee — no real orders are placed, no money moves, and nothing here is investment advice.&lt;/span&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;grid&quot;&gt;
+        &lt;!-- Ticket --&gt;
+        &lt;div class=&quot;card&quot;&gt;
+          &lt;div class=&quot;card-h&quot;&gt;&lt;div class=&quot;ttl&quot;&gt;Order ticket&lt;b&gt;Paper · manual entry&lt;/b&gt;&lt;/div&gt;&lt;span class=&quot;tag buy&quot;&gt;Buy&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;card-b&quot;&gt;
+            &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Symbol&lt;/label&gt;&lt;input class=&quot;input&quot; value=&quot;AAPL&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Side&lt;/label&gt;
+              &lt;div class=&quot;seg&quot;&gt;&lt;button class=&quot;buy&quot;&gt;↗ Buy&lt;/button&gt;&lt;button&gt;↘ Sell&lt;/button&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;row2&quot;&gt;
+              &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Quantity&lt;/label&gt;&lt;input class=&quot;input&quot; value=&quot;100&quot;&gt;&lt;/div&gt;
+              &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Order type&lt;/label&gt;&lt;div class=&quot;select&quot;&gt;&lt;input class=&quot;input&quot; value=&quot;Market&quot; readonly&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;row2&quot;&gt;
+              &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Limit price&lt;/label&gt;&lt;input class=&quot;input ph&quot; value=&quot;Market&quot; readonly&gt;&lt;/div&gt;
+              &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Time in force&lt;/label&gt;&lt;div class=&quot;select&quot;&gt;&lt;input class=&quot;input&quot; value=&quot;Day&quot; readonly&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;button class=&quot;cta&quot;&gt;Preview order&lt;/button&gt;
+            &lt;div class=&quot;signin&quot;&gt;Estimated on preview · placed on confirm&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Impact review (populated) --&gt;
+        &lt;div class=&quot;card&quot;&gt;
+          &lt;div class=&quot;card-h&quot;&gt;&lt;div class=&quot;ttl&quot;&gt;Impact review&lt;b&gt;Estimated fill&lt;/b&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;Simulated&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;card-b&quot;&gt;
+            &lt;div class=&quot;impact&quot;&gt;
+              &lt;div class=&quot;imp-row&quot;&gt;&lt;span class=&quot;l&quot;&gt;Estimated fill price&lt;/span&gt;&lt;span class=&quot;v&quot;&gt;$229.14&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;imp-row&quot;&gt;&lt;span class=&quot;l&quot;&gt;Quantity&lt;/span&gt;&lt;span class=&quot;v&quot;&gt;100 sh&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;imp-row&quot;&gt;&lt;span class=&quot;l&quot;&gt;Estimated fees&lt;/span&gt;&lt;span class=&quot;v&quot;&gt;$2.29&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;imp-row&quot;&gt;&lt;span class=&quot;l&quot;&gt;Buying power after&lt;/span&gt;&lt;span class=&quot;v&quot;&gt;$77,061.57&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;imp-row total&quot;&gt;&lt;span class=&quot;l&quot;&gt;Estimated total cost&lt;/span&gt;&lt;span class=&quot;v&quot;&gt;$22,916.29&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;imp-note&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M12 9v4M12 17h.01M10.3 3.9l-8 14A2 2 0 004 21h16a2 2 0 001.7-3l-8-14a2 2 0 00-3.4 0z&quot;/&gt;&lt;/svg&gt;Modeled 5 bps slippage applied — a real fill may differ.&lt;/div&gt;
+            &lt;button class=&quot;cta&quot; style=&quot;margin-top:16px;background:linear-gradient(120deg,#39D98A,#4CD6E6);color:#04140d&quot;&gt;Place paper buy order · 100 AAPL&lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Blotter --&gt;
+      &lt;div class=&quot;card blot&quot;&gt;
+        &lt;div class=&quot;card-h&quot;&gt;&lt;div class=&quot;ttl&quot;&gt;Order blotter&lt;b&gt;Your paper orders, newest first&lt;/b&gt;&lt;/div&gt;&lt;span class=&quot;tag&quot;&gt;3 orders&lt;/span&gt;&lt;/div&gt;
+        &lt;table&gt;
+          &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Time&lt;/th&gt;&lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Side&lt;/th&gt;&lt;th&gt;Qty&lt;/th&gt;&lt;th&gt;Type&lt;/th&gt;&lt;th&gt;Avg fill&lt;/th&gt;&lt;th&gt;Fees&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+          &lt;tbody&gt;
+            &lt;tr&gt;&lt;td class=&quot;mono&quot;&gt;13:08:44&lt;/td&gt;&lt;td class=&quot;sym&quot;&gt;NVDA&lt;/td&gt;&lt;td class=&quot;side-b&quot;&gt;Buy&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;40&lt;/td&gt;&lt;td&gt;Market&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;$174.62&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;$0.70&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;st filled&quot;&gt;Filled&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td class=&quot;mono&quot;&gt;12:51:20&lt;/td&gt;&lt;td class=&quot;sym&quot;&gt;TSLA&lt;/td&gt;&lt;td class=&quot;side-s&quot;&gt;Sell&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;25&lt;/td&gt;&lt;td&gt;Limit · $340.00&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;—&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;—&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;st working&quot;&gt;Working&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;x&quot;&gt;✕&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td class=&quot;mono&quot;&gt;11:37:02&lt;/td&gt;&lt;td class=&quot;sym&quot;&gt;AAPL&lt;/td&gt;&lt;td class=&quot;side-b&quot;&gt;Buy&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;60&lt;/td&gt;&lt;td&gt;Market&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;$228.90&lt;/td&gt;&lt;td class=&quot;mono&quot;&gt;$1.37&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;st filled&quot;&gt;Filled&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+" title="Aurora"></iframe><iframe class="pane" data-i="1" srcdoc="&lt;title&gt;DSH — reimagined&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --bg:#080A12; --bg2:#0C0F1B;
+    --glass:rgba(255,255,255,.045); --glass2:rgba(255,255,255,.03);
+    --brd:rgba(255,255,255,.08); --brd2:rgba(255,255,255,.14);
+    --tx:#EDEFF8; --mut:#9AA0BC; --faint:#636A8C;
+    --violet:#9A86FF; --blue:#5B8CFF; --cyan:#57DCE6;
+    --up:#3FE0A0; --down:#FF6E92; --amber:#FFC46B;
+    --g1:linear-gradient(120deg,#9A86FF,#5B8CFF 55%,#57DCE6);
+    --g-soft:linear-gradient(135deg,rgba(154,134,255,.22),rgba(91,140,255,.10));
+    --sans:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,&quot;SF Mono&quot;,&quot;JetBrains Mono&quot;,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:&quot;&quot;;position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(46% 40% at 8% -6%,rgba(154,134,255,.30),transparent 60%),
+      radial-gradient(40% 36% at 98% -2%,rgba(87,220,230,.16),transparent 62%),
+      radial-gradient(60% 50% at 78% 108%,rgba(91,140,255,.16),transparent 60%);}
+  .wrap{position:relative;z-index:1;max-width:1220px;margin:0 auto;padding:0 26px 80px}
+
+  /* Floating glass nav */
+  nav{position:sticky;top:16px;z-index:20;margin:16px auto 0;display:flex;align-items:center;gap:18px;
+    padding:11px 14px 11px 18px;border:1px solid var(--brd);border-radius:20px;
+    background:rgba(12,15,27,.6);backdrop-filter:blur(22px) saturate(1.2);box-shadow:0 20px 50px -30px #000}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.4px}
+  .logo .m{width:34px;height:34px;border-radius:11px;background:var(--g1);display:grid;place-items:center;color:#080A12;font-size:16px;box-shadow:0 8px 22px -6px rgba(91,140,255,.7)}
+  .navlinks{display:flex;gap:4px;margin-left:8px}
+  .navlinks a{padding:8px 15px;border-radius:12px;color:var(--mut);text-decoration:none;font-size:13.5px;font-weight:600}
+  .navlinks a.on{color:#fff;background:var(--g-soft);border:1px solid rgba(154,134,255,.28)}
+  .navlinks a:hover:not(.on){color:var(--tx)}
+  .navr{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .pill{display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:13px;background:var(--glass);border:1px solid var(--brd);font-size:12.5px;color:var(--mut);font-family:var(--mono)}
+  .pill .d{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 9px var(--up)}
+  .avatar{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#5B8CFF,#9A86FF);display:grid;place-items:center;font-weight:700;font-size:13px}
+
+  /* Hero */
+  .hero{display:grid;grid-template-columns:1.55fr 1fr;gap:20px;margin-top:26px}
+  .card{border:1px solid var(--brd);border-radius:24px;background:var(--glass);backdrop-filter:blur(16px);box-shadow:0 30px 60px -40px #000}
+  .port{padding:26px 28px;position:relative;overflow:hidden}
+  .port .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .port .val{font-size:52px;font-weight:800;letter-spacing:-.03em;margin:8px 0 6px;font-variant-numeric:tabular-nums}
+  .port .val .c{background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .delta{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;background:rgba(63,224,160,.13);border:1px solid rgba(63,224,160,.3);color:var(--up);font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums}
+  .tf{display:flex;gap:5px;margin:18px 0 6px}
+  .tf span{font-family:var(--mono);font-size:12px;padding:5px 11px;border-radius:9px;color:var(--faint)}
+  .tf span.on{background:var(--glass);border:1px solid var(--brd);color:var(--tx)}
+  .chart{margin-top:10px;height:150px;width:100%}
+
+  .trade{padding:22px}
+  .trade h3{margin:0 0 4px;font-size:15px}
+  .trade .sub{color:var(--mut);font-size:12.5px;margin:0 0 16px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:var(--glass2);border:1px solid var(--brd);border-radius:14px;margin-bottom:14px}
+  .seg b{text-align:center;padding:10px;border-radius:10px;font-size:14px;color:var(--mut);cursor:pointer}
+  .seg b.on{background:linear-gradient(120deg,#3FE0A0,#57DCE6);color:#04140d;font-weight:800}
+  .inp{width:100%;background:var(--glass2);border:1px solid var(--brd);border-radius:13px;padding:12px 14px;color:var(--tx);font-family:var(--mono);font-size:15px;margin-bottom:11px}
+  .cta{width:100%;border:0;border-radius:14px;padding:14px;font-weight:800;font-size:14.5px;color:#080A12;background:var(--g1);cursor:pointer;box-shadow:0 14px 30px -12px rgba(91,140,255,.7)}
+  .bp{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin-top:13px;font-family:var(--mono)}
+  .bp b{color:var(--tx)}
+
+  /* Bento */
+  .bento{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:20px}
+  .b{border:1px solid var(--brd);border-radius:22px;background:var(--glass);backdrop-filter:blur(14px);padding:20px}
+  .b .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+  .b .h .t{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .b .h .more{font-size:12px;color:var(--violet)}
+  .span4{grid-column:span 4} .span5{grid-column:span 5} .span3{grid-column:span 3} .span7{grid-column:span 7} .span8{grid-column:span 8}
+
+  .wl{display:flex;flex-direction:column;gap:3px}
+  .wl .r{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:12px}
+  .wl .r:hover{background:var(--glass2)}
+  .wl .sym{font-weight:700;width:52px;font-family:var(--mono);font-size:13.5px}
+  .spark{flex:1;height:26px}
+  .wl .px{font-family:var(--mono);font-size:13px;text-align:right;width:66px}
+  .chg{font-family:var(--mono);font-size:12px;width:58px;text-align:right;font-weight:600}
+  .chg.u{color:var(--up)} .chg.d{color:var(--down)}
+
+  .signal{background:linear-gradient(150deg,rgba(154,134,255,.16),rgba(87,220,230,.06));}
+  .signal .big{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:2px 0 4px}
+  .signal .conf{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(63,224,160,.14);color:var(--up);border:1px solid rgba(63,224,160,.3);margin-top:6px}
+  .signal p{color:var(--mut);font-size:13px;line-height:1.55;margin:12px 0 0}
+
+  .alloc{display:flex;align-items:center;gap:20px}
+  .donut{width:118px;height:118px;border-radius:50%;flex:none;
+    background:conic-gradient(var(--violet) 0 42%,var(--blue) 42% 68%,var(--cyan) 68% 84%,var(--amber) 84% 100%);
+    -webkit-mask:radial-gradient(closest-side,transparent 62%,#000 63%);mask:radial-gradient(closest-side,transparent 62%,#000 63%)}
+  .leg{display:flex;flex-direction:column;gap:9px;font-size:13px;flex:1}
+  .leg .l{display:flex;align-items:center;gap:9px;color:var(--mut)}
+  .leg .l b{margin-left:auto;color:var(--tx);font-family:var(--mono)}
+  .dot{width:9px;height:9px;border-radius:3px}
+
+  .mv{display:flex;flex-direction:column;gap:11px}
+  .mv .r{display:flex;align-items:center;gap:10px;font-size:13.5px}
+  .mv .sym{font-weight:700;font-family:var(--mono);width:50px}
+  .mv .bar{flex:1;height:7px;border-radius:6px;background:var(--glass2);overflow:hidden}
+  .mv .bar i{display:block;height:100%;border-radius:6px}
+  .mv .v{font-family:var(--mono);font-size:12.5px;width:52px;text-align:right;font-weight:600}
+
+  @media(max-width:900px){.hero{grid-template-columns:1fr}.span4,.span5,.span3,.span7,.span8{grid-column:span 12}.navlinks{display:none}}
+&lt;/style&gt;
+
+&lt;div class=&quot;wrap&quot;&gt;
+  &lt;nav&gt;
+    &lt;div class=&quot;logo&quot;&gt;&lt;span class=&quot;m&quot;&gt;◆&lt;/span&gt;DSH&lt;/div&gt;
+    &lt;div class=&quot;navlinks&quot;&gt;
+      &lt;a href=&quot;#&quot; class=&quot;on&quot;&gt;Overview&lt;/a&gt;&lt;a href=&quot;#&quot;&gt;Markets&lt;/a&gt;&lt;a href=&quot;#&quot;&gt;Trade&lt;/a&gt;&lt;a href=&quot;#&quot;&gt;AI Desk&lt;/a&gt;&lt;a href=&quot;#&quot;&gt;Research&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;navr&quot;&gt;
+      &lt;span class=&quot;pill&quot;&gt;&lt;span class=&quot;d&quot;&gt;&lt;/span&gt;MARKET OPEN · 14:12 ET&lt;/span&gt;
+      &lt;div class=&quot;avatar&quot;&gt;DH&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/nav&gt;
+
+  &lt;!-- Hero --&gt;
+  &lt;section class=&quot;hero&quot;&gt;
+    &lt;div class=&quot;card port&quot;&gt;
+      &lt;div class=&quot;lab&quot;&gt;Total portfolio value&lt;/div&gt;
+      &lt;div class=&quot;val&quot;&gt;$&lt;span class=&quot;c&quot;&gt;248,317&lt;/span&gt;.40&lt;/div&gt;
+      &lt;span class=&quot;delta&quot;&gt;▲ $4,912.08 · +2.02% today&lt;/span&gt;
+      &lt;div class=&quot;tf&quot;&gt;&lt;span&gt;1D&lt;/span&gt;&lt;span class=&quot;on&quot;&gt;1W&lt;/span&gt;&lt;span&gt;1M&lt;/span&gt;&lt;span&gt;1Y&lt;/span&gt;&lt;span&gt;ALL&lt;/span&gt;&lt;/div&gt;
+      &lt;svg class=&quot;chart&quot; viewBox=&quot;0 0 620 150&quot; preserveAspectRatio=&quot;none&quot;&gt;
+        &lt;defs&gt;
+          &lt;linearGradient id=&quot;af&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;&gt;
+            &lt;stop offset=&quot;0&quot; stop-color=&quot;#5B8CFF&quot; stop-opacity=&quot;.45&quot;/&gt;
+            &lt;stop offset=&quot;1&quot; stop-color=&quot;#5B8CFF&quot; stop-opacity=&quot;0&quot;/&gt;
+          &lt;/linearGradient&gt;
+          &lt;linearGradient id=&quot;al&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;0&quot;&gt;
+            &lt;stop offset=&quot;0&quot; stop-color=&quot;#9A86FF&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#57DCE6&quot;/&gt;
+          &lt;/linearGradient&gt;
+        &lt;/defs&gt;
+        &lt;path d=&quot;M0,110 C60,120 90,70 150,80 C210,90 240,40 300,52 C360,64 400,30 460,26 C520,22 560,58 620,40 L620,150 L0,150 Z&quot; fill=&quot;url(#af)&quot;/&gt;
+        &lt;path d=&quot;M0,110 C60,120 90,70 150,80 C210,90 240,40 300,52 C360,64 400,30 460,26 C520,22 560,58 620,40&quot; fill=&quot;none&quot; stroke=&quot;url(#al)&quot; stroke-width=&quot;2.5&quot; stroke-linecap=&quot;round&quot;/&gt;
+        &lt;circle cx=&quot;620&quot; cy=&quot;40&quot; r=&quot;4.5&quot; fill=&quot;#57DCE6&quot;/&gt;
+      &lt;/svg&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;card trade&quot;&gt;
+      &lt;h3&gt;Quick trade &lt;span style=&quot;font-family:var(--mono);font-size:10px;color:var(--violet);border:1px solid rgba(154,134,255,.3);padding:2px 7px;border-radius:20px;margin-left:6px&quot;&gt;PAPER&lt;/span&gt;&lt;/h3&gt;
+      &lt;p class=&quot;sub&quot;&gt;Simulated — no real orders placed.&lt;/p&gt;
+      &lt;div class=&quot;seg&quot;&gt;&lt;b class=&quot;on&quot;&gt;↗ Buy&lt;/b&gt;&lt;b&gt;↘ Sell&lt;/b&gt;&lt;/div&gt;
+      &lt;input class=&quot;inp&quot; value=&quot;AAPL&quot;&gt;&lt;input class=&quot;inp&quot; value=&quot;100 shares&quot;&gt;
+      &lt;button class=&quot;cta&quot;&gt;Preview order · $22,914&lt;/button&gt;
+      &lt;div class=&quot;bp&quot;&gt;&lt;span&gt;Buying power&lt;/span&gt;&lt;b&gt;$99,940.51&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;bp&quot;&gt;&lt;span&gt;Est. fill · fees&lt;/span&gt;&lt;b&gt;$229.14 · $2.29&lt;/b&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;!-- Bento grid --&gt;
+  &lt;section class=&quot;bento&quot;&gt;
+    &lt;div class=&quot;b span5&quot;&gt;
+      &lt;div class=&quot;h&quot;&gt;&lt;span class=&quot;t&quot;&gt;Watchlist&lt;/span&gt;&lt;span class=&quot;more&quot;&gt;View all →&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;wl&quot;&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;NVDA&lt;/span&gt;&lt;svg class=&quot;spark&quot; viewBox=&quot;0 0 120 26&quot; preserveAspectRatio=&quot;none&quot;&gt;&lt;path d=&quot;M0,20 L20,17 L40,19 L60,11 L80,13 L100,5 L120,7&quot; fill=&quot;none&quot; stroke=&quot;#3FE0A0&quot; stroke-width=&quot;2&quot;/&gt;&lt;/svg&gt;&lt;span class=&quot;px&quot;&gt;$174.62&lt;/span&gt;&lt;span class=&quot;chg u&quot;&gt;+3.1%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;AAPL&lt;/span&gt;&lt;svg class=&quot;spark&quot; viewBox=&quot;0 0 120 26&quot; preserveAspectRatio=&quot;none&quot;&gt;&lt;path d=&quot;M0,10 L20,12 L40,9 L60,14 L80,12 L100,15 L120,13&quot; fill=&quot;none&quot; stroke=&quot;#3FE0A0&quot; stroke-width=&quot;2&quot;/&gt;&lt;/svg&gt;&lt;span class=&quot;px&quot;&gt;$229.14&lt;/span&gt;&lt;span class=&quot;chg u&quot;&gt;+0.8%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;TSLA&lt;/span&gt;&lt;svg class=&quot;spark&quot; viewBox=&quot;0 0 120 26&quot; preserveAspectRatio=&quot;none&quot;&gt;&lt;path d=&quot;M0,6 L20,9 L40,8 L60,14 L80,16 L100,15 L120,20&quot; fill=&quot;none&quot; stroke=&quot;#FF6E92&quot; stroke-width=&quot;2&quot;/&gt;&lt;/svg&gt;&lt;span class=&quot;px&quot;&gt;$338.20&lt;/span&gt;&lt;span class=&quot;chg d&quot;&gt;-1.9%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;MSFT&lt;/span&gt;&lt;svg class=&quot;spark&quot; viewBox=&quot;0 0 120 26&quot; preserveAspectRatio=&quot;none&quot;&gt;&lt;path d=&quot;M0,16 L20,14 L40,15 L60,10 L80,11 L100,8 L120,6&quot; fill=&quot;none&quot; stroke=&quot;#3FE0A0&quot; stroke-width=&quot;2&quot;/&gt;&lt;/svg&gt;&lt;span class=&quot;px&quot;&gt;$512.90&lt;/span&gt;&lt;span class=&quot;chg u&quot;&gt;+1.4%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;AMD&lt;/span&gt;&lt;svg class=&quot;spark&quot; viewBox=&quot;0 0 120 26&quot; preserveAspectRatio=&quot;none&quot;&gt;&lt;path d=&quot;M0,12 L20,10 L40,14 L60,9 L80,7 L100,10 L120,8&quot; fill=&quot;none&quot; stroke=&quot;#3FE0A0&quot; stroke-width=&quot;2&quot;/&gt;&lt;/svg&gt;&lt;span class=&quot;px&quot;&gt;$164.05&lt;/span&gt;&lt;span class=&quot;chg u&quot;&gt;+2.2%&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;b span4 signal&quot;&gt;
+      &lt;div class=&quot;h&quot;&gt;&lt;span class=&quot;t&quot;&gt;AI signal of the day&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;big&quot;&gt;Accumulate &lt;span style=&quot;background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent&quot;&gt;NVDA&lt;/span&gt;&lt;/div&gt;
+      &lt;span class=&quot;conf&quot;&gt;Conviction 84%&lt;/span&gt;
+      &lt;p&gt;Momentum + earnings revision breadth turning positive across semis. Model flags a favorable risk/reward into the next print.&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;b span3&quot;&gt;
+      &lt;div class=&quot;h&quot;&gt;&lt;span class=&quot;t&quot;&gt;Allocation&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;alloc&quot;&gt;
+        &lt;div class=&quot;donut&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;leg&quot;&gt;
+          &lt;div class=&quot;l&quot;&gt;&lt;span class=&quot;dot&quot; style=&quot;background:var(--violet)&quot;&gt;&lt;/span&gt;Tech &lt;b&gt;42%&lt;/b&gt;&lt;/div&gt;
+          &lt;div class=&quot;l&quot;&gt;&lt;span class=&quot;dot&quot; style=&quot;background:var(--blue)&quot;&gt;&lt;/span&gt;ETFs &lt;b&gt;26%&lt;/b&gt;&lt;/div&gt;
+          &lt;div class=&quot;l&quot;&gt;&lt;span class=&quot;dot&quot; style=&quot;background:var(--cyan)&quot;&gt;&lt;/span&gt;Cash &lt;b&gt;16%&lt;/b&gt;&lt;/div&gt;
+          &lt;div class=&quot;l&quot;&gt;&lt;span class=&quot;dot&quot; style=&quot;background:var(--amber)&quot;&gt;&lt;/span&gt;Other &lt;b&gt;16%&lt;/b&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;b span7&quot;&gt;
+      &lt;div class=&quot;h&quot;&gt;&lt;span class=&quot;t&quot;&gt;Top movers · your universe&lt;/span&gt;&lt;span class=&quot;more&quot;&gt;Markets →&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;mv&quot;&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;SMCI&lt;/span&gt;&lt;div class=&quot;bar&quot;&gt;&lt;i style=&quot;width:88%;background:linear-gradient(90deg,#3FE0A0,#57DCE6)&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;span class=&quot;v&quot; style=&quot;color:var(--up)&quot;&gt;+8.4%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;PLTR&lt;/span&gt;&lt;div class=&quot;bar&quot;&gt;&lt;i style=&quot;width:64%;background:linear-gradient(90deg,#3FE0A0,#57DCE6)&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;span class=&quot;v&quot; style=&quot;color:var(--up)&quot;&gt;+5.1%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;COIN&lt;/span&gt;&lt;div class=&quot;bar&quot;&gt;&lt;i style=&quot;width:40%;background:linear-gradient(90deg,#FF6E92,#FFC46B)&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;span class=&quot;v&quot; style=&quot;color:var(--down)&quot;&gt;-3.7%&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot;&gt;RIVN&lt;/span&gt;&lt;div class=&quot;bar&quot;&gt;&lt;i style=&quot;width:58%;background:linear-gradient(90deg,#FF6E92,#FFC46B)&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;span class=&quot;v&quot; style=&quot;color:var(--down)&quot;&gt;-4.9%&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;b span5&quot;&gt;
+      &lt;div class=&quot;h&quot;&gt;&lt;span class=&quot;t&quot;&gt;Catalysts ahead&lt;/span&gt;&lt;span class=&quot;more&quot;&gt;Calendar →&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;mv&quot;&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot; style=&quot;width:auto;color:var(--violet)&quot;&gt;Wed&lt;/span&gt;&lt;span style=&quot;flex:1;color:var(--mut);font-size:13.5px&quot;&gt;NVDA earnings · after close&lt;/span&gt;&lt;span class=&quot;v&quot; style=&quot;width:auto;color:var(--faint)&quot;&gt;high impact&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot; style=&quot;width:auto;color:var(--violet)&quot;&gt;Thu&lt;/span&gt;&lt;span style=&quot;flex:1;color:var(--mut);font-size:13.5px&quot;&gt;CPI print · 8:30 ET&lt;/span&gt;&lt;span class=&quot;v&quot; style=&quot;width:auto;color:var(--faint)&quot;&gt;macro&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;r&quot;&gt;&lt;span class=&quot;sym&quot; style=&quot;width:auto;color:var(--violet)&quot;&gt;Fri&lt;/span&gt;&lt;span style=&quot;flex:1;color:var(--mut);font-size:13.5px&quot;&gt;Fed speakers · midday&lt;/span&gt;&lt;span class=&quot;v&quot; style=&quot;width:auto;color:var(--faint)&quot;&gt;rates&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+&lt;/div&gt;
+" title="Aurora v2"></iframe><iframe class="pane" data-i="2" srcdoc="&lt;title&gt;DSH — conversational cockpit&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --bg:#07090F; --tx:#EEF0F8; --mut:#9BA2BE; --faint:#5E6588;
+    --glass:rgba(255,255,255,.05); --glass2:rgba(255,255,255,.028);
+    --brd:rgba(255,255,255,.09); --brd2:rgba(255,255,255,.16);
+    --violet:#9B87FF; --blue:#5C8DFF; --cyan:#58DDE7; --up:#41E2A2; --down:#FF6E92; --amber:#FFC46B;
+    --g1:linear-gradient(120deg,#9B87FF,#5C8DFF 55%,#58DDE7);
+    --gsoft:linear-gradient(135deg,rgba(155,135,255,.20),rgba(92,141,255,.08));
+    --sans:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,&quot;SF Mono&quot;,&quot;JetBrains Mono&quot;,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:&quot;&quot;;position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(50% 42% at 50% -12%,rgba(155,135,255,.28),transparent 62%),
+      radial-gradient(40% 40% at 6% 8%,rgba(88,221,231,.12),transparent 60%),
+      radial-gradient(46% 42% at 96% 12%,rgba(92,141,255,.16),transparent 60%),
+      radial-gradient(60% 44% at 50% 116%,rgba(92,141,255,.12),transparent 60%);}
+
+  header{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:20px 30px;max-width:1080px;margin:0 auto}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}
+  .logo .m{width:30px;height:30px;border-radius:10px;background:var(--g1);display:grid;place-items:center;color:#07090F;font-size:14px;box-shadow:0 6px 18px -5px rgba(92,141,255,.7)}
+  .hr{display:flex;align-items:center;gap:11px}
+  .pill{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:12px;background:var(--glass);border:1px solid var(--brd);font-size:12px;color:var(--mut);font-family:var(--mono)}
+  .pill .d{width:6px;height:6px;border-radius:50%;background:var(--up);box-shadow:0 0 8px var(--up)}
+  .avatar{width:33px;height:33px;border-radius:11px;background:linear-gradient(135deg,#5C8DFF,#9B87FF);display:grid;place-items:center;font-weight:700;font-size:12px}
+
+  main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:46px 26px 90px}
+  .greet{text-align:center;margin-bottom:26px}
+  .greet .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet)}
+  .greet h1{font-size:38px;font-weight:800;letter-spacing:-.03em;margin:12px 0 6px;text-wrap:balance}
+  .greet h1 .c{background:var(--g1);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .greet p{color:var(--mut);font-size:15px;margin:0}
+
+  /* Command bar */
+  .cmd{display:flex;align-items:center;gap:12px;padding:9px 9px 9px 20px;border:1px solid var(--brd2);border-radius:20px;
+    background:rgba(255,255,255,.05);backdrop-filter:blur(20px) saturate(1.2);
+    box-shadow:0 30px 70px -34px #000,0 0 0 4px rgba(155,135,255,.06)}
+  .cmd svg{color:var(--faint);flex:none}
+  .cmd input{flex:1;background:transparent;border:0;outline:none;color:var(--tx);font-size:16px;font-family:var(--sans)}
+  .cmd input::placeholder{color:var(--faint)}
+  .cmd .send{width:44px;height:44px;border-radius:14px;border:0;background:var(--g1);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 24px -10px rgba(92,141,255,.8)}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:16px 0 8px}
+  .chip{padding:8px 14px;border-radius:20px;background:var(--glass);border:1px solid var(--brd);color:var(--mut);font-size:13px;cursor:pointer}
+  .chip:hover{color:var(--tx);border-color:var(--brd2)}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:40px 0 22px;color:var(--faint);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .divider::before,.divider::after{content:&quot;&quot;;height:1px;flex:1;background:var(--brd)}
+
+  /* Conversation thread */
+  .q{display:flex;justify-content:flex-end;margin-bottom:16px}
+  .q span{background:var(--gsoft);border:1px solid rgba(155,135,255,.3);padding:11px 17px;border-radius:18px 18px 6px 18px;font-size:14.5px;max-width:80%}
+  .ans{border:1px solid var(--brd);border-radius:22px;background:var(--glass);backdrop-filter:blur(16px);overflow:hidden;box-shadow:0 30px 60px -42px #000}
+  .ans .head{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--brd)}
+  .ans .head .ai{width:26px;height:26px;border-radius:8px;background:var(--g1);display:grid;place-items:center;color:#07090F;font-size:12px;font-weight:800}
+  .ans .head b{font-size:13.5px}
+  .ans .head .tag{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .ans .body{padding:20px}
+  .ans p{margin:0 0 16px;color:#cdd2e6;font-size:14.5px;line-height:1.6}
+  .ans p b{color:#fff}
+
+  .statrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .stat{flex:1;min-width:120px;border:1px solid var(--brd);border-radius:14px;padding:12px 14px;background:var(--glass2)}
+  .stat .l{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .stat .v{font-family:var(--mono);font-size:19px;font-weight:700;margin-top:5px;font-variant-numeric:tabular-nums}
+  .stat .v.u{color:var(--up)}
+
+  .chartwrap{border:1px solid var(--brd);border-radius:16px;padding:14px 8px 6px;background:var(--glass2);margin-bottom:18px}
+  .chartwrap .cap{display:flex;justify-content:space-between;padding:0 10px 8px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .act{display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:13px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid var(--brd);background:var(--glass);color:var(--tx)}
+  .act.prime{border:0;background:var(--g1);color:#07090F;box-shadow:0 10px 24px -12px rgba(92,141,255,.8)}
+  .act svg{width:16px;height:16px}
+
+  .followups{display:flex;flex-direction:column;gap:1px;margin-top:16px;border-top:1px solid var(--brd);padding-top:8px}
+  .fu{display:flex;align-items:center;gap:10px;padding:11px 6px;color:var(--mut);font-size:14px;cursor:pointer;border-radius:10px}
+  .fu:hover{color:var(--tx);background:var(--glass2)}
+  .fu svg{color:var(--violet)}
+
+  @media(max-width:640px){.greet h1{font-size:30px}.statrow{flex-direction:column}}
+&lt;/style&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;logo&quot;&gt;&lt;span class=&quot;m&quot;&gt;◆&lt;/span&gt;DSH&lt;/div&gt;
+  &lt;div class=&quot;hr&quot;&gt;
+    &lt;span class=&quot;pill&quot;&gt;&lt;span class=&quot;d&quot;&gt;&lt;/span&gt;MARKET OPEN · 14:21 ET&lt;/span&gt;
+    &lt;div class=&quot;avatar&quot;&gt;DH&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;div class=&quot;greet&quot;&gt;
+    &lt;div class=&quot;k&quot;&gt;DSH Cockpit&lt;/div&gt;
+    &lt;h1&gt;Good morning, Danny. &lt;span class=&quot;c&quot;&gt;What are we trading?&lt;/span&gt;&lt;/h1&gt;
+    &lt;p&gt;Ask about any market, place a paper trade, or run a backtest — DSH answers with live data.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;cmd&quot;&gt;
+    &lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;7&quot;/&gt;&lt;path d=&quot;M21 21l-4-4&quot;/&gt;&lt;/svg&gt;
+    &lt;input placeholder=&quot;Ask anything —  “How is NVDA set up into earnings?”&quot; value=&quot;&quot;&gt;
+    &lt;button class=&quot;send&quot;&gt;&lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#07090F&quot; stroke-width=&quot;2.4&quot;&gt;&lt;path d=&quot;M5 12h14M13 6l6 6-6 6&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;chips&quot;&gt;
+    &lt;span class=&quot;chip&quot;&gt;📈 Scan for breakouts&lt;/span&gt;
+    &lt;span class=&quot;chip&quot;&gt;🤖 Today&#x27;s AI signals&lt;/span&gt;
+    &lt;span class=&quot;chip&quot;&gt;🧪 Backtest a strategy&lt;/span&gt;
+    &lt;span class=&quot;chip&quot;&gt;💼 How&#x27;s my portfolio?&lt;/span&gt;
+    &lt;span class=&quot;chip&quot;&gt;📰 What moved markets?&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;divider&quot;&gt;Earlier today&lt;/div&gt;
+
+  &lt;!-- Sample thread --&gt;
+  &lt;div class=&quot;q&quot;&gt;&lt;span&gt;How is NVDA setting up into earnings?&lt;/span&gt;&lt;/div&gt;
+
+  &lt;div class=&quot;ans&quot;&gt;
+    &lt;div class=&quot;head&quot;&gt;&lt;span class=&quot;ai&quot;&gt;◆&lt;/span&gt;&lt;b&gt;DSH&lt;/b&gt;&lt;span class=&quot;tag&quot;&gt;Live · Finnhub + AI by Foundry&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;body&quot;&gt;
+      &lt;p&gt;&lt;b&gt;NVDA looks constructive into the print.&lt;/b&gt; It&#x27;s up &lt;b&gt;+3.1% today&lt;/b&gt; to $174.62, riding a 5-day momentum push as semis lead. Earnings-revision breadth has turned positive and implied volatility is elevated — the market is pricing a ~8% move.&lt;/p&gt;
+
+      &lt;div class=&quot;statrow&quot;&gt;
+        &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;l&quot;&gt;Last&lt;/div&gt;&lt;div class=&quot;v&quot;&gt;$174.62&lt;/div&gt;&lt;/div&gt;
+        &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;l&quot;&gt;Today&lt;/div&gt;&lt;div class=&quot;v u&quot;&gt;+3.1%&lt;/div&gt;&lt;/div&gt;
+        &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;l&quot;&gt;Implied move&lt;/div&gt;&lt;div class=&quot;v&quot;&gt;±8.2%&lt;/div&gt;&lt;/div&gt;
+        &lt;div class=&quot;stat&quot;&gt;&lt;div class=&quot;l&quot;&gt;AI conviction&lt;/div&gt;&lt;div class=&quot;v u&quot;&gt;84%&lt;/div&gt;&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;chartwrap&quot;&gt;
+        &lt;div class=&quot;cap&quot;&gt;&lt;span&gt;NVDA · 20 sessions&lt;/span&gt;&lt;span&gt;174.62 ▲&lt;/span&gt;&lt;/div&gt;
+        &lt;svg viewBox=&quot;0 0 640 120&quot; preserveAspectRatio=&quot;none&quot; style=&quot;width:100%;height:120px&quot;&gt;
+          &lt;defs&gt;
+            &lt;linearGradient id=&quot;f&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#41E2A2&quot; stop-opacity=&quot;.4&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#41E2A2&quot; stop-opacity=&quot;0&quot;/&gt;&lt;/linearGradient&gt;
+            &lt;linearGradient id=&quot;l&quot; x1=&quot;0&quot; x2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#9B87FF&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#58DDE7&quot;/&gt;&lt;/linearGradient&gt;
+          &lt;/defs&gt;
+          &lt;path d=&quot;M0,96 C50,100 80,84 130,86 C190,88 220,70 280,64 C340,58 380,66 440,44 C500,26 540,36 640,18 L640,120 L0,120 Z&quot; fill=&quot;url(#f)&quot;/&gt;
+          &lt;path d=&quot;M0,96 C50,100 80,84 130,86 C190,88 220,70 280,64 C340,58 380,66 440,44 C500,26 540,36 640,18&quot; fill=&quot;none&quot; stroke=&quot;url(#l)&quot; stroke-width=&quot;2.5&quot;/&gt;
+          &lt;circle cx=&quot;640&quot; cy=&quot;18&quot; r=&quot;4&quot; fill=&quot;#58DDE7&quot;/&gt;
+        &lt;/svg&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;actions&quot;&gt;
+        &lt;span class=&quot;act prime&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#07090F&quot; stroke-width=&quot;2.2&quot;&gt;&lt;path d=&quot;M4 18V9M9 18V5M14 18v-7M19 18v-11&quot;/&gt;&lt;/svg&gt;Paper trade NVDA&lt;/span&gt;
+        &lt;span class=&quot;act&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z&quot;/&gt;&lt;/svg&gt;Backtest a strategy&lt;/span&gt;
+        &lt;span class=&quot;act&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z&quot;/&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;/svg&gt;Add to watchlist&lt;/span&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;followups&quot;&gt;
+        &lt;div class=&quot;fu&quot;&gt;&lt;svg width=&quot;15&quot; height=&quot;15&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M5 12h14M13 6l6 6-6 6&quot;/&gt;&lt;/svg&gt;What&#x27;s the options-implied range for earnings week?&lt;/div&gt;
+        &lt;div class=&quot;fu&quot;&gt;&lt;svg width=&quot;15&quot; height=&quot;15&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M5 12h14M13 6l6 6-6 6&quot;/&gt;&lt;/svg&gt;Compare NVDA vs AMD momentum&lt;/div&gt;
+        &lt;div class=&quot;fu&quot;&gt;&lt;svg width=&quot;15&quot; height=&quot;15&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M5 12h14M13 6l6 6-6 6&quot;/&gt;&lt;/svg&gt;Backtest &quot;buy 3 days before earnings, sell after&quot;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/main&gt;
+" title="Conversational cockpit"></iframe><iframe class="pane" data-i="3" srcdoc="&lt;title&gt;DSH Alpha Insight — State of the Terminal &amp; Roadmap&lt;/title&gt;
+&lt;style&gt;
+  :root {
+    /* Light theme (deliberately chosen warm-paper terminal print-out) */
+    --ground: #F6F4EF;
+    --surface: #FFFFFF;
+    --surface-2: #EFEBE2;
+    --border: #DcD5C7;
+    --border-strong: #C7BFAD;
+    --text: #1A1D22;
+    --muted: #5E6470;
+    --faint: #8A8F9A;
+    --accent: #C2701C;
+    --accent-soft: #F0E2CE;
+    --up: #2E9E4B;
+    --down: #CC3B3B;
+    --warn: #B8842A;
+    --shadow: 0 1px 2px rgba(26,29,34,.06), 0 8px 24px rgba(26,29,34,.06);
+    --mono: ui-monospace, &quot;SF Mono&quot;, &quot;JetBrains Mono&quot;, &quot;Menlo&quot;, &quot;Consolas&quot;, monospace;
+    --sans: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;
+  }
+  :root:not([data-theme=&quot;light&quot;]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #0C0E12;
+      --surface: #14171D;
+      --surface-2: #1B1F27;
+      --border: #272C36;
+      --border-strong: #39414F;
+      --text: #E6E9EF;
+      --muted: #9AA3B2;
+      --faint: #6B7382;
+      --accent: #E8913C;
+      --accent-soft: #2A2015;
+      --up: #46C46A;
+      --down: #EF5350;
+      --warn: #E0B24A;
+      --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme=&quot;dark&quot;] {
+    --ground: #0C0E12;
+    --surface: #14171D;
+    --surface-2: #1B1F27;
+    --border: #272C36;
+    --border-strong: #39414F;
+    --text: #E6E9EF;
+    --muted: #9AA3B2;
+    --faint: #6B7382;
+    --accent: #E8913C;
+    --accent-soft: #2A2015;
+    --up: #46C46A;
+    --down: #EF5350;
+    --warn: #E0B24A;
+    --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    font-size: 16px;
+    letter-spacing: -0.003em;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- Terminal status header ---- */
+  .topbar {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 12px 24px; max-width: 1000px; margin: 0 auto;
+    font-family: var(--mono); font-size: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: .02em; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--up); box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 22%, transparent); }
+  .topbar .meta { color: var(--faint); letter-spacing: .04em; }
+
+  /* ---- Hero ---- */
+  header.hero { padding: 64px 0 36px; border-bottom: 1px solid var(--border); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 20px;
+  }
+  h1 {
+    font-family: var(--mono); font-weight: 600;
+    font-size: clamp(30px, 5.4vw, 52px); line-height: 1.04;
+    letter-spacing: -0.02em; margin: 0 0 20px; text-wrap: balance;
+  }
+  h1 .amp { color: var(--accent); }
+  .lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--muted); max-width: 62ch; margin: 0; }
+
+  /* ---- Ticker metric row ---- */
+  .ticker {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin: 36px 0 0;
+  }
+  .ticker .cell { background: var(--surface); padding: 16px 18px; }
+  .ticker .k { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin: 0 0 8px; }
+  .ticker .v { font-family: var(--mono); font-size: clamp(19px, 3vw, 26px); font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .ticker .v.crit { color: var(--down); }
+  .ticker .v.ok { color: var(--up); }
+  .ticker .v.warn { color: var(--warn); }
+  .ticker .sub { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+
+  /* ---- Sections ---- */
+  section { padding: 52px 0; border-bottom: 1px solid var(--border); }
+  .sec-label {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--faint); margin: 0 0 6px; display: flex; align-items: center; gap: 10px;
+  }
+  .sec-label::before { content: &quot;&quot;; width: 22px; height: 1px; background: var(--accent); display: inline-block; }
+  h2 { font-family: var(--mono); font-size: clamp(22px, 3.4vw, 30px); font-weight: 600; letter-spacing: -.015em; margin: 0 0 24px; text-wrap: balance; }
+  h3 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
+  p { margin: 0 0 16px; }
+  p:last-child { margin-bottom: 0; }
+  strong { font-weight: 650; color: var(--text); }
+  code { font-family: var(--mono); font-size: .86em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--accent); }
+
+  .callout {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+    padding: 22px 24px; box-shadow: var(--shadow);
+  }
+  .callout.crit { border-left-color: var(--down); }
+  .callout p { color: var(--muted); }
+  .callout strong { color: var(--text); }
+
+  /* ---- Assessment cards ---- */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-head .num { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+  .grade {
+    font-family: var(--mono); font-weight: 700; font-size: 13px;
+    padding: 3px 9px; border-radius: 6px; letter-spacing: .02em; white-space: nowrap;
+  }
+  .grade.good { color: var(--up); background: color-mix(in srgb, var(--up) 14%, transparent); border: 1px solid color-mix(in srgb, var(--up) 30%, transparent); }
+  .grade.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent); }
+  .grade.crit { color: var(--down); background: color-mix(in srgb, var(--down) 14%, transparent); border: 1px solid color-mix(in srgb, var(--down) 30%, transparent); }
+  .card ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .card li { position: relative; padding-left: 20px; font-size: 14.5px; color: var(--muted); }
+  .card li::before { content: &quot;&quot;; position: absolute; left: 3px; top: 9px; width: 6px; height: 6px; border-radius: 1px; background: var(--border-strong); }
+  .card li.plus::before { background: var(--up); }
+  .card li.minus::before { background: var(--down); }
+  .card li strong { color: var(--text); font-weight: 600; }
+
+  /* ---- Priority list ---- */
+  .prio { display: flex; flex-direction: column; gap: 12px; }
+  .prio-row {
+    display: grid; grid-template-columns: 76px 1fr; gap: 18px; align-items: start;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .tier { font-family: var(--mono); font-weight: 700; font-size: 13px; padding: 5px 0; text-align: center; border-radius: 6px; }
+  .tier.p0 { color: var(--down); background: color-mix(in srgb, var(--down) 13%, transparent); border: 1px solid color-mix(in srgb, var(--down) 32%, transparent); }
+  .tier.p1 { color: var(--warn); background: color-mix(in srgb, var(--warn) 13%, transparent); border: 1px solid color-mix(in srgb, var(--warn) 32%, transparent); }
+  .tier.p2 { color: var(--muted); background: var(--surface-2); border: 1px solid var(--border); }
+  .prio-row h3 { font-family: var(--sans); font-size: 15.5px; margin: 0 0 5px; }
+  .prio-row p { font-size: 14px; color: var(--muted); margin: 0; }
+  .prio-row .files { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 7px; }
+
+  /* ---- Roadmap phases ---- */
+  .phases { display: flex; flex-direction: column; gap: 0; }
+  .phase {
+    display: grid; grid-template-columns: 120px 1fr; gap: 28px;
+    padding: 26px 0; border-top: 1px solid var(--border);
+  }
+  .phase:first-child { border-top: none; }
+  .phase-idx { font-family: var(--mono); }
+  .phase-idx .n { font-size: 30px; font-weight: 700; color: var(--accent); letter-spacing: -.02em; }
+  .phase-idx .t { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-top: 4px; }
+  .phase-body h3 { font-size: 19px; margin: 2px 0 8px; }
+  .phase-body p { color: var(--muted); font-size: 15px; margin: 0 0 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .01em;
+    padding: 4px 10px; border-radius: 20px; background: var(--surface-2);
+    border: 1px solid var(--border); color: var(--muted);
+  }
+
+  /* ---- iPhone track ---- */
+  .track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .stage { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .stage .when { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .stage h3 { font-size: 16px; margin: 10px 0 8px; }
+  .stage p { font-size: 13.5px; color: var(--muted); margin: 0; }
+  .stage .effort { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+  /* ---- Decision footer ---- */
+  .decision { padding: 52px 0 72px; }
+  .decision .callout { border-left-color: var(--up); }
+  .qopts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .qopt { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .qopt .q { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .04em; }
+  .qopt p { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+
+  footer { padding: 28px 0 60px; }
+  .foot-line { font-family: var(--mono); font-size: 12px; color: var(--faint); letter-spacing: .03em; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+  @media (max-width: 720px) {
+    .ticker { grid-template-columns: repeat(2, 1fr); }
+    .cards, .qopts, .track { grid-template-columns: 1fr; }
+    .phase { grid-template-columns: 1fr; gap: 12px; }
+    .phase-idx { display: flex; align-items: baseline; gap: 10px; }
+    .phase-idx .t { margin-top: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .card, .prio-row, .stage { transition: border-color .2s ease, transform .2s ease; }
+    .card:hover, .prio-row:hover, .stage:hover { border-color: var(--border-strong); }
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+&lt;/style&gt;
+
+&lt;div class=&quot;topbar&quot;&gt;
+  &lt;div class=&quot;topbar-inner&quot;&gt;
+    &lt;span class=&quot;brand&quot;&gt;&lt;span class=&quot;dot&quot;&gt;&lt;/span&gt;DSH&amp;nbsp;·&amp;nbsp;ALPHA&amp;nbsp;INSIGHT&lt;/span&gt;
+    &lt;span class=&quot;meta&quot;&gt;CODE AUDIT + ROADMAP · REV 2026-08-11 · CONFIDENTIAL&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;wrap&quot;&gt;
+
+  &lt;header class=&quot;hero&quot;&gt;
+    &lt;p class=&quot;eyebrow&quot;&gt;State of the Terminal&lt;/p&gt;
+    &lt;h1&gt;What you&#x27;ve built, what&#x27;s real, &lt;span class=&quot;amp&quot;&gt;&amp;&lt;/span&gt; the path to making it great.&lt;/h1&gt;
+    &lt;p class=&quot;lede&quot;&gt;A code-grounded assessment of &lt;strong&gt;dsh-alpha-insight&lt;/strong&gt; — a multi-user AI trading terminal — across security, multi-user reporting, live trading, and backtesting, plus a phased plan to production and onto iPhone.&lt;/p&gt;
+
+    &lt;div class=&quot;ticker&quot;&gt;
+      &lt;div class=&quot;cell&quot;&gt;&lt;p class=&quot;k&quot;&gt;Routes&lt;/p&gt;&lt;div class=&quot;v&quot;&gt;35&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;pages built&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;cell&quot;&gt;&lt;p class=&quot;k&quot;&gt;DB migrations&lt;/p&gt;&lt;div class=&quot;v&quot;&gt;24&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;RLS enabled&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;cell&quot;&gt;&lt;p class=&quot;k&quot;&gt;Live execution&lt;/p&gt;&lt;div class=&quot;v crit&quot;&gt;0&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;paper only&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;cell&quot;&gt;&lt;p class=&quot;k&quot;&gt;Data tenancy&lt;/p&gt;&lt;div class=&quot;v crit&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;shared, not per-user&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;cell&quot;&gt;&lt;p class=&quot;k&quot;&gt;Foundation&lt;/p&gt;&lt;div class=&quot;v ok&quot;&gt;Strong&lt;/div&gt;&lt;div class=&quot;sub&quot;&gt;real, not mocked&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Executive summary&lt;/p&gt;
+    &lt;h2&gt;You&#x27;re ~75% of the way to the product you described — but two structural gaps must close first.&lt;/h2&gt;
+    &lt;div class=&quot;callout&quot;&gt;
+      &lt;p&gt;&lt;strong&gt;The good news:&lt;/strong&gt; this is a real, substantial application, not a demo. Thirty-five routes, a proper Supabase backend with Row-Level Security on every table, live market data (Finnhub + Yahoo), read-only brokerage linking through SnapTrade, AI research and paper-trading &quot;funds,&quot; and a backtesting engine wired to real historical prices. The bones of a serious trading terminal are here.&lt;/p&gt;
+      &lt;p style=&quot;margin-top:16px&quot;&gt;&lt;strong&gt;The two gaps that define the work ahead:&lt;/strong&gt; (1) the core screens are &lt;strong&gt;single-tenant&lt;/strong&gt; — everyone shares one portfolio and watchlist — so &quot;multiple people, each with their own reports&quot; isn&#x27;t true yet; and (2) &lt;strong&gt;nothing places a live trade&lt;/strong&gt; — every &quot;trade&quot; is simulated. Neither is a flaw in the vision; both are the natural next build phase, and both are very achievable.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;callout&quot; style=&quot;margin-top:16px;border-left-color:var(--warn)&quot;&gt;
+      &lt;p&gt;&lt;strong&gt;Correction to my first read:&lt;/strong&gt; I initially warned that the committed &lt;code&gt;.env&lt;/code&gt; meant &quot;rotate every key.&quot; After reading it, that was an over-alarm. The committed &lt;code&gt;.env&lt;/code&gt; holds &lt;strong&gt;only public values&lt;/strong&gt; (Supabase URL, project ref, and the publishable/anon key that ships to the browser anyway). &lt;strong&gt;No service-role key and no third-party API keys are committed&lt;/strong&gt; — those stay server-side at runtime. It&#x27;s still worth untracking, but it is not an emergency.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Assessment · four domains&lt;/p&gt;
+    &lt;h2&gt;Graded against what a production version needs.&lt;/h2&gt;
+    &lt;div class=&quot;cards&quot;&gt;
+
+      &lt;div class=&quot;card&quot;&gt;
+        &lt;div class=&quot;card-head&quot;&gt;
+          &lt;div&gt;&lt;span class=&quot;num&quot;&gt;01&lt;/span&gt;&lt;h3&gt;Multi-user &amp; reports&lt;/h3&gt;&lt;/div&gt;
+          &lt;span class=&quot;grade crit&quot;&gt;NEEDS WORK&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;ul&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;Single-tenant bug (top priority).&lt;/strong&gt; Dashboard, Portfolio, Watchlist, Settings &amp; AI Reports run on the RLS-bypassing service-role client and read one &lt;em&gt;global&lt;/em&gt; row — every user shares the same data.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;No auth gate&lt;/strong&gt; on those endpoints — effectively reachable without a token.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;No roles / teams / orgs.&lt;/strong&gt; No structure yet for &quot;multiple people collaborating.&quot;&lt;/li&gt;
+          &lt;li class=&quot;plus&quot;&gt;Auth itself is sound: Supabase email/password + Google, tokens verified server-side.&lt;/li&gt;
+          &lt;li class=&quot;plus&quot;&gt;Notes, chat, accounts, managed portfolios &lt;em&gt;are&lt;/em&gt; correctly per-user.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;card&quot;&gt;
+        &lt;div class=&quot;card-head&quot;&gt;
+          &lt;div&gt;&lt;span class=&quot;num&quot;&gt;02&lt;/span&gt;&lt;h3&gt;Live trading&lt;/h3&gt;&lt;/div&gt;
+          &lt;span class=&quot;grade warn&quot;&gt;READ-ONLY TODAY&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;ul&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;No real order execution anywhere.&lt;/strong&gt; SnapTrade is linked as &lt;code&gt;connectionType: &quot;read&quot;&lt;/code&gt; — positions sync in, nothing goes out.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;&quot;Managed,&quot; &quot;AI Funds,&quot; &quot;Day Trader&quot; are paper.&lt;/strong&gt; Fills book against database rows at the last quote — no spread, slippage, or market-hours checks.&lt;/li&gt;
+          &lt;li class=&quot;plus&quot;&gt;The safe architecture is already chosen: users link &lt;em&gt;their own&lt;/em&gt; broker; the app never custodies money.&lt;/li&gt;
+          &lt;li class=&quot;plus&quot;&gt;Clean, disclosed separation — the honest base to build real execution on, deliberately.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;card&quot;&gt;
+        &lt;div class=&quot;card-head&quot;&gt;
+          &lt;div&gt;&lt;span class=&quot;num&quot;&gt;03&lt;/span&gt;&lt;h3&gt;Backtesting engine&lt;/h3&gt;&lt;/div&gt;
+          &lt;span class=&quot;grade warn&quot;&gt;SOLID CORE&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;ul&gt;
+          &lt;li class=&quot;plus&quot;&gt;&lt;strong&gt;Real data, correct mechanics.&lt;/strong&gt; Runs on real Yahoo daily bars; equity curve, drawdown, Wilder-smoothed RSI and rolling SMA are all correct.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;No transaction costs or slippage&lt;/strong&gt; — flatters high-frequency configs.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;Stop-losses fill at the close, not intrabar&lt;/strong&gt; — the single biggest result distortion.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;No Sharpe, no benchmark.&lt;/strong&gt; &quot;3 strategies&quot; is really one strategy with three presets.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;card&quot;&gt;
+        &lt;div class=&quot;card-head&quot;&gt;
+          &lt;div&gt;&lt;span class=&quot;num&quot;&gt;04&lt;/span&gt;&lt;h3&gt;Security &amp; secrets&lt;/h3&gt;&lt;/div&gt;
+          &lt;span class=&quot;grade good&quot;&gt;MOSTLY SOUND&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;ul&gt;
+          &lt;li class=&quot;plus&quot;&gt;&lt;strong&gt;RLS enabled on every table&lt;/strong&gt;, per-user tables scoped to &lt;code&gt;auth.uid()&lt;/code&gt;.&lt;/li&gt;
+          &lt;li class=&quot;plus&quot;&gt;No catastrophic secrets committed; third-party &amp; service-role keys stay server-side.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;Public cron hooks gated only by the public anon key&lt;/strong&gt; — anyone could trigger expensive LLM/trading jobs. Top fix.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;strong&gt;SnapTrade &lt;code&gt;user_secret&lt;/code&gt; is browser-readable&lt;/strong&gt; — should never leave the server.&lt;/li&gt;
+          &lt;li class=&quot;minus&quot;&gt;&lt;code&gt;.env&lt;/code&gt; is tracked in git (public values only) — untrack it.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;What I&#x27;d do first&lt;/p&gt;
+    &lt;h2&gt;Ordered by leverage, not by area.&lt;/h2&gt;
+    &lt;div class=&quot;prio&quot;&gt;
+      &lt;div class=&quot;prio-row&quot;&gt;
+        &lt;div class=&quot;tier p0&quot;&gt;P0&lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Make the app truly multi-user&lt;/h3&gt;
+          &lt;p&gt;Route the core screens through the authenticated, per-user client and stamp &lt;code&gt;user_id&lt;/code&gt; on every read and write. This is what turns &quot;one shared terminal&quot; into &quot;everyone has their own.&quot; Nothing else matters until this is true.&lt;/p&gt;
+          &lt;div class=&quot;files&quot;&gt;terminal.functions.ts · terminal.server.ts · +requireSupabaseAuth&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;prio-row&quot;&gt;
+        &lt;div class=&quot;tier p0&quot;&gt;P0&lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Lock the public hooks&lt;/h3&gt;
+          &lt;p&gt;Swap the anon-key gate for a dedicated server-only secret with a constant-time compare, and rotate it into the cron config. Small change, closes a real cost-abuse hole.&lt;/p&gt;
+          &lt;div class=&quot;files&quot;&gt;src/routes/api/public/hooks/*.ts&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;prio-row&quot;&gt;
+        &lt;div class=&quot;tier p1&quot;&gt;P1&lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Tenancy hygiene: &lt;code&gt;.env&lt;/code&gt; + SnapTrade secret&lt;/h3&gt;
+          &lt;p&gt;Untrack &lt;code&gt;.env&lt;/code&gt; (add &lt;code&gt;.env.example&lt;/code&gt;); revoke browser &lt;code&gt;SELECT&lt;/code&gt; on &lt;code&gt;snaptrade_users.user_secret&lt;/code&gt; so the brokerage credential stays server-only.&lt;/p&gt;
+          &lt;div class=&quot;files&quot;&gt;.gitignore · migration (REVOKE SELECT)&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;prio-row&quot;&gt;
+        &lt;div class=&quot;tier p1&quot;&gt;P1&lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Backtest credibility pass&lt;/h3&gt;
+          &lt;p&gt;Add transaction costs + slippage, adjusted-close prices, and intrabar stop fills; add Sharpe and a buy-&amp;-hold benchmark. Makes reported numbers trustworthy.&lt;/p&gt;
+          &lt;div class=&quot;files&quot;&gt;src/lib/trading-algorithms/*&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;prio-row&quot;&gt;
+        &lt;div class=&quot;tier p2&quot;&gt;P2&lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Roles, teams &amp; report sharing&lt;/h3&gt;
+          &lt;p&gt;Add a &lt;code&gt;user_roles&lt;/code&gt; / teams model and a per-report visibility scope (private / team / public) so collaboration and shareable reports become first-class.&lt;/p&gt;
+          &lt;div class=&quot;files&quot;&gt;new migrations · RLS policies&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;prio-row&quot;&gt;
+        &lt;div class=&quot;tier p2&quot;&gt;P2&lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Real trade execution (gated, deliberate)&lt;/h3&gt;
+          &lt;p&gt;Only after the above: build the SnapTrade execution layer (impact-preview → place → status → cancel), an order-ticket UI, and hard safety gates. This is the regulated frontier — design review before code.&lt;/p&gt;
+          &lt;div class=&quot;files&quot;&gt;snaptrade.server.ts · new order UI&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Roadmap · phased&lt;/p&gt;
+    &lt;h2&gt;From shared demo to production platform.&lt;/h2&gt;
+    &lt;div class=&quot;phases&quot;&gt;
+      &lt;div class=&quot;phase&quot;&gt;
+        &lt;div class=&quot;phase-idx&quot;&gt;&lt;span class=&quot;n&quot;&gt;00&lt;/span&gt;&lt;span class=&quot;t&quot;&gt;Harden&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;phase-body&quot;&gt;
+          &lt;h3&gt;Security &amp; tenancy foundation&lt;/h3&gt;
+          &lt;p&gt;Close the two P0s and the P1 hygiene items. After this phase, each person logs in and sees only their own portfolio, watchlist, settings, and reports — and no endpoint runs unauthenticated. This is the gate to everything else.&lt;/p&gt;
+          &lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip&quot;&gt;per-user data layer&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;hook auth&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;.env untrack&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;secret revoke&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;phase&quot;&gt;
+        &lt;div class=&quot;phase-idx&quot;&gt;&lt;span class=&quot;n&quot;&gt;01&lt;/span&gt;&lt;span class=&quot;t&quot;&gt;Reports&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;phase-body&quot;&gt;
+          &lt;h3&gt;A real multi-user reporting product&lt;/h3&gt;
+          &lt;p&gt;Replace the remaining seeded/&quot;demo&quot; panels with live data, add per-report ownership and visibility, and give the dashboard honest per-user analytics. This is the &quot;multiple people look at it and see reports&quot; milestone.&lt;/p&gt;
+          &lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip&quot;&gt;retire DemoTag mocks&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;report visibility&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;real risk analytics&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;notifications&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;phase&quot;&gt;
+        &lt;div class=&quot;phase-idx&quot;&gt;&lt;span class=&quot;n&quot;&gt;02&lt;/span&gt;&lt;span class=&quot;t&quot;&gt;Collaborate&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;phase-body&quot;&gt;
+          &lt;h3&gt;Teams, roles &amp; sharing&lt;/h3&gt;
+          &lt;p&gt;Introduce teams/orgs, admin vs member roles, and shareable report links. Turns individual accounts into a group that can work off the same research while keeping personal portfolios private.&lt;/p&gt;
+          &lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip&quot;&gt;user_roles&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;teams&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;share links&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;RLS by membership&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;phase&quot;&gt;
+        &lt;div class=&quot;phase-idx&quot;&gt;&lt;span class=&quot;n&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;t&quot;&gt;Rigor&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;phase-body&quot;&gt;
+          &lt;h3&gt;Serious backtesting &amp; signals&lt;/h3&gt;
+          &lt;p&gt;Cost/slippage modeling, intrabar stops, risk-adjusted metrics, benchmark comparison, and genuinely distinct strategies with out-of-sample validation. Makes the &quot;alpha&quot; in Alpha Insight defensible.&lt;/p&gt;
+          &lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip&quot;&gt;costs + slippage&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;Sharpe / Sortino&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;benchmark&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;walk-forward&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;phase&quot;&gt;
+        &lt;div class=&quot;phase-idx&quot;&gt;&lt;span class=&quot;n&quot;&gt;04&lt;/span&gt;&lt;span class=&quot;t&quot;&gt;Execute&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;phase-body&quot;&gt;
+          &lt;h3&gt;Live trading (regulated frontier)&lt;/h3&gt;
+          &lt;p&gt;The SnapTrade execution layer, order-ticket UI, and safety gating — plus the compliance conversation that comes with routing real orders and AI-driven allocation. Deliberately last, and gated behind a design review.&lt;/p&gt;
+          &lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip&quot;&gt;order impact + place&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;order UI&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;safety gates&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;compliance review&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;iPhone · phased track&lt;/p&gt;
+    &lt;h2&gt;Onto your phone — reusing what&#x27;s already built.&lt;/h2&gt;
+    &lt;p style=&quot;color:var(--muted);max-width:64ch;margin-bottom:24px&quot;&gt;Because the app is React with a clean Supabase backend, the phone path is progressive: each stage reuses the last, and the architecture from Phase 00 (shared logic + a clean API) is what makes it painless later.&lt;/p&gt;
+    &lt;div class=&quot;track&quot;&gt;
+      &lt;div class=&quot;stage&quot;&gt;
+        &lt;div class=&quot;when&quot;&gt;Now&lt;/div&gt;
+        &lt;h3&gt;Installable PWA&lt;/h3&gt;
+        &lt;p&gt;Add a manifest + service worker so the existing site installs to the iPhone home screen with an app icon, splash, and offline shell. Zero App Store friction.&lt;/p&gt;
+        &lt;div class=&quot;effort&quot;&gt;Effort: low · Reuses: everything&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;stage&quot;&gt;
+        &lt;div class=&quot;when&quot;&gt;Next&lt;/div&gt;
+        &lt;h3&gt;Capacitor wrapper&lt;/h3&gt;
+        &lt;p&gt;Wrap the same web app in a native shell for a real App Store listing plus Face ID login and native push notifications. Minimal new code.&lt;/p&gt;
+        &lt;div class=&quot;effort&quot;&gt;Effort: medium · Reuses: full web app&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;stage&quot;&gt;
+        &lt;div class=&quot;when&quot;&gt;Later&lt;/div&gt;
+        &lt;h3&gt;React Native / Expo&lt;/h3&gt;
+        &lt;p&gt;A fully native client that reuses your Supabase backend and shared &lt;code&gt;trading-algorithms&lt;/code&gt; logic. Best UX — worth it only once the product is proven.&lt;/p&gt;
+        &lt;div class=&quot;effort&quot;&gt;Effort: high · Reuses: backend + core logic&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section class=&quot;decision&quot;&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Your call&lt;/p&gt;
+    &lt;h2&gt;Where should I point first?&lt;/h2&gt;
+    &lt;div class=&quot;callout&quot;&gt;
+      &lt;p&gt;My recommendation: &lt;strong&gt;start with Phase 00&lt;/strong&gt; — specifically the per-user data layer. It&#x27;s the highest-leverage change, it&#x27;s what makes the app genuinely multi-user, and it unblocks everything else on the roadmap. It&#x27;s also a contained, well-scoped piece of work.&lt;/p&gt;
+      &lt;p style=&quot;margin-top:14px&quot;&gt;One logistics note before I write code: I currently have &lt;strong&gt;read-only&lt;/strong&gt; access to &lt;code&gt;dsh-alpha-insight&lt;/code&gt;, and it&#x27;s a &lt;strong&gt;Lovable-connected&lt;/strong&gt; repo (pushes sync into your Lovable editor and its history shouldn&#x27;t be rewritten). To commit fixes there I&#x27;ll need push access — or we decide together how you want changes delivered.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;qopts&quot;&gt;
+      &lt;div class=&quot;qopt&quot;&gt;&lt;div class=&quot;q&quot;&gt;OPTION A&lt;/div&gt;&lt;p&gt;Start Phase 00 — make it truly multi-user + lock the hooks. (Recommended)&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;qopt&quot;&gt;&lt;div class=&quot;q&quot;&gt;OPTION B&lt;/div&gt;&lt;p&gt;Start with the backtesting credibility pass — it&#x27;s self-contained and visible.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;qopt&quot;&gt;&lt;div class=&quot;q&quot;&gt;OPTION C&lt;/div&gt;&lt;p&gt;Ship the PWA first, so you can put it on your phone this week.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;qopt&quot;&gt;&lt;div class=&quot;q&quot;&gt;OPTION D&lt;/div&gt;&lt;p&gt;Go deeper on any one domain before we touch code.&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;footer&gt;
+    &lt;div class=&quot;foot-line&quot;&gt;
+      &lt;span&gt;DSH ALPHA INSIGHT&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;CODE AUDIT + ROADMAP&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;4 DOMAINS REVIEWED&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;GENERATED FROM SOURCE, NOT ASSUMPTIONS&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/footer&gt;
+
+&lt;/div&gt;
+" title="Roadmap"></iframe><iframe class="pane" data-i="4" srcdoc="&lt;title&gt;DSH Live Trading — Architecture &amp; Decisions&lt;/title&gt;
+&lt;style&gt;
+  :root {
+    --ground: #F6F4EF;
+    --surface: #FFFFFF;
+    --surface-2: #EFEBE2;
+    --border: #DcD5C7;
+    --border-strong: #C7BFAD;
+    --text: #1A1D22;
+    --muted: #5E6470;
+    --faint: #8A8F9A;
+    --accent: #C2701C;
+    --up: #2E9E4B;
+    --down: #CC3B3B;
+    --warn: #B8842A;
+    --shadow: 0 1px 2px rgba(26,29,34,.06), 0 8px 24px rgba(26,29,34,.06);
+    --mono: ui-monospace, &quot;SF Mono&quot;, &quot;JetBrains Mono&quot;, &quot;Menlo&quot;, &quot;Consolas&quot;, monospace;
+    --sans: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;
+  }
+  :root:not([data-theme=&quot;light&quot;]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #0C0E12; --surface: #14171D; --surface-2: #1B1F27;
+      --border: #272C36; --border-strong: #39414F; --text: #E6E9EF;
+      --muted: #9AA3B2; --faint: #6B7382; --accent: #E8913C;
+      --up: #46C46A; --down: #EF5350; --warn: #E0B24A;
+      --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme=&quot;dark&quot;] {
+    --ground: #0C0E12; --surface: #14171D; --surface-2: #1B1F27;
+    --border: #272C36; --border-strong: #39414F; --text: #E6E9EF;
+    --muted: #9AA3B2; --faint: #6B7382; --accent: #E8913C;
+    --up: #46C46A; --down: #EF5350; --warn: #E0B24A;
+    --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--sans); line-height: 1.6; font-size: 16px; letter-spacing: -0.003em; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 24px; max-width: 1000px; margin: 0 auto; font-family: var(--mono); font-size: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: .02em; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--down); box-shadow: 0 0 0 3px color-mix(in srgb, var(--down) 22%, transparent); }
+  .topbar .meta { color: var(--faint); letter-spacing: .04em; }
+
+  header.hero { padding: 60px 0 34px; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin: 0 0 18px; }
+  h1 { font-family: var(--mono); font-weight: 600; font-size: clamp(28px, 5vw, 48px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; text-wrap: balance; }
+  .lede { font-size: clamp(16px, 2.1vw, 19px); color: var(--muted); max-width: 64ch; margin: 0; }
+
+  section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .sec-label { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+  .sec-label::before { content: &quot;&quot;; width: 22px; height: 1px; background: var(--accent); display: inline-block; }
+  h2 { font-family: var(--mono); font-size: clamp(21px, 3.2vw, 28px); font-weight: 600; letter-spacing: -.015em; margin: 0 0 22px; text-wrap: balance; }
+  p { margin: 0 0 16px; } p:last-child { margin-bottom: 0; }
+  strong { font-weight: 650; }
+  code { font-family: var(--mono); font-size: .85em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--accent); }
+
+  .callout { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 20px 22px; box-shadow: var(--shadow); }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--down); }
+  .callout p { color: var(--muted); } .callout strong { color: var(--text); }
+
+  /* Flow */
+  .flow { display: flex; flex-direction: column; gap: 0; counter-reset: step; }
+  .step { display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 18px 0; border-top: 1px solid var(--border); position: relative; }
+  .step:first-child { border-top: none; }
+  .step .idx { font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--accent); width: 44px; height: 44px; border: 1px solid var(--border-strong); border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--surface); }
+  .step h3 { margin: 8px 0 5px; font-size: 16px; }
+  .step p { font-size: 14px; color: var(--muted); margin: 0; }
+  .step .tag { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 6px; }
+
+  /* Gate stack */
+  .gates { display: flex; flex-direction: column; gap: 10px; }
+  .gate { display: grid; grid-template-columns: 30px 1fr; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 15px 18px; }
+  .gate .lock { color: var(--down); font-family: var(--mono); font-weight: 700; }
+  .gate h3 { font-size: 15px; margin: 0 0 3px; font-family: var(--sans); }
+  .gate p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+  /* Decision cards */
+  .decisions { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .decision { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
+  .decision .q { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  .decision h3 { font-size: 17px; margin: 0 0 12px; }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; background: var(--surface-2); }
+  .opt .name { font-weight: 650; font-size: 14px; margin-bottom: 3px; }
+  .opt .note { font-size: 12.5px; color: var(--muted); }
+  .opt.rec { border-color: color-mix(in srgb, var(--up) 45%, var(--border)); background: color-mix(in srgb, var(--up) 8%, var(--surface)); }
+  .opt .flag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--up); display: inline-block; margin-top: 6px; }
+  .opt.risk .flag { color: var(--down); }
+
+  /* Component checklist */
+  .comp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .citem { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; }
+  .citem h3 { font-size: 14px; margin: 0 0 4px; font-family: var(--sans); }
+  .citem p { font-size: 12.5px; color: var(--muted); margin: 0; }
+  .citem .files { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 7px; }
+
+  ul.clean { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  ul.clean li { position: relative; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  ul.clean li::before { content: &quot;&quot;; position: absolute; left: 3px; top: 9px; width: 6px; height: 6px; border-radius: 1px; background: var(--warn); }
+  ul.clean li strong { color: var(--text); }
+
+  .phase-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .ptile { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 16px; box-shadow: var(--shadow); }
+  .ptile .n { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .08em; }
+  .ptile h3 { font-size: 14.5px; margin: 8px 0 6px; }
+  .ptile p { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+  footer { padding: 26px 0 60px; }
+  .foot-line { font-family: var(--mono); font-size: 12px; color: var(--faint); letter-spacing: .03em; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+  @media (max-width: 720px) { .opts, .comp, .phase-track { grid-template-columns: 1fr; } }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+&lt;/style&gt;
+
+&lt;div class=&quot;topbar&quot;&gt;
+  &lt;div class=&quot;topbar-inner&quot;&gt;
+    &lt;span class=&quot;brand&quot;&gt;&lt;span class=&quot;dot&quot;&gt;&lt;/span&gt;DSH&amp;nbsp;·&amp;nbsp;LIVE&amp;nbsp;TRADING&lt;/span&gt;
+    &lt;span class=&quot;meta&quot;&gt;DESIGN &amp;amp; DECISIONS · REV 2026-08-11 · NOT LEGAL ADVICE&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;wrap&quot;&gt;
+  &lt;header class=&quot;hero&quot;&gt;
+    &lt;p class=&quot;eyebrow&quot;&gt;The Regulated Frontier&lt;/p&gt;
+    &lt;h1&gt;Turning DSH from read-only into a place people actually trade.&lt;/h1&gt;
+    &lt;p class=&quot;lede&quot;&gt;Everything today is read-only or paper. Real execution is a deliberate, gated build — not a flag flip. This lays out the flow, the safety stack, what has to be built, the compliance questions, and the decisions only you can make.&lt;/p&gt;
+  &lt;/header&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Where you are today&lt;/p&gt;
+    &lt;h2&gt;One string is all that separates the app from live orders — and that&#x27;s the problem.&lt;/h2&gt;
+    &lt;div class=&quot;callout crit&quot;&gt;
+      &lt;p&gt;SnapTrade is linked as &lt;code&gt;connectionType: &quot;read&quot;&lt;/code&gt; (&lt;code&gt;snaptrade.server.ts:127&lt;/code&gt;). Positions and balances flow &lt;em&gt;in&lt;/em&gt;; nothing goes &lt;em&gt;out&lt;/em&gt;. The &quot;Managed,&quot; &quot;AI Funds,&quot; and &quot;Day Trader&quot; engines execute against database rows at the last quote — &lt;strong&gt;no broker, no real capital&lt;/strong&gt;. That&#x27;s a safe, honest starting point. But it means &quot;go live&quot; is often imagined as flipping &lt;code&gt;read&lt;/code&gt; → &lt;code&gt;trade&lt;/code&gt;, and it is emphatically not: that flag with no gates around it is how people lose money and you inherit liability. The rest of this document is the scaffolding that has to exist &lt;em&gt;before&lt;/em&gt; that flag ever changes.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;The execution flow&lt;/p&gt;
+    &lt;h2&gt;What a single live order actually has to do.&lt;/h2&gt;
+    &lt;div class=&quot;flow&quot;&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;idx&quot;&gt;1&lt;/div&gt;&lt;div&gt;&lt;h3&gt;Order ticket&lt;/h3&gt;&lt;p&gt;User specifies symbol, side, quantity (or notional), order type (market / limit), and time-in-force. Client-side validation only — nothing is trusted yet.&lt;/p&gt;&lt;div class=&quot;tag&quot;&gt;new UI · none exists today&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;idx&quot;&gt;2&lt;/div&gt;&lt;div&gt;&lt;h3&gt;Pre-trade checks (server)&lt;/h3&gt;&lt;p&gt;Re-validate everything server-side: market hours, buying power vs. the synced balance, position limits, symbol tradability, PDT/day-trade count, and per-user risk caps. Reject before touching the broker.&lt;/p&gt;&lt;div class=&quot;tag&quot;&gt;new server layer&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;idx&quot;&gt;3&lt;/div&gt;&lt;div&gt;&lt;h3&gt;Impact preview&lt;/h3&gt;&lt;p&gt;Call SnapTrade &lt;code&gt;POST /trade/impact&lt;/code&gt; to get estimated price, fees, and buying-power effect. Show the user a review screen with the real numbers. Nothing is placed yet.&lt;/p&gt;&lt;div class=&quot;tag&quot;&gt;SnapTrade trade API&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;idx&quot;&gt;4&lt;/div&gt;&lt;div&gt;&lt;h3&gt;Explicit confirm → place&lt;/h3&gt;&lt;p&gt;User confirms the previewed order. Server places it (&lt;code&gt;POST /trade/{tradeId}&lt;/code&gt;) with an idempotency key so a double-tap or retry can&#x27;t duplicate the order.&lt;/p&gt;&lt;div class=&quot;tag&quot;&gt;idempotent · audited&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;idx&quot;&gt;5&lt;/div&gt;&lt;div&gt;&lt;h3&gt;Status &amp;amp; fills&lt;/h3&gt;&lt;p&gt;Poll or webhook order status until filled / partially filled / rejected / cancelled. Persist every state transition. Surface it live in the UI; allow cancel of working orders.&lt;/p&gt;&lt;div class=&quot;tag&quot;&gt;reconciliation&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;idx&quot;&gt;6&lt;/div&gt;&lt;div&gt;&lt;h3&gt;Reconcile&lt;/h3&gt;&lt;p&gt;Replace the current &quot;fill at last quote&quot; assumption with the broker&#x27;s &lt;em&gt;actual&lt;/em&gt; fill price and fees. Update positions, cash, and the audit log from truth, not estimate.&lt;/p&gt;&lt;div class=&quot;tag&quot;&gt;truth over estimate&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;The safety stack&lt;/p&gt;
+    &lt;h2&gt;Layers between &quot;tap&quot; and &quot;real money leaves.&quot;&lt;/h2&gt;
+    &lt;div class=&quot;gates&quot;&gt;
+      &lt;div class=&quot;gate&quot;&gt;&lt;span class=&quot;lock&quot;&gt;01&lt;/span&gt;&lt;div&gt;&lt;h3&gt;Feature flag + per-user opt-in&lt;/h3&gt;&lt;p&gt;Live trading off by default, globally and per user. A user must explicitly enable it and re-consent SnapTrade with trade scope — separate from the read-only link they have now.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;gate&quot;&gt;&lt;span class=&quot;lock&quot;&gt;02&lt;/span&gt;&lt;div&gt;&lt;h3&gt;Server-side authority&lt;/h3&gt;&lt;p&gt;Every order validated and placed server-side under the user&#x27;s own auth. The client never talks to the broker directly and can never be the source of truth for buying power or limits.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;gate&quot;&gt;&lt;span class=&quot;lock&quot;&gt;03&lt;/span&gt;&lt;div&gt;&lt;h3&gt;Explicit review + confirm&lt;/h3&gt;&lt;p&gt;No order places without the user seeing the impact preview and confirming. No &quot;one-tap trade&quot; at launch.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;gate&quot;&gt;&lt;span class=&quot;lock&quot;&gt;04&lt;/span&gt;&lt;div&gt;&lt;h3&gt;Risk limits &amp;amp; kill switch&lt;/h3&gt;&lt;p&gt;Per-order and per-day notional caps, max position size, and a global kill switch that halts all order routing instantly if something looks wrong.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;gate&quot;&gt;&lt;span class=&quot;lock&quot;&gt;05&lt;/span&gt;&lt;div&gt;&lt;h3&gt;Idempotency &amp;amp; audit trail&lt;/h3&gt;&lt;p&gt;Every order carries an idempotency key; every state change is logged immutably (who, what, when, which key). This is both a safety and a compliance requirement.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;gate&quot;&gt;&lt;span class=&quot;lock&quot;&gt;06&lt;/span&gt;&lt;div&gt;&lt;h3&gt;Hard separation of paper vs live&lt;/h3&gt;&lt;p&gt;Paper and live accounts never share a code path that could cross wires. A live order is visually and structurally unmistakable from a simulated one.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Compliance landscape&lt;/p&gt;
+    &lt;h2&gt;The honest flags — read before writing any execution code.&lt;/h2&gt;
+    &lt;div class=&quot;callout warn&quot; style=&quot;margin-bottom:18px&quot;&gt;
+      &lt;p&gt;I&#x27;m not a lawyer and this isn&#x27;t legal advice. But the shape of the regulatory questions is predictable, and &lt;strong&gt;which ones apply depends almost entirely on the first decision below&lt;/strong&gt; — whether users place their own orders, or the app/AI places orders for them.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;ul class=&quot;clean&quot;&gt;
+      &lt;li&gt;&lt;strong&gt;Self-directed vs. discretionary.&lt;/strong&gt; If each user places their own orders through their own linked broker, you&#x27;re a software front-end over a regulated broker (SnapTrade + the executing broker carry most of the burden). If the &lt;em&gt;app or an AI&lt;/em&gt; decides and places trades on someone&#x27;s behalf, that&#x27;s discretionary asset management — likely &lt;strong&gt;RIA&lt;/strong&gt; and/or &lt;strong&gt;broker-dealer&lt;/strong&gt; territory, with registration, suitability, and fiduciary duties.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;AI-driven allocation raises the bar.&lt;/strong&gt; The &quot;Managed&quot; and &quot;AI Funds&quot; engines currently pick trades with an LLM. Pointing those at real money is the single biggest compliance escalation in the whole project — suitability, best-execution, and advice-giving all attach.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Disclosures &amp;amp; agreements.&lt;/strong&gt; Risk disclosures, terms of service, and clear &quot;this is not investment advice&quot; labeling — especially anywhere AI output sits next to a trade button.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Pattern Day Trader &amp;amp; margin rules.&lt;/strong&gt; If day-trading features touch real accounts, PDT ($25k equity) and margin rules must be enforced or surfaced.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Data &amp;amp; credential handling.&lt;/strong&gt; Trade-scoped broker credentials are far more sensitive than read tokens. (Already flagged: the SnapTrade &lt;code&gt;user_secret&lt;/code&gt; should be server-only — fixed in the multi-user PR.)&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Record-keeping.&lt;/strong&gt; Order audit trails and communications may need retention regardless of registration status.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Decisions only you can make&lt;/p&gt;
+    &lt;h2&gt;Four forks that determine everything downstream.&lt;/h2&gt;
+    &lt;div class=&quot;decisions&quot;&gt;
+
+      &lt;div class=&quot;decision&quot;&gt;
+        &lt;p class=&quot;q&quot;&gt;Decision 1 — the big one&lt;/p&gt;
+        &lt;h3&gt;Who places the order?&lt;/h3&gt;
+        &lt;div class=&quot;opts&quot;&gt;
+          &lt;div class=&quot;opt rec&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;User places their own&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Self-directed. App shows research + a ticket; the human decides and confirms every trade through their own broker link.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Lower regulatory burden&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;opt risk&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;App / AI places for them&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Discretionary / automated. The managed &amp;amp; AI-fund engines route real orders. Powerful, but this is RIA/BD territory.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Registration likely required&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;decision&quot;&gt;
+        &lt;p class=&quot;q&quot;&gt;Decision 2 — rollout&lt;/p&gt;
+        &lt;h3&gt;How cautiously do we go live?&lt;/h3&gt;
+        &lt;div class=&quot;opts&quot;&gt;
+          &lt;div class=&quot;opt rec&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;Paper-parity first&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Build the full ticket → preview → confirm → status flow against the &lt;em&gt;paper&lt;/em&gt; engine, prove it end to end, then swap the execution adapter to SnapTrade for a small pilot.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Recommended&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;opt risk&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;Straight to live&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Wire SnapTrade execution directly. Faster, but every bug is a real-money bug on day one.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;High blast radius&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;decision&quot;&gt;
+        &lt;p class=&quot;q&quot;&gt;Decision 3 — scope at launch&lt;/p&gt;
+        &lt;h3&gt;What can users actually do v1?&lt;/h3&gt;
+        &lt;div class=&quot;opts&quot;&gt;
+          &lt;div class=&quot;opt rec&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;Equities, market + limit&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Whole-share equity orders, market and limit, day / GTC. Covers most use, smallest surface.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Smallest safe surface&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;opt&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;+ Options / fractional / more&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Options, fractional shares, advanced order types. Each adds real complexity and rules — defer past v1.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Later phase&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;decision&quot;&gt;
+        &lt;p class=&quot;q&quot;&gt;Decision 4 — the AI engines&lt;/p&gt;
+        &lt;h3&gt;Do &quot;Managed&quot; &amp;amp; &quot;AI Funds&quot; ever trade real money?&lt;/h3&gt;
+        &lt;div class=&quot;opts&quot;&gt;
+          &lt;div class=&quot;opt rec&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;Stay paper / advisory&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Keep them as simulation and idea-generation; a human still places any real trade. Sidesteps the heaviest regulation.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Simplest&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;opt risk&quot;&gt;
+            &lt;div class=&quot;name&quot;&gt;Real discretionary&lt;/div&gt;
+            &lt;div class=&quot;note&quot;&gt;Let them execute. Requires the Decision-1 &quot;app places&quot; path and everything that comes with it.&lt;/div&gt;
+            &lt;span class=&quot;flag&quot;&gt;Heaviest compliance&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;What gets built&lt;/p&gt;
+    &lt;h2&gt;Components, mapped to the codebase.&lt;/h2&gt;
+    &lt;div class=&quot;comp&quot;&gt;
+      &lt;div class=&quot;citem&quot;&gt;&lt;h3&gt;Execution adapter&lt;/h3&gt;&lt;p&gt;Impact-preview, place, status, and cancel against SnapTrade&#x27;s trade API, behind an interface so paper and live share one shape.&lt;/p&gt;&lt;div class=&quot;files&quot;&gt;snaptrade.server.ts (extend)&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;citem&quot;&gt;&lt;h3&gt;Order server functions&lt;/h3&gt;&lt;p&gt;Authenticated preview / place / cancel with server-side validation + idempotency keys.&lt;/p&gt;&lt;div class=&quot;files&quot;&gt;new: orders.functions.ts / .server.ts&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;citem&quot;&gt;&lt;h3&gt;Order ticket UI&lt;/h3&gt;&lt;p&gt;Ticket, impact-review screen, working-orders list, cancel, live status.&lt;/p&gt;&lt;div class=&quot;files&quot;&gt;new terminal components&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;citem&quot;&gt;&lt;h3&gt;Risk &amp;amp; limits engine&lt;/h3&gt;&lt;p&gt;Per-order/day caps, position limits, PDT check, global kill switch.&lt;/p&gt;&lt;div class=&quot;files&quot;&gt;new: risk.server.ts&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;citem&quot;&gt;&lt;h3&gt;Reconciliation&lt;/h3&gt;&lt;p&gt;Replace last-quote fills with real broker fills across positions, cash, and trades.&lt;/p&gt;&lt;div class=&quot;files&quot;&gt;managed.server.ts · ai-fund.server.ts&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;citem&quot;&gt;&lt;h3&gt;Audit &amp;amp; consent&lt;/h3&gt;&lt;p&gt;Immutable order log, trade-scope opt-in, disclosures at the point of action.&lt;/p&gt;&lt;div class=&quot;files&quot;&gt;new migrations + UI&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;p class=&quot;sec-label&quot;&gt;Recommended path&lt;/p&gt;
+    &lt;h2&gt;If it were mine, this is the sequence.&lt;/h2&gt;
+    &lt;div class=&quot;phase-track&quot;&gt;
+      &lt;div class=&quot;ptile&quot;&gt;&lt;div class=&quot;n&quot;&gt;A&lt;/div&gt;&lt;h3&gt;Full flow on paper&lt;/h3&gt;&lt;p&gt;Ticket → preview → confirm → status → reconcile, wired to the existing paper engine. All the safety gates, zero real-money risk.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;ptile&quot;&gt;&lt;div class=&quot;n&quot;&gt;B&lt;/div&gt;&lt;h3&gt;Self-directed pilot&lt;/h3&gt;&lt;p&gt;Swap the adapter to SnapTrade trade scope for a tiny allowlist of users, equities + market/limit only, hard caps + kill switch.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;ptile&quot;&gt;&lt;div class=&quot;n&quot;&gt;C&lt;/div&gt;&lt;h3&gt;Broaden carefully&lt;/h3&gt;&lt;p&gt;Widen access, add order types, tighten reconciliation and monitoring. Still self-directed.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;ptile&quot;&gt;&lt;div class=&quot;n&quot;&gt;D&lt;/div&gt;&lt;h3&gt;(Only if you choose) automation&lt;/h3&gt;&lt;p&gt;Real discretionary AI trading — gated behind the registration/compliance work Decision 1 implies. A separate, deliberate program.&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;callout&quot; style=&quot;margin-top:22px&quot;&gt;
+      &lt;p&gt;&lt;strong&gt;My recommendation:&lt;/strong&gt; commit to &lt;strong&gt;self-directed&lt;/strong&gt; (Decision 1) and &lt;strong&gt;paper-parity first&lt;/strong&gt; (Decision 2). It gets people real trading through their own brokers with the smallest legal surface, reuses the entire flow you&#x27;d need anyway, and keeps the AI as an advisor rather than a discretionary manager — which is where the heavy regulation lives. You can always escalate later; you can&#x27;t easily un-route a bad automated order.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;footer&gt;
+    &lt;div class=&quot;foot-line&quot;&gt;&lt;span&gt;DSH · LIVE TRADING BLUEPRINT&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;DESIGN &amp;amp; DECISIONS&lt;/span&gt;&lt;span&gt;·&lt;/span&gt;&lt;span&gt;NOT LEGAL ADVICE — CONFIRM WITH COUNSEL BEFORE GOING LIVE&lt;/span&gt;&lt;/div&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;
+" title="Live trading blueprint"></iframe></main>
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panes = document.querySelectorAll('.pane');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    const i = t.dataset.i;
+    tabs.forEach(x => x.classList.toggle('active', x.dataset.i === i));
+    panes.forEach(p => p.classList.toggle('active', p.dataset.i === i));
+  }));
+</script>
+</body>
+</html>

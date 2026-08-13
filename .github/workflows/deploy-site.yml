@@ -1,0 +1,38 @@
+name: Deploy site to GitHub Pages
+
+# Publishes the static product site in `site/` to GitHub Pages (Pages enabled).
+# `configure-pages` with `enablement: true` turns Pages on automatically,
+# so no manual Settings step is needed. Runs on pushes to the site (from
+# main or the active dev branch) and on demand.
+on:
+  push:
+    branches: [main, claude/project-code-review-qtmeuo]
+    paths: ["site/**", ".github/workflows/deploy-site.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site/ as the Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

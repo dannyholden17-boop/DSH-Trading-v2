@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    { "id": "a1000000000000f1", "type": "group", "x": -60, "y": -80, "width": 380, "height": 620, "label": "Always-on engines", "color": "5" },
+    { "id": "1111111111111111", "type": "file", "x": 0, "y": 0,   "width": 300, "height": 70, "file": "Sentinel/Engines/Scanner.md" },
+    { "id": "2222222222222222", "type": "file", "x": 0, "y": 90,  "width": 300, "height": 70, "file": "Sentinel/Engines/Catalyst.md" },
+    { "id": "3333333333333333", "type": "file", "x": 0, "y": 180, "width": 300, "height": 70, "file": "Sentinel/Engines/Options Flow.md" },
+    { "id": "4444444444444444", "type": "file", "x": 0, "y": 270, "width": 300, "height": 70, "file": "Sentinel/Engines/Technicals.md" },
+    { "id": "5555555555555555", "type": "file", "x": 0, "y": 360, "width": 300, "height": 70, "file": "Sentinel/Engines/Risk.md", "color": "1" },
+    { "id": "6666666666666666", "type": "text", "x": 440, "y": 150, "width": 200, "height": 90, "color": "3", "text": "**Signal queue**\n\nBuffers raw signals" },
+    { "id": "7777777777777777", "type": "file", "x": 740, "y": 130, "width": 280, "height": 130, "file": "Sentinel/DSH Sentinel.md", "color": "6" },
+    { "id": "8888888888888888", "type": "file", "x": 740, "y": 360, "width": 280, "height": 80, "file": "Sentinel/Engines/Backtest.md", "color": "2" },
+    { "id": "9999999999999999", "type": "text", "x": 1120, "y": 140, "width": 220, "height": 100, "color": "4", "text": "**Findings table**\n\nDurable record (Postgres)" },
+    { "id": "aaaaaaaaaaaaaaaa", "type": "text", "x": 1440, "y": 150, "width": 200, "height": 80, "color": "5", "text": "**Realtime channel**\n\nPush to every client" },
+    { "id": "bbbbbbbbbbbbbbbb", "type": "file", "x": 1740, "y": 120, "width": 300, "height": 130, "file": "Concepts/Conversational Cockpit.md", "color": "6" },
+    { "id": "cccccccccccccccc", "type": "text", "x": 1740, "y": 360, "width": 300, "height": 90, "color": "2", "text": "**Order layer**\n\nRisk-gated routing" }
+  ],
+  "edges": [
+    { "id": "e000000000000001", "fromNode": "1111111111111111", "fromSide": "right", "toNode": "6666666666666666", "toSide": "left" },
+    { "id": "e000000000000002", "fromNode": "2222222222222222", "fromSide": "right", "toNode": "6666666666666666", "toSide": "left" },
+    { "id": "e000000000000003", "fromNode": "3333333333333333", "fromSide": "right", "toNode": "6666666666666666", "toSide": "left" },
+    { "id": "e000000000000004", "fromNode": "4444444444444444", "fromSide": "right", "toNode": "6666666666666666", "toSide": "left" },
+    { "id": "e000000000000005", "fromNode": "5555555555555555", "fromSide": "right", "toNode": "6666666666666666", "toSide": "left" },
+    { "id": "e000000000000006", "fromNode": "6666666666666666", "fromSide": "right", "toNode": "7777777777777777", "toSide": "left", "label": "score" },
+    { "id": "e000000000000007", "fromNode": "7777777777777777", "fromSide": "bottom", "toNode": "8888888888888888", "toSide": "top", "label": "validate" },
+    { "id": "e000000000000008", "fromNode": "8888888888888888", "fromSide": "left", "toNode": "7777777777777777", "toSide": "bottom", "label": "verdict" },
+    { "id": "e000000000000009", "fromNode": "7777777777777777", "fromSide": "right", "toNode": "9999999999999999", "toSide": "left" },
+    { "id": "e00000000000000a", "fromNode": "9999999999999999", "fromSide": "right", "toNode": "aaaaaaaaaaaaaaaa", "toSide": "left" },
+    { "id": "e00000000000000b", "fromNode": "aaaaaaaaaaaaaaaa", "fromSide": "right", "toNode": "bbbbbbbbbbbbbbbb", "toSide": "left" },
+    { "id": "e00000000000000c", "fromNode": "bbbbbbbbbbbbbbbb", "fromSide": "bottom", "toNode": "cccccccccccccccc", "toSide": "top", "label": "action" },
+    { "id": "e00000000000000d", "fromNode": "cccccccccccccccc", "fromSide": "left", "toNode": "5555555555555555", "toSide": "right", "color": "1", "label": "fills → Risk" }
+  ]
+}

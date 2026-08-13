@@ -1,0 +1,290 @@
+<title>DSH Live Trading — Architecture & Decisions</title>
+<style>
+  :root {
+    --ground: #F6F4EF;
+    --surface: #FFFFFF;
+    --surface-2: #EFEBE2;
+    --border: #DcD5C7;
+    --border-strong: #C7BFAD;
+    --text: #1A1D22;
+    --muted: #5E6470;
+    --faint: #8A8F9A;
+    --accent: #C2701C;
+    --up: #2E9E4B;
+    --down: #CC3B3B;
+    --warn: #B8842A;
+    --shadow: 0 1px 2px rgba(26,29,34,.06), 0 8px 24px rgba(26,29,34,.06);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #0C0E12; --surface: #14171D; --surface-2: #1B1F27;
+      --border: #272C36; --border-strong: #39414F; --text: #E6E9EF;
+      --muted: #9AA3B2; --faint: #6B7382; --accent: #E8913C;
+      --up: #46C46A; --down: #EF5350; --warn: #E0B24A;
+      --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0C0E12; --surface: #14171D; --surface-2: #1B1F27;
+    --border: #272C36; --border-strong: #39414F; --text: #E6E9EF;
+    --muted: #9AA3B2; --faint: #6B7382; --accent: #E8913C;
+    --up: #46C46A; --down: #EF5350; --warn: #E0B24A;
+    --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--sans); line-height: 1.6; font-size: 16px; letter-spacing: -0.003em; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 24px; max-width: 1000px; margin: 0 auto; font-family: var(--mono); font-size: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: .02em; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--down); box-shadow: 0 0 0 3px color-mix(in srgb, var(--down) 22%, transparent); }
+  .topbar .meta { color: var(--faint); letter-spacing: .04em; }
+
+  header.hero { padding: 60px 0 34px; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin: 0 0 18px; }
+  h1 { font-family: var(--mono); font-weight: 600; font-size: clamp(28px, 5vw, 48px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; text-wrap: balance; }
+  .lede { font-size: clamp(16px, 2.1vw, 19px); color: var(--muted); max-width: 64ch; margin: 0; }
+
+  section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .sec-label { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+  .sec-label::before { content: ""; width: 22px; height: 1px; background: var(--accent); display: inline-block; }
+  h2 { font-family: var(--mono); font-size: clamp(21px, 3.2vw, 28px); font-weight: 600; letter-spacing: -.015em; margin: 0 0 22px; text-wrap: balance; }
+  p { margin: 0 0 16px; } p:last-child { margin-bottom: 0; }
+  strong { font-weight: 650; }
+  code { font-family: var(--mono); font-size: .85em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--accent); }
+
+  .callout { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 20px 22px; box-shadow: var(--shadow); }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout.crit { border-left-color: var(--down); }
+  .callout p { color: var(--muted); } .callout strong { color: var(--text); }
+
+  /* Flow */
+  .flow { display: flex; flex-direction: column; gap: 0; counter-reset: step; }
+  .step { display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 18px 0; border-top: 1px solid var(--border); position: relative; }
+  .step:first-child { border-top: none; }
+  .step .idx { font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--accent); width: 44px; height: 44px; border: 1px solid var(--border-strong); border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--surface); }
+  .step h3 { margin: 8px 0 5px; font-size: 16px; }
+  .step p { font-size: 14px; color: var(--muted); margin: 0; }
+  .step .tag { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 6px; }
+
+  /* Gate stack */
+  .gates { display: flex; flex-direction: column; gap: 10px; }
+  .gate { display: grid; grid-template-columns: 30px 1fr; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 15px 18px; }
+  .gate .lock { color: var(--down); font-family: var(--mono); font-weight: 700; }
+  .gate h3 { font-size: 15px; margin: 0 0 3px; font-family: var(--sans); }
+  .gate p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+  /* Decision cards */
+  .decisions { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .decision { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
+  .decision .q { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  .decision h3 { font-size: 17px; margin: 0 0 12px; }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; background: var(--surface-2); }
+  .opt .name { font-weight: 650; font-size: 14px; margin-bottom: 3px; }
+  .opt .note { font-size: 12.5px; color: var(--muted); }
+  .opt.rec { border-color: color-mix(in srgb, var(--up) 45%, var(--border)); background: color-mix(in srgb, var(--up) 8%, var(--surface)); }
+  .opt .flag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--up); display: inline-block; margin-top: 6px; }
+  .opt.risk .flag { color: var(--down); }
+
+  /* Component checklist */
+  .comp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .citem { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; }
+  .citem h3 { font-size: 14px; margin: 0 0 4px; font-family: var(--sans); }
+  .citem p { font-size: 12.5px; color: var(--muted); margin: 0; }
+  .citem .files { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 7px; }
+
+  ul.clean { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  ul.clean li { position: relative; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  ul.clean li::before { content: ""; position: absolute; left: 3px; top: 9px; width: 6px; height: 6px; border-radius: 1px; background: var(--warn); }
+  ul.clean li strong { color: var(--text); }
+
+  .phase-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .ptile { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 16px; box-shadow: var(--shadow); }
+  .ptile .n { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .08em; }
+  .ptile h3 { font-size: 14.5px; margin: 8px 0 6px; }
+  .ptile p { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+  footer { padding: 26px 0 60px; }
+  .foot-line { font-family: var(--mono); font-size: 12px; color: var(--faint); letter-spacing: .03em; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+  @media (max-width: 720px) { .opts, .comp, .phase-track { grid-template-columns: 1fr; } }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+</style>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><span class="dot"></span>DSH&nbsp;·&nbsp;LIVE&nbsp;TRADING</span>
+    <span class="meta">DESIGN &amp; DECISIONS · REV 2026-08-11 · NOT LEGAL ADVICE</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">The Regulated Frontier</p>
+    <h1>Turning DSH from read-only into a place people actually trade.</h1>
+    <p class="lede">Everything today is read-only or paper. Real execution is a deliberate, gated build — not a flag flip. This lays out the flow, the safety stack, what has to be built, the compliance questions, and the decisions only you can make.</p>
+  </header>
+
+  <section>
+    <p class="sec-label">Where you are today</p>
+    <h2>One string is all that separates the app from live orders — and that's the problem.</h2>
+    <div class="callout crit">
+      <p>SnapTrade is linked as <code>connectionType: "read"</code> (<code>snaptrade.server.ts:127</code>). Positions and balances flow <em>in</em>; nothing goes <em>out</em>. The "Managed," "AI Funds," and "Day Trader" engines execute against database rows at the last quote — <strong>no broker, no real capital</strong>. That's a safe, honest starting point. But it means "go live" is often imagined as flipping <code>read</code> → <code>trade</code>, and it is emphatically not: that flag with no gates around it is how people lose money and you inherit liability. The rest of this document is the scaffolding that has to exist <em>before</em> that flag ever changes.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">The execution flow</p>
+    <h2>What a single live order actually has to do.</h2>
+    <div class="flow">
+      <div class="step"><div class="idx">1</div><div><h3>Order ticket</h3><p>User specifies symbol, side, quantity (or notional), order type (market / limit), and time-in-force. Client-side validation only — nothing is trusted yet.</p><div class="tag">new UI · none exists today</div></div></div>
+      <div class="step"><div class="idx">2</div><div><h3>Pre-trade checks (server)</h3><p>Re-validate everything server-side: market hours, buying power vs. the synced balance, position limits, symbol tradability, PDT/day-trade count, and per-user risk caps. Reject before touching the broker.</p><div class="tag">new server layer</div></div></div>
+      <div class="step"><div class="idx">3</div><div><h3>Impact preview</h3><p>Call SnapTrade <code>POST /trade/impact</code> to get estimated price, fees, and buying-power effect. Show the user a review screen with the real numbers. Nothing is placed yet.</p><div class="tag">SnapTrade trade API</div></div></div>
+      <div class="step"><div class="idx">4</div><div><h3>Explicit confirm → place</h3><p>User confirms the previewed order. Server places it (<code>POST /trade/{tradeId}</code>) with an idempotency key so a double-tap or retry can't duplicate the order.</p><div class="tag">idempotent · audited</div></div></div>
+      <div class="step"><div class="idx">5</div><div><h3>Status &amp; fills</h3><p>Poll or webhook order status until filled / partially filled / rejected / cancelled. Persist every state transition. Surface it live in the UI; allow cancel of working orders.</p><div class="tag">reconciliation</div></div></div>
+      <div class="step"><div class="idx">6</div><div><h3>Reconcile</h3><p>Replace the current "fill at last quote" assumption with the broker's <em>actual</em> fill price and fees. Update positions, cash, and the audit log from truth, not estimate.</p><div class="tag">truth over estimate</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">The safety stack</p>
+    <h2>Layers between "tap" and "real money leaves."</h2>
+    <div class="gates">
+      <div class="gate"><span class="lock">01</span><div><h3>Feature flag + per-user opt-in</h3><p>Live trading off by default, globally and per user. A user must explicitly enable it and re-consent SnapTrade with trade scope — separate from the read-only link they have now.</p></div></div>
+      <div class="gate"><span class="lock">02</span><div><h3>Server-side authority</h3><p>Every order validated and placed server-side under the user's own auth. The client never talks to the broker directly and can never be the source of truth for buying power or limits.</p></div></div>
+      <div class="gate"><span class="lock">03</span><div><h3>Explicit review + confirm</h3><p>No order places without the user seeing the impact preview and confirming. No "one-tap trade" at launch.</p></div></div>
+      <div class="gate"><span class="lock">04</span><div><h3>Risk limits &amp; kill switch</h3><p>Per-order and per-day notional caps, max position size, and a global kill switch that halts all order routing instantly if something looks wrong.</p></div></div>
+      <div class="gate"><span class="lock">05</span><div><h3>Idempotency &amp; audit trail</h3><p>Every order carries an idempotency key; every state change is logged immutably (who, what, when, which key). This is both a safety and a compliance requirement.</p></div></div>
+      <div class="gate"><span class="lock">06</span><div><h3>Hard separation of paper vs live</h3><p>Paper and live accounts never share a code path that could cross wires. A live order is visually and structurally unmistakable from a simulated one.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">Compliance landscape</p>
+    <h2>The honest flags — read before writing any execution code.</h2>
+    <div class="callout warn" style="margin-bottom:18px">
+      <p>I'm not a lawyer and this isn't legal advice. But the shape of the regulatory questions is predictable, and <strong>which ones apply depends almost entirely on the first decision below</strong> — whether users place their own orders, or the app/AI places orders for them.</p>
+    </div>
+    <ul class="clean">
+      <li><strong>Self-directed vs. discretionary.</strong> If each user places their own orders through their own linked broker, you're a software front-end over a regulated broker (SnapTrade + the executing broker carry most of the burden). If the <em>app or an AI</em> decides and places trades on someone's behalf, that's discretionary asset management — likely <strong>RIA</strong> and/or <strong>broker-dealer</strong> territory, with registration, suitability, and fiduciary duties.</li>
+      <li><strong>AI-driven allocation raises the bar.</strong> The "Managed" and "AI Funds" engines currently pick trades with an LLM. Pointing those at real money is the single biggest compliance escalation in the whole project — suitability, best-execution, and advice-giving all attach.</li>
+      <li><strong>Disclosures &amp; agreements.</strong> Risk disclosures, terms of service, and clear "this is not investment advice" labeling — especially anywhere AI output sits next to a trade button.</li>
+      <li><strong>Pattern Day Trader &amp; margin rules.</strong> If day-trading features touch real accounts, PDT ($25k equity) and margin rules must be enforced or surfaced.</li>
+      <li><strong>Data &amp; credential handling.</strong> Trade-scoped broker credentials are far more sensitive than read tokens. (Already flagged: the SnapTrade <code>user_secret</code> should be server-only — fixed in the multi-user PR.)</li>
+      <li><strong>Record-keeping.</strong> Order audit trails and communications may need retention regardless of registration status.</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="sec-label">Decisions only you can make</p>
+    <h2>Four forks that determine everything downstream.</h2>
+    <div class="decisions">
+
+      <div class="decision">
+        <p class="q">Decision 1 — the big one</p>
+        <h3>Who places the order?</h3>
+        <div class="opts">
+          <div class="opt rec">
+            <div class="name">User places their own</div>
+            <div class="note">Self-directed. App shows research + a ticket; the human decides and confirms every trade through their own broker link.</div>
+            <span class="flag">Lower regulatory burden</span>
+          </div>
+          <div class="opt risk">
+            <div class="name">App / AI places for them</div>
+            <div class="note">Discretionary / automated. The managed &amp; AI-fund engines route real orders. Powerful, but this is RIA/BD territory.</div>
+            <span class="flag">Registration likely required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="decision">
+        <p class="q">Decision 2 — rollout</p>
+        <h3>How cautiously do we go live?</h3>
+        <div class="opts">
+          <div class="opt rec">
+            <div class="name">Paper-parity first</div>
+            <div class="note">Build the full ticket → preview → confirm → status flow against the <em>paper</em> engine, prove it end to end, then swap the execution adapter to SnapTrade for a small pilot.</div>
+            <span class="flag">Recommended</span>
+          </div>
+          <div class="opt risk">
+            <div class="name">Straight to live</div>
+            <div class="note">Wire SnapTrade execution directly. Faster, but every bug is a real-money bug on day one.</div>
+            <span class="flag">High blast radius</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="decision">
+        <p class="q">Decision 3 — scope at launch</p>
+        <h3>What can users actually do v1?</h3>
+        <div class="opts">
+          <div class="opt rec">
+            <div class="name">Equities, market + limit</div>
+            <div class="note">Whole-share equity orders, market and limit, day / GTC. Covers most use, smallest surface.</div>
+            <span class="flag">Smallest safe surface</span>
+          </div>
+          <div class="opt">
+            <div class="name">+ Options / fractional / more</div>
+            <div class="note">Options, fractional shares, advanced order types. Each adds real complexity and rules — defer past v1.</div>
+            <span class="flag">Later phase</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="decision">
+        <p class="q">Decision 4 — the AI engines</p>
+        <h3>Do "Managed" &amp; "AI Funds" ever trade real money?</h3>
+        <div class="opts">
+          <div class="opt rec">
+            <div class="name">Stay paper / advisory</div>
+            <div class="note">Keep them as simulation and idea-generation; a human still places any real trade. Sidesteps the heaviest regulation.</div>
+            <span class="flag">Simplest</span>
+          </div>
+          <div class="opt risk">
+            <div class="name">Real discretionary</div>
+            <div class="note">Let them execute. Requires the Decision-1 "app places" path and everything that comes with it.</div>
+            <span class="flag">Heaviest compliance</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">What gets built</p>
+    <h2>Components, mapped to the codebase.</h2>
+    <div class="comp">
+      <div class="citem"><h3>Execution adapter</h3><p>Impact-preview, place, status, and cancel against SnapTrade's trade API, behind an interface so paper and live share one shape.</p><div class="files">snaptrade.server.ts (extend)</div></div>
+      <div class="citem"><h3>Order server functions</h3><p>Authenticated preview / place / cancel with server-side validation + idempotency keys.</p><div class="files">new: orders.functions.ts / .server.ts</div></div>
+      <div class="citem"><h3>Order ticket UI</h3><p>Ticket, impact-review screen, working-orders list, cancel, live status.</p><div class="files">new terminal components</div></div>
+      <div class="citem"><h3>Risk &amp; limits engine</h3><p>Per-order/day caps, position limits, PDT check, global kill switch.</p><div class="files">new: risk.server.ts</div></div>
+      <div class="citem"><h3>Reconciliation</h3><p>Replace last-quote fills with real broker fills across positions, cash, and trades.</p><div class="files">managed.server.ts · ai-fund.server.ts</div></div>
+      <div class="citem"><h3>Audit &amp; consent</h3><p>Immutable order log, trade-scope opt-in, disclosures at the point of action.</p><div class="files">new migrations + UI</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-label">Recommended path</p>
+    <h2>If it were mine, this is the sequence.</h2>
+    <div class="phase-track">
+      <div class="ptile"><div class="n">A</div><h3>Full flow on paper</h3><p>Ticket → preview → confirm → status → reconcile, wired to the existing paper engine. All the safety gates, zero real-money risk.</p></div>
+      <div class="ptile"><div class="n">B</div><h3>Self-directed pilot</h3><p>Swap the adapter to SnapTrade trade scope for a tiny allowlist of users, equities + market/limit only, hard caps + kill switch.</p></div>
+      <div class="ptile"><div class="n">C</div><h3>Broaden carefully</h3><p>Widen access, add order types, tighten reconciliation and monitoring. Still self-directed.</p></div>
+      <div class="ptile"><div class="n">D</div><h3>(Only if you choose) automation</h3><p>Real discretionary AI trading — gated behind the registration/compliance work Decision 1 implies. A separate, deliberate program.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px">
+      <p><strong>My recommendation:</strong> commit to <strong>self-directed</strong> (Decision 1) and <strong>paper-parity first</strong> (Decision 2). It gets people real trading through their own brokers with the smallest legal surface, reuses the entire flow you'd need anyway, and keeps the AI as an advisor rather than a discretionary manager — which is where the heavy regulation lives. You can always escalate later; you can't easily un-route a bad automated order.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-line"><span>DSH · LIVE TRADING BLUEPRINT</span><span>·</span><span>DESIGN &amp; DECISIONS</span><span>·</span><span>NOT LEGAL ADVICE — CONFIRM WITH COUNSEL BEFORE GOING LIVE</span></div>
+  </footer>
+</div>
