@@ -188,7 +188,7 @@
         </div>
       </div>
       <div class="db-actions">
-        <a class="btn btn-primary btn-sm" href="./desktop.html">Open web terminal</a>
+        <a class="btn btn-primary btn-sm" href="./terminal.html">Open web terminal</a>
         <a class="btn btn-ghost btn-sm" href="./app.html">Phone app</a>
         <a class="btn btn-ghost btn-sm" data-signout href="./index.html">Sign out</a>
       </div>
@@ -582,7 +582,7 @@ document.addEventListener("DOMContentLoaded", function(){
           '<div class="db-rec-spark"><canvas id="' + cid + '" aria-label="Illustrative price trace for ' + s.t + '"></canvas></div>' +
           '<div class="db-rec-foot">' +
             '<button class="btn btn-ghost btn-sm" type="button" data-add="' + s.t + '" data-up="' + (long ? "1" : "0") + '" data-mv="' + s.mv + '">Add to watchlist</button>' +
-            '<a class="btn btn-primary btn-sm" href="./desktop.html">Trade</a>' +
+            '<a class="btn btn-primary btn-sm" href="./terminal.html?symbol=' + s.t + '">Trade</a>' +
           '</div>' +
         '</article>';
     }).join("");

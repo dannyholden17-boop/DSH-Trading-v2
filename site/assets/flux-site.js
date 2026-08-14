@@ -211,6 +211,54 @@
   };
   window.FLUXAuth=F.Auth;
 
+  /* ---- prices + paper-trading book (client-side, simulated) ---- */
+  F.PRICES={NVDA:184.20,AMD:172.40,TSLA:248.90,AAPL:226.50,MSFT:428.10,SMCI:41.80,
+    COIN:251.30,PLTR:38.90,AMZN:201.40,META:612.30,GOOGL:178.60,NFLX:705.20,AVGO:172.90,
+    SPY:559.10,QQQ:486.40,MU:104.80,ARM:138.40,INTC:23.60,MARA:18.40,SOFI:9.80,
+    DELL:118.30,CRM:332.10,ORCL:188.70,UBER:74.20};
+  F.priceOf=function(t){
+    t=(t||"").toUpperCase();var b=F.PRICES[t];if(!b)return null;
+    var min=Math.floor(Date.now()/60000),r=F.seed(t+"|"+min),f=((r%2000)/2000-0.5)*0.014;
+    return +(b*(1+f)).toFixed(2);
+  };
+  F.Book={
+    KEY:"flux_book",
+    get:function(){
+      var b=null;try{b=JSON.parse(localStorage.getItem(this.KEY))}catch(e){}
+      if(!b||b.v!==1){b={v:1,cash:100000,start:100000,positions:{},orders:[]};this.save(b);}
+      return b;
+    },
+    save:function(b){try{localStorage.setItem(this.KEY,JSON.stringify(b))}catch(e){}},
+    reset:function(){var b={v:1,cash:100000,start:100000,positions:{},orders:[]};this.save(b);return b;},
+    place:function(o){
+      var b=this.get(),t=(o.ticker||"").toUpperCase(),qty=Math.floor(+o.qty||0);
+      var px=(o.type==="limit"&&+o.limit)?+(+o.limit).toFixed(2):F.priceOf(t);
+      if(!t||px==null)return{ok:false,msg:"Unknown symbol."};
+      if(qty<1)return{ok:false,msg:"Enter a share quantity."};
+      var cost=+(qty*px).toFixed(2),pos=b.positions[t]||{qty:0,avg:0};
+      if(o.side==="buy"){
+        if(cost>b.cash+0.001)return{ok:false,msg:"Not enough buying power ($"+b.cash.toFixed(2)+")."};
+        var nq=pos.qty+qty;pos.avg=+(((pos.qty*pos.avg)+cost)/nq).toFixed(4);pos.qty=nq;b.cash=+(b.cash-cost).toFixed(2);
+      }else{
+        if(qty>pos.qty)return{ok:false,msg:"You only hold "+pos.qty+" "+t+"."};
+        pos.qty-=qty;b.cash=+(b.cash+cost).toFixed(2);if(pos.qty===0)pos.avg=0;
+      }
+      if(pos.qty>0)b.positions[t]=pos;else delete b.positions[t];
+      var ord={id:b.orders.length+1,ts:Date.now(),side:o.side,ticker:t,qty:qty,price:px,type:o.type||"market",status:"filled"};
+      b.orders.unshift(ord);if(b.orders.length>60)b.orders.length=60;this.save(b);
+      return{ok:true,msg:(o.side==="buy"?"Bought ":"Sold ")+qty+" "+t+" @ $"+px.toFixed(2),order:ord,book:b};
+    },
+    positionsList:function(){
+      var b=this.get(),out=[];
+      for(var t in b.positions){var p=b.positions[t],px=F.priceOf(t)||p.avg;
+        out.push({ticker:t,qty:p.qty,avg:p.avg,price:px,mkt:+(p.qty*px).toFixed(2),
+          pl:+((px-p.avg)*p.qty).toFixed(2),plpct:p.avg?+(((px-p.avg)/p.avg)*100).toFixed(2):0});}
+      return out.sort(function(a,c){return c.mkt-a.mkt});
+    },
+    equity:function(){var b=this.get(),v=b.cash;for(var t in b.positions)v+=b.positions[t].qty*(F.priceOf(t)||b.positions[t].avg);return +v.toFixed(2);}
+  };
+  window.FLUXBook=F.Book;
+
   F.initAuth=function(){
     var u=F.Auth.get(),cta=$(".nav-cta");
     if(cta){

@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trade — Flux</title>
+<meta name="description" content="The Flux paper-trading terminal: pick a symbol, read the chart and AI signal, and place simulated market or limit orders that persist. Paper trading with virtual money and simulated prices — not investment advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ============================================================
+     page-only LAYOUT: terminal.html (tm- prefixed)
+     Shared design-system classes/tokens are reused, never redefined.
+     ============================================================ */
+
+  .tm-shell{max-width:1320px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,30px)}
+
+  /* ---- top strip ---- */
+  .tm-top{display:flex;align-items:center;gap:16px 22px;flex-wrap:wrap;padding:15px 20px}
+  .tm-sym{min-width:0;display:flex;align-items:center;gap:13px}
+  .tm-sym-av{width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
+    font-weight:700;font-size:12.5px;border:1px solid var(--line);
+    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.16),rgba(139,92,246,.1))}
+  .tm-sym-id{min-width:0}
+  .tm-sym-id .tk{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;letter-spacing:.02em}
+  .tm-sym-id .co{font-size:.8rem;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:22ch}
+  .tm-price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .tm-price .big{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;
+    font-size:clamp(1.5rem,1.2rem + 1.6vw,2.05rem);letter-spacing:-.02em;border-radius:8px;padding:1px 6px;margin-left:-6px}
+  .tm-price .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
+  .tm-chips{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;align-items:center}
+  .tm-chip{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:8px 12px;min-width:0}
+  .tm-chip .k{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .tm-chip .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem;margin-top:3px}
+  @keyframes tmFlashUp{from{background:color-mix(in srgb,var(--emerald) 26%,transparent)}to{background:transparent}}
+  @keyframes tmFlashDn{from{background:color-mix(in srgb,var(--crimson) 26%,transparent)}to{background:transparent}}
+  .tm-fu{animation:tmFlashUp .7s ease-out}
+  .tm-fd{animation:tmFlashDn .7s ease-out}
+
+  /* ---- app grid ---- */
+  .tm-grid{display:grid;gap:16px;align-items:start;margin-top:16px;
+    grid-template-columns:248px minmax(0,1fr) 344px;
+    grid-template-areas:"watch chart ticket"}
+  @media(max-width:1120px){
+    .tm-grid{grid-template-columns:minmax(0,1fr) 330px;
+      grid-template-areas:"chart ticket" "watch ticket"}
+  }
+  @media(max-width:780px){
+    .tm-grid{grid-template-columns:1fr;grid-template-areas:"chart" "ticket" "watch"}
+  }
+  .tm-watch{grid-area:watch}
+  .tm-chartpane{grid-area:chart}
+  .tm-rightcol{grid-area:ticket;display:flex;flex-direction:column;gap:16px;min-width:0}
+
+  .tm-pane{padding:16px}
+  .tm-phd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .tm-phd h3{font-size:1rem}
+  .tm-cap{font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+
+  /* ---- watchlist ---- */
+  .tm-search{width:100%;background:var(--well);border:1px solid var(--line);border-radius:10px;color:var(--text);
+    font-family:var(--f-sans);font-size:.86rem;padding:9px 12px;margin-bottom:10px}
+  .tm-search::placeholder{color:var(--text-faint)}
+  .tm-search:focus{outline:1px solid rgba(0,242,255,.5);border-color:rgba(0,242,255,.45)}
+  .tm-wl{display:flex;flex-direction:column;max-height:560px;overflow-y:auto;margin-inline:-4px;padding-inline:4px}
+  .tm-wl-row{display:flex;align-items:center;gap:10px;padding:9px 8px;border-top:1px solid var(--line-2);
+    cursor:pointer;border-radius:9px}
+  .tm-wl-row:first-child{border-top:0}
+  .tm-wl-row:hover{background:rgba(0,242,255,.05)}
+  .tm-wl-row:focus-visible{outline:1px solid var(--cyan);outline-offset:-1px}
+  .tm-wl-row.on{background:rgba(0,242,255,.08)}
+  .tm-wl-tk{min-width:0;flex:1}
+  .tm-wl-tk b{font-family:var(--f-mono);font-weight:700;font-size:.86rem}
+  .tm-wl-tk span{display:block;font-size:.68rem;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tm-wl-px{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;flex:none}
+  .tm-wl-px .l{font-weight:700;font-size:.82rem}
+  .tm-wl-px .c{font-size:.7rem;font-weight:700;margin-top:2px}
+  .tm-wl-empty{color:var(--text-faint);font-size:.82rem;text-align:center;padding:16px 2px}
+
+  /* ---- chart ---- */
+  .tm-tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tm-tab{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+    padding:6px 12px;border-radius:100px;cursor:pointer;color:var(--text-dim);border:1px solid var(--line);background:var(--well)}
+  .tm-tab:hover{color:var(--text)}
+  .tm-tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.08)}
+  .tm-chart{width:100%;height:300px;display:block;border:1px solid var(--line-2);border-radius:12px;background:var(--well)}
+  @media(max-width:520px){.tm-chart{height:230px}}
+
+  .tm-ai{margin-top:14px;border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:14px}
+  .tm-ai-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .tm-ai-eng{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--text-dim);background:var(--glass)}
+  .tm-ai-th{font-size:.86rem;color:var(--text-dim);line-height:1.55}
+  .tm-ai-conf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:12px;font-family:var(--f-mono)}
+  .tm-ai-conf .n{font-weight:700;font-size:1.02rem;line-height:1}
+  .tm-ai-conf .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .tm-cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:8px}
+  .tm-cbar i{display:block;height:100%}
+
+  /* ---- ticket ---- */
+  .tm-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .tm-seg button{font-family:var(--f-mono);font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;
+    padding:11px;border-radius:10px;cursor:pointer;border:1px solid var(--line);background:var(--well);color:var(--text-dim)}
+  .tm-seg .tm-buy[aria-pressed="true"]{border-color:rgba(16,185,129,.55);background:rgba(16,185,129,.12);color:var(--emerald)}
+  .tm-seg .tm-sell[aria-pressed="true"]{border-color:rgba(239,68,68,.55);background:rgba(239,68,68,.12);color:var(--crimson)}
+  .tm-otype{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .tm-otype button{font-family:var(--f-mono);font-weight:600;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:9px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:var(--well);color:var(--text-dim)}
+  .tm-otype button[aria-pressed="true"]{color:var(--cyan);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.08)}
+  .tm-field{margin-bottom:12px}
+  .tm-lab{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+    margin-bottom:6px;display:block}
+  .tm-inwrap{display:flex;align-items:stretch;gap:8px}
+  .tm-in{flex:1;min-width:0;background:var(--well);border:1px solid var(--line);border-radius:10px;color:var(--text);
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1rem;font-weight:700;padding:11px 12px}
+  .tm-in:focus{outline:1px solid rgba(0,242,255,.5);border-color:rgba(0,242,255,.45)}
+  .tm-step{width:44px;flex:none;border:1px solid var(--line);border-radius:10px;background:var(--well);color:var(--cyan);
+    font-size:1.2rem;font-weight:700;cursor:pointer;font-family:var(--f-mono);line-height:1}
+  .tm-step:hover{border-color:rgba(0,242,255,.45)}
+  .tm-hide{display:none}
+  .tm-est{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:.82rem;
+    padding:8px 0;border-top:1px solid var(--line-2)}
+  .tm-est .k{color:var(--text-faint)}
+  .tm-est .v{font-weight:700;font-variant-numeric:tabular-nums}
+  .tm-place{width:100%;margin-top:10px;padding:14px;border-radius:12px;border:1px solid transparent;font-weight:700;
+    font-size:15px;cursor:pointer;font-family:var(--f-sans);letter-spacing:.01em}
+  .tm-place.tm-side-buy{background:linear-gradient(120deg,#10b981,#34d399);color:#04231a;
+    box-shadow:0 10px 30px -12px rgba(16,185,129,.6)}
+  .tm-place.tm-side-sell{background:linear-gradient(120deg,#ef4444,#f87171);color:#fff;
+    box-shadow:0 10px 30px -12px rgba(239,68,68,.6)}
+  @keyframes tmPulse{0%{transform:scale(1)}45%{transform:scale(.965)}100%{transform:scale(1)}}
+  .tm-pulse{animation:tmPulse .4s ease}
+  .tm-banner{margin-top:12px;border-radius:10px;padding:10px 12px;font-size:.85rem;font-weight:600;display:none}
+  .tm-banner.show{display:block}
+  .tm-banner.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:#6ee7b7}
+  .tm-banner.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+
+  /* ---- tables (positions + blotter) ---- */
+  .tm-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.tm-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.tm-pos{min-width:360px}
+  table.tm-bl{min-width:520px}
+  table.tm-tbl th{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+    font-weight:600;text-align:right;padding:0 8px 10px;white-space:nowrap}
+  table.tm-tbl th:first-child,table.tm-tbl td:first-child{text-align:left;padding-left:2px}
+  table.tm-tbl th:last-child,table.tm-tbl td:last-child{padding-right:2px}
+  table.tm-tbl td{text-align:right;padding:9px 8px;border-top:1px solid var(--line-2);white-space:nowrap;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  table.tm-tbl td b{font-weight:700;letter-spacing:.02em}
+  .tm-empty{color:var(--text-faint);font-size:.84rem;padding:16px 2px;text-align:center}
+  .tm-postot{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+  .tm-postot .q .n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem}
+  .tm-postot .q .l{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:3px}
+  .tm-reset{margin-left:auto;background:none;border:0;color:var(--text-faint);font-family:var(--f-mono);font-size:11px;
+    cursor:pointer;text-decoration:underline;padding:0}
+  .tm-reset:hover{color:var(--crimson)}
+  .tm-side-b{color:var(--emerald);font-weight:700}
+  .tm-side-s{color:var(--crimson);font-weight:700}
+  .tm-st{font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:5px;
+    background:rgba(16,185,129,.14);color:#6ee7b7}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
+      <a class="btn btn-primary btn-sm" href="./dashboard.html">Account</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="tm-shell">
+
+  <!-- ============ TOP STRIP ============ -->
+  <div class="glass sheen tm-top reveal">
+    <div class="tm-sym">
+      <div class="tm-sym-av" id="tmAv">NVD</div>
+      <div class="tm-sym-id">
+        <div class="tk" id="tmTk">NVDA</div>
+        <div class="co" id="tmCo">NVIDIA</div>
+      </div>
+    </div>
+    <div class="tm-price">
+      <span class="big mono" id="tmBig">—</span>
+      <span class="chg mono" id="tmChg">—</span>
+    </div>
+    <div class="tm-chips">
+      <span class="pill live">Paper · simulated</span>
+      <div class="tm-chip"><div class="k">Equity</div><div class="v" id="tmEqChip">—</div></div>
+      <div class="tm-chip"><div class="k">Cash</div><div class="v" id="tmCashChip">—</div></div>
+      <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
+    </div>
+  </div>
+
+  <!-- ============ APP GRID ============ -->
+  <div class="tm-grid">
+
+    <!-- LEFT: watchlist -->
+    <section class="glass tm-pane tm-watch reveal" aria-label="Watchlist">
+      <div class="tm-phd">
+        <h3>Symbols</h3>
+        <span class="tm-cap">simulated</span>
+      </div>
+      <input class="tm-search" id="tmSearch" type="text" inputmode="search" autocomplete="off"
+        placeholder="Search symbols…" aria-label="Search symbols">
+      <div class="tm-wl" id="tmWatch" role="listbox" aria-label="Tradable symbols"></div>
+    </section>
+
+    <!-- CENTER: chart + AI -->
+    <section class="glass tm-pane tm-chartpane reveal" aria-label="Chart">
+      <div class="tm-phd">
+        <h3 id="tmChartTitle">NVDA · chart</h3>
+        <div class="tm-tabs" id="tmTfs" role="tablist" aria-label="Timeframe">
+          <button class="tm-tab" type="button" role="tab" data-tf="1D" aria-selected="true">1D</button>
+          <button class="tm-tab" type="button" role="tab" data-tf="1W" aria-selected="false">1W</button>
+          <button class="tm-tab" type="button" role="tab" data-tf="1M" aria-selected="false">1M</button>
+          <button class="tm-tab" type="button" role="tab" data-tf="1Y" aria-selected="false">1Y</button>
+        </div>
+      </div>
+      <canvas class="tm-chart" id="tmChart" aria-label="Simulated candlestick chart for the active symbol"></canvas>
+      <div class="tm-ai" id="tmAI" aria-live="polite"></div>
+      <p class="tm-cap" style="margin-top:12px">Candles, levels and signals are simulated and illustrative — not a real quote and not advice.</p>
+    </section>
+
+    <!-- RIGHT: ticket + positions -->
+    <div class="tm-rightcol">
+
+      <section class="glass tm-pane tm-ticket reveal" aria-label="Order ticket">
+        <div class="tm-phd">
+          <h3>Order ticket</h3>
+          <span class="pill live" style="padding:5px 11px;font-size:10px">Paper</span>
+        </div>
+        <form id="tmForm" novalidate>
+          <div class="tm-seg" id="tmSideSeg" role="group" aria-label="Order side">
+            <button class="tm-buy" type="button" data-side="buy" aria-pressed="true">Buy</button>
+            <button class="tm-sell" type="button" data-side="sell" aria-pressed="false">Sell</button>
+          </div>
+          <div class="tm-otype" id="tmTypeSeg" role="group" aria-label="Order type">
+            <button type="button" data-type="market" aria-pressed="true">Market</button>
+            <button type="button" data-type="limit" aria-pressed="false">Limit</button>
+          </div>
+
+          <div class="tm-field tm-hide" id="tmLimitField">
+            <label class="tm-lab" for="tmLimit">Limit price</label>
+            <div class="tm-inwrap">
+              <input class="tm-in" id="tmLimit" type="text" inputmode="decimal" autocomplete="off" aria-label="Limit price">
+            </div>
+          </div>
+
+          <div class="tm-field">
+            <label class="tm-lab" for="tmQty">Quantity (shares)</label>
+            <div class="tm-inwrap">
+              <button class="tm-step" type="button" data-step="-1" aria-label="Decrease quantity">−</button>
+              <input class="tm-in" id="tmQty" type="text" inputmode="numeric" autocomplete="off" value="10" aria-label="Quantity in shares">
+              <button class="tm-step" type="button" data-step="1" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <div class="tm-est"><span class="k" id="tmEstK">Estimated cost</span><span class="v" id="tmEstV">—</span></div>
+          <div class="tm-est"><span class="k">Buying power</span><span class="v" id="tmBuyPow">—</span></div>
+          <div class="tm-est"><span class="k">Shares held</span><span class="v" id="tmHeld">—</span></div>
+
+          <button class="tm-place tm-side-buy" id="tmPlace" type="submit">Buy NVDA</button>
+          <div class="tm-banner" id="tmBanner" role="status" aria-live="polite"></div>
+        </form>
+        <p class="tm-cap" style="margin-top:12px">Simulated fill at a simulated price · virtual money · no real order is placed.</p>
+      </section>
+
+      <section class="glass tm-pane tm-positions reveal" aria-label="Positions">
+        <div class="tm-phd">
+          <h3>Positions</h3>
+          <span class="tm-cap">paper account</span>
+        </div>
+        <div class="tm-scroll">
+          <table class="tm-tbl tm-pos">
+            <thead>
+              <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">Qty</th>
+                <th scope="col">Avg</th>
+                <th scope="col">Last</th>
+                <th scope="col">Mkt val</th>
+                <th scope="col">P/L</th>
+              </tr>
+            </thead>
+            <tbody id="tmPosBody"></tbody>
+          </table>
+        </div>
+        <div class="tm-postot">
+          <div class="q"><div class="n mono" id="tmEqTot">—</div><div class="l">Equity</div></div>
+          <div class="q"><div class="n mono" id="tmCashTot">—</div><div class="l">Cash</div></div>
+          <div class="q"><div class="n mono" id="tmPlTot">—</div><div class="l">Open P/L</div></div>
+          <button class="tm-reset" type="button" id="tmReset">Reset paper account</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ============ BLOTTER ============ -->
+  <section class="glass tm-pane tm-blotter reveal" style="margin-top:16px" aria-label="Order blotter">
+    <div class="tm-phd">
+      <h3>Blotter</h3>
+      <span class="tm-cap">recent simulated fills</span>
+    </div>
+    <div class="tm-scroll">
+      <table class="tm-tbl tm-bl">
+        <thead>
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Side</th>
+            <th scope="col">Ticker</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Price</th>
+            <th scope="col">Type</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tmBlBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="disclaimer" style="margin-top:22px">Paper trading · simulated · virtual money. This terminal is a self-contained
+    simulation running in your browser: prices are generated locally, orders fill instantly at a simulated price, and your
+    paper account is stored only in this browser. Flux is not a broker-dealer, this is not connected to any brokerage, no
+    real orders are placed, and nothing here is investment advice. Trading involves risk of loss, including loss of principal.</p>
+
+</div>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. This terminal is a simulated paper-trading environment using virtual money and simulated prices; it is not connected to any brokerage and no real orders are placed. Results are hypothetical. Trading involves risk of loss, including loss of principal.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  if(!window.FLUXAuth || !FLUXAuth.guard()) return;
+
+  var F  = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s);};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var Book = window.FLUXBook;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  var PRICES = F.PRICES || {};
+  var SIGNALS = F.SIGNALS || [];
+  var SIG = {};
+  SIGNALS.forEach(function(s){ SIG[s.t] = s; });
+
+  var NAMES = {
+    NVDA:"NVIDIA", AMD:"Advanced Micro", TSLA:"Tesla", AAPL:"Apple", MSFT:"Microsoft",
+    SMCI:"Super Micro", COIN:"Coinbase", PLTR:"Palantir", AMZN:"Amazon", META:"Meta Platforms",
+    GOOGL:"Alphabet", NFLX:"Netflix", AVGO:"Broadcom", SPY:"SPDR S&P 500", QQQ:"Invesco QQQ",
+    MU:"Micron", ARM:"Arm Holdings", INTC:"Intel", MARA:"Marathon Digital", SOFI:"SoFi Technologies",
+    DELL:"Dell Technologies", CRM:"Salesforce", ORCL:"Oracle", UBER:"Uber"
+  };
+  function coName(t){ return NAMES[t] || t; }
+
+  var TICKERS = Object.keys(PRICES);
+  var ACTIVE = (SIGNALS[0] && SIGNALS[0].t && PRICES[SIGNALS[0].t]) ? SIGNALS[0].t : (PRICES.NVDA ? "NVDA" : (TICKERS[0] || "NVDA"));
+  try { var qSym = (new URLSearchParams(location.search).get("symbol") || "").toUpperCase(); if(qSym && PRICES[qSym]) ACTIVE = qSym; } catch(e){}
+  var TF = "1D";
+  var side = "buy";
+  var otype = "market";
+  var lastPrice = null;
+
+  var TF_N = {"1D":36, "1W":44, "1M":56, "1Y":76};
+
+  /* ---------- helpers ---------- */
+  function money(n){ return "$" + Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function priceOf(t){ var p = F.priceOf ? F.priceOf(t) : null; return (p==null) ? (PRICES[t]||0) : p; }
+  function chgOf(t){
+    var base = PRICES[t] || 0, px = priceOf(t), chg = px - base, pct = base ? (chg/base*100) : 0;
+    return {px:px, chg:chg, pct:pct, up:chg>=0};
+  }
+  function sigUp(t){ return SIG[t] ? !!SIG[t].u : true; }
+
+  /* ---------- element refs ---------- */
+  var avEl = $("#tmAv"), tkEl = $("#tmTk"), coEl = $("#tmCo");
+  var bigEl = $("#tmBig"), chgEl = $("#tmChg");
+  var eqChip = $("#tmEqChip"), cashChip = $("#tmCashChip");
+  var chartTitle = $("#tmChartTitle"), chartCv = $("#tmChart"), aiEl = $("#tmAI");
+  var watchEl = $("#tmWatch"), searchEl = $("#tmSearch");
+  var form = $("#tmForm"), qtyEl = $("#tmQty"), limitEl = $("#tmLimit"), limitField = $("#tmLimitField");
+  var estK = $("#tmEstK"), estV = $("#tmEstV"), buyPow = $("#tmBuyPow"), heldEl = $("#tmHeld");
+  var placeBtn = $("#tmPlace"), banner = $("#tmBanner");
+  var posBody = $("#tmPosBody"), eqTot = $("#tmEqTot"), cashTot = $("#tmCashTot"), plTot = $("#tmPlTot");
+  var blBody = $("#tmBlBody"), resetBtn = $("#tmReset");
+
+  /* ---------- header ---------- */
+  function paintHeader(doFlash){
+    var c = chgOf(ACTIVE);
+    if(avEl) avEl.textContent = ACTIVE.slice(0,3);
+    if(tkEl) tkEl.textContent = ACTIVE;
+    if(coEl) coEl.textContent = coName(ACTIVE);
+    if(bigEl){
+      bigEl.textContent = money(c.px);
+      if(doFlash && !reduce && lastPrice != null && c.px !== lastPrice){
+        bigEl.classList.remove("tm-fu","tm-fd"); void bigEl.offsetWidth;
+        bigEl.classList.add(c.px >= lastPrice ? "tm-fu" : "tm-fd");
+      }
+    }
+    lastPrice = c.px;
+    if(chgEl){
+      chgEl.textContent = (c.up?"+":"−") + "$" + Math.abs(c.chg).toFixed(2) + " · " + (c.up?"+":"−") + Math.abs(c.pct).toFixed(2) + "%";
+      chgEl.className = "chg mono " + (c.up ? "up" : "down");
+    }
+  }
+  function paintChips(){
+    var b = Book.get();
+    if(eqChip) eqChip.textContent = money(Book.equity());
+    if(cashChip) cashChip.textContent = money(b.cash);
+  }
+
+  /* ---------- chart ---------- */
+  function drawChart(){
+    if(chartTitle) chartTitle.textContent = ACTIVE + " · " + TF + " chart";
+    if(chartCv && F.drawCandles) F.drawCandles(chartCv, ACTIVE + "|" + TF, TF_N[TF] || 44, sigUp(ACTIVE));
+  }
+
+  /* ---------- AI panel ---------- */
+  function paintAI(){
+    if(!aiEl) return;
+    var s = SIG[ACTIVE];
+    if(s){
+      var col = s.u ? EM : (s.c>=80 ? CY : CR);
+      aiEl.innerHTML =
+        '<div class="tm-ai-hd">' +
+          '<span class="pill pill-violet" style="padding:5px 11px;font-size:10px"><i></i> Flux AI</span>' +
+          '<span class="tm-ai-eng">' + s.e + ' · ' + s.lbl + '</span>' +
+        '</div>' +
+        '<p class="tm-ai-th">' + s.i + '</p>' +
+        '<div class="tm-ai-conf"><span class="l">Signal · ' + (s.u?"long":"short") + ' setup</span>' +
+          '<span class="n" style="color:' + col + '">' + s.c + '%</span></div>' +
+        '<div class="tm-cbar"><i style="width:' + s.c + '%;background:' + col + '"></i></div>';
+    }else{
+      aiEl.innerHTML =
+        '<div class="tm-ai-hd">' +
+          '<span class="pill" style="padding:5px 11px;font-size:10px"><i></i> Flux AI</span>' +
+          '<span class="tm-ai-eng">monitoring</span>' +
+        '</div>' +
+        '<p class="tm-ai-th">No active signal on <b>' + ACTIVE + '</b> — the engines are monitoring it. This is a research note, not advice.</p>';
+    }
+  }
+
+  /* ---------- watchlist ---------- */
+  function buildWatch(){
+    if(!watchEl) return;
+    watchEl.innerHTML = TICKERS.map(function(t){
+      return '<div class="tm-wl-row" role="option" tabindex="0" data-tk="' + t + '" aria-selected="false">' +
+        '<div class="tm-wl-tk"><b>' + t + '</b><span>' + coName(t) + '</span></div>' +
+        '<div class="tm-wl-px"><div class="l" data-px>—</div><div class="c" data-c>—</div></div>' +
+      '</div>';
+    }).join("");
+    paintWatch();
+  }
+  function paintWatch(){
+    if(!watchEl) return;
+    $$(".tm-wl-row", watchEl).forEach(function(row){
+      var t = row.getAttribute("data-tk"), c = chgOf(t);
+      var on = (t === ACTIVE);
+      row.classList.toggle("on", on);
+      row.setAttribute("aria-selected", on ? "true" : "false");
+      var pxEl = row.querySelector("[data-px]"), cEl = row.querySelector("[data-c]");
+      if(pxEl) pxEl.textContent = money(c.px);
+      if(cEl){ cEl.textContent = (c.up?"+":"−") + Math.abs(c.pct).toFixed(2) + "%"; cEl.className = "c " + (c.up?"up":"down"); }
+    });
+  }
+  function filterWatch(q){
+    q = (q||"").trim().toUpperCase();
+    var any = false;
+    $$(".tm-wl-row", watchEl).forEach(function(row){
+      var t = row.getAttribute("data-tk"), nm = coName(t).toUpperCase();
+      var show = !q || t.indexOf(q) > -1 || nm.indexOf(q) > -1;
+      row.style.display = show ? "" : "none";
+      if(show) any = true;
+    });
+    var old = $(".tm-wl-empty", watchEl);
+    if(!any && !old){
+      var d = document.createElement("div"); d.className = "tm-wl-empty"; d.textContent = "No symbols match.";
+      watchEl.appendChild(d);
+    }else if(any && old){ old.remove(); }
+  }
+
+  /* ---------- ticket ---------- */
+  function qtyVal(){ var n = parseInt(qtyEl && qtyEl.value, 10); return isNaN(n) ? 0 : n; }
+  function ticketPrice(){
+    if(otype === "limit"){
+      var l = parseFloat(limitEl && limitEl.value);
+      if(!isNaN(l) && l > 0) return l;
+    }
+    return priceOf(ACTIVE);
+  }
+  function paintTicket(){
+    var b = Book.get();
+    var q = qtyVal(), px = ticketPrice(), cost = q * px;
+    if(estK) estK.textContent = (side === "buy") ? "Estimated cost" : "Estimated proceeds";
+    if(estV) estV.textContent = money(cost);
+    if(buyPow) buyPow.textContent = money(b.cash);
+    var held = (b.positions[ACTIVE] && b.positions[ACTIVE].qty) || 0;
+    if(heldEl) heldEl.textContent = held + " sh";
+    if(placeBtn){
+      placeBtn.textContent = (side === "buy" ? "Buy " : "Sell ") + ACTIVE;
+      placeBtn.className = "tm-place " + (side === "buy" ? "tm-side-buy" : "tm-side-sell");
+    }
+  }
+  function syncLimitField(){
+    if(!limitField) return;
+    limitField.classList.toggle("tm-hide", otype !== "limit");
+    if(otype === "limit" && limitEl && !limitEl.value){ limitEl.value = priceOf(ACTIVE).toFixed(2); }
+  }
+  function showBanner(ok, msg){
+    if(!banner) return;
+    banner.textContent = msg;
+    banner.className = "tm-banner show " + (ok ? "ok" : "err");
+  }
+
+  /* ---------- positions ---------- */
+  function paintPositions(){
+    if(!posBody) return;
+    var list = Book.positionsList(), b = Book.get();
+    if(!list.length){
+      posBody.innerHTML = '<tr><td colspan="6" class="tm-empty">No open positions — place a paper trade to start your book.</td></tr>';
+    }else{
+      posBody.innerHTML = list.map(function(p){
+        var cls = p.pl >= 0 ? "up" : "down";
+        return '<tr>' +
+          '<td><b>' + p.ticker + '</b></td>' +
+          '<td>' + p.qty + '</td>' +
+          '<td>' + p.avg.toFixed(2) + '</td>' +
+          '<td>' + p.price.toFixed(2) + '</td>' +
+          '<td>' + money(p.mkt) + '</td>' +
+          '<td class="' + cls + '">' + (p.pl>=0?"+":"−") + "$" + Math.abs(p.pl).toFixed(2) + ' · ' + (p.plpct>=0?"+":"−") + Math.abs(p.plpct).toFixed(2) + '%</td>' +
+        '</tr>';
+      }).join("");
+    }
+    var totalPl = list.reduce(function(a,p){ return a + p.pl; }, 0);
+    if(eqTot) eqTot.textContent = money(Book.equity());
+    if(cashTot) cashTot.textContent = money(b.cash);
+    if(plTot){ plTot.textContent = (totalPl>=0?"+":"−") + "$" + Math.abs(totalPl).toFixed(2); plTot.className = "n mono " + (totalPl>=0?"up":"down"); }
+  }
+
+  /* ---------- blotter ---------- */
+  function two(n){ n = String(n); return n.length < 2 ? "0"+n : n; }
+  function paintBlotter(){
+    if(!blBody) return;
+    var b = Book.get(), orders = b.orders || [];
+    if(!orders.length){
+      blBody.innerHTML = '<tr><td colspan="7" class="tm-empty">No orders yet — place your first paper trade above.</td></tr>';
+      return;
+    }
+    blBody.innerHTML = orders.map(function(o){
+      var d = new Date(o.ts), tm = two(d.getHours()) + ":" + two(d.getMinutes()) + ":" + two(d.getSeconds());
+      var sc = o.side === "buy" ? "tm-side-b" : "tm-side-s";
+      return '<tr>' +
+        '<td class="faint">' + tm + '</td>' +
+        '<td class="' + sc + '">' + o.side.toUpperCase() + '</td>' +
+        '<td><b>' + o.ticker + '</b></td>' +
+        '<td>' + o.qty + '</td>' +
+        '<td>$' + o.price.toFixed(2) + '</td>' +
+        '<td class="faint">' + o.type + '</td>' +
+        '<td><span class="tm-st">' + o.status + '</span></td>' +
+      '</tr>';
+    }).join("");
+  }
+
+  /* ---------- render orchestration ---------- */
+  function renderStatic(){ /* symbol / TF change */
+    paintHeader(false);
+    paintChips();
+    drawChart();
+    paintAI();
+    syncLimitField();
+    paintTicket();
+    paintWatch();
+  }
+  function renderAll(){ renderStatic(); paintPositions(); paintBlotter(); }
+  function liveTick(){
+    paintHeader(true);
+    paintChips();
+    paintWatch();
+    paintTicket();
+    paintPositions();
+  }
+
+  function setActive(t){
+    if(!PRICES[t] || t === ACTIVE) return;
+    ACTIVE = t;
+    lastPrice = null;
+    if(limitEl) limitEl.value = "";     /* re-prefill for new symbol on demand */
+    syncLimitField();
+    renderStatic();
+    paintPositions();
+  }
+
+  /* ---------- events ---------- */
+  if(watchEl){
+    watchEl.addEventListener("click", function(e){
+      var row = e.target.closest ? e.target.closest(".tm-wl-row") : null;
+      if(row) setActive(row.getAttribute("data-tk"));
+    });
+    watchEl.addEventListener("keydown", function(e){
+      if(e.key === "Enter" || e.key === " "){
+        var row = e.target.closest ? e.target.closest(".tm-wl-row") : null;
+        if(row){ e.preventDefault(); setActive(row.getAttribute("data-tk")); }
+      }
+    });
+  }
+  if(searchEl) searchEl.addEventListener("input", function(){ filterWatch(searchEl.value); });
+
+  var tfs = $("#tmTfs");
+  if(tfs){
+    tfs.addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest("[data-tf]") : null;
+      if(!b) return;
+      TF = b.getAttribute("data-tf");
+      $$("[data-tf]", tfs).forEach(function(o){ o.setAttribute("aria-selected", String(o === b)); });
+      drawChart();
+    });
+  }
+
+  var sideSeg = $("#tmSideSeg");
+  if(sideSeg){
+    sideSeg.addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest("[data-side]") : null;
+      if(!b) return;
+      side = b.getAttribute("data-side");
+      $$("[data-side]", sideSeg).forEach(function(o){ o.setAttribute("aria-pressed", String(o === b)); });
+      paintTicket();
+    });
+  }
+  var typeSeg = $("#tmTypeSeg");
+  if(typeSeg){
+    typeSeg.addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest("[data-type]") : null;
+      if(!b) return;
+      otype = b.getAttribute("data-type");
+      $$("[data-type]", typeSeg).forEach(function(o){ o.setAttribute("aria-pressed", String(o === b)); });
+      syncLimitField();
+      paintTicket();
+    });
+  }
+
+  if(form){
+    form.addEventListener("click", function(e){
+      var st = e.target.closest ? e.target.closest("[data-step]") : null;
+      if(!st) return;
+      var d = parseInt(st.getAttribute("data-step"), 10) || 0;
+      var n = Math.max(0, qtyVal() + d);
+      if(qtyEl) qtyEl.value = String(n);
+      paintTicket();
+    });
+    form.addEventListener("input", function(e){
+      if(e.target === qtyEl || e.target === limitEl) paintTicket();
+    });
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var q = qtyVal();
+      var order = {side:side, ticker:ACTIVE, qty:q, type:otype, limit:(otype==="limit" ? limitEl.value : undefined)};
+      var res = Book.place(order);
+      showBanner(res.ok, res.msg);
+      if(res.ok){
+        if(placeBtn && !reduce){ placeBtn.classList.remove("tm-pulse"); void placeBtn.offsetWidth; placeBtn.classList.add("tm-pulse"); }
+        paintChips(); paintTicket(); paintPositions(); paintBlotter(); paintWatch();
+      }
+    });
+  }
+
+  if(resetBtn){
+    resetBtn.addEventListener("click", function(){
+      if(window.confirm("Reset your paper account to a fresh $100,000? This clears all simulated positions and orders.")){
+        Book.reset();
+        showBanner(true, "Paper account reset to $100,000.");
+        renderAll();
+      }
+    });
+  }
+
+  /* ---------- canvas resize ---------- */
+  var rt;
+  window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(drawChart, 140); });
+
+  /* ---------- boot ---------- */
+  buildWatch();
+  renderAll();
+
+  if(!reduce){
+    setInterval(function(){ if(!document.hidden) liveTick(); }, 3000);
+  }
+
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>
