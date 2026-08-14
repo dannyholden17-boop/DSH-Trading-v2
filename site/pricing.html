@@ -1,0 +1,365 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing — Flux</title>
+<meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ---- page-specific layout only ---- */
+  .seg{display:inline-flex;gap:4px;padding:4px;border-radius:100px;border:1px solid var(--line);background:var(--well)}
+  .seg button{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+    padding:9px 18px;border-radius:100px;border:1px solid transparent;background:transparent;color:var(--text-dim);
+    cursor:pointer;transition:color .2s,background .2s,border-color .2s;white-space:nowrap}
+  .seg button:hover{color:var(--text)}
+  .seg button[aria-pressed="true"]{color:var(--cyan);background:rgba(0,242,255,.09);border-color:rgba(0,242,255,.4)}
+
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  @media(max-width:920px){.plans{grid-template-columns:1fr;max-width:440px;margin-inline:auto}}
+  .plan{display:flex;flex-direction:column;padding:28px}
+  .plan.pop{border-color:rgba(0,242,255,.5);
+    box-shadow:0 0 0 1px rgba(0,242,255,.15), 0 0 55px -20px rgba(0,242,255,.45), inset 0 1px 0 rgba(255,255,255,.06)}
+  .plan .nm{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+  .plan .amt{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:2.7rem;font-weight:700;
+    letter-spacing:-.03em;margin:14px 0 2px;line-height:1.05}
+  .plan .amt small{font-size:1rem;color:var(--text-faint);font-weight:500;letter-spacing:0}
+  .plan .bill{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);min-height:18px}
+  .plan .desc{color:var(--text-dim);font-size:.9rem;margin-top:14px;min-height:46px}
+  .plan ul{list-style:none;padding:0;margin:20px 0 26px;display:flex;flex-direction:column;gap:11px}
+  .plan li{display:flex;gap:10px;font-size:.92rem;color:var(--text-dim);line-height:1.45}
+  .plan li::before{content:"✓";color:var(--cyan);font-weight:800;flex:none}
+  .plan .btn{margin-top:auto;width:100%}
+  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#03202a;
+    font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;white-space:nowrap}
+
+  .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.cmp{width:100%;min-width:600px;border-collapse:collapse;font-size:.9rem}
+  table.cmp th,table.cmp td{padding:12px 14px;text-align:center;border-top:1px solid var(--line-2)}
+  table.cmp thead th{border-top:0;border-bottom:1px solid var(--line);padding-top:0;vertical-align:bottom}
+  table.cmp th:first-child,table.cmp td:first-child{text-align:left;width:38%;min-width:210px;color:var(--text-dim)}
+  table.cmp thead .pn{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+  table.cmp thead .pp{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);font-weight:400;display:block;margin-top:4px}
+  table.cmp tbody tr:hover{background:rgba(0,242,255,.035)}
+  table.cmp .grp td{background:var(--well);border-top:1px solid var(--line);
+    font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);
+    padding-block:9px;font-weight:700}
+  table.cmp .grp:hover td{background:var(--well)}
+  .yes{color:var(--cyan);font-weight:800}
+  .no{color:var(--text-faint)}
+  .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--text-dim)}
+  .cmp-hint{display:none}
+  @media(max-width:640px){.cmp-hint{display:block}}
+
+  .addon{padding:22px;display:flex;flex-direction:column}
+  .addon .pr{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:700;margin-top:14px}
+  .addon .pr small{font-size:.8rem;color:var(--text-faint);font-weight:500}
+  .addon p{color:var(--text-dim);font-size:.9rem;margin-top:8px}
+
+  .panel{padding:22px}
+  @media(max-width:520px){.plan,.panel{padding:20px}.plan .amt{font-size:2.3rem}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="section phero" style="padding-bottom:0">
+  <div class="wrap center reveal">
+    <span class="eyebrow c">Pricing</span>
+    <h1 class="h1" style="margin-top:18px">Start free.<br><span class="grad-text">Upgrade when it earns its keep.</span></h1>
+    <p class="lede" style="margin-inline:auto">Every plan runs all six engines and paper trades from day one.
+      No card to start, no contract, no cut of your trades — ever.</p>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:30px">
+      <div class="seg" id="cycle" role="group" aria-label="Billing cycle">
+        <button type="button" data-cycle="m" aria-pressed="true">Monthly</button>
+        <button type="button" data-cycle="y" aria-pressed="false">Annual</button>
+      </div>
+      <span class="pill pill-violet" id="saveNote"><i></i> Annual saves two months</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLANS ============ -->
+<section class="section" style="padding-top:clamp(34px,4vw,54px)">
+  <div class="wrap">
+    <div class="plans reveal">
+
+      <div class="glass plan">
+        <div class="nm">Scout</div>
+        <div class="amt" data-m="$0" data-y="$0">$0</div>
+        <div class="bill" data-bill-m="forever free" data-bill-y="forever free">forever free</div>
+        <p class="desc">See the desk work. Everything you need to judge whether Flux earns a seat.</p>
+        <ul>
+          <li>All six engines, live feed</li>
+          <li>Paper trading + full terminal</li>
+          <li>25 signals per day</li>
+          <li>1 watchlist</li>
+        </ul>
+        <a class="btn btn-ghost" href="./download.html">Start free</a>
+      </div>
+
+      <div class="glass plan pop">
+        <span class="badge">Most popular</span>
+        <div class="nm">Trader</div>
+        <div class="amt" data-m="$49" data-y="$490">$49</div>
+        <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year — $41/mo equivalent">per month, billed monthly</div>
+        <p class="desc">The full autonomous desk for an active, self-directed trader.</p>
+        <ul>
+          <li>Unlimited signals and alerts</li>
+          <li>Flux AI chat — ask the desk anything</li>
+          <li>AI agents and scheduled reports</li>
+          <li>Backtest any setup, unlimited runs</li>
+          <li>Live trading through your own broker</li>
+          <li>Phone and email alerts</li>
+        </ul>
+        <a class="btn btn-primary" href="./download.html">Start 14-day trial</a>
+      </div>
+
+      <div class="glass plan">
+        <div class="nm">Desk</div>
+        <div class="amt" data-m="$149" data-y="$1,490">$149</div>
+        <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year — $124/mo equivalent">per month, billed monthly</div>
+        <p class="desc">For power users who run size and want the desk tuned to their book.</p>
+        <ul>
+          <li>Everything in Trader</li>
+          <li>Custom engines and scans</li>
+          <li>Personalized position sizing</li>
+          <li>Priority data lanes</li>
+          <li>API access</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a class="btn btn-ghost" href="./download.html">Talk to us</a>
+      </div>
+
+    </div>
+    <p class="disclaimer center" style="margin:22px auto 0">Prices shown are illustrative for this product demo.
+      Market data displayed anywhere on this site is simulated.</p>
+  </div>
+</section>
+
+<!-- ============ COMPARISON ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:60ch;margin-inline:auto">
+      <span class="eyebrow c">Compare</span>
+      <h2 class="h2" style="margin-top:16px">Line by line.</h2>
+      <p class="lede" style="margin-inline:auto;margin-top:14px">No asterisks, no "contact sales" to find out what you get.</p>
+    </div>
+
+    <div class="glass panel reveal" style="margin-top:34px">
+      <p class="mono cmp-hint" style="font-size:.7rem;color:var(--text-faint);margin-bottom:10px">Scroll the table sideways →</p>
+      <div class="tscroll">
+        <table class="cmp">
+          <thead>
+            <tr>
+              <th scope="col"><span class="mono" style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)">Feature</span></th>
+              <th scope="col"><span class="pn">Scout</span><span class="pp" data-hd="0">$0</span></th>
+              <th scope="col"><span class="pn" style="color:var(--cyan)">Trader</span><span class="pp" data-hd="1">$49/mo</span></th>
+              <th scope="col"><span class="pn">Desk</span><span class="pp" data-hd="2">$149/mo</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="grp"><td colspan="4">Data &amp; charting</td></tr>
+            <tr><td>Live market feed</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Watchlists</td><td class="v">1</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
+            <tr><td>Chart timeframes</td><td class="v">6</td><td class="v">12</td><td class="v">12 + custom</td></tr>
+            <tr><td>Historical depth</td><td class="v">1 year</td><td class="v">10 years</td><td class="v">20 years</td></tr>
+            <tr><td>Level 2 depth</td><td class="no">—</td><td class="v">Add-on</td><td class="yes">✓</td></tr>
+
+            <tr class="grp"><td colspan="4">Trading</td></tr>
+            <tr><td>Paper trading</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Live trading via your broker</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Risk-engine order guardrails</td><td class="v">Basic</td><td class="v">Full</td><td class="v">Full + custom</td></tr>
+            <tr><td>Automations &amp; scheduled orders</td><td class="no">—</td><td class="v">10</td><td class="v">Unlimited</td></tr>
+            <tr><td>Personalized position sizing</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+
+            <tr class="grp"><td colspan="4">Intelligence</td></tr>
+            <tr><td>All six engines</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Signals per day</td><td class="v">25</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
+            <tr><td>Flux AI chat</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>AI agents &amp; scheduled reports</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Backtesting</td><td class="no">—</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
+            <tr><td>Custom engines &amp; scans</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+
+            <tr class="grp"><td colspan="4">Support &amp; access</td></tr>
+            <tr><td>Community</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Phone + email alerts</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Support</td><td class="v">Community</td><td class="v">Email</td><td class="v">Dedicated</td></tr>
+            <tr><td>API access</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ADD-ONS ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">Add-ons</span>
+      <h2 class="h2" style="margin-top:16px">Bolt on only what you use.</h2>
+      <p class="lede" style="margin-top:14px">Available on Trader and Desk. Add or drop them any month.</p>
+    </div>
+    <div class="grid g-3 reveal" style="margin-top:30px">
+      <div class="glass glass-hover addon">
+        <span class="tag">market data</span>
+        <div class="pr">$12<small> / mo</small></div>
+        <h3 class="h3" style="margin-top:10px">Level 2 data</h3>
+        <p>Full order-book depth and a live ladder on every symbol, plus imbalance alerts. Included on Desk.</p>
+      </div>
+      <div class="glass glass-hover addon">
+        <span class="tag">derivatives</span>
+        <div class="pr">$19<small> / mo</small></div>
+        <h3 class="h3" style="margin-top:10px">Options analytics</h3>
+        <p>Greeks, skew surfaces, gamma exposure and a sweep tape wired into the Options engine.</p>
+      </div>
+      <div class="glass glass-hover addon">
+        <span class="tag">developers</span>
+        <div class="pr">$29<small> / mo</small></div>
+        <h3 class="h3" style="margin-top:10px">Extra API quota</h3>
+        <p>An additional 1M calls per month on top of the Desk allowance, with a higher burst ceiling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EVERYONE GETS ============ -->
+<section class="band">
+  <div class="wrap">
+    <span><b>✓</b> Paper trading on every plan</span><span>·</span>
+    <span><b>✓</b> No card to start</span><span>·</span>
+    <span><b>✓</b> Cancel anytime, one click</span><span>·</span>
+    <span><b>✓</b> Your keys, your broker, your funds</span>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:60ch;margin-inline:auto">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2" style="margin-top:16px">The things everyone asks about billing.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:36px">
+      <details open><summary>Can I cancel anytime?</summary>
+        <p>Yes — one click in settings, no phone call and no retention maze. You keep access through the end of
+          the period you already paid for, then drop to the free Scout plan rather than losing your account.</p></details>
+      <details><summary>Do I need a broker?</summary>
+        <p>Only for live trading. Paper trading, the terminal, the engines and every signal work without one.
+          When you're ready to go live you connect your own brokerage account with your own keys — Flux never
+          takes custody of your funds and is not a broker-dealer.</p></details>
+      <details><summary>What counts as a signal?</summary>
+        <p>One scored, delivered idea from one engine — a breakout, a sweep, a catalyst, a level reclaim.
+          Refreshing a chart, running a scan, opening the terminal or asking a follow-up question does not
+          count. Scout is capped at 25 delivered signals a day; Trader and Desk are uncapped.</p></details>
+      <details><summary>Is there a student discount?</summary>
+        <p>Yes — 50% off Trader for students and full-time educators with a valid academic email address.
+          Verification takes a minute and the discount renews each year while you're still enrolled.</p></details>
+      <details><summary>What happens to my data if I cancel?</summary>
+        <p>Your watchlists, notes, paper history and backtests stay in your account on the free plan.
+          If you delete the account outright, everything is erased within 30 days and you can export it as
+          CSV and JSON first.</p></details>
+      <details><summary>Do you take a cut of my trades?</summary>
+        <p>No. No commissions, no payment for order flow, no performance fee, no percentage of profits.
+          You pay the subscription and nothing else — your broker's own fees are between you and them.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c" style="justify-content:center">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Try the whole desk for nothing.</h2>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Scout is free forever and runs all six
+        engines. Upgrade the day it pays for itself — not before.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./download.html">Get Flux — free</a>
+        <a class="btn btn-ghost btn-lg" href="./markets.html">See it on the markets</a>
+      </div>
+      <p class="disclaimer" style="margin:24px auto 0">Flux is research and automation software, not investment
+        advice. Plan pricing and all market data shown across this site are illustrative and simulated for
+        demonstration purposes.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  "use strict";
+  var F = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  var HEAD = {
+    m: ["$0", "$49/mo", "$149/mo"],
+    y: ["$0", "$490/yr", "$1,490/yr"]
+  };
+
+  function setCycle(c){
+    $$(".plan .amt").forEach(function(el){
+      el.textContent = el.dataset[c] || el.textContent;
+    });
+    $$(".plan .bill").forEach(function(el){
+      el.textContent = (c === "y" ? el.dataset.billY : el.dataset.billM) || "";
+    });
+    $$("[data-hd]").forEach(function(el){
+      el.textContent = HEAD[c][parseInt(el.dataset.hd, 10)];
+    });
+    var note = $("#saveNote");
+    if(note) note.innerHTML = '<i></i> ' + (c === "y" ? "Two months free applied" : "Annual saves two months");
+    $$("#cycle button").forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.dataset.cycle === c));
+    });
+  }
+
+  $$("#cycle button").forEach(function(b){
+    b.addEventListener("click", function(){ setCycle(b.dataset.cycle); });
+  });
+
+  setCycle("m");
+});
+</script>
+</body></html>

@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio — Flux</title>
+<meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings — read-only until you say otherwise.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ---- page-only layout: portfolio.html ---- */
+  .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  @media(max-width:960px){.pf-hero{grid-template-columns:1fr;gap:36px}}
+  .pf-hero h1{margin-top:18px}
+  .pf-hero .btn-row{margin-top:30px}
+  .pf-trust{display:flex;gap:16px;margin-top:24px;flex-wrap:wrap;color:var(--text-faint);font-size:.85rem}
+  .pf-trust span{display:inline-flex;align-items:center;gap:7px}
+  .pf-trust b{color:var(--emerald);font-weight:700}
+
+  /* hero summary card */
+  .pf-summary{padding:22px}
+  .pf-sum-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .pf-sum-head .lb{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
+  .pf-total-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .pf-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2rem,1.5rem + 2.4vw,2.9rem);
+    font-weight:750;letter-spacing:-.03em;border-radius:9px;padding:1px 6px;margin-left:-6px;width:max-content}
+  .pf-day{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.98rem;font-weight:700}
+  .pf-spark{width:100%;height:66px;display:block;margin:14px 0 2px}
+  .pf-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .pf-q{border:1px solid var(--line-2);border-radius:12px;padding:11px 12px;background:var(--well);min-width:0}
+  .pf-q .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .pf-q .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1rem;font-weight:700;margin-top:5px;letter-spacing:-.01em}
+  .pf-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--text-faint);margin-top:14px;
+    display:flex;align-items:center;gap:7px}
+  @keyframes pfglow{from{background:color-mix(in srgb,var(--cyan) 20%,transparent)}to{background:transparent}}
+  .pf-flash{animation:pfglow .7s ease-out}
+
+  /* broker marquee */
+  .pf-marquee{overflow:hidden;position:relative;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  .pf-chips{display:flex;gap:12px;width:max-content;padding:4px 2px}
+  .pf-chip{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;padding:9px 16px;border-radius:100px;
+    border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px);
+    font-family:var(--f-mono);font-size:.82rem;letter-spacing:.03em;color:var(--text-dim);font-weight:600}
+  .pf-chip::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--grad);flex:none}
+  .pf-static{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+  /* holdings table */
+  .pf-tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.pf-hold{width:100%;min-width:540px;border-collapse:collapse;font-size:.9rem}
+  table.pf-hold th{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 12px;white-space:nowrap}
+  table.pf-hold th:first-child,table.pf-hold td:first-child{text-align:left;padding-left:4px}
+  table.pf-hold th:last-child,table.pf-hold td:last-child{padding-right:4px}
+  table.pf-hold td{text-align:right;padding:12px;border-top:1px solid var(--line-2);white-space:nowrap;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .pf-tk b{font-weight:700;font-size:.94rem;letter-spacing:.03em}
+  .pf-tk span{display:block;color:var(--text-faint);font-size:.72rem;line-height:1.3;font-family:var(--f-sans)}
+  .pf-wt-bar{position:relative;display:inline-block;width:52px;height:6px;border-radius:3px;
+    background:rgba(255,255,255,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
+  .pf-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--grad)}
+
+  /* donut */
+  .pf-donut{padding:20px}
+  .pf-donut canvas{width:100%;height:230px;display:block}
+  @media(max-width:640px){.pf-donut canvas{height:200px}}
+  .pf-legend{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .pf-legend .li{display:flex;align-items:center;gap:10px;font-size:.85rem}
+  .pf-legend .dot{width:10px;height:10px;border-radius:3px;flex:none}
+  .pf-legend .nm{font-family:var(--f-mono);font-weight:700;font-size:.82rem;letter-spacing:.02em}
+  .pf-legend .pc{margin-left:auto;font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--text-dim);font-weight:700}
+
+  /* metric cards */
+  .pf-metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .pf-metric{padding:16px 18px}
+  .pf-metric .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .pf-metric .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:700;margin-top:7px;letter-spacing:-.02em}
+  .pf-metric .s{font-size:.78rem;color:var(--text-faint);margin-top:4px}
+  @media(max-width:420px){.pf-metrics{grid-template-columns:1fr}.pf-quick{grid-template-columns:1fr 1fr}}
+
+  /* portfolio brief */
+  .pf-brief{padding:20px;overflow:hidden}
+  .pf-brief .bh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .pf-brief .bh .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+  .pf-brief .bh .ts{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .pf-brief .rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:8px}
+  .pf-brief .rline b{color:var(--text);font-weight:600}
+  .pf-brief.typing .rline{opacity:0;transform:translateY(6px)}
+  .pf-brief.typing .rline.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+  .pf-brief .sigs{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+  .pf-brief .foot{margin-top:14px;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--text-faint)}
+
+  /* guardrail badge inside feat */
+  .pf-rails{margin-top:26px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="section phero">
+  <div class="wrap pf-hero">
+    <div class="reveal">
+      <span class="eyebrow">Flux Portfolio</span>
+      <h1 class="h1">Every account.<br><span class="grad-text grad-anim">One intelligent view.</span></h1>
+      <p class="lede">Connect your brokerage in seconds. Flux reads your positions, watches your risk in
+        real time, and puts an AI analyst on your actual holdings — read-only until you say otherwise.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="#connect">Connect your brokerage →</a>
+        <a class="btn btn-ghost btn-lg" href="./autopilot.html">See Autopilot</a>
+      </div>
+      <div class="pf-trust">
+        <span><b>✓</b> Read-only by default</span>
+        <span><b>✓</b> You control everything</span>
+        <span><b>✓</b> Not advice</span>
+      </div>
+    </div>
+
+    <div class="glass fx-float sheen pf-summary reveal">
+      <div class="pf-sum-head">
+        <span class="pill"><i></i> Portfolio</span>
+        <span class="lb">total value · <b class="up">sample</b></span>
+      </div>
+      <div class="pf-total-row">
+        <div class="pf-total mono" id="pfTotal">$92,180.00</div>
+        <div class="pf-day up" id="pfDay">+$1,284.00 · +1.41%</div>
+      </div>
+      <canvas class="pf-spark" id="pfSpark" aria-label="Illustrative sample equity curve"></canvas>
+      <div class="pf-quick">
+        <div class="pf-q"><div class="k">Positions</div><div class="v">5</div></div>
+        <div class="pf-q"><div class="k">Day P/L</div><div class="v up">+$1,284</div></div>
+        <div class="pf-q"><div class="k">Buying power</div><div class="v">$17,304</div></div>
+      </div>
+      <p class="pf-cap"><span class="live"></span>Sample portfolio · illustrative</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BROKER STRIP ============ -->
+<div class="band">
+  <div class="wrap" style="flex-direction:column;gap:16px">
+    <div class="pf-marquee" style="width:100%">
+      <div class="pf-chips marquee-track" id="brokerTrack"></div>
+    </div>
+    <span style="text-align:center">Connect via <b>secure aggregation</b>. Read-only unless you enable trading.</span>
+  </div>
+</div>
+
+<!-- ============ CONNECT / HOW IT WORKS ============ -->
+<section class="section" id="connect">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Connecting</span>
+      <h2 class="h2" style="margin-top:16px">Four steps. You hold every key.</h2>
+      <p class="lede" style="margin-top:16px">Connecting is read-only by default and encrypted end to end.
+        Flux never sees your broker password, never moves money, and never trades a share until you turn it
+        on and set the rules yourself.</p>
+    </div>
+
+    <div class="steps reveal" style="margin-top:44px">
+      <div class="step">
+        <span class="n">01</span>
+        <h3>Pick your broker</h3>
+        <p>Choose from major US brokerages. You're handed to your broker's own secure login — Flux never
+          touches your credentials.</p>
+      </div>
+      <div class="step">
+        <span class="n">02</span>
+        <h3>Securely authorize</h3>
+        <p>Grant <b>read-only</b> access through your broker's consent screen. The connection is encrypted,
+          and you can revoke it at any moment.</p>
+      </div>
+      <div class="step">
+        <span class="n">03</span>
+        <h3>Flux syncs positions</h3>
+        <p>Your holdings, cost basis and history sync in about thirty seconds — then stay current. Nothing
+          leaves read-only until you decide.</p>
+      </div>
+      <div class="step">
+        <span class="n">04</span>
+        <h3>Turn on insights</h3>
+        <p>Flip on AI insights on your real book — and, if you choose, opt in to Autopilot with your own
+          hard guardrails.</p>
+      </div>
+    </div>
+    <p class="disclaimer reveal" style="margin-top:22px">Connections are read-only unless you explicitly enable
+      trading. Flux is not a broker-dealer and provides no investment advice. Bank-level encryption is our
+      security intent; Flux does not custody your assets or hold your funds.</p>
+  </div>
+</section>
+
+<!-- ============ YOUR PORTFOLIO UNDERSTOOD ============ -->
+<section class="section band" style="padding-block:clamp(48px,6vw,84px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Your book</span>
+      <h2 class="h2" style="margin-top:16px">Your portfolio, understood.</h2>
+      <p class="lede" style="margin-top:14px">Positions, weight, day moves and concentration in one place —
+        the way a desk actually looks at a book, not fifteen tabs you have to reconcile yourself.</p>
+    </div>
+
+    <div class="split wide-l" style="margin-top:34px;align-items:start">
+      <div class="glass sheen pf-donut reveal" style="padding:24px">
+        <div class="pf-sum-head" style="margin-bottom:6px">
+          <h3 class="h3">Holdings</h3>
+          <span class="tag" style="margin-left:auto">sample</span>
+        </div>
+        <div class="pf-tscroll">
+          <table class="pf-hold">
+            <thead>
+              <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">Shares</th>
+                <th scope="col">Price</th>
+                <th scope="col">Mkt value</th>
+                <th scope="col">Day %</th>
+                <th scope="col">Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="pf-tk"><b>NVDA</b><span>NVIDIA</span></td>
+                <td>120</td><td>$184.20</td><td>$22,104</td>
+                <td class="up">+2.1%</td>
+                <td>29.5%<span class="pf-wt-bar"><i style="width:29.5%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="pf-tk"><b>AAPL</b><span>Apple</span></td>
+                <td>90</td><td>$228.60</td><td>$20,574</td>
+                <td class="up">+0.6%</td>
+                <td>27.5%<span class="pf-wt-bar"><i style="width:27.5%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="pf-tk"><b>MSFT</b><span>Microsoft</span></td>
+                <td>34</td><td>$429.50</td><td>$14,603</td>
+                <td class="up">+1.2%</td>
+                <td>19.5%<span class="pf-wt-bar"><i style="width:19.5%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="pf-tk"><b>AMD</b><span>Advanced Micro</span></td>
+                <td>60</td><td>$172.40</td><td>$10,344</td>
+                <td class="down">−0.8%</td>
+                <td>13.8%<span class="pf-wt-bar"><i style="width:13.8%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="pf-tk"><b>COIN</b><span>Coinbase</span></td>
+                <td>30</td><td>$241.70</td><td>$7,251</td>
+                <td class="up">+4.1%</td>
+                <td>9.7%<span class="pf-wt-bar"><i style="width:9.7%"></i></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="pf-cap" style="margin-top:16px">Sample portfolio · illustrative · figures are not a real account.</p>
+      </div>
+
+      <div class="reveal">
+        <div class="glass sheen pf-donut" id="donutCard">
+          <div class="pf-sum-head" style="margin-bottom:4px">
+            <h3 class="h3">Allocation</h3>
+            <span class="pill" style="margin-left:auto;padding:5px 11px;font-size:10px"><i></i> live</span>
+          </div>
+          <canvas id="donut" aria-label="Illustrative allocation donut across five sample holdings"></canvas>
+          <div class="pf-legend" id="donutLegend"></div>
+        </div>
+
+        <div class="pf-metrics">
+          <div class="glass feat pf-metric">
+            <div class="k">Total value</div>
+            <div class="v mono">$74,876</div>
+            <div class="s">across 5 positions</div>
+          </div>
+          <div class="glass feat pf-metric">
+            <div class="k">Day P/L</div>
+            <div class="v mono up">+$1,284</div>
+            <div class="s">+1.4% on the book</div>
+          </div>
+          <div class="glass feat pf-metric" style="grid-column:1/-1">
+            <div class="k">Diversification</div>
+            <div class="v mono">3 sectors · <span class="down">high</span> concentration</div>
+            <div class="s">Top two names are 57% of the book — Risk radar is watching.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI ON YOUR HOLDINGS ============ -->
+<section class="section" id="insights">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Intelligence</span>
+      <h2 class="h2" style="margin-top:16px">An AI analyst on your actual names.</h2>
+      <p class="lede" style="margin-top:16px">Generic research talks about the market. Flux talks about
+        <em>your</em> book — the positions you hold, the risk you're carrying and the catalysts on your
+        tickers. Probabilistic, sourced, and never a recommendation.</p>
+    </div>
+
+    <div class="grid g-3" style="margin-top:44px">
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">◎</div><h3>Risk radar</h3>
+        <p>Concentration, correlation and drawdown watch on your real positions. When two of your names move
+          as one, you hear about it before the tape does the damage.</p>
+        <div class="meta"><span>watches <b>correlation</b></span><span>engine <b>Risk</b></span></div>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">◍</div><h3>Position insights</h3>
+        <p>What the models think about each holding — forecast drift, volatility regime and wire sentiment,
+          per ticker. Estimates, not advice, with the source kept alongside.</p>
+        <div class="meta"><span>per <b>holding</b></span><span>output <b>probabilistic</b></span></div>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⇄</div><h3>Rebalance ideas</h3>
+        <p>Suggestions to trim a crowded name or fill a gap, sized against your own weights and rules —
+          <b>suggested, never automatic</b>. You decide what, if anything, to act on.</p>
+        <div class="meta"><span>action <b>your call</b></span><span>auto <b>never</b></span></div>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⊟</div><h3>Tax-lot aware</h3>
+        <p>Flux reads your lots and surfaces harvest candidates — positions where a loss could offset a gain —
+          so the idea is there when you want it, not lost in a statement.</p>
+        <div class="meta"><span>reads <b>cost basis</b></span><span>flags <b>harvest</b></span></div>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">◈</div><h3>Catalysts on your names</h3>
+        <p>Earnings, filings and events on the tickers you actually hold, tracked by the Catalyst engine with
+          the historical drift attached — so nothing on your book blindsides you.</p>
+        <div class="meta"><span>scope <b>your tickers</b></span><span>engine <b>Catalyst</b></span></div>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">✦</div><h3>Daily portfolio report</h3>
+        <p>A written brief on your book each morning — what moved, what changed and where the risk sits — on
+          the same cadence as Flux Research, delivered before the bell.</p>
+        <div class="meta"><span>cadence <b>daily</b></span><span>engine <b>Reporter</b></span></div>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top:44px;align-items:start">
+      <div class="glass sheen pf-brief reveal" id="pfBrief">
+        <div class="bh">
+          <span class="pill pill-violet"><i></i> Reporter</span>
+          <span class="ttl grad-text grad-anim">Your Portfolio Brief</span>
+          <span class="ts" id="briefTs">—</span>
+        </div>
+        <p class="rline">Your book is <b>+1.4%</b> this morning, carried by <b>NVDA</b> and <b>COIN</b>; only
+          <b>AMD</b> is red.</p>
+        <p class="rline"><b>Concentration flag:</b> NVDA and AAPL together are <b>57%</b> of the portfolio.
+          Correlation across your two semis is <b>0.79</b> — they will move together, both ways.</p>
+        <p class="rline"><b>Catalyst on your names:</b> MSFT cloud update Thursday; a gamma wall is building at
+          $430. It's a position you hold, so it's in the brief.</p>
+        <p class="rline"><b>Tax-lot note:</b> one AMD lot sits at an unrealized loss that could offset your COIN
+          gain — a harvest candidate, not a recommendation.</p>
+        <div class="sigs" id="briefSigs"></div>
+        <p class="foot">Illustrative sample · probabilistic estimates · not investment advice.</p>
+      </div>
+
+      <div class="reveal">
+        <span class="eyebrow">How to read it</span>
+        <h3 class="h3" style="margin-top:14px;font-size:1.4rem">Sourced, per-name, and honest about uncertainty.</h3>
+        <div class="flist">
+          <div class="fi"><span class="k">%</span><div><b>Probabilities, not calls</b>
+            <p>Every forecast is a probability with a confidence score — the ensemble's view, never a promise
+              or a recommendation to buy or sell.</p></div></div>
+          <div class="fi"><span class="k">§</span><div><b>Sourced to your data</b>
+            <p>Claims about your book are tied to your synced positions, lots and history — you can check the
+              number behind the sentence.</p></div></div>
+          <div class="fi"><span class="k">⊘</span><div><b>You act, or you don't</b>
+            <p>Nothing here moves a share. Insights are read-only output; execution only ever happens on your
+              explicit instruction.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUTOPILOT ON YOUR ACCOUNT ============ -->
+<section class="section band" id="autopilot" style="padding-block:clamp(48px,6vw,84px)">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="eyebrow">Opt-in trading</span>
+      <h2 class="h2" style="margin-top:16px">Autopilot, on rails you set.</h2>
+      <p class="lede" style="margin-top:16px">If — and only if — you turn it on, Flux Autopilot can execute
+        inside guardrails you define: <b>max position size</b>, a <b>daily loss limit</b>, an <b>allowed-ticker
+        list</b> and a strategy you approve. It trades within those rails, logs every action, and stops the
+        moment you hit the kill-switch.</p>
+      <p class="lede" style="margin-top:14px">Autopilot never trades your real account without your explicit
+        approval and your rules. You can pause anytime, and everything reverts to read-only.</p>
+      <div class="btn-row" style="margin-top:26px">
+        <a class="btn btn-primary" href="./autopilot.html">See how the Flux Fund trades →</a>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="grid g-2">
+        <div class="glass sheen feat">
+          <div class="ic">⚑</div><h3>Your rules</h3>
+          <p>Position caps, daily loss limit and allowed tickers — Autopilot cannot step outside them.</p>
+        </div>
+        <div class="glass sheen feat">
+          <div class="ic">⊘</div><h3>Read-only default</h3>
+          <p>Trading is off until you switch it on. No opt-in, no orders — ever.</p>
+        </div>
+        <div class="glass sheen feat">
+          <div class="ic">▤</div><h3>Full log</h3>
+          <p>Every order, fill and decision is written down and timestamped for you to review.</p>
+        </div>
+        <div class="glass sheen feat">
+          <div class="ic">◼</div><h3>Kill-switch</h3>
+          <p>One tap pauses Autopilot and returns your account to read-only immediately.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECURITY & CONSENT ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Security &amp; consent</span>
+      <h2 class="h2" style="margin-top:16px">Consent-first, by design.</h2>
+      <p class="lede" style="margin-top:16px">Access is something you grant and can take back. Flux is built so
+        the default is the safe one — and nothing happens on your account that you didn't ask for.</p>
+    </div>
+
+    <div class="grid g-3" style="margin-top:44px">
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⊘</div><h3>Read-only by default</h3>
+        <p>A new connection can see your positions and history — and nothing else. It cannot place a trade.</p>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">↺</div><h3>Revoke access anytime</h3>
+        <p>Disconnect in one tap, in Flux or at your broker. The link is yours to cut whenever you want.</p>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">🔒</div><h3>Encrypted connections</h3>
+        <p>Connections are encrypted in transit and at rest. Flux never sees or stores your broker password.</p>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⦸</div><h3>We never sell your data</h3>
+        <p>Your portfolio is yours. Flux does not sell it, and does not share it to advertise to you.</p>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">✓</div><h3>You approve every permission</h3>
+        <p>Any trading permission is a deliberate, explicit opt-in — with your rules attached before a single order.</p>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">◼</div><h3>Nothing autonomous without your rules</h3>
+        <p>Autopilot will not act until you've set its guardrails and switched it on. No rules, no trades.</p>
+      </div>
+    </div>
+    <p class="disclaimer reveal" style="margin-top:22px">Security descriptions state Flux's design intent. Flux is
+      research and automation software, not a broker-dealer, and does not custody your assets. We do not claim any
+      specific certification, endorsement or affiliation with any brokerage named on this page.</p>
+  </div>
+</section>
+
+<!-- ============ STATS BAND ============ -->
+<section class="section band" style="padding-block:clamp(44px,5vw,72px)">
+  <div class="wrap" style="display:block">
+    <div class="stats reveal">
+      <div class="stat"><div class="v"><span data-count="12" data-suffix="+">0</span></div><div class="k">Brokerages supported</div></div>
+      <div class="stat"><div class="v"><span data-count="30" data-suffix="s">0</span></div><div class="k">Typical sync time</div></div>
+      <div class="stat"><div class="v"><span data-count="1.8" data-suffix="M">0</span></div><div class="k">Data points watched daily</div></div>
+      <div class="stat"><div class="v"><span data-count="21">0</span></div><div class="k">Portfolio reports / week</div></div>
+    </div>
+    <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures above are illustrative and
+      describe the demo experience, not a guarantee of coverage, speed or output for any particular account.</p>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:62ch;margin-inline:auto">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2" style="margin-top:16px">What Flux Portfolio is — and isn't.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:40px">
+      <details open><summary>Is my connection read-only?</summary>
+        <p>Yes — read-only by default. A new brokerage connection lets Flux see your positions and history and
+          nothing more. It cannot place or cancel a trade unless you explicitly enable trading and set your rules.</p></details>
+      <details><summary>Can Flux trade for me?</summary>
+        <p>Only if you turn it on. Autopilot executes solely within guardrails you define — max position size,
+          daily loss limit and an allowed-ticker list — after you approve the strategy. It logs everything, and
+          you can pause it anytime, which returns the account to read-only.</p></details>
+      <details><summary>Which brokers work?</summary>
+        <p>Major US brokerages, connected through secure aggregation. The list shown on this page is illustrative
+          for the demo, and available brokers can change over time.</p></details>
+      <details><summary>Is my data safe?</summary>
+        <p>Connections are encrypted in transit and at rest, and Flux never sees your broker password. We do not
+          sell your portfolio data, and you can revoke access at any time from Flux or your broker.</p></details>
+      <details><summary>Is this a sample portfolio?</summary>
+        <p>Yes. Every figure shown on this page — the total value, the holdings, the allocation and the brief —
+          is a simulated sample for illustration. It is not a real account and not a record of actual holdings.</p></details>
+      <details><summary>Is this investment advice?</summary>
+        <p>No. Flux is research and automation software, not a broker-dealer and not an adviser. Insights are
+          probabilistic estimates, not recommendations, and every decision — with its outcome — is yours.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c" style="justify-content:center">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Put an AI analyst on your real portfolio.</h2>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Connect read-only in seconds, see your whole
+        book in one view, and only ever hand over more when you decide to.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="#connect">Connect your brokerage →</a>
+        <a class="btn btn-ghost btn-lg" href="./autopilot.html">Watch the Flux Fund</a>
+      </div>
+      <p class="disclaimer" style="margin:24px auto 0">Portfolio figures on this page are an illustrative sample.
+        Brokerage connections are read-only unless you explicitly enable trading, and Autopilot never trades your
+        account without your approval and your rules. Trading involves risk of loss, including loss of principal.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Portfolio figures shown are an illustrative sample. Brokerage connections are read-only unless you explicitly enable trading, and Autopilot never trades your account without your approval and your rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  "use strict";
+  var F = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var CY = F.CY || "#00f2ff", VI = F.VI || "#8b5cf6", EM = F.EM || "#10b981",
+      AM = F.AM || "#f5b544", BL = "#6ab8ff";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  /* ---------------- broker chips ---------------- */
+  var BROKERS = ["Robinhood","Fidelity","Schwab","E*TRADE","Webull","Coinbase","Interactive Brokers","Vanguard"];
+  var track = $("#brokerTrack");
+  if(track){
+    var one = BROKERS.map(function(b){ return '<span class="pf-chip">' + b + '</span>'; }).join("");
+    /* duplicate for a seamless marquee if the shared class animates it */
+    track.innerHTML = one + one;
+    if(reduce){
+      track.classList.remove("marquee-track");
+      track.className = "pf-chips pf-static";
+      track.innerHTML = one;
+    }
+  }
+
+  /* ---------------- timestamp ---------------- */
+  var ts = $("#briefTs");
+  if(ts){
+    var d = new Date(), hh = d.getHours(), ap = hh >= 12 ? "PM" : "AM";
+    var h12 = hh % 12; if(h12 === 0) h12 = 12;
+    var mm = String(d.getMinutes()); if(mm.length < 2) mm = "0" + mm;
+    ts.textContent = "generated " + h12 + ":" + mm + " " + ap;
+  }
+
+  /* ---------------- hero equity sparkline ---------------- */
+  function drawSpark(){
+    var cv = $("#pfSpark");
+    if(cv && F.drawArea) F.drawArea(cv, "portfolio", 48, true, CY);
+  }
+  drawSpark();
+
+  /* ---------------- allocation donut ---------------- */
+  var HOLD = [
+    {t:"NVDA", w:29.5, c:CY},
+    {t:"AAPL", w:27.5, c:VI},
+    {t:"MSFT", w:19.5, c:EM},
+    {t:"AMD",  w:13.8, c:AM},
+    {t:"COIN", w:9.7,  c:BL}
+  ];
+
+  var legend = $("#donutLegend");
+  if(legend){
+    legend.innerHTML = HOLD.map(function(s){
+      return '<div class="li"><span class="dot" style="background:' + s.c + '"></span>' +
+        '<span class="nm">' + s.t + '</span>' +
+        '<span class="pc">' + s.w.toFixed(1) + '%</span></div>';
+    }).join("");
+  }
+
+  function drawDonut(cv, prog){
+    if(!cv || !cv.clientWidth) return;
+    var dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    var c = cv.getContext("2d"); c.scale(dpr, dpr); c.clearRect(0, 0, w, h);
+    var cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 6, th = Math.max(16, R * 0.32);
+    var rad = R - th / 2, TAU = Math.PI * 2, start = -Math.PI / 2;
+    /* track */
+    c.beginPath(); c.arc(cx, cy, rad, 0, TAU);
+    c.strokeStyle = "rgba(255,255,255,.06)"; c.lineWidth = th; c.stroke();
+    var sweepEnd = start + TAU * prog, acc = 0, gap = 0.035;
+    HOLD.forEach(function(s){
+      var a0 = start + TAU * (acc / 100), a1 = start + TAU * ((acc + s.w) / 100);
+      acc += s.w;
+      var e = Math.min(a1, sweepEnd);
+      if(e > a0 + gap){
+        c.beginPath(); c.arc(cx, cy, rad, a0 + gap, e);
+        c.strokeStyle = s.c; c.lineWidth = th; c.lineCap = "butt"; c.stroke();
+      }
+    });
+    /* center label */
+    c.textAlign = "center";
+    c.fillStyle = "#dce1fb";
+    c.font = "700 " + Math.round(R * 0.30) + "px 'JetBrains Mono', monospace";
+    c.fillText("$74.9k", cx, cy - 1);
+    c.fillStyle = "#6b7a9c";
+    c.font = "600 " + Math.round(R * 0.13) + "px 'JetBrains Mono', monospace";
+    c.fillText("5 HOLDINGS", cx, cy + R * 0.24);
+  }
+
+  var donut = $("#donut"), donutDone = false;
+  function animateDonut(){
+    if(!donut) return;
+    if(reduce){ drawDonut(donut, 1); return; }
+    var t0 = null;
+    function step(ts2){
+      if(!t0) t0 = ts2;
+      var p = Math.min((ts2 - t0) / 1100, 1), e = 1 - Math.pow(1 - p, 3);
+      drawDonut(donut, e);
+      if(p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if(donut){
+    var card = $("#donutCard");
+    if("IntersectionObserver" in window && card){
+      var dio = new IntersectionObserver(function(es){
+        es.forEach(function(en){
+          if(en.isIntersecting && !donutDone){ donutDone = true; animateDonut(); dio.unobserve(en.target); }
+        });
+      }, {threshold:.35});
+      dio.observe(card);
+    } else {
+      donutDone = true; drawDonut(donut, 1);
+    }
+  }
+
+  /* ---------------- portfolio brief line reveal ---------------- */
+  var brief = $("#pfBrief");
+  if(brief){
+    brief.classList.add("typing");
+    var lines = $$(".rline", brief);
+    function revealLines(){
+      if(reduce){ lines.forEach(function(l){ l.classList.add("in"); }); return; }
+      lines.forEach(function(l, i){ setTimeout(function(){ l.classList.add("in"); }, 200 + i * 200); });
+    }
+    if("IntersectionObserver" in window){
+      var bio = new IntersectionObserver(function(es){
+        es.forEach(function(en){
+          if(en.isIntersecting){ revealLines(); bio.unobserve(en.target); }
+        });
+      }, {threshold:.3});
+      bio.observe(brief);
+    } else {
+      revealLines();
+    }
+  }
+
+  /* ---------------- brief signal rows (only the holdings' names) ---------------- */
+  var sigWrap = $("#briefSigs");
+  if(sigWrap && F.SIGNALS && F.sigHTML){
+    var names = {NVDA:1, AAPL:1, MSFT:1, AMD:1, COIN:1};
+    F.SIGNALS.filter(function(s){ return names[s.t]; }).slice(0, 2).forEach(function(s){
+      var box = document.createElement("div");
+      box.innerHTML = F.sigHTML(s);
+      if(box.firstChild) sigWrap.appendChild(box.firstChild);
+    });
+  }
+
+  /* ---------------- live-ticking total value ---------------- */
+  var totalEl = $("#pfTotal"), dayEl = $("#pfDay");
+  var prevClose = 90896.00, total = 92180.00;
+  function fmt(n){ return "$" + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function paintTotal(flash){
+    if(!totalEl) return;
+    totalEl.textContent = fmt(total);
+    var chg = total - prevClose, pct = chg / prevClose * 100, up = chg >= 0;
+    if(dayEl){
+      dayEl.textContent = (up ? "+" : "−") + "$" + Math.abs(chg).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) +
+        " · " + (up ? "+" : "−") + Math.abs(pct).toFixed(2) + "%";
+      dayEl.className = "pf-day " + (up ? "up" : "down");
+    }
+    if(flash && !reduce){
+      totalEl.classList.remove("pf-flash"); void totalEl.offsetWidth; totalEl.classList.add("pf-flash");
+    }
+  }
+  paintTotal(false);
+  if(!reduce){
+    setInterval(function(){
+      if(document.hidden) return;
+      total = Math.max(prevClose * 0.9, total + (Math.random() - 0.46) * 42);
+      paintTotal(true);
+    }, 1700);
+  }
+
+  /* ---------------- debounced resize redraw ---------------- */
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){
+      drawSpark();
+      if(donut) drawDonut(donut, 1);
+    }, 140);
+  });
+
+  /* pick up any reveal targets created above */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>
