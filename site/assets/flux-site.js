@@ -190,7 +190,46 @@
     }
   };
 
+  /* ---- Auth (client-side demo session) ---- */
+  F.Auth={
+    KEY:"flux_user",
+    get:function(){try{return JSON.parse(localStorage.getItem(this.KEY))}catch(e){return null}},
+    signIn:function(name,email){
+      var u={name:(name||((email||"Trader").split("@")[0]||"Trader")),email:(email||""),since:Date.now()};
+      try{localStorage.setItem(this.KEY,JSON.stringify(u))}catch(e){}
+      return u;
+    },
+    signOut:function(){try{localStorage.removeItem(this.KEY)}catch(e){}},
+    guard:function(){
+      if(!this.get()){
+        var here=(location.pathname.split("/").pop()||"dashboard.html");
+        location.replace("./signin.html?next="+encodeURIComponent(here));
+        return false;
+      }
+      return true;
+    }
+  };
+  window.FLUXAuth=F.Auth;
+
+  F.initAuth=function(){
+    var u=F.Auth.get(),cta=$(".nav-cta");
+    if(cta){
+      if(u){
+        var nm=(u.name||"Trader");
+        cta.innerHTML='<a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>'+
+          '<a class="btn btn-primary btn-sm" href="./dashboard.html" title="'+nm.replace(/"/g,"")+'">'+nm.slice(0,14)+'</a>';
+      }else{
+        cta.innerHTML='<a class="btn btn-ghost btn-sm" href="./signin.html">Sign in</a>'+
+          '<a class="btn btn-primary btn-sm" href="./dashboard.html">Launch app</a>';
+      }
+    }
+    $$("[data-auth-name]").forEach(function(e){e.textContent=u?(u.name||"Trader"):""});
+    $$("[data-auth-only]").forEach(function(e){if(!u)e.style.display="none"});
+    $$("[data-guest-only]").forEach(function(e){if(u)e.style.display="none"});
+    $$("[data-signout]").forEach(function(e){e.addEventListener("click",function(ev){ev.preventDefault();F.Auth.signOut();location.href="./index.html";});});
+  };
+
   document.addEventListener("DOMContentLoaded",function(){
-    F.initNav();F.initReveal();F.initCounters();F.initFX();
+    F.initNav();F.initReveal();F.initCounters();F.initFX();F.initAuth();
   });
 })();
