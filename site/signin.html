@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sign in — Flux</title>
-<meta name="description" content="Sign in to Flux to unlock your AI trading desk — the daily brief, ranked trade recommendations and your portfolio watched in real time. Client-side demo sign-in only.">
+<meta name="description" content="Sign in to Flux to unlock your AI trading desk — the daily brief, ranked trade recommendations, and your paper portfolio synced across devices. Trading is simulated; no real brokerage is connected.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-supa.js" defer></script>
 <script src="./assets/flux-site.js" defer></script>
 <style>
   /* ---- page-only layout: signin.html ---- */
@@ -225,8 +226,8 @@
           </div>
         </form>
 
-        <p class="si-note">Demo sign-in — no password is checked and nothing is sent anywhere;
-          your session is stored only in this browser.</p>
+        <p class="si-note">Secure sign-in. Your account and paper portfolio are stored to your
+          Flux account and sync across devices. Trading is simulated — no real brokerage is connected.</p>
       </div>
 
     </div>
@@ -273,10 +274,20 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---- looks-like-an-email check (minimal, demo) ---- */
   function looksEmail(v){ return /^\S+@\S+\.\S+$/.test((v || "").trim()); }
 
-  /* ---- complete the demo sign-in and leave ---- */
-  function finish(name, email){
-    if(Auth && Auth.signIn) Auth.signIn(name, email);
-    location.href = safeNext();
+  /* ---- real auth via Supabase (window.FluxSupa) ---- */
+  var Supa = window.FluxSupa;
+  function go(){ location.href = safeNext(); }
+  function showErr(el, text){ if(!el) return; el.textContent = text; el.style.color = ""; el.classList.add("show"); }
+  function showOk(el, text){ if(!el) return; el.textContent = text; el.style.color = "var(--emerald)"; el.classList.add("show"); }
+  function clearErr(el){ if(el) el.classList.remove("show"); }
+  function needPass(v){ return (v||"").length >= 6; }
+  function withReady(fn, el){
+    if(!Supa){ showErr(el, "Auth service unavailable — please refresh."); return false; }
+    Supa.ready.then(function(ok){
+      if(!ok || !Supa.client){ showErr(el, "Couldn't reach the sign-in service. Check your connection and retry."); return; }
+      fn();
+    });
+    return true;
   }
 
   /* ---- tabs ---- */
@@ -299,10 +310,19 @@ document.addEventListener("DOMContentLoaded", function(){
   if(formSignin){
     formSignin.addEventListener("submit", function(ev){
       ev.preventDefault();
-      var email = $("#siEmail").value;
-      if(!looksEmail(email)){ if(errSignin) errSignin.classList.add("show"); return; }
-      if(errSignin) errSignin.classList.remove("show");
-      finish("", email);
+      var email = $("#siEmail").value.trim(), pw = $("#siPass").value;
+      if(!looksEmail(email)){ showErr(errSignin, "Enter a valid email address."); return; }
+      if(!needPass(pw)){ showErr(errSignin, "Enter your password (at least 6 characters)."); return; }
+      clearErr(errSignin);
+      var btn = formSignin.querySelector('button[type="submit"]'), label = btn ? btn.textContent : "";
+      if(btn){ btn.disabled = true; btn.textContent = "Signing in…"; }
+      function done(){ if(btn){ btn.disabled = false; btn.textContent = label; } }
+      if(!withReady(function(){
+        Supa.signInEmail(email, pw).then(function(res){
+          if(res.error){ showErr(errSignin, res.error.message || "Sign-in failed."); done(); }
+          else { go(); }
+        }).catch(function(){ showErr(errSignin, "Sign-in failed. Try again."); done(); });
+      }, errSignin)) done();
     });
   }
 
@@ -311,20 +331,38 @@ document.addEventListener("DOMContentLoaded", function(){
   if(formSignup){
     formSignup.addEventListener("submit", function(ev){
       ev.preventDefault();
-      var name = $("#suName").value, email = $("#suEmail").value;
-      if(!looksEmail(email)){ if(errSignup) errSignup.classList.add("show"); return; }
-      if(errSignup) errSignup.classList.remove("show");
-      finish(name, email);
+      var name = $("#suName").value.trim(), email = $("#suEmail").value.trim(), pw = $("#suPass").value;
+      if(!looksEmail(email)){ showErr(errSignup, "Enter a valid email address."); return; }
+      if(!needPass(pw)){ showErr(errSignup, "Choose a password (at least 6 characters)."); return; }
+      clearErr(errSignup);
+      var btn = formSignup.querySelector('button[type="submit"]'), label = btn ? btn.textContent : "";
+      if(btn){ btn.disabled = true; btn.textContent = "Creating…"; }
+      function done(){ if(btn){ btn.disabled = false; btn.textContent = label; } }
+      if(!withReady(function(){
+        Supa.signUpEmail(email, pw, name).then(function(res){
+          if(res.error){ showErr(errSignup, res.error.message || "Sign-up failed."); done(); }
+          else if(res.data && res.data.session){ go(); }
+          else { showOk(errSignup, "Account created — check your email to confirm, then sign in."); done(); }
+        }).catch(function(){ showErr(errSignup, "Sign-up failed. Try again."); done(); });
+      }, errSignup)) done();
     });
   }
 
-  /* ---- social buttons (also demo sign-in) ---- */
+  /* ---- social buttons: Google via Supabase OAuth ---- */
   $$("[data-social]").forEach(function(btn){
     btn.addEventListener("click", function(){
-      var signupVisible = !formSignup.classList.contains("si-hidden");
-      var name  = signupVisible ? $("#suName").value : "";
-      var email = signupVisible ? $("#suEmail").value : $("#siEmail").value;
-      finish(name, email);
+      var prov = btn.getAttribute("data-social");
+      var errEl = formSignup.classList.contains("si-hidden") ? errSignin : errSignup;
+      if(prov === "google"){
+        clearErr(errEl);
+        withReady(function(){
+          Supa.signInGoogle().then(function(res){
+            if(res && res.error) showErr(errEl, res.error.message || "Google sign-in isn't enabled yet.");
+          }).catch(function(){ showErr(errEl, "Google sign-in failed."); });
+        }, errEl);
+      } else {
+        showErr(errEl, "Apple sign-in isn't enabled yet — use Google or email.");
+      }
     });
   });
 

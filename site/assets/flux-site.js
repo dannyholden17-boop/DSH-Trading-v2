@@ -193,14 +193,24 @@
   /* ---- Auth (client-side demo session) ---- */
   F.Auth={
     KEY:"flux_user",
-    get:function(){try{return JSON.parse(localStorage.getItem(this.KEY))}catch(e){return null}},
-    signIn:function(name,email){
+    supa:function(){return !!window.FluxSupa;},
+    get:function(){
+      if(this.supa())return window.__fluxUser||null;            // real Supabase session
+      try{return JSON.parse(localStorage.getItem(this.KEY))}catch(e){return null} // legacy demo fallback
+    },
+    signIn:function(name,email){ // legacy demo only (no Supabase)
       var u={name:(name||((email||"Trader").split("@")[0]||"Trader")),email:(email||""),since:Date.now()};
       try{localStorage.setItem(this.KEY,JSON.stringify(u))}catch(e){}
       return u;
     },
-    signOut:function(){try{localStorage.removeItem(this.KEY)}catch(e){}},
+    signOut:function(){
+      try{localStorage.removeItem(this.KEY)}catch(e){}
+      if(this.supa()&&window.FluxSupa.signOut){try{return window.FluxSupa.signOut()}catch(e){}}
+    },
+    // true when this load is an OAuth / magic-link redirect landing (SDK still parsing the URL)
+    landing:function(){return /access_token|[?&]code=/.test(location.hash+location.search);},
     guard:function(){
+      if(this.landing())return true;                            // let the SDK finish establishing the session
       if(!this.get()){
         var here=(location.pathname.split("/").pop()||"dashboard.html");
         location.replace("./signin.html?next="+encodeURIComponent(here));
@@ -307,7 +317,11 @@
     $$("[data-auth-name]").forEach(function(e){e.textContent=u?(u.name||"Trader"):""});
     $$("[data-auth-only]").forEach(function(e){if(!u)e.style.display="none"});
     $$("[data-guest-only]").forEach(function(e){if(u)e.style.display="none"});
-    $$("[data-signout]").forEach(function(e){e.addEventListener("click",function(ev){ev.preventDefault();F.Auth.signOut();location.href="./index.html";});});
+    $$("[data-signout]").forEach(function(e){e.addEventListener("click",function(ev){ev.preventDefault();
+      var p=F.Auth.signOut();
+      if(p&&p.then){p.then(function(){location.href="./index.html";});setTimeout(function(){location.href="./index.html";},800);}
+      else location.href="./index.html";
+    });});
   };
 
   document.addEventListener("DOMContentLoaded",function(){
