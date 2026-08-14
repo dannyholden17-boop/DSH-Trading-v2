@@ -156,6 +156,7 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
+      <a href="./terminal.html">Trade</a>
       <a href="./ai.html">Flux AI</a>
       <a href="./autopilot.html">Autopilot</a>
       <a href="./portfolio.html">Portfolio</a>
@@ -242,7 +243,7 @@
             <thead>
               <tr>
                 <th>Time</th><th>Ticker</th><th>Side</th>
-                <th class="r">Qty</th><th class="r">Price</th><th class="r">P / L</th>
+                <th class="r">Qty</th><th class="r">Price</th><th>Reason</th>
               </tr>
             </thead>
             <tbody id="logBody"></tbody>
@@ -693,6 +694,282 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* pick up any cards injected above */
   if(F.initReveal) F.initReveal();
+});
+</script>
+
+<!-- ============================================================
+     REAL FUND OVERRIDE — swaps the illustrative/simulated demo above
+     for the live server-side autopilot paper fund (FluxSupa.autopilot()).
+     Additive: runs on DOMContentLoaded, takes over the existing DOM only
+     when real data arrives; otherwise leaves the demo as a fallback.
+     ============================================================ -->
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var FS = window.FluxSupa;
+  if(!FS || !FS.ready || typeof FS.autopilot !== "function") return; // offline → keep demo
+
+  var F = window.FLUX || {};
+  var CY = F.CY || "#00f2ff", EM = F.EM || "#10b981", CR = F.CR || "#ef4444";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function $(s, r){ return (r || document).querySelector(s); }
+  function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+
+  var DATA = null;          // latest autopilot payload
+  var curveCv = null;       // reclaimed hero equity canvas (id stripped)
+  var sparkCv = null;       // reclaimed sparkline canvas (id stripped)
+  var tookOver = false;
+
+  /* ---- helpers ---- */
+  function money2(n){ return "$" + Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function money0(n){ return "$" + Math.round(Number(n)).toLocaleString(); }
+  function priceOf(t){ var p = F.priceOf ? F.priceOf(t) : null; return (p == null ? null : Number(p)); }
+  function num(x){ var v = Number(x); return isFinite(v) ? v : 0; }
+
+  function positions(){ return (DATA && DATA.positions) || []; }
+  function marketValue(){
+    var v = 0;
+    positions().forEach(function(p){
+      var px = priceOf(p.ticker); if(px == null) px = num(p.avg);
+      v += num(p.qty) * px;
+    });
+    return v;
+  }
+  function equityNow(){
+    if(!DATA || !DATA.fund) return null;
+    return num(DATA.fund.cash) + marketValue();
+  }
+  function fmtTime(ts){
+    var d = new Date(ts); if(isNaN(d.getTime())) return "--:--";
+    function p2(n){ n = String(n); return n.length < 2 ? "0" + n : n; }
+    return p2(d.getHours()) + ":" + p2(d.getMinutes());
+  }
+  function relTime(ts){
+    var d = new Date(ts); if(isNaN(d.getTime())) return "";
+    var s = Math.max(0, (Date.now() - d.getTime()) / 1000);
+    if(s < 90) return "just now";
+    if(s < 3600) return Math.round(s / 60) + "m ago";
+    if(s < 86400) return Math.round(s / 3600) + "h ago";
+    return Math.round(s / 86400) + "d ago";
+  }
+
+  /* replace a node with a fresh clone so the demo's captured references
+     (and its setInterval writes) land on the now-detached original. */
+  function reclaim(node){
+    if(!node || !node.parentNode) return node;
+    var c = node.cloneNode(false);           // empty clone; we refill it
+    node.parentNode.replaceChild(c, node);
+    return c;
+  }
+
+  /* ---- real area chart on a canvas from an equity series ---- */
+  function drawArea(cv, vals, color){
+    if(!cv || !cv.clientWidth || !vals || vals.length < 2) return;
+    var dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    var c = cv.getContext("2d"); c.scale(dpr, dpr); c.clearRect(0, 0, w, h);
+    var n = vals.length, mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+    var rg = (mx - mn) || 1, pad = 8;
+    function X(i){ return pad + i * (w - 2 * pad) / (n - 1); }
+    function Y(v){ return pad + (h - 2 * pad) * (1 - (v - mn) / rg); }
+    var g = c.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, color + "3a"); g.addColorStop(1, color + "00");
+    c.beginPath(); c.moveTo(X(0), Y(vals[0]));
+    for(var i = 1; i < n; i++) c.lineTo(X(i), Y(vals[i]));
+    c.lineTo(X(n - 1), h); c.lineTo(X(0), h); c.closePath();
+    c.fillStyle = g; c.fill();
+    c.beginPath(); c.moveTo(X(0), Y(vals[0]));
+    for(i = 1; i < n; i++) c.lineTo(X(i), Y(vals[i]));
+    c.strokeStyle = color; c.lineWidth = 2.2; c.lineJoin = "round";
+    c.shadowColor = color; c.shadowBlur = 10; c.stroke(); c.shadowBlur = 0;
+    c.beginPath(); c.arc(X(n - 1), Y(vals[n - 1]), 3, 0, 7); c.fillStyle = color; c.fill();
+  }
+  function series(){
+    var eq = (DATA && DATA.equity) || [];
+    var vals = eq.map(function(r){ return num(r.equity); }).filter(function(v){ return v > 0; });
+    if(vals.length < 2){
+      var start = DATA && DATA.fund ? num(DATA.fund.start) : 0;
+      var now = equityNow();
+      if(start && now != null) vals = [start, now];
+    }
+    return vals;
+  }
+  function drawCurves(){
+    var vals = series();
+    if(curveCv) drawArea(curveCv, vals, CY);
+    if(sparkCv){
+      var up = vals.length < 2 || vals[vals.length - 1] >= vals[0];
+      drawArea(sparkCv, vals, up ? EM : CR);
+    }
+  }
+
+  /* ---- equity + P/L into hero and metric cards ---- */
+  var heroEq, heroChg, mEq, mDay, mCash, mExp, mPos, qsPos, qsTrades;
+  function renderEquity(){
+    var eq = equityNow(); if(eq == null) return;
+    var start = num(DATA.fund.start) || eq;
+    var pl = eq - start, pct = start ? (pl / start) * 100 : 0, up = pl >= 0;
+    var sign = up ? "+" : "−";
+    if(heroEq) heroEq.textContent = money2(eq);
+    if(heroChg){ heroChg.textContent = sign + Math.abs(pct).toFixed(2) + "%"; heroChg.className = "chg " + (up ? "up" : "down"); }
+    if(mEq) mEq.textContent = money0(eq);
+    if(mDay){ mDay.textContent = sign + "$" + Math.abs(Math.round(pl)).toLocaleString(); mDay.className = "v mono " + (up ? "up" : "down"); }
+    if(mCash) mCash.textContent = money0(DATA.fund.cash);
+    if(mExp) mExp.textContent = (eq ? Math.round((marketValue() / eq) * 100) : 0) + "%";
+    if(mPos) mPos.textContent = String(positions().length);
+    if(qsPos) qsPos.textContent = String(positions().length);
+  }
+
+  /* ---- live trade log from real orders ---- */
+  var logBody;
+  function renderLog(){
+    if(!logBody) return;
+    logBody.innerHTML = "";
+    var orders = ((DATA && DATA.orders) || []).slice(0, 10);
+    orders.forEach(function(o){
+      var buy = String(o.side || "").toLowerCase() === "buy";
+      var tr = document.createElement("tr");
+      function td(txt, cls){ var e = document.createElement("td"); if(cls) e.className = cls; e.textContent = txt; return e; }
+      tr.appendChild(td(fmtTime(o.ts)));
+      var tk = document.createElement("td"); var b = document.createElement("b"); b.textContent = o.ticker || ""; tk.appendChild(b); tr.appendChild(tk);
+      var sd = document.createElement("td");
+      var sp = document.createElement("span"); sp.className = "ap-side " + (buy ? "buy" : "sell"); sp.textContent = buy ? "BUY" : "SELL";
+      sd.appendChild(sp); tr.appendChild(sd);
+      tr.appendChild(td(String(Math.round(num(o.qty))), "r"));
+      tr.appendChild(td(money2(o.price).replace("$", ""), "r"));
+      var reason = String(o.reason || "");
+      var rc = td(reason.length > 42 ? reason.slice(0, 41) + "…" : reason);
+      if(reason) rc.title = reason;
+      tr.appendChild(rc);
+      logBody.appendChild(tr);
+    });
+  }
+
+  /* ---- reports: render newest real report into the report card ---- */
+  function renderReport(){
+    var rep = (DATA && DATA.reports && DATA.reports[0]) || null;
+    if(!rep) return;
+    var card = $("#report"); if(!card) return;
+    card.classList.add("typing");
+
+    var pill = $(".ap-rep-head .pill", card);
+    if(pill){
+      var kind = String(rep.kind || "").toLowerCase();
+      var label = kind.indexOf("dai") > -1 ? "Daily wrap" : (kind.indexOf("hour") > -1 ? "Hourly pulse" : (rep.kind || "Report"));
+      pill.textContent = "";
+      var ic = document.createElement("i"); pill.appendChild(ic);
+      pill.appendChild(document.createTextNode(" " + label));
+    }
+    var ts = $("#repTs", card);
+    if(ts) ts.textContent = "filed " + relTime(rep.ts);
+
+    var body = $(".ap-rep-body", card);
+    if(body){
+      body = reclaim(body); body.className = "ap-rep-body";
+      var lines = [];
+      if(rep.title) lines.push({ b:true, t:String(rep.title) });
+      var raw = String(rep.body || "").trim();
+      var chunks = raw.split(/\n+/).filter(function(x){ return x.trim(); });
+      if(chunks.length < 2){
+        var sents = raw.match(/[^.!?]+[.!?]+/g);
+        if(sents && sents.length > 1) chunks = sents;
+      }
+      chunks.slice(0, 5).forEach(function(x){ lines.push({ b:false, t:x.trim() }); });
+
+      var els = [];
+      lines.forEach(function(ln){
+        var p = document.createElement("p"); p.className = "ap-rline";
+        if(ln.b){ var bb = document.createElement("b"); bb.textContent = ln.t; p.appendChild(bb); }
+        else { p.appendChild(document.createTextNode(ln.t)); }
+        body.appendChild(p); els.push(p);
+      });
+
+      var stat = $("#repStat", card);
+      if(stat){ stat = reclaim(stat); stat.id = "repStat"; }
+      if(reduce){
+        els.forEach(function(p){ p.classList.add("in"); });
+        if(stat) stat.textContent = "live report · simulated";
+      } else {
+        els.forEach(function(p, i){ setTimeout(function(){ p.classList.add("in"); }, 200 + i * 200); });
+        if(stat) setTimeout(function(){ stat.textContent = "live report · simulated"; }, 260 + els.length * 200);
+      }
+    }
+  }
+
+  /* ---- one-time takeover of the demo DOM ---- */
+  function takeover(){
+    if(tookOver) return; tookOver = true;
+
+    heroEq  = reclaim($("#heroEq"));  if(heroEq){ heroEq.id = "heroEq"; heroEq.className = "val mono"; }
+    heroChg = reclaim($("#heroChg")); if(heroChg) heroChg.id = "heroChg";
+    mEq     = reclaim($("#mEq"));     if(mEq){ mEq.id = "mEq"; mEq.className = "v mono"; }
+    mDay    = reclaim($("#mDay"));    if(mDay) mDay.id = "mDay";
+    logBody = reclaim($("#logBody")); if(logBody) logBody.id = "logBody";
+
+    /* labelled metric cards without ids (Cash / Exposure / Open positions) */
+    $$(".ap-metric").forEach(function(card){
+      var l = $(".l", card), v = $(".v", card); if(!l || !v) return;
+      var key = l.textContent.toLowerCase();
+      if(key.indexOf("cash") > -1) mCash = v;
+      else if(key.indexOf("exposure") > -1) mExp = v;
+      else if(key.indexOf("open position") > -1) mPos = v;
+    });
+    /* hero quick-stats (Open positions / Trades today) */
+    var qs = $$("#fundCard .ap-qs");
+    if(qs[0]) qsPos = $(".n", qs[0]);
+    if(qs[1]) qsTrades = $(".n", qs[1]);
+
+    /* strip ids off the canvases so the demo's resize redraw can't find them */
+    var hc = document.getElementById("heroCurve"); if(hc){ hc.removeAttribute("id"); curveCv = hc; }
+    var sp = document.getElementById("eqA");       if(sp){ sp.removeAttribute("id"); sparkCv = sp; }
+
+    /* honesty caption near the fund */
+    var fund = $("#fundCard");
+    if(fund && !$(".ap-cap-live", fund)){
+      var anchor = $(".ap-cap", fund);
+      var cap = document.createElement("div");
+      cap.className = "ap-cap ap-cap-live";
+      cap.textContent = "Live paper fund · updates automatically · simulated $10,000, virtual money.";
+      if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(cap, anchor.nextSibling);
+      else fund.appendChild(cap);
+    }
+  }
+
+  function renderAll(){
+    if(!DATA || !DATA.fund) return;
+    if(qsTrades){
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var n = ((DATA.orders) || []).filter(function(o){ var d = new Date(o.ts); return !isNaN(d.getTime()) && d.getTime() >= today.getTime(); }).length;
+      qsTrades.textContent = String(n);
+    }
+    renderEquity();
+    renderLog();
+    renderReport();
+    drawCurves();
+  }
+
+  /* resize: redraw the real curves (debounced longer than the demo's 140ms) */
+  var rzT;
+  window.addEventListener("resize", function(){
+    if(!tookOver) return;
+    clearTimeout(rzT);
+    rzT = setTimeout(drawCurves, 200);
+  });
+
+  function pull(){
+    return FS.autopilot().then(function(d){
+      if(!d || !d.fund) return false;     // no live fund → leave demo as fallback
+      DATA = d;
+      takeover();
+      renderAll();
+      return true;
+    }).catch(function(){ return false; });
+  }
+
+  FS.ready.then(function(){
+    pull();
+    setInterval(function(){ if(DATA) renderEquity(); if(DATA) drawCurves(); }, 15000); // live equity refresh
+    setInterval(pull, 60000);                                                          // refresh log/reports/positions
+  }).catch(function(){});
 });
 </script>
 </body>
