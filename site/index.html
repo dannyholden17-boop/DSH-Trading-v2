@@ -62,7 +62,7 @@
   .marquee-track .mi b{color:var(--text)} .marquee-track .mi .up{color:var(--emerald)} .marquee-track .mi .dn{color:var(--crimson)}
 
   /* ---- Mac product-tour ---- */
-  .mac{position:relative;justify-self:center;width:min(560px,94vw)}
+  .mac{position:relative;justify-self:center;width:min(660px,97vw)}
   .macwin{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);
     background:rgba(6,11,26,.92);box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.03),0 0 60px -20px rgba(0,242,255,.25)}
   .macbar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line-2);
@@ -72,7 +72,7 @@
   .macurl{margin-left:12px;flex:1;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);
     background:rgba(2,6,20,.6);border:1px solid var(--line-2);border-radius:7px;padding:5px 12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .macurl b{color:var(--cyan)}
-  .macbody{display:grid;grid-template-columns:132px 1fr;height:330px}
+  .macbody{display:grid;grid-template-columns:150px 1fr;height:384px}
   @media(max-width:540px){.macbody{grid-template-columns:96px 1fr;height:300px}}
   .macside{border-right:1px solid var(--line-2);padding:12px 8px;display:flex;flex-direction:column;gap:4px;background:rgba(3,8,20,.4)}
   .macside .si{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;font-size:12.5px;
@@ -116,6 +116,7 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
+      <a href="./terminal.html">Trade</a>
       <a href="./ai.html">Flux AI</a>
       <a href="./autopilot.html">Autopilot</a>
       <a href="./portfolio.html">Portfolio</a>
@@ -194,7 +195,7 @@
             <section class="scr" data-s="chart">
               <h5 id="macChartHd">△ NVDA <span class="up">184.20 · +2.1%</span></h5>
               <div class="sub">15-minute · MA(7) · simulated data</div>
-              <canvas id="macChart" style="height:210px"></canvas>
+              <canvas id="macChart" style="height:250px"></canvas>
             </section>
             <section class="scr" data-s="auto">
               <h5>◷ Flux Fund <span class="tag">paper · live</span></h5>
@@ -531,24 +532,40 @@ document.addEventListener("DOMContentLoaded",function(){
   (function(){
     var win=$(".macwin"); if(!win)return;
     var side=$("#macSide"),main=$("#macMain"),crumb=$("#macCrumb"),cur=$("#macCur"),ring=$("#macRing");
-    // build screen content
-    if(F.SIGNALS){
-      var mi=$("#macIdeas");
-      if(mi)mi.innerHTML=F.SIGNALS.slice(0,4).map(function(s){var c=s.u?F.EM:F.CR;
-        return '<div class="mrow"><span class="tk">'+s.t+'</span><span class="'+(s.u?"up":"down")+'">'+s.mv+
-          '</span><span class="bar"><i style="width:'+s.c+'%;background:'+c+'"></i></span>'+
-          '<span class="mono" style="font-size:11px;color:'+c+'">'+s.c+'%</span></div>';}).join("");
+    // build screen content — uses REAL live prices (FLUX.priceOf / prevClose)
+    function chg(t){var p=F.priceOf(t),pv=F.prevClose(t);if(!p||!pv)return{p:p||0,pct:0,up:true};var pc=((p-pv)/pv)*100;return{p:p,pct:pc,up:pc>=0};}
+    function px(t){return (F.priceOf(t)||0).toFixed(2);}
+    function buildIdeas(){
+      var mi=$("#macIdeas");if(!mi||!F.SIGNALS)return;
+      mi.innerHTML=F.SIGNALS.slice(0,5).map(function(s){var g=chg(s.t),col=g.up?F.EM:F.CR;
+        return '<div class="mrow"><span class="tk">'+s.t+'</span>'+
+          '<span class="mono" style="font-size:11px;color:var(--text-faint);min-width:56px;text-align:right">'+px(s.t)+'</span>'+
+          '<span class="'+(g.up?"up":"down")+'" style="min-width:54px;text-align:right;font-size:11.5px">'+(g.up?"+":"")+g.pct.toFixed(2)+'%</span>'+
+          '<span class="bar"><i style="width:'+s.c+'%;background:'+col+'"></i></span></div>';}).join("");
     }
-    var mf=$("#macFolio");
-    if(mf)mf.innerHTML=[["NVDA",42],["AMD",23],["TSLA",18],["AAPL",17]].map(function(h){
-      return '<div class="mrow"><span class="tk">'+h[0]+'</span><span class="bar"><i style="width:'+h[1]+'%;background:'+F.CY+'"></i></span>'+
-        '<span class="mono" style="font-size:11px;color:var(--text-faint)">'+h[1]+'%</span></div>';}).join("");
-    var ml=$("#macLog");
-    if(ml)ml.innerHTML=[["BUY","NVDA 12 @ 184.20",1],["SELL","AMD 20 @ 172.40",0]].map(function(t){
-      return '<div class="mono" style="font-size:10.5px;color:var(--text-faint);padding:2px 0"><span style="color:'+(t[2]?F.EM:F.CR)+'">'+t[0]+'</span> '+t[1]+'</div>';}).join("");
+    function buildFolio(){
+      var mf=$("#macFolio");if(!mf)return;
+      mf.innerHTML=[["NVDA",34],["AMD",22],["MSFT",16],["AAPL",15],["TSLA",13]].map(function(h){var g=chg(h[0]);
+        return '<div class="mrow"><span class="tk">'+h[0]+'</span>'+
+          '<span class="mono" style="font-size:11px;color:var(--text-faint);min-width:56px;text-align:right">'+px(h[0])+'</span>'+
+          '<span class="'+(g.up?"up":"down")+'" style="min-width:46px;text-align:right;font-size:11px">'+(g.up?"+":"")+g.pct.toFixed(1)+'%</span>'+
+          '<span class="bar"><i style="width:'+h[1]+'%;background:'+F.CY+'"></i></span></div>';}).join("");
+    }
+    function buildLog(){
+      var ml=$("#macLog");if(!ml)return;
+      ml.innerHTML=[["BUY","NVDA",12],["SELL","AMD",8],["BUY","MSFT",5]].map(function(t){
+        return '<div class="mono" style="font-size:10.5px;color:var(--text-faint);padding:2px 0"><span style="color:'+(t[0]==="BUY"?F.EM:F.CR)+'">'+t[0]+'</span> '+t[2]+' '+t[1]+' @ '+px(t[1])+'</div>';}).join("");
+    }
+    function chartHead(){
+      var hd=$("#macChartHd");if(!hd)return;var g=chg("NVDA");
+      hd.innerHTML='△ NVDA <span class="'+(g.up?"up":"down")+'">'+g.p.toFixed(2)+' · '+(g.up?"+":"")+g.pct.toFixed(2)+'%</span>';
+    }
+    function refreshMac(){buildIdeas();buildFolio();buildLog();chartHead();}
+    refreshMac();
+    window.addEventListener("flux-prices",refreshMac);
 
     function drawScr(s){
-      if(s==="chart"&&F.drawCandles)F.drawCandles($("#macChart"),"NVDAq",38,true);
+      if(s==="chart"&&F.drawCandles){chartHead();F.drawCandles($("#macChart"),"NVDA|tour",40,chg("NVDA").up);}
       if(s==="auto"&&F.drawArea)F.drawArea($("#macAuto"),"fluxfund",44,true,F.EM);
     }
     function activate(s){

@@ -45,6 +45,8 @@
       });
     }catch(e){ readyResolve(false); return; }
     S.loaded = true;
+    S.syncPrices();
+    setInterval(function(){ S.syncPrices(); }, 20000);
     // After an OAuth / magic-link redirect, clean the URL and reload once so the
     // page (re)renders with the established session on first paint.
     function cleanLandingIfNeeded(){
@@ -130,6 +132,36 @@
       return b;
     };
     window.FLUXBook.__wrapped = true;
+  };
+
+  // ---- live prices (public read) → feed FLUX.LIVE so the whole site uses real quotes ----
+  S.prices = null;
+  S.syncPrices = function(){
+    if(!S.client) return Promise.resolve(false);
+    return S.client.from("prices").select("ticker,name,base,last,prev_close").then(function(r){
+      if(r && r.data && r.data.length){
+        var m = {}; r.data.forEach(function(p){ m[p.ticker] = { last:Number(p.last), prev_close:Number(p.prev_close), name:p.name }; });
+        S.prices = m;
+        if(window.FLUX) window.FLUX.LIVE = m;
+        try{ window.dispatchEvent(new Event("flux-prices")); }catch(e){}
+      }
+      return true;
+    }).catch(function(){ return false; });
+  };
+
+  // ---- autopilot fund (public read) ----
+  S.autopilot = function(){
+    if(!S.client) return Promise.resolve(null);
+    return Promise.all([
+      S.client.from("autopilot_fund").select("*").eq("id",1).maybeSingle(),
+      S.client.from("autopilot_positions").select("*"),
+      S.client.from("autopilot_orders").select("*").order("ts",{ascending:false}).limit(40),
+      S.client.from("autopilot_equity").select("*").order("ts",{ascending:true}).limit(400),
+      S.client.from("autopilot_reports").select("*").order("ts",{ascending:false}).limit(20)
+    ]).then(function(r){
+      return { fund:(r[0]&&r[0].data)||null, positions:(r[1]&&r[1].data)||[], orders:(r[2]&&r[2].data)||[],
+        equity:(r[3]&&r[3].data)||[], reports:(r[4]&&r[4].data)||[] };
+    }).catch(function(){ return null; });
   };
 
   window.FluxSupa = S;
