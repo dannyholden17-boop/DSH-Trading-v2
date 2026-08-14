@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Trade Ideas — Flux</title>
+<meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a backtest attached — every one gated by the Risk engine. Never a naked 'buy this'.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ---- page-only layout: trade-ideas.html ---- */
+  .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  @media(max-width:960px){.t-hero{grid-template-columns:1fr;gap:36px}}
+  .t-hero h1{margin-top:18px}
+  .t-hero .btn-row{margin-top:30px}
+  .hero-note{display:flex;gap:18px;margin-top:26px;flex-wrap:wrap;color:var(--text-faint);font-size:.85rem}
+  .hero-note span{display:inline-flex;align-items:center;gap:7px}
+  .hero-note b{color:var(--emerald);font-weight:700}
+  .feed-card{padding:18px}
+  .feed-card .fh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1}
+  .feed-card .fh .k{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--text-faint)}
+  .feed-rows{display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
+
+  /* ---- idea cards ---- */
+  .ideas{display:flex;flex-direction:column;gap:18px;margin-top:44px}
+  .idea{padding:20px}
+  .idea > *{position:relative;z-index:1}
+  .idea-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .idea-top .av{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;
+    font-family:var(--f-mono);font-weight:700;font-size:12px;border:1px solid var(--line);
+    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.18),rgba(139,92,246,.12))}
+  .idea-top .id{min-width:0}
+  .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+  .idea-top .sub{font-size:.8rem;color:var(--text-faint);margin-top:2px}
+  .eng-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:4px 9px;border-radius:6px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+  .idea-top .cf{margin-left:auto;text-align:right;flex:none}
+  .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;line-height:1}
+  .idea-top .cf .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:14px 0 16px}
+  .cbar i{display:block;height:100%;border-radius:3px}
+  .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
+  @media(max-width:760px){.idea-body{grid-template-columns:1fr;gap:16px}}
+  .thesis{font-size:.95rem;color:var(--text-dim);line-height:1.6}
+  .kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+  @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}}
+  .kv{border:1px solid var(--line-2);border-radius:11px;background:var(--well);padding:9px 10px;min-width:0}
+  .kv .k{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
+  .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.92rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
+  .idea-chart{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:10px}
+  .idea-chart canvas{width:100%;height:118px;display:block}
+  .idea-chart .cl{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--text-faint);margin-top:8px}
+  .idea-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;
+    padding-top:15px;border-top:1px solid var(--line-2)}
+  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
+  .idea-foot .gate b{color:var(--emerald);font-weight:700}
+  @media(max-width:560px){.idea-foot .gate{margin-left:0;width:100%}}
+
+  /* ---- anatomy ---- */
+  .anno{padding:18px}
+  .anno > *{position:relative;z-index:1}
+  .anno-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line-2)}
+  .anno-row:last-child{border-bottom:0}
+  .anno-row .n{width:24px;height:24px;flex:none;border-radius:8px;display:grid;place-items:center;
+    font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--cyan);
+    background:rgba(0,242,255,.08);border:1px solid rgba(0,242,255,.25)}
+  .anno-row .c{min-width:0;flex:1}
+  .anno-row .c .t{font-family:var(--f-mono);font-size:.85rem;font-weight:700}
+  .anno-row .c .d{font-size:.82rem;color:var(--text-faint);margin-top:3px}
+
+  /* ---- risk gates ---- */
+  .gates{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+  @media(max-width:980px){.gates{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.gates{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="section phero">
+  <div class="wrap t-hero">
+    <div class="reveal">
+      <span class="eyebrow">AI Trade Ideas</span>
+      <h1 class="h1">Ideas with the <span class="grad-text">homework attached.</span></h1>
+      <p class="lede">Anyone can shout a ticker. A Flux idea arrives with the thesis in plain English,
+        the levels it lives and dies on, a confidence score you can interrogate, and a backtest that
+        shows how the setup behaved the last thousand times it appeared.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="./download.html">See today's ideas</a>
+        <a class="btn btn-ghost btn-lg" href="./research.html">How the research works</a>
+      </div>
+      <div class="hero-note">
+        <span><b>✓</b> Never a naked "buy this"</span>
+        <span><b>✓</b> Risk-gated before it ships</span>
+        <span><b>✓</b> Paper trade every one</span>
+      </div>
+    </div>
+
+    <div class="glass feed-card reveal">
+      <div class="fh">
+        <span class="pill"><i></i> Live feed</span>
+        <span class="k">ranked by confidence</span>
+      </div>
+      <div class="feed-rows" id="feedRows"></div>
+      <p class="faint mono" style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:14px;position:relative;z-index:1">
+        Illustrative sample feed · not advice</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BAND ============ -->
+<div class="band">
+  <div class="wrap">
+    <span>Every idea ships with a <b>thesis</b></span><span>·</span>
+    <span><b>entry, stop and target</b></span><span>·</span>
+    <span>a <b>confidence score</b></span><span>·</span>
+    <span>and a <b>backtest</b></span>
+  </div>
+</div>
+
+<!-- ============ IDEA FEED ============ -->
+<section class="section" id="feed">
+  <div class="wrap">
+    <div class="reveal" style="max-width:64ch">
+      <span class="eyebrow">Today's ideas</span>
+      <h2 class="h2" style="margin-top:16px">This is what an idea looks like.</h2>
+      <p class="lede" style="margin-top:16px">Five from a recent session, expanded in full. Nothing here is
+        a recommendation — it's the shape of the output: what Flux saw, where the setup breaks, and how
+        confident the ensemble is that the pattern is real.</p>
+    </div>
+    <div class="ideas" id="ideaList"></div>
+    <p class="disclaimer reveal" style="margin-top:26px">Sample ideas and levels shown are illustrative and
+      generated for demonstration only. They are not recommendations, not personalised, and not a solicitation
+      to buy or sell any security. Confidence scores describe model agreement — not the probability of profit.</p>
+  </div>
+</section>
+
+<!-- ============ ANATOMY ============ -->
+<section class="section band" id="anatomy">
+  <div class="wrap split wide-l">
+    <div class="reveal">
+      <span class="eyebrow">Anatomy of an idea</span>
+      <h2 class="h2" style="margin-top:16px">Five parts. None of them optional.</h2>
+      <p class="lede" style="margin-top:16px">If any one of these is missing, the idea doesn't ship. That rule
+        is what stops the feed turning into a wall of tickers with arrows next to them.</p>
+      <div class="flist">
+        <div class="fi"><span class="k">1</span><div><b>The thesis</b>
+          <p>One paragraph, plain English, naming the specific thing that happened — the sweep, the filing,
+            the level reclaimed. If it can't be written in a sentence, it isn't understood.</p></div></div>
+        <div class="fi"><span class="k">2</span><div><b>The confidence score</b>
+          <p>How strongly the engines agree, after AlphaRank re-scores the signal against five years of
+            outcomes. It measures conviction in the pattern, never the odds of making money.</p></div></div>
+        <div class="fi"><span class="k">3</span><div><b>The numbers</b>
+          <p>Entry zone, invalidation stop, target and the resulting reward-to-risk. The stop is the honest
+            part: it's the price at which the thesis is simply wrong.</p></div></div>
+        <div class="fi"><span class="k">4</span><div><b>The backtest</b>
+          <p>The same setup replayed across historical sessions, with the sample size shown so you can tell
+            a pattern from a coincidence.</p></div></div>
+        <div class="fi"><span class="k">5</span><div><b>The risk gate</b>
+          <p>Position size against your book, correlation with what you already hold, and total exposure.
+            An idea that breaks your rules never reaches the feed.</p></div></div>
+      </div>
+    </div>
+
+    <div class="glass anno reveal">
+      <div class="anno-row"><span class="n">1</span><div class="c">
+        <div class="t">Thesis</div>
+        <div class="d">"Call sweep — 14,200 contracts at the $185 strike, 3DTE, all at ask."</div></div></div>
+      <div class="anno-row"><span class="n">2</span><div class="c">
+        <div class="t">Confidence · 88%</div>
+        <div class="d">4 of 6 engines agree · AlphaRank percentile 94 · sample n=212</div></div></div>
+      <div class="anno-row"><span class="n">3</span><div class="c">
+        <div class="t">Levels</div>
+        <div class="d">Entry 184.20 · Stop 180.02 · Target 192.47 · R:R 2.0</div></div></div>
+      <div class="anno-row"><span class="n">4</span><div class="c">
+        <div class="t">Backtest</div>
+        <div class="d">1,260 sessions replayed · walk-forward · slippage and commission included</div></div></div>
+      <div class="anno-row"><span class="n">5</span><div class="c">
+        <div class="t">Risk gate</div>
+        <div class="d">Sized to 0.8% of book · correlation 0.41 vs. holdings · passed</div></div></div>
+      <p class="faint mono" style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:16px">
+        Illustrative example · hypothetical figures</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCORING ============ -->
+<section class="section" id="scoring">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Scoring</span>
+      <h2 class="h2" style="margin-top:16px">From raw signal to a number you can argue with.</h2>
+      <p class="lede" style="margin-top:16px">Confidence isn't a vibe. It's the output of four steps, and you
+        can open any of them to see why a score is 88 and not 62.</p>
+    </div>
+    <div class="steps reveal" style="margin-top:44px">
+      <div class="step"><div class="n">01</div><h3>Signal</h3>
+        <p>One of the six engines flags something concrete — a sweep, a breakout, a filing, a level reclaimed.
+          Raw, unranked, and far too noisy to trade on its own.</p></div>
+      <div class="step"><div class="n">02</div><h3>Cross-check</h3>
+        <p>The other engines are asked whether they see it too. A breakout with flow behind it and a catalyst
+          underneath scores very differently from one standing alone.</p></div>
+      <div class="step"><div class="n">03</div><h3>Backtest</h3>
+        <p>The setup is replayed across historical sessions, walk-forward, with costs. If the edge disappears
+          out of sample, the idea is dropped here and you never see it.</p></div>
+      <div class="step"><div class="n">04</div><h3>Score</h3>
+        <p>AlphaRank re-scores the survivor against five years of outcomes and assigns the confidence figure —
+          then the Risk engine decides whether it fits your book at all.</p></div>
+    </div>
+    <p class="faint reveal" style="font-size:.8rem;margin-top:22px;max-width:74ch">
+      A high confidence score means the engines agree and the historical pattern was consistent. It is not a
+      probability of profit, not a guarantee, and not a substitute for your own judgement.</p>
+  </div>
+</section>
+
+<!-- ============ RISK FIRST ============ -->
+<section class="section band" id="risk">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Risk first</span>
+      <h2 class="h2" style="margin-top:16px">The last engine to see an idea can kill it.</h2>
+      <p class="lede" style="margin-top:16px">A good setup in the wrong size, on top of three correlated
+        positions, is a bad trade. Every idea passes the Risk engine before it reaches your feed — and every
+        live order passes it again on the way out.</p>
+    </div>
+    <div class="gates">
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⊞</div><h3>Position sizing</h3>
+        <p>Size is derived from the distance to the stop and your own risk-per-trade rule — not from how
+          exciting the idea sounds.</p>
+        <div class="meta"><span>basis <b>your book</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⊗</div><h3>The stop</h3>
+        <p>Every idea carries an invalidation level before it carries a target. No stop, no idea.</p>
+        <div class="meta"><span>required <b>always</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">≈</div><h3>Correlation</h3>
+        <p>Checked against what you already hold. Four semis in a row is one position wearing four tickers.</p>
+        <div class="meta"><span>window <b>rolling</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⊘</div><h3>Exposure</h3>
+        <p>Gross, net and sector exposure against your limits. Ideas that would breach them are held back
+          and labelled, not quietly sent anyway.</p>
+        <div class="meta"><span>cadence <b>5s</b></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="section-sm">
+  <div class="wrap">
+    <div class="stats reveal">
+      <div class="stat"><div class="v"><span data-count="9">0</span></div><div class="k">Ideas per day, typical</div></div>
+      <div class="stat"><div class="v"><span data-count="71" data-suffix="%">0%</span></div><div class="k">Average confidence</div></div>
+      <div class="stat"><div class="v"><span data-count="6">0</span></div><div class="k">Engines cross-checking</div></div>
+      <div class="stat"><div class="v"><span data-count="1260">0</span></div><div class="k">Backtest sessions</div></div>
+    </div>
+    <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures are illustrative and
+      describe typical product behaviour and simulated backtests. They are not performance results and do not
+      predict future outcomes.</p>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:62ch;margin-inline:auto">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2" style="margin-top:16px">The fair questions.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:40px">
+      <details open><summary>Do you place trades for me?</summary>
+        <p>Not unless you explicitly set that up. By default Flux researches and surfaces ideas, and you decide
+          what happens next — paper first, if you want. If you do enable automation, every order still passes
+          the Risk engine's guardrails, and you can stop it at any time.</p></details>
+      <details><summary>What does the confidence score actually mean?</summary>
+        <p>It measures how strongly the six engines agree on a setup, after AlphaRank re-scores it against
+          historical outcomes. High confidence means the pattern is consistent and corroborated. It is
+          explicitly <em>not</em> a probability of profit and not a measure of how much you might make.</p></details>
+      <details><summary>Are these signals guaranteed?</summary>
+        <p>No. Nothing in markets is, and any product that says otherwise is lying to you. Ideas can be wrong,
+          data can lag, and historical patterns break. That's why every idea carries a stop, a sample size and
+          a backtest you can inspect — so you can size the risk you're actually taking.</p></details>
+      <details><summary>Is this financial advice?</summary>
+        <p>No. Flux is research and automation software. It is not a broker-dealer, not an investment adviser,
+          and nothing it produces is personalised advice or a recommendation. Every decision, and its outcome,
+          is yours.</p></details>
+      <details><summary>Where do the entry, stop and target come from?</summary>
+        <p>From the structure of the setup: the level that triggered the signal, the price that would invalidate
+          the thesis, and the next level the tape has historically respected. They're a starting frame to adjust
+          to your own plan — not instructions.</p></details>
+      <details><summary>Can I test an idea before risking anything?</summary>
+        <p>Yes, and we'd rather you did. Every idea has a one-tap path to paper trading and to the backtest
+          behind it, on every plan including the free one.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Read the homework. Then decide.</h2>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Open the feed, pick an idea apart, and
+        paper trade it before a single dollar is at risk.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./download.html">Open the app — free</a>
+        <a class="btn btn-ghost btn-lg" href="./download.html">Get Flux</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX || {};
+  var $ = F.$ || function(s,r){return (r||document).querySelector(s)};
+  var SIGNALS = F.SIGNALS || [];
+  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+
+  /* reference prices used to derive the illustrative levels below */
+  var PX = {NVDA:184.20, AMD:172.40, TSLA:248.90, AAPL:226.50, SMCI:41.80,
+            MSFT:428.60, COIN:251.30, PLTR:38.90};
+
+  /* ---- hero feed (shared .sig rows) ---- */
+  var rows = $("#feedRows");
+  if(rows && F.sigHTML){
+    SIGNALS.slice(0, 4).forEach(function(s){
+      var d = document.createElement("div");
+      d.innerHTML = F.sigHTML(s);
+      rows.appendChild(d.firstChild);
+    });
+  }
+
+  /* ---- expanded idea cards ---- */
+  var list = $("#ideaList");
+  var picks = SIGNALS.slice(0, 5);
+  var canvases = [];
+
+  function fmt(n){ return n.toFixed(2); }
+
+  picks.forEach(function(s, idx){
+    var px = PX[s.t] || 100;
+    var long = !!s.u;
+    /* higher confidence -> tighter invalidation; reward scales with conviction */
+    var risk = 0.052 - (s.c / 3000);
+    var reward = risk * (1.7 + (s.c - 60) / 100);
+    var entry = px;
+    var stop = long ? px * (1 - risk) : px * (1 + risk);
+    var target = long ? px * (1 + reward) : px * (1 - reward);
+    var rr = (Math.abs(target - entry) / Math.abs(entry - stop)).toFixed(1);
+    var col = long ? EM : CR;
+    var cid = "spark" + idx;
+
+    var el = document.createElement("article");
+    el.className = "glass idea reveal";
+    el.innerHTML =
+      '<div class="idea-top">' +
+        '<div class="av">' + s.t.slice(0,3) + '</div>' +
+        '<div class="id">' +
+          '<div class="tk">' + s.t + ' <span class="' + (long ? "up" : "down") + '" style="font-size:.85rem">' + s.mv + '</span></div>' +
+          '<div class="sub">' + s.lbl + ' · ' + (long ? "long setup" : "short setup") + '</div>' +
+        '</div>' +
+        '<span class="eng-tag">' + s.e + ' engine</span>' +
+        '<div class="cf"><div class="n" style="color:' + col + '">' + s.c + '%</div><div class="l">confidence</div></div>' +
+      '</div>' +
+      '<div class="cbar"><i style="width:' + s.c + '%;background:' + col + '"></i></div>' +
+      '<div class="idea-body">' +
+        '<div>' +
+          '<p class="thesis">' + s.i + '</p>' +
+          '<div class="kvs">' +
+            '<div class="kv"><div class="k">Entry</div><div class="v">' + fmt(entry) + '</div></div>' +
+            '<div class="kv"><div class="k">Stop</div><div class="v down">' + fmt(stop) + '</div></div>' +
+            '<div class="kv"><div class="k">Target</div><div class="v up">' + fmt(target) + '</div></div>' +
+            '<div class="kv"><div class="k">R : R</div><div class="v">' + rr + '</div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="idea-chart">' +
+          '<canvas id="' + cid + '" aria-label="Illustrative price trace for ' + s.t + '"></canvas>' +
+          '<div class="cl">20-session trace · illustrative</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="idea-foot">' +
+        '<a class="btn btn-ghost btn-sm" href="./download.html">Paper trade</a>' +
+        '<a class="btn btn-ghost btn-sm" href="./download.html">Backtest</a>' +
+        '<span class="gate"><b>✓</b> Risk gate passed · sized to your book</span>' +
+      '</div>';
+
+    list.appendChild(el);
+    canvases.push({id: cid, seed: s.t, up: long, col: col});
+  });
+
+  /* ---- sparklines ---- */
+  function drawAll(){
+    if(!F.drawArea) return;
+    canvases.forEach(function(c){
+      var cv = document.getElementById(c.id);
+      if(cv) F.drawArea(cv, c.seed, 40, c.up, c.up ? CY : CR);
+    });
+  }
+  drawAll();
+
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(drawAll, 140);
+  });
+
+  /* pick up cards injected above (FLUX.initReveal also runs on load) */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>

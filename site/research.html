@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Research — Flux</title>
+<meta name="description" content="Flux AI Research reads filings, earnings calls, the news wire and the options tape, then writes you the answer — with model forecasts, catalysts and risk, on a schedule.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ---- page-only layout: research.html ---- */
+  .r-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:start}
+  @media(max-width:960px){.r-hero{grid-template-columns:1fr;gap:36px}}
+  .r-hero h1{margin-top:18px}
+  .r-hero .btn-row{margin-top:30px}
+  .hero-note{display:flex;gap:18px;margin-top:26px;flex-wrap:wrap;color:var(--text-faint);font-size:.85rem}
+  .hero-note span{display:inline-flex;align-items:center;gap:7px}
+  .hero-note b{color:var(--emerald);font-weight:700}
+
+  /* report mock */
+  .report{overflow:hidden}
+  .rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:14px 16px;border-bottom:1px solid var(--line-2);position:relative;z-index:1}
+  .rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+  .rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .rep-body{padding:16px 16px 6px;position:relative;z-index:1}
+  .rsec{margin-bottom:18px}
+  .rsec h4{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--text-faint);font-weight:600;display:flex;align-items:center;gap:10px;margin:0 0 10px}
+  .rsec h4::after{content:"";flex:1;height:1px;background:var(--line-2)}
+  .rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:7px}
+  .rline b{color:var(--text);font-weight:600}
+  .report.typing .rline{opacity:0;transform:translateY(6px)}
+  .report.typing .rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
+  .mrow{display:flex;align-items:baseline;gap:10px;font-family:var(--f-mono);font-size:.8rem;
+    padding:6px 0;border-bottom:1px dashed var(--line-2)}
+  .mrow .nm{color:var(--text);font-weight:700;min-width:92px}
+  .mrow .dd{color:var(--text-faint);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mrow .vv{font-weight:700;margin-left:auto}
+  .rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;
+    border-top:1px solid var(--line-2);font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint);position:relative;z-index:1}
+  .caret{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:-2px;
+    box-shadow:0 0 8px var(--cyan);animation:blink 1s steps(1) infinite}
+  .caret.done{display:none}
+
+  /* source chips */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chips .tag{padding:5px 11px;font-size:10.5px}
+
+  /* model cards */
+  .model{padding:20px}
+  .model .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .model h3{font-size:1.05rem;font-family:var(--f-mono);letter-spacing:-.01em}
+  .model p{color:var(--text-dim);font-size:.9rem;margin-top:10px}
+
+  /* schedule timeline */
+  .tl{position:relative;margin-top:44px;padding-left:30px}
+  .tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:1px;
+    background:linear-gradient(180deg,var(--cyan),var(--violet));opacity:.35}
+  .tl-item{position:relative;padding-bottom:26px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{content:"";position:absolute;left:-26px;top:7px;width:9px;height:9px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .tl-item .hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .tl-item .tm{font-family:var(--f-mono);font-size:.82rem;color:var(--cyan);font-weight:700;white-space:nowrap}
+  .tl-item h3{font-size:1.05rem}
+  .tl-item p{color:var(--text-dim);font-size:.92rem;margin-top:7px;max-width:62ch}
+  .tl-item ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:7px}
+  .tl-item li{font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--text-faint);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px}
+
+  /* backtest panel */
+  .chart-card{padding:18px}
+  .chart-card canvas{width:100%;height:260px;display:block}
+  @media(max-width:640px){.chart-card canvas{height:200px}}
+  .chart-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .chart-legend .k{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="section phero">
+  <div class="wrap r-hero">
+    <div class="reveal">
+      <span class="eyebrow">AI Research</span>
+      <h1 class="h1">Research that reads everything.<br><span class="grad-text">So you don't have to.</span></h1>
+      <p class="lede">Flux pulls the 8-K at 4:02, the transcript at 5:30, every headline that crosses
+        the wire and every unusual print on the options tape — then writes it up in plain English,
+        with the model forecasts, the catalysts and the risks in one page.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="./download.html">Read today's brief</a>
+        <a class="btn btn-ghost btn-lg" href="./download.html">Get Flux</a>
+      </div>
+      <div class="hero-note">
+        <span><b>✓</b> Sourced, never hand-wavy</span>
+        <span><b>✓</b> Scheduled or on demand</span>
+        <span><b>✓</b> Research, not advice</span>
+      </div>
+      <div class="chips">
+        <span class="tag">SEC filings</span><span class="tag">Transcripts</span><span class="tag">News wire</span>
+        <span class="tag">Options tape</span><span class="tag">Price history</span><span class="tag">Your book</span>
+      </div>
+    </div>
+
+    <div class="glass report reveal" id="report">
+      <div class="rep-head">
+        <span class="pill pill-violet"><i></i> Reporter</span>
+        <span class="ttl grad-text">Morning Brief</span>
+        <span class="ts" id="repTs">—</span>
+      </div>
+      <div class="rep-body">
+        <div class="rsec">
+          <h4>Summary</h4>
+          <p class="rline">Semis carried the tape overnight; your watchlist is <b>+1.4%</b> on the average, led by
+            <b>NVDA</b> and <b>AMD</b>.</p>
+          <p class="rline">Two names changed state since yesterday's close: <b>TSLA</b> filed an 8-K after the bell,
+            and <b>SMCI</b> entered the top 1% of the universe for unusual volume.</p>
+          <p class="rline">Breadth is narrow — 61% of the move sits in three tickers, which is the kind of tape that
+            reverses on a single headline.</p>
+        </div>
+        <div class="rsec">
+          <h4>Model forecasts</h4>
+          <div class="rline mrow"><span class="nm">PriceNet</span><span class="dd">next-session drift</span><span class="vv up">+0.9%</span></div>
+          <div class="rline mrow"><span class="nm">VolRegime</span><span class="dd">current regime</span><span class="vv" style="color:var(--amber)">Elevated</span></div>
+          <div class="rline mrow"><span class="nm">NewsSense</span><span class="dd">wire sentiment, 24h</span><span class="vv up">+0.32</span></div>
+          <div class="rline mrow" style="border-bottom:0"><span class="nm">MonteCarlo</span><span class="dd">1-day VaR, 95%</span><span class="vv down">−2.6%</span></div>
+        </div>
+        <div class="rsec">
+          <h4>Catalysts</h4>
+          <p class="rline"><b>TSLA</b> — 8-K, delivery outlook revised. Similar filings historically preceded a
+            <b class="down">−2.3%</b> five-day drift across 14 comparable events.</p>
+          <p class="rline"><b>MSFT</b> — cloud update Thursday. Skew has flipped bullish and a gamma wall is building at $430.</p>
+        </div>
+        <div class="rsec">
+          <h4>Risk</h4>
+          <p class="rline">Your book is <b>68% concentrated in semis</b>. Correlation across the top three positions
+            is 0.81 — they will move together, in both directions.</p>
+          <p class="rline">Two open positions sit inside 1.2% of their stops. The Risk engine has flagged both for review<span class="caret" id="caret"></span></p>
+        </div>
+      </div>
+      <div class="rep-foot">
+        <span id="repStat">writing report…</span>
+        <span style="margin-left:auto">Illustrative sample · not advice</span>
+      </div>
+    </div>
+  </div>
+</section>
+<script>document.getElementById("report").classList.add("typing");</script>
+
+<!-- ============ BAND ============ -->
+<div class="band">
+  <div class="wrap">
+    <span>Reads <b>filings</b></span><span>·</span>
+    <span><b>transcripts</b></span><span>·</span>
+    <span><b>the wire</b></span><span>·</span>
+    <span><b>the options tape</b></span><span>·</span>
+    <span>and <b>your own book</b></span>
+  </div>
+</div>
+
+<!-- ============ WHAT IT READS ============ -->
+<section class="section" id="sources">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">The inputs</span>
+      <h2 class="h2" style="margin-top:16px">Six streams, read in full, every session.</h2>
+      <p class="lede" style="margin-top:16px">A person can read one 10-Q properly in an afternoon.
+        Flux reads the filing, the call, the wire and the tape around it — and tells you which of the
+        four actually changed the picture.</p>
+    </div>
+
+    <div class="grid g-3" style="margin-top:44px">
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">§</div><h3>SEC filings &amp; 8-Ks</h3>
+        <p>10-K, 10-Q, 8-K, S-1 and insider Form 4s, parsed the moment they hit EDGAR. Flux diffs each
+          filing against the last one and reports what changed — not what was restated.</p>
+        <div class="meta"><span>latency <b>&lt; 60s</b></span><span>diffed <b>vs. prior</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">◉</div><h3>Earnings calls &amp; transcripts</h3>
+        <p>Full transcripts summarized down to guidance changes, margin commentary and the questions
+          management dodged — with the exact quote kept alongside the summary.</p>
+        <div class="meta"><span>coverage <b>call + Q&amp;A</b></span><span>keeps <b>quotes</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">≋</div><h3>The news wire</h3>
+        <p>Every headline touching your universe, scored for sentiment by NewsSense and deduplicated,
+          so one story syndicated forty times counts once.</p>
+        <div class="meta"><span>model <b>FinBERT</b></span><span>dedup <b>on</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⟁</div><h3>The options tape</h3>
+        <p>Sweeps, blocks, open-interest shifts, skew and gamma positioning. The tape often moves
+          before the story does, and it shows up in the brief when it does.</p>
+        <div class="meta"><span>tracks <b>flow + skew</b></span><span>cadence <b>10s</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">◔</div><h3>Price &amp; volume history</h3>
+        <p>Years of daily and intraday history behind every claim — so "unusual volume" means a number
+          against a base, and a level is one the tape has actually respected.</p>
+        <div class="meta"><span>history <b>multi-year</b></span><span>frames <b>1m–1D</b></span></div>
+      </div>
+      <div class="glass glass-hover feat reveal">
+        <div class="ic">⊘</div><h3>Your own portfolio</h3>
+        <p>The part generic research can't do. Flux reads your positions, sizing, stops and correlation,
+          and writes the section that's about <em>your</em> book — not the market's.</p>
+        <div class="meta"><span>scope <b>your book</b></span><span>engine <b>Risk</b></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODELS ============ -->
+<section class="section" style="padding-top:0" id="models">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Under the hood</span>
+      <h2 class="h2" style="margin-top:16px">Six models. One report.</h2>
+      <p class="lede" style="margin-top:16px">The write-up you read is the last step. Behind it, six
+        specialised models each answer one narrow question, and the Reporter stitches their answers
+        into something a human can act on.</p>
+    </div>
+    <div class="grid g-3" id="modelGrid" style="margin-top:44px"></div>
+    <p class="faint reveal" style="font-size:.8rem;margin-top:20px;max-width:70ch">
+      Model names describe the class of technique used for each task. Forecasts are probabilistic
+      estimates, not predictions, and no model output is a recommendation to buy or sell.</p>
+  </div>
+</section>
+
+<!-- ============ SCHEDULE ============ -->
+<section class="section band" id="schedule">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Scheduled reports</span>
+      <h2 class="h2" style="margin-top:16px">The desk files before you ask.</h2>
+      <p class="lede" style="margin-top:16px">Four standing reports land on their own schedule — in the app,
+        by push, or by email. Every time is configurable, and you can trigger any of them on demand.</p>
+    </div>
+
+    <div class="tl reveal">
+      <div class="tl-item">
+        <div class="hd"><span class="tm">7:00 AM</span><h3>Morning Brief</h3></div>
+        <p>What moved overnight, what changed in your watchlist while the market was shut, and the day's
+          calendar. Written before the bell so the first decision of the day isn't made blind.</p>
+        <ul><li>Overnight recap</li><li>Watchlist deltas</li><li>Model forecasts</li><li>Today's catalysts</li></ul>
+      </div>
+      <div class="tl-item">
+        <div class="hd"><span class="tm">12:30 PM</span><h3>Midday Pulse</h3></div>
+        <p>A short read on the session in progress: where breadth is, which of the morning's setups held,
+          which failed, and any fresh filing or flow that landed since the open.</p>
+        <ul><li>Breadth &amp; regime</li><li>Setups holding</li><li>New flow</li><li>Intraday filings</li></ul>
+      </div>
+      <div class="tl-item">
+        <div class="hd"><span class="tm">4:15 PM</span><h3>Closing Wrap</h3></div>
+        <p>The session scored. What worked, what didn't, what the after-hours tape is already saying, and
+          the filings that dropped in the fifteen minutes after the close.</p>
+        <ul><li>Session P&amp;L attribution</li><li>After-hours moves</li><li>Post-close 8-Ks</li><li>Tomorrow's setup</li></ul>
+      </div>
+      <div class="tl-item">
+        <div class="hd"><span class="tm">Weekly</span><h3>Portfolio Review</h3></div>
+        <p>The long look. Concentration, correlation, drawdown, position sizing against your own rules, and
+          whether the edges you're trading still show up in the last twelve months of data.</p>
+        <ul><li>Concentration</li><li>Correlation matrix</li><li>Drawdown</li><li>Rule adherence</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BACKTEST ============ -->
+<section class="section" id="validation">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="eyebrow">Validation</span>
+      <h2 class="h2" style="margin-top:16px">Every claim gets replayed against history.</h2>
+      <p class="lede" style="margin-top:16px">Research that can't be checked is just prose. When the Catalyst
+        engine says a filing type preceded a drift, the Backtest engine has already replayed that setup across
+        years of sessions — and the report shows you the sample size, not just the headline number.</p>
+      <div class="flist">
+        <div class="fi"><span class="k">⧗</span><div><b>Walk-forward, not curve-fit</b>
+          <p>Setups are tested on data the model never saw, in the order it actually happened.</p></div></div>
+        <div class="fi"><span class="k">n</span><div><b>Sample size shown</b>
+          <p>Fourteen comparable events is not four hundred. The report says which it is.</p></div></div>
+        <div class="fi"><span class="k">⊘</span><div><b>Costs included</b>
+          <p>Simulated fills assume slippage and commission — not perfect prints at the close.</p></div></div>
+      </div>
+    </div>
+
+    <div class="glass chart-card reveal">
+      <div class="chart-legend">
+        <span class="pill"><i></i> Backtest</span>
+        <span class="k">Simulated equity curve · 1,260 sessions</span>
+      </div>
+      <canvas id="eqCurve" aria-label="Illustrative simulated equity curve"></canvas>
+      <p class="faint mono" style="font-size:10px;margin-top:10px;letter-spacing:.08em;text-transform:uppercase">
+        Illustrative · hypothetical · not a record of actual trading</p>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin-top:52px">
+    <div class="stats reveal">
+      <div class="stat"><div class="v"><span data-count="71" data-suffix="%">0%</span></div><div class="k">Win rate, simulated</div></div>
+      <div class="stat"><div class="v"><span data-count="1.42">0.00</span></div><div class="k">Sharpe, simulated</div></div>
+      <div class="stat"><div class="v"><span data-count="1260">0</span></div><div class="k">Sessions replayed</div></div>
+      <div class="stat"><div class="v"><span data-count="9.4" data-suffix="%">0%</span></div><div class="k">Max drawdown</div></div>
+    </div>
+    <p class="disclaimer reveal" style="margin:24px auto 0;text-align:center">
+      Figures above are illustrative and derived from hypothetical, simulated performance. Simulated results
+      have inherent limitations, do not represent actual trading, and do not guarantee or suggest future
+      outcomes. Flux does not promise returns.</p>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section band" id="faq">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:62ch;margin-inline:auto">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2" style="margin-top:16px">What the research is — and isn't.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:40px">
+      <details open><summary>Is this investment advice?</summary>
+        <p>No. Flux is research and automation software, not a broker-dealer and not an adviser. Reports
+          summarise public information, model output and your own portfolio data. Nothing in them is a
+          recommendation, and every decision — with its outcome — is yours.</p></details>
+      <details><summary>Where does the underlying information come from?</summary>
+        <p>Public filings, earnings transcripts, licensed market data and news feeds, plus the portfolio data
+          you connect. Each claim in a report carries its source, so you can open the filing or the print
+          behind it rather than taking the summary on faith.</p></details>
+      <details><summary>Can the AI get it wrong?</summary>
+        <p>Yes. Language models misread things, data feeds lag, and history is not a promise. That's exactly
+          why every quantitative claim is tied to a backtest with a visible sample size, and why sources stay
+          attached — so you can check the work instead of trusting the tone.</p></details>
+      <details><summary>Can I ask for a report on something specific?</summary>
+        <p>Any time. Ask for a name, a sector, a theme or your own book in plain English and the Reporter
+          assembles it on demand, using the same inputs as the scheduled briefs.</p></details>
+      <details><summary>How current is a report?</summary>
+        <p>Filings and wire items typically land in the research index within a minute of publication;
+          scheduled reports are written at their configured time. Every report is stamped with the moment it
+          was generated and the cutoff of the data behind it.</p></details>
+      <details><summary>Do the backtest numbers mean I'll make money?</summary>
+        <p>No. Backtested and simulated results are hypothetical. They show whether a pattern existed in
+          historical data — not whether it will repeat, and not what your own fills, timing or risk tolerance
+          would have produced. Trading involves risk of loss, including loss of principal.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Tomorrow's brief is already being written.</h2>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Turn Flux on tonight and read the
+        research over your first coffee instead of building it.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./download.html">Open the app — free</a>
+        <a class="btn btn-ghost btn-lg" href="./trade-ideas.html">See trade ideas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX || {};
+  var $ = F.$ || function(s,r){return (r||document).querySelector(s)};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* ---- report timestamp ---- */
+  var ts = $("#repTs");
+  if(ts){
+    var d = new Date(), hh = d.getHours();
+    var ap = hh >= 12 ? "PM" : "AM";
+    var h12 = hh % 12; if(h12 === 0) h12 = 12;
+    var mm = String(d.getMinutes());
+    if(mm.length < 2) mm = "0" + mm;
+    ts.textContent = "generated " + h12 + ":" + mm + " " + ap;
+  }
+
+  /* ---- typewriter-style staggered line reveal ---- */
+  var lines = $$("#report .rline");
+  var caret = $("#caret"), stat = $("#repStat");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){
+    lines.forEach(function(l){l.classList.add("in")});
+    if(caret) caret.classList.add("done");
+    if(stat) stat.textContent = "report complete · 412 documents read";
+  } else {
+    var delay = 260;
+    lines.forEach(function(l, i){
+      setTimeout(function(){ l.classList.add("in"); }, delay + i * 190);
+    });
+    setTimeout(function(){
+      if(caret) caret.classList.add("done");
+      if(stat) stat.textContent = "report complete · 412 documents read";
+    }, delay + lines.length * 190 + 500);
+    var phases = ["reading filings…","parsing transcripts…","scoring the wire…","running models…","writing report…"];
+    var pi = 0;
+    var ph = setInterval(function(){
+      if(!stat || stat.textContent.indexOf("complete") > -1){ clearInterval(ph); return; }
+      stat.textContent = phases[pi % phases.length]; pi++;
+    }, 900);
+  }
+
+  /* ---- model cards from FLUX.MODELS ---- */
+  var grid = $("#modelGrid");
+  if(grid && F.MODELS){
+    F.MODELS.forEach(function(m){
+      var el = document.createElement("div");
+      el.className = "glass glass-hover feat model reveal";
+      el.innerHTML = '<div class="top"><h3>' + m.n + '</h3><span class="tag">' + m.m + '</span></div>' +
+                     '<p>' + m.d + '</p>';
+      grid.appendChild(el);
+    });
+  }
+
+  /* ---- equity curve ---- */
+  function drawEq(){
+    var cv = $("#eqCurve");
+    if(cv && F.drawArea) F.drawArea(cv, "research", 60, true);
+  }
+  drawEq();
+
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(drawEq, 140);
+  });
+
+  /* pick up cards injected above (FLUX.initReveal also runs on load) */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>

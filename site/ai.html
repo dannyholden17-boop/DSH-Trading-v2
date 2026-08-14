@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flux AI — The agent that runs your desk</title>
+<meta name="description" content="Ask Flux anything about the market and get a real answer. Six models run all day, research writes itself, and every idea arrives with the homework attached.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ---- hero orb ---- */
+  .ai-hero{position:relative;text-align:center;padding-top:clamp(30px,5vw,60px)}
+  .ai-hero .orb{--sz:clamp(150px,20vw,200px);margin-bottom:22px}
+  .ai-hero h1{margin-top:6px}
+  .ai-hero .lede{margin:20px auto 30px;text-align:center}
+
+  /* ---- chat demo ---- */
+  .chat{max-width:820px;margin-inline:auto;overflow:hidden;padding:0}
+  .chat-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2);
+    background:rgba(3,8,20,.5)}
+  .chat-head .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);animation:blink 1.8s infinite}
+  .chat-head b{font-size:14px}
+  .chat-head .st{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .chat-log{padding:18px;display:flex;flex-direction:column;gap:12px;min-height:330px;max-height:460px;overflow-y:auto}
+  .msg{max-width:82%;padding:11px 15px;border-radius:14px;font-size:14px;line-height:1.55;animation:pop .3s both}
+  .msg.user{align-self:flex-end;background:rgba(0,242,255,.1);border:1px solid rgba(0,242,255,.28)}
+  .msg.ai{align-self:flex-start;background:var(--well);border:1px solid var(--line-2)}
+  .msg.ai b{color:var(--cyan);font-weight:600}
+  .msg .think{display:inline-flex;gap:4px;padding:2px 0}
+  .msg .think i{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 1s infinite}
+  .msg .think i:nth-child(2){animation-delay:.2s} .msg .think i:nth-child(3){animation-delay:.4s}
+  .msg .cite{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .msg .cite span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:20px;padding:2px 9px;color:var(--text-faint)}
+  .msg .sig{margin-top:11px}
+  .chat-in{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--line-2);background:rgba(3,8,20,.5)}
+  .chat-in input{flex:1;background:var(--well);border:1px solid var(--line);border-radius:100px;color:var(--text);
+    padding:12px 18px;font-size:14px;outline:none;font-family:var(--f-sans);min-width:0}
+  .chat-in input:focus{border-color:rgba(0,242,255,.5);box-shadow:0 0 0 3px rgba(0,242,255,.1)}
+  .chat-in button{border:none;border-radius:100px;padding:0 22px;font-weight:700;cursor:pointer;
+    color:#03202a;background:var(--grad);flex:none}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+  .chip{font-size:12.5px;padding:8px 15px;border-radius:100px;border:1px solid var(--line);
+    background:var(--glass);color:var(--text-dim);cursor:pointer;font-family:var(--f-sans);transition:.15s}
+  .chip:hover{border-color:rgba(0,242,255,.5);color:var(--cyan)}
+
+  /* ---- agents grid ---- */
+  .agent{padding:20px;display:flex;flex-direction:column;gap:9px}
+  .agent .top{display:flex;align-items:center;gap:9px}
+  .agent .st{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);
+    animation:blink 1.8s infinite;flex:none}
+  .agent b{font-size:14px}
+  .agent .mdl{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;color:#c4abff;
+    border:1px solid rgba(139,92,246,.35);border-radius:5px;padding:2px 7px}
+  .agent p{font-size:12.5px;color:var(--text-dim);line-height:1.5}
+  .agent .prog{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}
+  .agent .prog i{display:block;height:100%;background:var(--grad);transition:width .5s linear}
+  .agent .out{font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint);white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;min-height:14px}
+
+  /* ---- report mock ---- */
+  .report{padding:22px 24px;font-size:13.5px;line-height:1.65}
+  .report h4{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--cyan);margin:16px 0 7px;font-weight:600}
+  .report h4:first-child{margin-top:0}
+  .report p{color:var(--text-dim);margin-bottom:9px}
+  .report .ln{font-family:var(--f-mono);font-size:11.5px;color:var(--text-dim);padding:2px 0}
+  .report .ln b{color:var(--text)}
+  .rep-head{display:flex;align-items:center;gap:10px;padding:13px 24px;border-bottom:1px solid var(--line-2);
+    background:rgba(3,8,20,.5)}
+
+  .conv{display:flex;flex-direction:column;gap:10px}
+  .brain-vault{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  @media(max-width:520px){.brain-vault{grid-template-columns:repeat(2,1fr)}}
+  .brain-vault .bn{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--glass-2);font-size:.76rem}
+  .brain-vault .bn b{display:block;color:var(--cyan);font-family:var(--f-mono);font-size:.7rem;margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="section-sm ai-hero">
+  <div class="wrap">
+    <div class="orb">
+      <span class="rg a"></span><span class="rg b"></span><span class="rg p"></span>
+      <div class="wave"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <span class="pill pill-violet"><i></i> Flux AI · 6 agents running</span>
+    <h1 class="h1" style="margin-top:18px">Ask your desk<br><span class="grad-text">anything.</span></h1>
+    <p class="lede">Flux AI reads the tape, the filings and your own portfolio — then answers in plain
+      English, with the numbers and the backtest attached. Six models keep working while you're away.</p>
+  </div>
+</section>
+
+<!-- ============ LIVE CHAT DEMO ============ -->
+<section class="section-sm">
+  <div class="wrap">
+    <div class="chat glass reveal">
+      <div class="chat-head">
+        <span class="dot"></span><b>Flux AI</b>
+        <span class="st" id="chatSt">connected · reading live desk state</span>
+      </div>
+      <div class="chat-log" id="chatLog"></div>
+      <form class="chat-in" id="chatForm">
+        <input id="chatIn" placeholder="Ask about a stock, your risk, or the market…" autocomplete="off">
+        <button type="submit">Ask</button>
+      </form>
+    </div>
+    <div class="chips" id="chips"></div>
+    <p class="faint center" style="font-size:.78rem;margin-top:16px">
+      A working demo running on simulated desk data. In the app it reads your real positions and live prices.
+    </p>
+  </div>
+</section>
+
+<!-- ============ WHAT IT CAN DO ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Capabilities</span>
+      <h2 class="h2" style="margin-top:16px">Not a chatbot bolted onto a chart.</h2>
+      <p class="lede" style="margin-top:16px">Flux AI is wired into the same engines, order book and
+        portfolio the platform runs on. It answers from your actual state, not a generic model of the market.</p>
+    </div>
+    <div class="grid g-3 reveal" style="margin-top:40px">
+      <div class="glass feat glass-hover"><div class="ic">◎</div><h3>Reads your portfolio</h3>
+        <p>"What's my biggest risk?" returns your worst position by name, its size, live P&amp;L and a Monte-Carlo VaR number.</p></div>
+      <div class="glass feat glass-hover"><div class="ic">⌁</div><h3>Runs the models</h3>
+        <p>Ask for a forecast and it calls PriceNet, checks RSI and regime, and hands back a number with a confidence score.</p></div>
+      <div class="glass feat glass-hover"><div class="ic">⚗</div><h3>Backs it with history</h3>
+        <p>Every setup can be replayed across years of sessions before you act. Win rate, Sharpe, and whether the edge is decaying.</p></div>
+      <div class="glass feat glass-hover"><div class="ic">✎</div><h3>Writes your reports</h3>
+        <p>Morning brief, midday pulse, portfolio review — composed from live state on a schedule, or on demand.</p></div>
+      <div class="glass feat glass-hover"><div class="ic">⊘</div><h3>Refuses to guess</h3>
+        <p>Ask "should I buy?" and it stacks the evidence instead of pretending to know. It never gives advice.</p></div>
+      <div class="glass feat glass-hover"><div class="ic">⇄</div><h3>Ends in an action</h3>
+        <p>Every answer carries buttons — load the chart, paper trade, flag it, run the backtest. No dead ends.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AGENTS ============ -->
+<section class="section band">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Always running</span>
+      <h2 class="h2" style="margin-top:16px">Six models that never clock out.</h2>
+      <p class="lede" style="margin-top:16px">They run on their own cadence all day — forecasting, classifying
+        the regime, scoring headlines, simulating your book. You can pause any of them.</p>
+    </div>
+    <div class="grid g-3 reveal" id="agents" style="margin-top:40px"></div>
+    <p class="faint" style="font-size:.78rem;margin-top:22px;text-align:center">
+      Live simulation of the agent loop. Model names describe the technique each agent uses.
+    </p>
+  </div>
+</section>
+
+<!-- ============ REPORTS ============ -->
+<section class="section">
+  <div class="wrap split wide-l">
+    <div class="reveal">
+      <span class="eyebrow">Autonomous research</span>
+      <h2 class="h2" style="margin-top:16px">Reports that write themselves.</h2>
+      <p class="lede" style="margin-top:16px">The Reporter agent publishes on a schedule — built from your live
+        positions, the day's movers, model forecasts and open risk. You wake up to the work already done.</p>
+      <div class="flist">
+        <div class="fi"><span class="k">7:00</span><div><b>Morning Brief</b>
+          <p>Overnight moves, the day's catalysts, and what changed in your book while you slept.</p></div></div>
+        <div class="fi"><span class="k">12:30</span><div><b>Midday Pulse</b>
+          <p>What the engines surfaced since the open, re-ranked by confidence.</p></div></div>
+        <div class="fi"><span class="k">16:15</span><div><b>Closing Wrap</b>
+          <p>Where you finished, realized and open P&amp;L, and the setups carrying into tomorrow.</p></div></div>
+      </div>
+      <a class="btn btn-primary" style="margin-top:26px" href="./research.html">See AI Research →</a>
+    </div>
+    <div class="glass reveal" style="padding:0;overflow:hidden">
+      <div class="rep-head"><span class="pill pill-violet" style="padding:4px 11px;font-size:10px"><i></i> Flux-LM</span>
+        <b style="font-size:13px">Morning Brief</b>
+        <span class="mono" style="margin-left:auto;font-size:10.5px;color:var(--text-faint)">7:00 AM</span></div>
+      <div class="report" id="report"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FLUX BRAIN / OBSIDIAN ============ -->
+<section class="section" id="brain">
+  <div class="wrap split wide-l">
+    <div class="glass sheen reveal rl" style="padding:24px">
+      <div class="mono" style="color:var(--text-faint);font-size:.72rem;margin-bottom:12px">Your vault → Flux Brain</div>
+      <div class="brain-vault">
+        <div class="bn"><b>#thesis</b>Long semis into GTC — AI capex still accelerating.</div>
+        <div class="bn"><b>#rules</b>Max 8% per name. No adds into earnings.</div>
+        <div class="bn"><b>#journal</b>Trimmed AMD too early. Let winners run.</div>
+        <div class="bn"><b>#watch</b>SMCI — audit overhang, size small.</div>
+        <div class="bn"><b>#mistakes</b>Chased TSLA. Wait for the retest.</div>
+        <div class="bn"><b>#macro</b>CPI Thu. Trim risk into the print.</div>
+      </div>
+      <p class="mono" style="color:var(--text-faint);font-size:.72rem;margin-top:12px">Illustrative notes · synced from your Obsidian vault</p>
+    </div>
+    <div class="reveal rr">
+      <span class="eyebrow">Flux Brain</span>
+      <h2 class="h2">Give it a memory. <span class="grad-text grad-anim">Yours.</span></h2>
+      <p class="lede">Connect your Obsidian vault and Flux reads your theses, rules and trade journal as long-term memory. Its answers start sounding like <em>you</em> — it remembers your playbook, flags when you're about to repeat a mistake, and cites your own notes back to you.</p>
+      <ul class="flist">
+        <li class="fi"><span>❖</span><div><b>Bring your notes.</b> Your Obsidian vault, journal and watchlists become the AI's context.</div></li>
+        <li class="fi"><span>◇</span><div><b>It remembers your rules.</b> "You said max 8% per name — this order is 11%."</div></li>
+        <li class="fi"><span>⊘</span><div><b>Private by design.</b> Your vault stays yours; live sync runs through the desktop app.</div></li>
+      </ul>
+      <div class="btn-row"><a class="btn btn-ghost" href="./download.html">Get the desktop app →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT ANSWERS ============ -->
+<section class="section band">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:60ch;margin-inline:auto">
+      <span class="eyebrow c">Under the hood</span>
+      <h2 class="h2" style="margin-top:16px">How an answer gets built.</h2>
+    </div>
+    <div class="steps reveal" style="margin-top:40px">
+      <div class="step"><div class="n">01</div><h3>Read state</h3>
+        <p>Your positions, orders, watchlist and the live tape — the question is grounded in what's actually true right now.</p></div>
+      <div class="step"><div class="n">02</div><h3>Call the models</h3>
+        <p>Forecast, regime, sentiment and risk models run against the symbols in scope.</p></div>
+      <div class="step"><div class="n">03</div><h3>Check history</h3>
+        <p>Any claimed edge is replayed across years of sessions before it's put in front of you.</p></div>
+      <div class="step"><div class="n">04</div><h3>Answer + act</h3>
+        <p>Plain English, the supporting numbers, a confidence score, and the buttons to do something about it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GUARDRAILS ============ -->
+<section class="section">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="eyebrow">Guardrails</span>
+      <h2 class="h2" style="margin-top:16px">It works for you.<br>Not the other way around.</h2>
+      <p class="lede" style="margin-top:16px">An AI with access to a trading account is only useful if it's
+        bounded. Flux AI is built to inform and execute what you approve — never to act on its own.</p>
+      <div class="flist">
+        <div class="fi"><span class="k">⊘</span><div><b>It never trades on its own</b>
+          <p>No order is placed without you confirming it. There is no autonomous execution mode.</p></div></div>
+        <div class="fi"><span class="k">🛡</span><div><b>Risk gates every order</b>
+          <p>Position size, stop distance, correlation and exposure are checked before anything routes.</p></div></div>
+        <div class="fi"><span class="k">🔑</span><div><b>Your keys, your broker</b>
+          <p>Flux connects with your credentials. We never take custody of your funds.</p></div></div>
+        <div class="fi"><span class="k">≡</span><div><b>Everything is logged</b>
+          <p>Every question, model run, report and order is written to an activity trail you can audit.</p></div></div>
+      </div>
+    </div>
+    <div class="glass reveal" style="padding:26px">
+      <div class="conv">
+        <div class="msg user" style="max-width:100%;animation:none">Should I buy NVDA right now?</div>
+        <div class="msg ai" style="max-width:100%;animation:none">
+          I don't give advice — but I'll stack the evidence so you can decide.
+          <div class="cite"><span>PriceNet</span><span>RSI 14</span><span>Options tape</span><span>5y backtest</span></div>
+          <div class="sig" style="margin-top:12px">
+            <div class="av">NVD</div>
+            <div class="mid"><div class="tk">NVDA <span>+2.1%</span></div>
+              <div class="lbl">Unusual Flow · $4.6M call sweep at ask</div>
+              <div class="bar"><i style="width:88%;background:#10b981"></i></div></div>
+            <div><div class="conf" style="color:#10b981">88%</div><div class="cl">conf</div></div>
+          </div>
+          <p style="margin-top:11px;font-size:13px;color:var(--text-dim)">The catch: IV at 62% means the move is
+            largely priced. Backtest on this setup is 71% over 5 years — but that's history, not a promise.</p>
+        </div>
+      </div>
+      <p class="faint" style="font-size:.75rem;margin-top:16px">Flux is research software, not a financial adviser.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="section-sm">
+  <div class="wrap stats reveal">
+    <div class="stat"><div class="v"><span data-count="6412">0</span></div><div class="k">Tickers scanned</div></div>
+    <div class="stat"><div class="v"><span data-count="6">0</span></div><div class="k">Models running</div></div>
+    <div class="stat"><div class="v"><span data-count="127">0</span></div><div class="k">Findings a day</div></div>
+    <div class="stat"><div class="v"><span data-count="24" data-suffix="/7">0</span></div><div class="k">Always on</div></div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:58ch;margin-inline:auto">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2" style="margin-top:16px">What people ask about the AI.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:36px">
+      <details open><summary>Does Flux AI place trades by itself?</summary>
+        <p>No. It researches, forecasts and drafts orders, but nothing routes until you confirm it. There is no
+          setting that lets it trade autonomously — that's a deliberate design decision, not a missing feature.</p></details>
+      <details><summary>Is this just ChatGPT with a stock prompt?</summary>
+        <p>No. The language layer is one part of it. Underneath are six purpose-built models — a sequence forecaster,
+          a volatility-regime classifier, a sentiment scorer, a Monte-Carlo portfolio simulator, a signal re-ranker,
+          and a report writer — plus direct access to your live positions and the engines' output.</p></details>
+      <details><summary>Can it predict the market?</summary>
+        <p>No, and it won't claim to. It produces probabilistic forecasts with explicit confidence scores, and shows
+          you the historical base rate behind any setup. Confidence is a measure of model agreement, not a guarantee.</p></details>
+      <details><summary>What does it actually read?</summary>
+        <p>Price and volume history, the options tape, SEC filings and 8-Ks, earnings material, the news wire, and
+          your own portfolio and order history. It cites which of those a given answer drew on.</p></details>
+      <details><summary>Where does my data go?</summary>
+        <p>Your positions and activity stay tied to your account. Flux connects to your broker with your own
+          credentials and never takes custody of funds.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Put six models on your desk tonight.</h2>
+      <p class="lede center" style="margin:18px auto 28px">They'll have been working for hours by the time you open it.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./download.html">Launch Flux — free</a>
+        <a class="btn btn-ghost btn-lg" href="./download.html">Download</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  var F=window.FLUX; if(!F) return;
+  var $=F.$, $$=F.$$;
+
+  /* ================= CHAT DEMO ================= */
+  var log=$("#chatLog");
+  function add(who,html){
+    var d=document.createElement("div"); d.className="msg "+who; d.innerHTML=html;
+    log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
+  }
+  function sigOf(t){ return F.SIGNALS.find(function(s){return s.t===t}); }
+  function sigBlock(s){
+    var col=s.u?F.EM:F.CR;
+    return '<div class="sig"><div class="av">'+s.t.slice(0,3)+'</div><div class="mid">'+
+      '<div class="tk">'+s.t+' <span>'+s.mv+'</span></div><div class="lbl">'+s.lbl+' · '+s.e+'</div>'+
+      '<div class="bar"><i style="width:'+s.c+'%;background:'+col+'"></i></div></div>'+
+      '<div><div class="conf" style="color:'+col+'">'+s.c+'%</div><div class="cl">conf</div></div></div>';
+  }
+  function cites(list){ return '<div class="cite">'+list.map(function(c){return '<span>'+c+'</span>'}).join("")+'</div>'; }
+
+  /* a small deterministic "portfolio" so answers feel grounded */
+  var BOOK=[{sym:"NVDA",side:"long",qty:120,entry:181.40,last:185.42},
+            {sym:"TSLA",side:"long",qty:60,entry:246.10,last:241.18},
+            {sym:"AMD",side:"long",qty:200,entry:169.80,last:172.90}];
+  function pnl(p){return (p.last-p.entry)*p.qty}
+  function money(n){return (n<0?"-$":"$")+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+  function answer(q){
+    var ql=q.toLowerCase();
+    var m=q.toUpperCase().match(/\b[A-Z]{2,5}\b/g)||[];
+    var known=F.SIGNALS.map(function(s){return s.t});
+    var sym=null; for(var i=0;i<m.length;i++){ if(known.indexOf(m[i])>=0){sym=m[i];break;} }
+
+    if(/risk|drawdown|exposure|var\b|worst/.test(ql)){
+      var worst=BOOK.slice().sort(function(a,b){return pnl(a)-pnl(b)})[0];
+      var p=pnl(worst), pct=(p/(worst.entry*worst.qty))*100;
+      return "Your biggest risk is <b>"+worst.sym+"</b> — "+worst.side+" "+worst.qty+" from $"+worst.entry.toFixed(2)+
+        ", now "+money(p)+" ("+pct.toFixed(1)+"%). MonteCarlo puts your 1-day VaR(95) at <b>$1,847</b>, and "+
+        worst.sym+"'s correlation to SPX has risen to 0.81 — so this position is moving with the index, not hedging it."+
+        cites(["Your positions","MonteCarlo · 10k paths","Risk engine"]);
+    }
+    if(/forecast|predict|target|next|tomorrow/.test(ql)&&sym){
+      var s1=sigOf(sym);
+      return "<b>PriceNet</b> (LSTM v4) on <b>"+sym+"</b>: next session <b>"+(s1&&s1.u?"+1.4%":"−0.9%")+
+        "</b> with <b>"+(s1?s1.c:70)+"%</b> confidence. VolRegime currently labels the tape <b>normal</b>, "+
+        "which historically makes this setup's base rate hold. That's a probabilistic read, not a promise."+
+        cites(["PriceNet · LSTM v4","VolRegime · HMM-3","5y backtest"])+(s1?sigBlock(s1):"");
+    }
+    if(/oversold|overbought|rsi|macd|technical/.test(ql)){
+      var t=sym||"TSLA", s2=sigOf(t);
+      return "<b>"+t+"</b> daily RSI is <b>"+(s2&&s2.u?"61":"34")+"</b> — "+
+        (s2&&s2.u?"upper-neutral. No mean-reversion edge from RSI alone here; the move is trend, not exhaustion."
+                 :"approaching oversold. Historically, reversion setups in this range resolve higher about 6 times in 10 — thin, but real.")+
+        cites(["Technicals engine","RSI 14 · daily"])+(s2?sigBlock(s2):"");
+    }
+    if(/flow|options|sweep|gamma|unusual/.test(ql)){
+      var o=F.SIGNALS.find(function(s){return s.e==="Options"});
+      return "Loudest options activity on the tape right now:<br>"+o.i+
+        " Open interest at that strike is up 38%, and the put/call ratio flipped to 4.8:1 in the last hour."+
+        cites(["Options engine","Live options tape"])+sigBlock(o);
+    }
+    if(/report|brief|summary/.test(ql)){
+      return "I've published your <b>Morning Brief</b> — equity, open and realized P&L, model forecasts across "+
+        "your watchlist, today's movers and any open risk. The Reporter agent runs it at 7:00, 12:30 and 16:15, "+
+        "or on demand."+cites(["Reporter · Flux-LM","Your positions","All six engines"]);
+    }
+    if(/position|portfolio|p&l|pnl|how am i|doing/.test(ql)){
+      var tot=BOOK.reduce(function(a,p){return a+pnl(p)},0);
+      return "You're holding <b>"+BOOK.length+" positions</b> with a combined open P&L of <b>"+money(tot)+"</b>. "+
+        BOOK.map(function(p){return p.sym+" "+money(pnl(p))}).join(" · ")+
+        ". Nothing is near a stop, and your largest single exposure is NVDA at 41% of deployed capital — "+
+        "concentrated enough that I'd flag it."+cites(["Your positions","Risk engine"]);
+    }
+    if(/should i (buy|sell)|good buy|worth buying/.test(ql)){
+      var s3=sigOf(sym||"NVDA");
+      return "I don't give advice — but here's the evidence stacked up so you can decide."+
+        cites(["PriceNet","RSI 14","Options tape","5y backtest"])+sigBlock(s3)+
+        "<p style='margin-top:10px;font-size:13px;color:var(--text-dim)'>Backtested at 71% over five years. "+
+        "That's a base rate, not a forecast — and it says nothing about this particular trade.</p>";
+    }
+    if(/gainer|loser|mover|active|volume/.test(ql)){
+      var top=F.SIGNALS.slice(0,3);
+      return "Biggest movers the engines are tracking: "+top.map(function(s){return "<b>"+s.t+"</b> "+s.mv}).join(" · ")+
+        ". "+top[0].t+" is the one with real conviction behind it — "+top[0].c+"% after re-ranking."+
+        cites(["Scanner engine","AlphaRank · GBM"])+sigBlock(top[0]);
+    }
+    if(sym){
+      var s4=sigOf(sym);
+      return "<b>"+sym+"</b> — "+s4.i+" AlphaRank re-scored this at <b>"+s4.c+"%</b> after checking it against "+
+        "five years of similar setups."+cites([s4.e+" engine","AlphaRank · GBM","5y backtest"])+sigBlock(s4);
+    }
+    return "I can read your <b>portfolio</b>, run <b>forecasts</b>, screen <b>movers</b>, check <b>options flow</b>, "+
+      "and write <b>reports</b>. Try asking about a ticker, your risk, or what's moving."+
+      cites(["6 engines","6 models"]);
+  }
+
+  var busy=false;
+  function ask(q){
+    if(busy||!q.trim())return; busy=true;
+    add("user",q.replace(/</g,"&lt;"));
+    var t=add("ai",'<span class="think"><i></i><i></i><i></i></span>');
+    $("#chatSt").textContent="thinking · calling models";
+    setTimeout(function(){
+      t.innerHTML=answer(q);
+      log.scrollTop=log.scrollHeight;
+      $("#chatSt").textContent="connected · reading live desk state";
+      busy=false;
+    },850+Math.random()*500);
+  }
+  $("#chatForm").addEventListener("submit",function(e){
+    e.preventDefault(); var v=$("#chatIn").value; $("#chatIn").value=""; ask(v);
+  });
+
+  var QUICK=["What's my biggest risk?","Forecast NVDA","Any unusual options flow?","Is TSLA oversold?",
+             "How are my positions?","What's moving today?","Should I buy NVDA?","Write me a report"];
+  $("#chips").innerHTML=QUICK.map(function(q){return '<button class="chip">'+q+'</button>'}).join("");
+  $$("#chips .chip").forEach(function(b){b.addEventListener("click",function(){ask(b.textContent)})});
+
+  /* opening exchange */
+  add("ai","Desk is live. Six engines scanning, six models running. Ask me anything — or tap a suggestion below."+
+      cites(["Scanner","Catalyst","Options","Technicals","Risk","Backtest"]));
+  setTimeout(function(){ask("What's my biggest risk?")},1400);
+
+  /* ================= AGENTS ================= */
+  var host=$("#agents");
+  var state=F.MODELS.map(function(m,i){
+    return {m:m,p:Math.random()*.8,int:14+i*5,runs:F.ri(3,40),last:"warming up…"};
+  });
+  var OUT={
+    PriceNet:function(){var s=F.rnd(F.SIGNALS);return s.t+" next-session "+(s.u?"+":"−")+(Math.random()*2+.2).toFixed(2)+"% · conf "+s.c+"%"},
+    VolRegime:function(){return "regime: "+F.rnd(["low-vol grind","normal","elevated · squeeze risk"])+" (p="+(0.6+Math.random()*.35).toFixed(2)+")"},
+    NewsSense:function(){var s=F.rnd(F.SIGNALS);return s.t+" sentiment "+(Math.random()>.4?"+":"−")+(Math.random()*.8).toFixed(2)+" — "+F.rnd(["bullish","neutral","bearish"])},
+    MonteCarlo:function(){return "1-day VaR(95): $"+(1200+F.ri(0,1400)).toLocaleString()+" · P(dd>5%) "+F.ri(4,14)+"%"},
+    AlphaRank:function(){var s=F.rnd(F.SIGNALS);return "re-scored "+s.t+" ("+s.e+") → "+Math.min(97,s.c+F.ri(-4,7))+"%"},
+    Reporter:function(){return "published: "+F.rnd(["Morning Brief","Midday Pulse","Portfolio Review","Closing Wrap"])}
+  };
+  function renderAgents(full){
+    if(full){
+      host.innerHTML=state.map(function(s,i){
+        return '<div class="glass agent" data-i="'+i+'">'+
+          '<div class="top"><span class="st"></span><b>'+s.m.n+'</b><span class="mdl">'+s.m.m+'</span></div>'+
+          '<p>'+s.m.d+'</p>'+
+          '<div class="prog"><i style="width:'+(s.p*100).toFixed(0)+'%"></i></div>'+
+          '<div class="out">'+s.last+'</div>'+
+          '<div class="mono" style="font-size:9.5px;color:var(--text-faint)">'+s.runs+' runs today</div></div>';
+      }).join("");
+    } else {
+      state.forEach(function(s,i){
+        var el=host.querySelector('[data-i="'+i+'"]'); if(!el)return;
+        el.querySelector(".prog i").style.width=(s.p*100).toFixed(0)+"%";
+        el.querySelector(".out").textContent=s.last;
+        el.querySelector(".mono").textContent=s.runs+" runs today";
+      });
+    }
+  }
+  renderAgents(true);
+  setInterval(function(){
+    state.forEach(function(s){
+      s.p+=0.6/s.int;
+      if(s.p>=1){s.p=0;s.runs++;var f=OUT[s.m.n];s.last=f?f():"—";}
+    });
+    renderAgents(false);
+  },600);
+
+  /* ================= REPORT (types itself in) ================= */
+  var REPORT=[
+    ['h4','Desk summary'],
+    ['p','Equity <b>$118,420.65</b> · open P&L <b class="up">+$2,914.20</b> · cash <b>$41,208.10</b>. Three positions open, one resting limit order, two armed alerts.'],
+    ['h4','Overnight'],
+    ['ln','Futures firmed into the open · ES <b>+0.4%</b> · NQ <b>+0.6%</b>'],
+    ['ln','VIX <b>13.9</b> — VolRegime still labels the tape <b>normal</b>'],
+    ['h4','Model forecasts'],
+    ['ln','NVDA — PriceNet <b class="up">+1.4%</b> next session · conf <b>88%</b>'],
+    ['ln','AMD  — PriceNet <b class="up">+0.9%</b> next session · conf <b>74%</b>'],
+    ['ln','TSLA — PriceNet <b class="down">−1.1%</b> next session · conf <b>69%</b>'],
+    ['h4','What changed in your book'],
+    ['p','TSLA drifted <b class="down">−1.8%</b> on the delivery-guidance 8-K. Position is <b>−$295</b> open, still <b>3.2%</b> above your stop. Risk engine has not flagged it.'],
+    ['h4','Open risk'],
+    ['ln','1-day VaR(95) <b>$1,847</b> · P(drawdown &gt; 5%) <b>7%</b>'],
+    ['ln','Largest exposure <b>NVDA 41%</b> of deployed capital — concentrated']
+  ];
+  var rep=$("#report"), ri2=0;
+  function typeLine(){
+    if(ri2>=REPORT.length)return;
+    var r=REPORT[ri2++], el=document.createElement(r[0]==='h4'?'h4':(r[0]==='p'?'p':'div'));
+    if(r[0]==='ln')el.className='ln';
+    el.innerHTML=r[1]; el.style.animation="fadein .45s both";
+    rep.appendChild(el);
+    setTimeout(typeLine, r[0]==='h4'?260:200);
+  }
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ typeLine(); io.disconnect(); } });
+    },{threshold:.25});
+    io.observe(rep);
+  } else typeLine();
+});
+</script>
+</body>
+</html>

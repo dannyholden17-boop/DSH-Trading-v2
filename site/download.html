@@ -1,0 +1,778 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download Flux — Desktop, iPhone, iPad &amp; Android</title>
+<meta name="description" content="Get Flux on every device. The full pro workstation on Mac and Windows, the autonomous desk in your pocket on iPhone and Android, and instant web access.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ==========================================================
+     Page-only layout for download.html.
+     Tokens and components come from flux.css — nothing here
+     redefines a variable or restyles a shared component.
+     ========================================================== */
+
+  /* ---- hero ---- */
+  .dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .dl-meta{margin-top:15px;font-size:.76rem;letter-spacing:.05em;color:var(--text-faint)}
+  .dl-note{margin-top:18px;display:none;gap:12px;align-items:flex-start;max-width:54ch;
+    padding:13px 16px;border-radius:14px;border:1px solid rgba(0,242,255,.32);
+    background:rgba(0,242,255,.06);font-size:.88rem;color:var(--text-dim);line-height:1.5}
+  .dl-note.show{display:flex;animation:pop .35s both}
+  .dl-note .nk{font-family:var(--f-mono);color:var(--cyan);font-weight:700;flex:none;line-height:1.5}
+  .dl-note b{color:var(--text)}
+
+  /* ---- store badges (inline SVG, no external assets) ---- */
+  .store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+  .store-badge{display:inline-block;line-height:0;border-radius:12px;overflow:hidden;
+    border:1px solid var(--line);background:#05070f;
+    transition:border-color .2s,box-shadow .2s,transform .12s}
+  .store-badge:hover{border-color:rgba(0,242,255,.45)}
+  .store-badge:active{transform:scale(.975)}
+  .store-badge.on{border-color:rgba(0,242,255,.6);box-shadow:0 0 24px -6px rgba(0,242,255,.65)}
+  .store-badge svg{display:block;width:172px;height:52px}
+  .store-caption{margin-top:14px;font-size:.78rem;color:var(--text-faint);max-width:50ch;line-height:1.55}
+
+  /* ---- hero release card ---- */
+  .rel-card{padding:24px}
+  .rel-card .rc-h{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .rel-card h3{font-size:1.05rem}
+  .rc-rows{margin-top:18px;display:flex;flex-direction:column;gap:0}
+  .rc-row{display:flex;justify-content:space-between;align-items:center;gap:16px;
+    padding:11px 0;border-bottom:1px solid var(--line-2);font-size:.86rem}
+  .rc-row:last-child{border-bottom:0}
+  .rc-row span{color:var(--text-dim)}
+  .rc-row b{font-family:var(--f-mono);font-weight:600;font-size:.82rem;color:var(--text)}
+  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:11px;background:var(--well);
+    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:10.5px;
+    color:var(--text-faint);word-break:break-all;line-height:1.5}
+  .rc-sha b{color:var(--cyan);font-weight:600}
+
+  /* ---- device / desktop visual ---- */
+  .dl-visual{display:grid;grid-template-columns:.82fr 1.18fr;gap:34px;align-items:center}
+  @media(max-width:900px){.dl-visual{grid-template-columns:1fr;gap:34px}}
+  .ph-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px 4px}
+  .ph-t{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;font-weight:700}
+  .ph-core{padding:16px 0 6px}
+  .ph-status{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--text-dim);text-align:center;padding-bottom:14px}
+  .ph-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--text-faint);padding:0 16px 9px}
+  .ph-feed{padding:0 12px 16px;display:flex;flex-direction:column;gap:8px}
+
+  .win{padding:0;overflow:hidden}
+  .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
+    border-bottom:1px solid var(--line-2);background:rgba(3,8,20,.72)}
+  .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:rgba(255,255,255,.14)}
+  .win-bar i:nth-child(1){background:rgba(239,68,68,.55)}
+  .win-bar i:nth-child(2){background:rgba(245,181,68,.55)}
+  .win-bar i:nth-child(3){background:rgba(16,185,129,.55)}
+  .win-title{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--text-faint);margin-left:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .win-body{padding:14px}
+  .win-body canvas{width:100%;height:214px;border-radius:12px;display:block}
+  @media(max-width:520px){.win-body canvas{height:170px}}
+  .win-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+
+  /* ---- platform cards ---- */
+  .dl-card{display:flex;flex-direction:column}
+  .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;
+    font-size:.88rem;color:var(--text-dim)}
+  .dl-list li{display:flex;gap:9px;align-items:flex-start}
+  .dl-list li::before{content:"✓";color:var(--cyan);font-weight:800;font-size:.82rem;flex:none;line-height:1.6}
+  .dl-card .btn{margin-top:20px;width:100%}
+
+  /* ---- QR ---- */
+  .qr{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding:28px}
+  @media(max-width:640px){.qr{grid-template-columns:1fr;gap:24px;justify-items:center;text-align:center}}
+  .qr-card{width:198px;max-width:100%;flex:none;background:#eef2ff;border-radius:16px;padding:13px;
+    box-shadow:0 24px 50px -28px rgba(0,242,255,.55), inset 0 0 0 1px rgba(2,6,23,.08)}
+  .qr-card svg{width:100%;height:auto;display:block}
+  .qr-steps{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-direction:column;gap:11px;
+    font-size:.89rem;color:var(--text-dim);counter-reset:qs}
+  .qr-steps li{display:flex;gap:11px;align-items:flex-start;text-align:left}
+  .qr-steps li::before{counter-increment:qs;content:counter(qs);flex:none;width:22px;height:22px;border-radius:7px;
+    background:rgba(0,242,255,.09);border:1px solid rgba(0,242,255,.28);color:var(--cyan);
+    font-family:var(--f-mono);font-size:11px;font-weight:700;display:grid;place-items:center;line-height:1}
+  @media(max-width:640px){.qr-steps li{text-align:left}}
+
+  /* ---- comparison table ---- */
+  .cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:18px;padding:2px}
+  .cmp{width:100%;min-width:580px;border-collapse:collapse;font-size:.92rem}
+  .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--line-2)}
+  .cmp thead th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--line)}
+  .cmp thead th:not(:first-child){color:var(--text-dim)}
+  .cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:15%}
+  .cmp tbody tr:last-child td{border-bottom:0}
+  .cmp tbody tr:hover{background:rgba(0,242,255,.035)}
+  .cmp td:first-child{color:var(--text)}
+  .mk{font-family:var(--f-mono);font-weight:700;font-size:.95rem}
+  .mk.y{color:var(--cyan)}
+  .mk.n{color:var(--text-faint)}
+  .cmp-note{margin-top:16px;font-size:.78rem;color:var(--text-faint)}
+
+  /* ---- system requirements ---- */
+  .req{padding:22px;display:flex;flex-direction:column}
+  .req .os{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  .req h3{font-size:1.02rem;margin-top:9px}
+  .req ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:0}
+  .req li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;
+    border-bottom:1px dashed var(--line-2);font-size:.83rem;color:var(--text-dim)}
+  .req li:last-child{border-bottom:0}
+  .req li b{color:var(--text);font-weight:600;text-align:right}
+
+  /* ---- release timeline ---- */
+  .rel-line{position:relative;margin-top:38px;padding-left:28px;max-width:780px;
+    display:flex;flex-direction:column;gap:24px}
+  .rel-line::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;
+    background:linear-gradient(180deg,var(--cyan),rgba(139,92,246,.45),transparent)}
+  .rel-i{position:relative}
+  .rel-i::before{content:"";position:absolute;left:-28px;top:6px;width:11px;height:11px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 12px rgba(0,242,255,.7)}
+  .rel-i.past::before{border-color:rgba(139,92,246,.55);box-shadow:none}
+  .rel-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .rel-v{font-family:var(--f-mono);font-size:1rem;font-weight:700;letter-spacing:-.01em}
+  .rel-d{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;color:var(--text-faint)}
+  .rel-i p{margin-top:6px;color:var(--text-dim);font-size:.9rem;max-width:64ch}
+
+  /* ---- misc ---- */
+  .shead{max-width:64ch}
+  .shead h2{margin-top:16px}
+  .shead p{margin-top:16px}
+  .shead.c{margin-inline:auto;text-align:center}
+  .shead.c .lede{margin-inline:auto}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== HERO ===================== -->
+<section class="section phero">
+  <div class="wrap split wide-l">
+    <div class="reveal">
+      <span class="eyebrow">Download</span>
+      <h1 class="h1" style="margin-top:18px">Your desk.<br><span class="grad-text">Every device.</span></h1>
+      <p class="lede">The full workstation on Mac and Windows. The same six engines in your
+        pocket. And nothing to install at all if you'd rather just open a tab — your
+        watchlists, signals and paper book sync across all three.</p>
+
+      <div class="dl-actions">
+        <a class="btn btn-lg btn-primary" href="#" id="dlMac" data-dl="mac" data-os="macOS">Download for Mac</a>
+        <a class="btn btn-lg btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Download for Windows</a>
+        <a class="btn btn-lg btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux (.AppImage)</a>
+      </div>
+      <p class="mono dl-meta" id="dlMetaLine">version 2.4.1 · 84 MB · macOS 12+ (Apple Silicon &amp; Intel)</p>
+
+      <div class="dl-note" id="betaNote" role="status" aria-live="polite">
+        <span class="nk">›</span><span id="betaNoteText"></span>
+      </div>
+
+      <div class="store-row">
+        <a class="store-badge" href="#" id="badgeIOS" data-dl="ios" data-os="iOS" aria-label="Download on the App Store">
+          <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
+            <rect width="172" height="52" rx="12" fill="#05070f"/>
+            <g transform="translate(17,13) scale(1.08)" fill="#dce1fb">
+              <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.75-4.11z" transform="translate(-3,-4)"/>
+              <path d="M14.6 4.5c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.3-.58 3.02-1.44z" transform="translate(-3,-4)"/>
+            </g>
+            <text x="47" y="22" fill="#9aa8c7" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
+            <text x="46" y="39" fill="#dce1fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
+          </svg>
+        </a>
+        <a class="store-badge" href="#" id="badgeAndroid" data-dl="android" data-os="Android" aria-label="Get it on Google Play">
+          <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
+            <rect width="172" height="52" rx="12" fill="#05070f"/>
+            <g transform="translate(15,15)">
+              <polygon points="3,2 14,10 3,10" fill="#00d67f"/>
+              <polygon points="3,18 14,10 3,10" fill="#00a0ff"/>
+              <polygon points="3,2 19.4,10 14,10" fill="#ff3a44"/>
+              <polygon points="3,18 19.4,10 14,10" fill="#ffce00"/>
+            </g>
+            <text x="47" y="22" fill="#9aa8c7" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
+            <text x="46" y="39" fill="#dce1fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
+          </svg>
+        </a>
+      </div>
+      <p class="store-caption">iOS and Android apps are in beta — web and desktop are available now.</p>
+    </div>
+
+    <div class="glass rel-card reveal">
+      <div class="rc-h">
+        <h3>Latest release</h3>
+        <span class="pill"><i></i> 2.4.1 stable</span>
+      </div>
+      <div class="rc-rows">
+        <div class="rc-row"><span>macOS · universal .dmg</span><b>84 MB</b></div>
+        <div class="rc-row"><span>Windows · .exe installer</span><b>96 MB</b></div>
+        <div class="rc-row"><span>Linux · .AppImage</span><b>78 MB</b></div>
+        <div class="rc-row"><span>Published</span><b>11 Aug 2026</b></div>
+        <div class="rc-row"><span>Update channel</span><b>stable</b></div>
+      </div>
+      <div class="rc-sha"><b>SHA-256</b> · flux-2.4.1-universal.dmg<br>9f2c 41ab 77d0 e6c3 8b15 aa92 3fd7 0c48 e1b6 5a29 cc74 90f1 2d83 be55 617a 04df</div>
+      <p class="muted" style="margin-top:16px;font-size:.85rem">Every build is signed and notarized, and the
+        desktop app verifies its own signature before it updates itself. <a href="#whats-new" style="color:var(--cyan)">See what changed →</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BAND ===================== -->
+<div class="band">
+  <div class="wrap">
+    <span>One account · <b>every</b> device</span><span>·</span>
+    <span>Watchlists and paper book <b>sync live</b></span><span>·</span>
+    <span><b>No card</b> to start on Scout</span><span>·</span>
+    <span>Uninstall in <b>one click</b></span>
+  </div>
+</div>
+
+<!-- ===================== PLATFORM CARDS ===================== -->
+<section class="section" id="platforms">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">Three ways in</span>
+      <h2 class="h2">Pick the surface. The desk is the same.</h2>
+      <p class="lede">The engines run on our side, not yours — so whichever client you open,
+        you're looking at the same live state of the same account.</p>
+    </div>
+
+    <div class="grid g-3" style="margin-top:44px">
+      <div class="glass feat glass-hover dl-card reveal">
+        <div class="ic">▤</div>
+        <h3>Flux Desktop</h3>
+        <p>The full workstation. Native, GPU-accelerated charts and the whole terminal
+          with nothing hidden behind a tab.</p>
+        <ul class="dl-list">
+          <li>Order ladder and streaming time-&amp;-sales</li>
+          <li>Multi-monitor layouts you can save per session</li>
+          <li>Keyboard-first order entry and hotkeys</li>
+          <li>Offline chart cache and local backtest replay</li>
+        </ul>
+        <div class="meta"><span>macOS <b>12+</b></span><span>Windows <b>10/11</b></span><span>Ubuntu <b>20.04+</b></span></div>
+        <a class="btn btn-primary" href="#" data-dl="desktop" data-os="desktop">Download Flux Desktop</a>
+      </div>
+
+      <div class="glass feat glass-hover dl-card reveal">
+        <div class="ic">▮</div>
+        <h3>Flux Mobile</h3>
+        <p>The autonomous desk in your pocket. Signals arrive as push notifications the
+          moment an engine fires — with the reasoning attached.</p>
+        <ul class="dl-list">
+          <li>Push alerts on price, flow and catalysts</li>
+          <li>Full charting with MACD, RSI and VWAP</li>
+          <li>Ask Flux AI by voice or text</li>
+          <li>Face ID / biometric unlock</li>
+        </ul>
+        <div class="meta"><span>iOS <b>16+</b></span><span>Android <b>10+</b></span><span>status <b>beta</b></span></div>
+        <a class="btn btn-ghost" href="#" data-dl="mobile" data-os="mobile">Join the mobile beta</a>
+      </div>
+
+      <div class="glass feat glass-hover dl-card reveal">
+        <div class="ic">◇</div>
+        <h3>Flux Web</h3>
+        <p>Nothing to install, nothing to update. Open a tab on any machine you're sitting
+          at and the desk is already running.</p>
+        <ul class="dl-list">
+          <li>Available right now — no beta list</li>
+          <li>Same signals, watchlists and paper book</li>
+          <li>Works on a locked-down work laptop</li>
+          <li>Sessions expire; nothing is written to disk</li>
+        </ul>
+        <div class="meta"><span>Chrome</span><span>Safari</span><span>Edge</span><span>Firefox</span></div>
+        <a class="btn btn-primary" href="./download.html">Open in browser →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DEVICE VISUAL ===================== -->
+<section class="section band" style="border-block:1px solid var(--line-2)">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">Same desk, two shapes</span>
+      <h2 class="h2">A glance on the phone. The whole tape on the desk.</h2>
+    </div>
+
+    <div class="dl-visual" style="margin-top:44px">
+      <div class="device reveal">
+        <div class="device-screen">
+          <div class="ph-top">
+            <span class="ph-t grad-text">FLUX</span>
+            <span class="pill" style="padding:4px 10px;font-size:9px"><i></i> live</span>
+          </div>
+          <div class="ph-core">
+            <div class="orb" style="--sz:104px">
+              <span class="rg a"></span><span class="rg b"></span><span class="rg p"></span>
+              <div class="wave"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="ph-status" id="phStatus">neural scan active</div>
+          <div class="ph-label">Alpha signals</div>
+          <div class="ph-feed" id="phFeed"></div>
+        </div>
+      </div>
+
+      <div class="glass win reveal">
+        <div class="win-bar">
+          <i></i><i></i><i></i>
+          <span class="win-title">Flux Desktop 2.4.1 — NVDA · 15m · workspace “Open”</span>
+        </div>
+        <div class="win-body">
+          <canvas id="dlChart" aria-label="Illustrative candlestick chart"></canvas>
+          <div class="win-foot">
+            <span class="tag">MACD</span><span class="tag">RSI 14</span><span class="tag">VWAP</span>
+            <span class="tag">Order ladder</span><span class="tag">Time &amp; sales</span><span class="tag">4 monitors</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QR ===================== -->
+<section class="section" id="qr">
+  <div class="wrap">
+    <div class="glass qr reveal">
+      <div class="qr-card" id="qrCard"></div>
+      <div>
+        <span class="eyebrow">On your phone</span>
+        <h2 class="h2" style="font-size:clamp(1.5rem,1.2rem + 1.4vw,2rem);margin-top:14px">Scan to install on your phone.</h2>
+        <p class="muted" style="margin-top:12px;font-size:.95rem;max-width:46ch">Point your camera
+          at the code. It opens the Flux beta page on your device — one field, no download
+          manager, no sideloading.</p>
+        <ol class="qr-steps">
+          <li>Open the camera app and hold it over the code.</li>
+          <li>Tap the link and enter the email on your Flux account.</li>
+          <li>TestFlight or Play beta invite lands the same day.</li>
+        </ol>
+        <p class="faint mono" style="margin-top:18px;font-size:.72rem">decorative code · beta invites are sent by email</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPARISON ===================== -->
+<section class="section" id="compare" style="padding-top:0">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">What's where</span>
+      <h2 class="h2">Feature by feature, honestly.</h2>
+      <p class="lede">Mobile and web are not cut-down demos — but a phone screen can't hold a
+        depth ladder, and a browser tab can't drive four monitors. Here's exactly where the lines are.</p>
+    </div>
+
+    <div class="glass reveal" style="margin-top:40px;padding:6px">
+      <div class="cmp-scroll">
+        <table class="cmp">
+          <caption class="faint" style="caption-side:bottom;text-align:left;padding:14px 18px;font-size:.76rem">Feature availability by client, Flux 2.4.1.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Feature</th>
+              <th scope="col">Desktop</th>
+              <th scope="col">Mobile</th>
+              <th scope="col">Web</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Live market data</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>Pro charting with MACD/RSI</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>Order ladder &amp; time-&amp;-sales</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk n" role="img" aria-label="Not available">—</span></td>
+              <td><span class="mk n" role="img" aria-label="Not available">—</span></td></tr>
+            <tr><td>Paper trading</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>Limit &amp; stop orders</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>Screener</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>Price alerts</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>Flux AI chat</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+            <tr><td>AI agents &amp; scheduled reports</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk n" role="img" aria-label="Not available">—</span></td></tr>
+            <tr><td>Multi-monitor layouts</td>
+              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk n" role="img" aria-label="Not available">—</span></td>
+              <td><span class="mk n" role="img" aria-label="Not available">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="cmp-note reveal">Agents and reports still run for web users — they're configured on
+      desktop or mobile, and the finished report shows up everywhere.</p>
+  </div>
+</section>
+
+<!-- ===================== SYSTEM REQUIREMENTS ===================== -->
+<section class="section band" id="requirements" style="border-block:1px solid var(--line-2)">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">System requirements</span>
+      <h2 class="h2">It runs on the machine you already have.</h2>
+      <p class="lede">The heavy work happens on our engines. Flux Desktop is a client, not a
+        render farm — these are floors, not recommendations for comfort.</p>
+    </div>
+
+    <div class="grid g-3" style="margin-top:40px">
+      <div class="glass req reveal">
+        <div class="os">macOS</div>
+        <h3>macOS 12 Monterey or later</h3>
+        <ul>
+          <li><span>Chip</span><b class="mono">Apple Silicon / Intel</b></li>
+          <li><span>Memory</span><b class="mono">8 GB (16 GB rec.)</b></li>
+          <li><span>Disk</span><b class="mono">1.2 GB free</b></li>
+          <li><span>Package</span><b class="mono">universal .dmg · 84 MB</b></li>
+        </ul>
+      </div>
+      <div class="glass req reveal">
+        <div class="os">Windows</div>
+        <h3>Windows 10 or 11, 64-bit</h3>
+        <ul>
+          <li><span>CPU</span><b class="mono">x64, 4 cores</b></li>
+          <li><span>Memory</span><b class="mono">8 GB (16 GB rec.)</b></li>
+          <li><span>Disk</span><b class="mono">1.4 GB free</b></li>
+          <li><span>Package</span><b class="mono">signed .exe · 96 MB</b></li>
+        </ul>
+      </div>
+      <div class="glass req reveal">
+        <div class="os">Linux</div>
+        <h3>Ubuntu 20.04+ or equivalent</h3>
+        <ul>
+          <li><span>Runtime</span><b class="mono">glibc 2.31+, GTK 3</b></li>
+          <li><span>Memory</span><b class="mono">8 GB</b></li>
+          <li><span>Disk</span><b class="mono">1.1 GB free</b></li>
+          <li><span>Package</span><b class="mono">.AppImage · 78 MB</b></li>
+        </ul>
+      </div>
+    </div>
+    <p class="faint reveal" style="margin-top:24px;font-size:.82rem">A live internet connection is
+      required — Flux streams market data continuously. Cached charts and saved layouts stay
+      readable offline.</p>
+  </div>
+</section>
+
+<!-- ===================== RELEASE NOTES ===================== -->
+<section class="section" id="whats-new">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">Release notes</span>
+      <h2 class="h2">What's new.</h2>
+      <p class="lede">Desktop ships on a two-week cadence. Every build is signed, and you can
+        pin to the previous version from Settings → Updates.</p>
+    </div>
+
+    <div class="rel-line reveal">
+      <div class="rel-i">
+        <div class="rel-h"><span class="rel-v">2.4.1</span><span class="rel-d">11 Aug 2026</span><span class="tag">current</span></div>
+        <p>Fixed a chart redraw stall when waking a Mac from sleep with four workspaces open.
+          Order-ladder scroll now keeps the mid price pinned.</p>
+      </div>
+      <div class="rel-i past">
+        <div class="rel-h"><span class="rel-v">2.4.0</span><span class="rel-d">28 Jul 2026</span></div>
+        <p>Multi-monitor workspaces: save a per-session layout and restore it on launch.
+          Adds RSI divergence markers and a compact depth view.</p>
+      </div>
+      <div class="rel-i past">
+        <div class="rel-h"><span class="rel-v">2.3.2</span><span class="rel-d">09 Jul 2026</span></div>
+        <p>Backtest replay is roughly 40% faster on long ranges. Fixed duplicate push alerts
+          when the same signal fired on two engines.</p>
+      </div>
+      <div class="rel-i past">
+        <div class="rel-h"><span class="rel-v">2.3.0</span><span class="rel-d">17 Jun 2026</span></div>
+        <p>Flux AI chat moved into the terminal sidebar, so you can ask about the symbol
+          you're looking at without leaving the chart.</p>
+      </div>
+      <div class="rel-i past">
+        <div class="rel-h"><span class="rel-v">2.2.4</span><span class="rel-d">30 May 2026</span></div>
+        <p>Risk engine now gates live orders before they leave the client. Added Linux
+          .AppImage builds and hardware-accelerated rendering on Windows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="section" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="shead c reveal">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2">Before you install.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:40px">
+      <details open><summary>Is it free?</summary>
+        <p>The apps are free to download and the Scout plan costs nothing, with no card
+          required. Trader and Desk unlock unlimited signals, live order routing and the AI
+          agents — see <a href="./pricing.html" style="color:var(--cyan)">pricing</a>. The download
+          itself is never the paywall.</p></details>
+      <details><summary>Do I need a broker?</summary>
+        <p>Not to start. Paper trading, every engine and all the research work without one.
+          You only connect a broker when you want orders to reach the market — Flux is not a
+          broker-dealer and never takes custody of your funds. Your keys stay yours.</p></details>
+      <details><summary>Does the mobile app do everything desktop does?</summary>
+        <p>Close, but not all of it. Charting, screening, alerts, paper trading, order entry
+          and Flux AI are all there. The order ladder, time-and-sales tape and multi-monitor
+          workspaces are desktop-only — they need the screen space to be useful.</p></details>
+      <details><summary>Is my data private?</summary>
+        <p>Your watchlists, positions and chat history belong to your account and are not sold
+          or shared. Broker credentials are stored encrypted and are never visible to us in
+          plain text. You can export or delete everything from Settings → Data at any time.</p></details>
+      <details><summary>How do updates work?</summary>
+        <p>Flux Desktop checks for a signed update on launch and applies it in the background;
+          you'll be asked before it restarts. Mobile updates come through the App Store or Play
+          Store. Web is always current. You can pin to the previous desktop build if a release
+          breaks a workflow.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Install it tonight. Wake up to the research.</h2>
+      <p class="lede center" style="margin:18px auto 28px">Start on the web in ten seconds, or put
+        the full workstation on your machine. Same account either way.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./download.html">Open Flux Web — free</a>
+        <a class="btn btn-ghost btn-lg" href="#" data-dl="desktop" data-os="desktop">Get the desktop app</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* ---------- OS detection ---------- */
+  function detectOS(){
+    var ua = navigator.userAgent || "", pf = navigator.platform || "";
+    if(/iPhone|iPad|iPod/i.test(ua)) return "ios";
+    if(pf === "MacIntel" && navigator.maxTouchPoints > 1) return "ios";      /* iPadOS */
+    if(/Android/i.test(ua)) return "android";
+    if(/Mac/i.test(pf) || /Mac OS X/i.test(ua)) return "mac";
+    if(/Win/i.test(pf) || /Windows/i.test(ua)) return "win";
+    if(/Linux|X11|CrOS/i.test(pf) || /Linux/i.test(ua)) return "linux";
+    return "unknown";
+  }
+
+  var META = {
+    mac:   "version 2.4.1 · 84 MB · macOS 12+ (Apple Silicon & Intel)",
+    win:   "version 2.4.1 · 96 MB · Windows 10/11, 64-bit",
+    linux: "version 2.4.1 · 78 MB · Ubuntu 20.04+ (.AppImage)"
+  };
+
+  var os = detectOS();
+  var btns = { mac: $("#dlMac"), win: $("#dlWin"), linux: $("#dlLinux") };
+  var metaLine = $("#dlMetaLine");
+
+  function promote(key){
+    ["mac","win","linux"].forEach(function(k){
+      if(!btns[k]) return;
+      btns[k].classList.remove("btn-primary","btn-ghost");
+      btns[k].classList.add(k === key ? "btn-primary" : "btn-ghost");
+    });
+    if(metaLine && META[key]) metaLine.textContent = META[key];
+  }
+
+  if(os === "win" || os === "linux" || os === "mac"){
+    promote(os);
+  } else if(os === "ios" || os === "android"){
+    /* On a phone the desktop row is secondary — highlight the right store badge instead. */
+    promote("");
+    var badge = $(os === "ios" ? "#badgeIOS" : "#badgeAndroid");
+    if(badge) badge.classList.add("on");
+    if(metaLine) metaLine.textContent = (os === "ios" ? "iOS 16+ · beta via TestFlight" : "Android 10+ · beta via Google Play")
+      + " · desktop builds below";
+  } else {
+    promote("mac");
+  }
+
+  /* ---------- download handlers (no installer exists yet) ---------- */
+  var note = $("#betaNote"), noteText = $("#betaNoteText");
+  var MSG = {
+    ios:     "Coming to the App Store — join the beta. Drop your Flux account email on the beta page and we'll send a TestFlight invite the same day.",
+    android: "Coming to Google Play — join the beta. Add your Flux account email and we'll send a Play beta invite the same day.",
+    mobile:  "Coming to the App Store and Google Play — join the beta. iOS and Android builds go out to beta testers first; web and desktop are available now.",
+    mac:     "The signed macOS build ships with the 2.4.1 rollout. Join the beta and we'll email you the .dmg link — <b>Flux Web works right now</b> in the meantime.",
+    win:     "The signed Windows installer ships with the 2.4.1 rollout. Join the beta and we'll email you the .exe link — <b>Flux Web works right now</b> in the meantime.",
+    linux:   "The Linux .AppImage ships with the 2.4.1 rollout. Join the beta and we'll email you the link — <b>Flux Web works right now</b> in the meantime.",
+    desktop: "Desktop installers ship with the 2.4.1 rollout. Join the beta and we'll email you the link for your platform — <b>Flux Web works right now</b> in the meantime."
+  };
+
+  $$("[data-dl]").forEach(function(el){
+    el.addEventListener("click", function(ev){
+      ev.preventDefault();
+      var kind = el.getAttribute("data-dl");
+      if(!note || !noteText) return;
+      noteText.innerHTML = MSG[kind] || MSG.desktop;
+      note.classList.add("show");
+      /* Scroll the note into view when the click came from far down the page. */
+      var r = note.getBoundingClientRect();
+      if(r.top < 0 || r.bottom > (window.innerHeight || 0)){
+        note.scrollIntoView({behavior:"smooth", block:"center"});
+      }
+    });
+  });
+
+  /* ---------- phone mock: signal feed + status ---------- */
+  var feed = $("#phFeed");
+  if(feed && F.SIGNALS && F.sigHTML){
+    feed.innerHTML = F.SIGNALS.slice(0,3).map(F.sigHTML).join("");
+    var i = 3;
+    setInterval(function(){
+      var s = F.SIGNALS[i % F.SIGNALS.length]; i++;
+      var d = document.createElement("div");
+      d.innerHTML = F.sigHTML(s);
+      var row = d.firstChild;
+      row.style.animation = "pop .4s both";
+      feed.insertBefore(row, feed.firstChild);
+      while(feed.children.length > 3) feed.removeChild(feed.lastChild);
+    }, 3600);
+  }
+  var status = $("#phStatus");
+  if(status){
+    var STATES = ["neural scan active","correlating options flow","ranking fresh setups","reading the tape","syncing to desktop"];
+    var si = 0;
+    setInterval(function(){ si++; status.textContent = STATES[si % STATES.length]; }, 3000);
+  }
+
+  /* ---------- desktop window mock: candles ---------- */
+  function paintChart(){
+    var cv = $("#dlChart");
+    if(cv && F.drawCandles) F.drawCandles(cv, "download", 44, true);
+  }
+  paintChart();
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt); rt = setTimeout(paintChart, 160);
+  });
+
+  /* ---------- decorative QR (inline SVG, deterministic) ---------- */
+  function buildQR(seedStr, N){
+    N = N || 25;
+    var quiet = 2, cell = 8, size = (N + quiet * 2) * cell;
+    var g = [], x, y;
+    for(y = 0; y < N; y++){ g[y] = []; for(x = 0; x < N; x++) g[y][x] = 0; }
+
+    var reserved = [];
+    for(y = 0; y < N; y++){ reserved[y] = []; for(x = 0; x < N; x++) reserved[y][x] = 0; }
+
+    function block(ox, oy, w, h, val){
+      for(var j = 0; j < h; j++) for(var k = 0; k < w; k++){
+        var px = ox + k, py = oy + j;
+        if(px < 0 || py < 0 || px >= N || py >= N) continue;
+        g[py][px] = val; reserved[py][px] = 1;
+      }
+    }
+    /* finder pattern: 7x7 ring with a 3x3 core, plus a 1-module separator */
+    function finder(ox, oy){
+      block(ox - 1, oy - 1, 9, 9, 0);
+      block(ox, oy, 7, 7, 1);
+      block(ox + 1, oy + 1, 5, 5, 0);
+      block(ox + 2, oy + 2, 3, 3, 1);
+    }
+    finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
+
+    /* alignment pattern */
+    function align(ox, oy){
+      block(ox, oy, 5, 5, 1);
+      block(ox + 1, oy + 1, 3, 3, 0);
+      block(ox + 2, oy + 2, 1, 1, 1);
+    }
+    align(N - 9, N - 9);
+
+    /* timing patterns */
+    for(x = 8; x < N - 8; x++){ g[6][x] = (x % 2 === 0) ? 1 : 0; reserved[6][x] = 1; }
+    for(y = 8; y < N - 8; y++){ g[y][6] = (y % 2 === 0) ? 1 : 0; reserved[y][6] = 1; }
+
+    /* deterministic fill for everything else */
+    var r = (F.seed ? F.seed(seedStr) : 4211);
+    function rr(){ r = (r * 9301 + 49297) % 233280; return r / 233280; }
+    for(y = 0; y < N; y++) for(x = 0; x < N; x++){
+      if(!reserved[y][x]) g[y][x] = rr() > .48 ? 1 : 0;
+    }
+
+    var rects = "";
+    for(y = 0; y < N; y++) for(x = 0; x < N; x++){
+      if(!g[y][x]) continue;
+      rects += '<rect x="' + ((x + quiet) * cell) + '" y="' + ((y + quiet) * cell) +
+               '" width="' + cell + '" height="' + cell + '"/>';
+    }
+    return '<svg viewBox="0 0 ' + size + ' ' + size + '" role="img" ' +
+           'aria-label="Decorative QR code linking to the Flux mobile beta page">' +
+           '<rect width="' + size + '" height="' + size + '" fill="#eef2ff"/>' +
+           '<g fill="#050b1c">' + rects + '</g></svg>';
+  }
+
+  var qrCard = $("#qrCard");
+  if(qrCard) qrCard.innerHTML = buildQR("flux-download-2.4.1", 25);
+
+  /* newly injected .reveal nodes (none today, but safe if content grows) */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body></html>

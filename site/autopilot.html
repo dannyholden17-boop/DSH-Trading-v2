@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flux Autopilot — Flux</title>
+<meta name="description" content="Flux Autopilot runs a live $10,000 paper account, makes its own decisions and posts hourly and daily reports — so you can watch exactly how it thinks before you ever let it near your money. Simulated, not advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ============================================================
+     page-only styles: autopilot.html
+     — LAYOUT (ap- prefixed) + the animation utility classes the
+       page relies on (grad-anim / fx-float / marquee / live / sheen).
+       These names are not defined by the shared design system, so
+       they are declared here rather than redefined.
+     ============================================================ */
+
+  /* ---- animation utilities ---- */
+  .grad-anim{background-size:220% 220%;animation:apGrad 7s ease infinite}
+  @keyframes apGrad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  .fx-float{animation:apFloat 7s ease-in-out infinite}
+  @keyframes apFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .live{display:inline-flex;align-items:center;gap:8px}
+  .live::before{content:"";width:8px;height:8px;border-radius:50%;flex:none;background:var(--emerald);
+    box-shadow:0 0 10px var(--emerald);animation:apPulse 1.6s ease-in-out infinite}
+  @keyframes apPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.68)}}
+  .sheen{position:relative;overflow:hidden}
+  .sheen::before{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;pointer-events:none;z-index:3;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent)}
+  .sheen:hover::before{animation:apSheen .95s ease}
+  @keyframes apSheen{to{left:135%}}
+
+  /* ---- marquee ---- */
+  .marquee{overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+  .marquee-track{display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;animation:apMarquee 36s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes apMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ap-mq-item{display:inline-flex;align-items:center;gap:9px;padding:0 22px;font-family:var(--f-mono);font-size:.82rem;color:var(--text-dim)}
+  .ap-mq-item .s{font-weight:700}
+  .ap-mq-item .px{color:var(--text-faint)}
+  .ap-mq-sep{color:rgba(255,255,255,.14)}
+  .ap-mq-band{border-block:1px solid var(--line-2);background:rgba(5,10,24,.5);backdrop-filter:blur(10px);padding-block:16px}
+  .ap-mq-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    color:var(--amber);border:1px solid rgba(245,181,68,.3);border-radius:6px;padding:2px 7px;background:rgba(245,181,68,.08)}
+
+  /* ---- hero ---- */
+  .ap-hero{display:grid;grid-template-columns:1.04fr .96fr;gap:48px;align-items:start}
+  @media(max-width:960px){.ap-hero{grid-template-columns:1fr;gap:36px}}
+  .ap-hero h1{margin-top:18px}
+  .ap-hero .btn-row{margin-top:30px}
+  .ap-trust{margin-top:20px;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.04em;color:var(--text-faint)}
+  .ap-pillrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px}
+
+  /* ---- fund card (hero right) ---- */
+  .ap-fund{padding:20px}
+  .ap-fund > *{position:relative;z-index:1}
+  .ap-fund .fhd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .ap-fund .fhd .k{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--text-faint)}
+  .ap-eq{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(2rem,1.4rem + 2.6vw,2.7rem);letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums}
+  .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.92rem}
+  .ap-cap{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .ap-fund canvas{width:100%;height:150px;display:block;margin:14px 0 4px}
+  .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+  .ap-qs{border:1px solid var(--line-2);border-radius:11px;background:var(--well);padding:10px}
+  .ap-qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+  .ap-qs .l{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .ap-fund .foot{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+
+  /* ---- fund showcase (#fund) ---- */
+  .ap-fund-grid{display:grid;grid-template-columns:1.28fr .72fr;gap:24px;align-items:start}
+  @media(max-width:900px){.ap-fund-grid{grid-template-columns:1fr;gap:20px}}
+  .ap-panel{padding:20px}
+  .ap-panel > *{position:relative;z-index:1}
+  .ap-panel .phd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .ap-panel .phd .k{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--text-faint)}
+  .ap-log-wrap{overflow-x:auto}
+  .ap-log{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:460px}
+  .ap-log th{text-align:left;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
+    font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
+  .ap-log th.r,.ap-log td.r{text-align:right;padding-right:0}
+  .ap-log td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
+  .ap-log tbody tr{animation:apRowIn .5s ease}
+  @keyframes apRowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .ap-side{display:inline-block;font-weight:700;font-size:9.5px;letter-spacing:.06em;padding:2px 7px;border-radius:5px}
+  .ap-side.buy{color:var(--emerald);background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3)}
+  .ap-side.sell{color:var(--crimson);background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3)}
+  .ap-panel .foot{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+
+  .ap-metrics{display:flex;flex-direction:column;gap:14px}
+  .ap-metric{padding:16px 18px;position:relative}
+  .ap-metric > *{position:relative;z-index:1}
+  .ap-metric .l{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
+  .ap-metric .v{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums}
+  .ap-metric .cap{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:5px}
+  .ap-metric canvas{width:100%;height:40px;display:block;margin-top:10px}
+
+  /* ---- reports timeline + sample ---- */
+  .ap-tl{position:relative;margin-top:8px;padding-left:30px}
+  .ap-tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:1px;
+    background:linear-gradient(180deg,var(--cyan),var(--violet));opacity:.35}
+  .ap-tl-item{position:relative;padding-bottom:26px}
+  .ap-tl-item:last-child{padding-bottom:0}
+  .ap-tl-item::before{content:"";position:absolute;left:-26px;top:6px;width:9px;height:9px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .ap-tl-item .hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .ap-tl-item .tm{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);font-weight:700;white-space:nowrap}
+  .ap-tl-item h3{font-size:1.05rem}
+  .ap-tl-item p{color:var(--text-dim);font-size:.92rem;margin-top:7px;max-width:58ch}
+
+  .ap-report{padding:0;overflow:hidden}
+  .ap-report > *{position:relative;z-index:1}
+  .ap-rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+  .ap-rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+  .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .ap-rep-body{padding:16px 18px 6px}
+  .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;display:flex;gap:9px}
+  .ap-rline::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
+  .ap-rline b{color:var(--text);font-weight:600}
+  .ap-report.typing .ap-rline{opacity:0;transform:translateY(6px)}
+  .ap-report.typing .ap-rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
+  .ap-rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line-2);
+    font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+
+  /* ---- disclaimer strip ---- */
+  .ap-strip{margin-top:22px;border:1px solid rgba(245,181,68,.22);border-radius:14px;background:rgba(245,181,68,.05);
+    padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
+  .ap-strip .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none}
+  .ap-strip p{color:var(--text-dim);font-size:.82rem;line-height:1.55}
+
+  /* ---- model cards ---- */
+  .ap-model{padding:20px}
+  .ap-model .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ap-model h3{font-size:1.05rem;font-family:var(--f-mono);letter-spacing:-.01em}
+  .ap-model p{color:var(--text-dim);font-size:.9rem;margin-top:10px}
+
+  /* ---- guardrails ---- */
+  .ap-guards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+  @media(max-width:900px){.ap-guards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.ap-guards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
+      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="section phero">
+  <div class="wrap ap-hero">
+    <div class="reveal">
+      <span class="eyebrow">Flux Autopilot</span>
+      <h1 class="h1">An AI that trades —<br><span class="grad-text grad-anim">and shows its work.</span></h1>
+      <p class="lede">Flux runs a live $10,000 paper account, makes its own decisions, and posts hourly and
+        daily reports so you can watch exactly how it thinks — before you ever let it near your money.</p>
+      <div class="ap-pillrow">
+        <span class="pill live">Paper account · live</span>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="#fund">See the live fund →</a>
+        <a class="btn btn-ghost btn-lg" href="./portfolio.html">Let it trade for you</a>
+      </div>
+      <p class="ap-trust">Simulated $10k · not real money · not advice.</p>
+    </div>
+
+    <div class="glass fx-float sheen ap-fund reveal" id="fundCard">
+      <div class="fhd">
+        <span class="pill live">Flux Fund</span>
+        <span class="k">paper · simulated</span>
+      </div>
+      <div class="ap-eq">
+        <span class="val mono" id="heroEq">$12,480.00</span>
+        <span class="chg up" id="heroChg">+1.24%</span>
+      </div>
+      <div class="ap-cap">Virtual equity · paper account · simulated</div>
+      <canvas id="heroCurve" aria-label="Illustrative simulated equity curve for the Flux paper fund"></canvas>
+      <div class="ap-qstats">
+        <div class="ap-qs"><div class="n mono">6</div><div class="l">Open positions</div></div>
+        <div class="ap-qs"><div class="n mono">14</div><div class="l">Trades today</div></div>
+        <div class="ap-qs"><div class="n mono up">63%</div><div class="l">Win rate</div></div>
+      </div>
+      <div class="foot">Simulated / hypothetical · not indicative of future results</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE TICKER MARQUEE ============ -->
+<div class="ap-mq-band">
+  <div class="marquee">
+    <div class="marquee-track" id="mqTrack"></div>
+  </div>
+</div>
+
+<!-- ============ #fund — THE LIVE FUND ============ -->
+<section class="section" id="fund">
+  <div class="wrap">
+    <div class="reveal" style="max-width:64ch">
+      <span class="eyebrow">The live fund</span>
+      <h2 class="h2" style="margin-top:16px">Watch it trade, in real time, with fake money.</h2>
+      <p class="lede" style="margin-top:16px">Every fill below is Flux acting on its own inside a $10,000
+        paper account. No real orders, no real dollars — just a transparent record of what the AI decided
+        and why, so you can judge it before it ever touches your book.</p>
+    </div>
+
+    <div class="ap-fund-grid" style="margin-top:44px">
+      <div class="glass ap-panel reveal">
+        <div class="phd">
+          <span class="pill live">Flux Fund · paper account</span>
+          <span class="k">live fills · simulated</span>
+        </div>
+        <div class="ap-log-wrap">
+          <table class="ap-log">
+            <thead>
+              <tr>
+                <th>Time</th><th>Ticker</th><th>Side</th>
+                <th class="r">Qty</th><th class="r">Price</th><th class="r">P / L</th>
+              </tr>
+            </thead>
+            <tbody id="logBody"></tbody>
+          </table>
+        </div>
+        <div class="foot">Simulated fills · virtual $10,000 · resets are possible</div>
+      </div>
+
+      <div class="ap-metrics">
+        <div class="glass ap-metric reveal">
+          <div class="l">Equity</div>
+          <div class="v mono" id="mEq">$12,480</div>
+          <canvas id="eqA" aria-label="Illustrative equity sparkline"></canvas>
+          <div class="cap">paper · simulated</div>
+        </div>
+        <div class="glass ap-metric reveal">
+          <div class="l">Cash</div>
+          <div class="v mono">$4,930</div>
+          <div class="cap">virtual · simulated</div>
+        </div>
+        <div class="glass ap-metric reveal">
+          <div class="l">Exposure</div>
+          <div class="v mono">61%</div>
+          <div class="cap">gross · paper book</div>
+        </div>
+        <div class="glass ap-metric reveal">
+          <div class="l">Day P / L</div>
+          <div class="v mono up" id="mDay">+$153</div>
+          <div class="cap">simulated · hypothetical</div>
+        </div>
+        <div class="glass ap-metric reveal">
+          <div class="l">Open positions</div>
+          <div class="v mono">6</div>
+          <div class="cap">paper account</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ap-strip reveal">
+      <span class="ic">⚠</span>
+      <p>The Flux Fund is a <b>simulated $10,000 paper account using virtual money</b>. Every figure here is
+        hypothetical and does not represent real trading or real performance. Simulated results have inherent
+        limitations and are not indicative of future results. Flux is not a broker-dealer and none of this is
+        investment advice.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW AUTOPILOT DECIDES ============ -->
+<section class="section band" id="how">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">How Autopilot decides</span>
+      <h2 class="h2" style="margin-top:16px">Every trade walks the same five gates.</h2>
+      <p class="lede" style="margin-top:16px">Nothing is discretionary and nothing is hidden. A fill only lands
+        in the log after it clears scan, score, risk and execution — and each step is written down.</p>
+    </div>
+    <div class="steps reveal" style="margin-top:44px">
+      <div class="step"><div class="n">01</div><h3>Scan</h3>
+        <p>Six engines — Scanner, Catalyst, Options, Technicals, Risk and Backtest — sweep the tape for
+          breakouts, flow, catalysts and level reclaims.</p></div>
+      <div class="step"><div class="n">02</div><h3>Score &amp; rank</h3>
+        <p>AlphaRank re-scores every surviving signal against years of outcomes and ranks the candidates by
+          model agreement, not by how loud they look.</p></div>
+      <div class="step"><div class="n">03</div><h3>Risk gate</h3>
+        <p>The Risk engine checks size, stop distance, correlation and total exposure. An oversized or
+          correlated trade is blocked before it exists.</p></div>
+      <div class="step"><div class="n">04</div><h3>Execute (paper)</h3>
+        <p>The survivor is filled inside the $10,000 paper account with simulated slippage — never a real
+          order, never real dollars.</p></div>
+      <div class="step"><div class="n">05</div><h3>Log &amp; report</h3>
+        <p>The fill, the reason and the running P/L are written to the live log and rolled into the hourly
+          and daily reports.</p></div>
+    </div>
+    <p class="faint reveal" style="font-size:.8rem;margin-top:22px;max-width:74ch">
+      Engine outputs are probabilistic estimates, not predictions or recommendations. Every action described
+      here happens inside a simulated paper account.</p>
+  </div>
+</section>
+
+<!-- ============ HOURLY + DAILY REPORTS ============ -->
+<section class="section" id="reports">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Hourly + daily reports</span>
+      <h2 class="h2" style="margin-top:16px">It never trades quietly.</h2>
+      <p class="lede" style="margin-top:16px">Every market hour and every close, Flux writes up what it did and
+        why. The transparency is the point — you should be able to read a full day of decisions before you
+        trust it with a cent.</p>
+    </div>
+
+    <div class="split" style="margin-top:44px;align-items:start">
+      <div class="reveal">
+        <div class="ap-tl">
+          <div class="ap-tl-item">
+            <div class="hd"><span class="tm">Every hour</span><h3>Hourly pulse</h3></div>
+            <p>What it did this hour, the reason behind each fill, and current exposure across the paper book —
+              filed on the top of every market hour.</p>
+          </div>
+          <div class="ap-tl-item">
+            <div class="hd"><span class="tm">4:30 PM</span><h3>Daily wrap</h3></div>
+            <p>Every trade of the session, the day's simulated P/L, the best and worst positions, and the plan
+              the AI has drawn up for tomorrow.</p>
+          </div>
+          <div class="ap-tl-item">
+            <div class="hd"><span class="tm">Weekly</span><h3>Weekly review</h3></div>
+            <p>The long look: drawdown, correlation, rule adherence, and whether the edges the fund is trading
+              still show up in recent data.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass ap-report reveal" id="report">
+        <div class="ap-rep-head">
+          <span class="pill pill-violet"><i></i> Daily wrap</span>
+          <span class="ttl grad-text">Flux Fund</span>
+          <span class="ts" id="repTs">—</span>
+        </div>
+        <div class="ap-rep-body">
+          <p class="ap-rline">Closed the session at <b>$12,633</b> on the paper account — a simulated
+            <b class="up">+1.3%</b> day across 14 fills.</p>
+          <p class="ap-rline">Best position was <b>NVDA</b> on the morning call sweep; worst was a <b>TSLA</b>
+            short trimmed into the close after the 8-K drift stalled.</p>
+          <p class="ap-rline">Exposure ran at <b>61% gross</b> all afternoon; the Risk engine blocked two
+            correlated semis from being added on top.</p>
+          <p class="ap-rline">Tomorrow's plan: hold <b>4 of 6</b> positions, tighten stops on the two runners,
+            and watch <b>MSFT</b> into the cloud update.</p>
+        </div>
+        <div class="ap-rep-foot">
+          <span id="repStat">writing wrap…</span>
+          <span style="margin-left:auto">Illustrative sample · simulated</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE MODELS ============ -->
+<section class="section band" id="models">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Under the hood</span>
+      <h2 class="h2" style="margin-top:16px">The models behind the fund.</h2>
+      <p class="lede" style="margin-top:16px">The trade log is the last step. Behind it, six specialised models
+        each answer one narrow question, and the fund only acts when enough of them agree.</p>
+    </div>
+    <div class="grid g-3" id="modelGrid" style="margin-top:44px"></div>
+    <p class="faint reveal" style="font-size:.8rem;margin-top:20px;max-width:72ch">
+      Model names describe the class of technique used for each task. Outputs are probabilistic estimates,
+      not predictions or recommendations, and drive a simulated paper account only.</p>
+  </div>
+</section>
+
+<!-- ============ GUARDRAILS ============ -->
+<section class="section" id="control">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">You're in control</span>
+      <h2 class="h2" style="margin-top:16px">Guardrails you set — and can pull anytime.</h2>
+      <p class="lede" style="margin-top:16px">The paper fund runs on its own. Your real account never does
+        unless you say so, on rules you write, with a stop button that's always yours.</p>
+    </div>
+    <div class="ap-guards">
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⊘</div><h3>Never without approval</h3>
+        <p>Flux never touches your real account until you explicitly opt in. Until then it only trades its own
+          simulated paper money.</p>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⊞</div><h3>You set the rules</h3>
+        <p>Max position size, daily loss limit, allowed tickers, sectors to avoid — you write the mandate and
+          Autopilot trades inside it.</p>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⏸</div><h3>Pause or stop anytime</h3>
+        <p>One tap freezes new trades or flattens the book. There is no lock-in and no waiting — control is
+          always in your hands.</p>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">≡</div><h3>Every action is logged</h3>
+        <p>Each decision, fill and reason is written down and reported hourly and daily. Nothing happens off
+          the record.</p>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⊗</div><h3>Hard risk gates</h3>
+        <p>The Risk engine blocks oversized, over-correlated or over-exposed trades before they're placed —
+          on paper and, if enabled, on your account.</p>
+      </div>
+      <div class="glass glass-hover sheen feat reveal">
+        <div class="ic">⚡</div><h3>Kill-switch on drawdown</h3>
+        <p>Hit your daily loss limit and Autopilot halts itself automatically, then tells you why. The floor
+          is a rule, not a hope.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS BAND ============ -->
+<section class="section-sm band">
+  <div class="wrap">
+    <div class="stats reveal">
+      <div class="stat"><div class="v"><span data-count="4820">0</span></div><div class="k">Trades logged, simulated</div></div>
+      <div class="stat"><div class="v"><span data-count="99.7" data-suffix="%">0%</span></div><div class="k">Uptime, illustrative</div></div>
+      <div class="stat"><div class="v"><span data-count="2.4">0</span></div><div class="k">Avg hold, days (sim)</div></div>
+      <div class="stat"><div class="v"><span data-count="1860">0</span></div><div class="k">Reports written (sim)</div></div>
+    </div>
+    <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures above are illustrative
+      and describe activity inside a simulated $10,000 paper account. They are hypothetical, do not represent
+      real trading or performance, and do not predict future outcomes. Flux never promises returns.</p>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:62ch;margin-inline:auto">
+      <span class="eyebrow c">Questions</span>
+      <h2 class="h2" style="margin-top:16px">The fair questions.</h2>
+    </div>
+    <div class="faq reveal" style="margin-top:40px">
+      <details open><summary>Is this real money?</summary>
+        <p>No. The Flux Fund is a simulated $10,000 paper account using virtual money. It exists as a
+          transparency tool — a live demonstration of how the AI thinks and trades — not as a real portfolio.
+          Every number you see is hypothetical.</p></details>
+      <details><summary>Will it trade MY account?</summary>
+        <p>Only if you opt in and set the rules. By default Autopilot trades nothing but its own paper money.
+          If you connect a brokerage, you define the mandate — max size, loss limits, allowed tickers — and
+          you can pause or stop it at any moment.</p></details>
+      <details><summary>Can I see every trade?</summary>
+        <p>Yes. The live log shows each fill as it happens, and the hourly and daily reports write up what the
+          fund did and why. The whole point of the paper account is that nothing is hidden.</p></details>
+      <details><summary>Is this financial advice?</summary>
+        <p>No. Flux is research and automation software — not a broker-dealer and not an investment adviser.
+          Nothing it produces is personalised advice or a recommendation, and every decision on your real
+          account is yours.</p></details>
+      <details><summary>What strategies does it use?</summary>
+        <p>A multi-engine mix: momentum and breakout scanning, options flow, catalyst-driven setups and
+          mean-reversion — each signal cross-checked and then risk-gated for size, stop, correlation and
+          exposure before it's allowed to trade.</p></details>
+      <details><summary>Can it lose money?</summary>
+        <p>Yes. The simulated results include losing trades and losing days, because that's honest. Trading
+          involves risk of loss, including loss of principal, and no strategy — human or AI — removes it.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Watch Flux trade. Then decide.</h2>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Follow the paper fund for a week, read the
+        reports, and only then connect a brokerage — on your rules, with your stop button.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./portfolio.html">Connect your brokerage →</a>
+        <a class="btn btn-ghost btn-lg" href="./download.html">Download Flux</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account without your explicit approval and rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX || {};
+  var $ = F.$ || function(s,r){return (r||document).querySelector(s);};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  var SIGNALS = F.SIGNALS || [];
+  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* reference prices for the illustrative simulated fills */
+  var PX = {NVDA:184.20, AMD:172.40, TSLA:248.90, AAPL:226.50, SMCI:41.80,
+            MSFT:428.60, COIN:251.30, PLTR:38.90};
+  var TICKERS = ["NVDA","AMD","TSLA","AAPL","SMCI","MSFT","COIN","PLTR"];
+
+  function ri(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
+  function pad2(n){ n = String(n); return n.length<2 ? "0"+n : n; }
+
+  /* ---------- report timestamp ---------- */
+  var ts = $("#repTs");
+  if(ts){
+    var d = new Date(), hh = d.getHours();
+    var ap = hh >= 12 ? "PM" : "AM";
+    var h12 = hh % 12; if(h12 === 0) h12 = 12;
+    ts.textContent = "filed " + h12 + ":" + pad2(d.getMinutes()) + " " + ap;
+  }
+
+  /* ---------- report line reveal (research.html pattern) ---------- */
+  var report = $("#report");
+  if(report) report.classList.add("typing");
+  var lines = $$("#report .ap-rline");
+  var stat = $("#repStat");
+  if(reduce){
+    lines.forEach(function(l){ l.classList.add("in"); });
+    if(stat) stat.textContent = "wrap complete · 14 fills · simulated";
+  } else {
+    var delay = 260;
+    lines.forEach(function(l, i){
+      setTimeout(function(){ l.classList.add("in"); }, delay + i * 220);
+    });
+    setTimeout(function(){
+      if(stat) stat.textContent = "wrap complete · 14 fills · simulated";
+    }, delay + lines.length * 220 + 400);
+    var phases = ["tallying fills…","scoring P/L…","ranking positions…","writing wrap…"];
+    var pi = 0;
+    var ph = setInterval(function(){
+      if(!stat || stat.textContent.indexOf("complete") > -1){ clearInterval(ph); return; }
+      stat.textContent = phases[pi % phases.length]; pi++;
+    }, 850);
+  }
+
+  /* ---------- marquee of simulated fills ---------- */
+  var mq = $("#mqTrack");
+  if(mq){
+    var parts = [];
+    for(var m=0; m<10; m++){
+      var tk = TICKERS[m % TICKERS.length];
+      var side = (m % 2 === 0) ? "BUY" : "SELL";
+      var qty = ri(6, 40);
+      var base = PX[tk] || 100;
+      var price = (base * (1 + (Math.random()-0.5)*0.01)).toFixed(2);
+      var col = side === "BUY" ? EM : CR;
+      parts.push('<span class="ap-mq-item"><span class="s" style="color:' + col + '">' + side + '</span> ' +
+        tk + ' ' + qty + ' <span class="px">@ ' + price + '</span></span><span class="ap-mq-sep">·</span>');
+    }
+    parts.push('<span class="ap-mq-item"><span class="ap-mq-tag">Simulated</span></span><span class="ap-mq-sep">·</span>');
+    /* duplicate for a seamless -50% loop */
+    mq.innerHTML = parts.join("") + parts.join("");
+  }
+
+  /* ---------- live trade log ---------- */
+  var logBody = $("#logBody");
+  var MAXROWS = 8;
+  function makeFill(){
+    var tk = TICKERS[ri(0, TICKERS.length-1)];
+    var buy = Math.random() > 0.5;
+    var qty = ri(4, 45);
+    var base = PX[tk] || 100;
+    var price = base * (1 + (Math.random()-0.5)*0.012);
+    var pl = (Math.random()-0.42) * 90;
+    var now = new Date();
+    return { t:tk, buy:buy, qty:qty, price:price, pl:pl,
+      time: pad2(now.getHours()) + ":" + pad2(now.getMinutes()) + ":" + pad2(now.getSeconds()) };
+  }
+  function rowHTML(f){
+    var plCls = f.pl >= 0 ? "up" : "down";
+    var plTxt = (f.pl >= 0 ? "+" : "−") + "$" + Math.abs(f.pl).toFixed(2);
+    return '<td>' + f.time + '</td>' +
+      '<td><b>' + f.t + '</b></td>' +
+      '<td><span class="ap-side ' + (f.buy ? "buy" : "sell") + '">' + (f.buy ? "BUY" : "SELL") + '</span></td>' +
+      '<td class="r">' + f.qty + '</td>' +
+      '<td class="r">' + f.price.toFixed(2) + '</td>' +
+      '<td class="r ' + plCls + '">' + plTxt + '</td>';
+  }
+  function pushFill(){
+    if(!logBody) return;
+    var tr = document.createElement("tr");
+    tr.innerHTML = rowHTML(makeFill());
+    logBody.insertBefore(tr, logBody.firstChild);
+    while(logBody.children.length > MAXROWS){
+      logBody.removeChild(logBody.lastChild);
+    }
+  }
+  if(logBody){
+    /* seed a full static table first */
+    var seedRows = [];
+    for(var s0=0; s0<MAXROWS; s0++) seedRows.push(rowHTML(makeFill()));
+    logBody.innerHTML = "<tr>" + seedRows.join("</tr><tr>") + "</tr>";
+    if(!reduce){
+      setInterval(pushFill, 2500);
+    }
+  }
+
+  /* ---------- ticking paper equity ---------- */
+  var heroEq = $("#heroEq"), heroChg = $("#heroChg"), mEq = $("#mEq"), mDay = $("#mDay");
+  var EQ_BASE = 12480, dayOpen = 12327;
+  var eq = EQ_BASE;
+  function money(n){ return "$" + n.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function renderEq(){
+    if(heroEq) heroEq.textContent = money(eq);
+    if(mEq) mEq.textContent = "$" + Math.round(eq).toLocaleString();
+    var pct = ((eq - dayOpen)/dayOpen)*100;
+    var up = pct >= 0;
+    if(heroChg){
+      heroChg.textContent = (up ? "+" : "−") + Math.abs(pct).toFixed(2) + "%";
+      heroChg.className = "chg " + (up ? "up" : "down");
+    }
+    if(mDay){
+      var dd = eq - dayOpen;
+      mDay.textContent = (dd >= 0 ? "+" : "−") + "$" + Math.abs(Math.round(dd)).toLocaleString();
+      mDay.className = "v mono " + (dd >= 0 ? "up" : "down");
+    }
+  }
+  renderEq();
+  if(!reduce){
+    setInterval(function(){
+      eq += (Math.random()-0.5) * 14;
+      if(eq < EQ_BASE-160) eq = EQ_BASE-160;
+      if(eq > EQ_BASE+200) eq = EQ_BASE+200;
+      renderEq();
+    }, 1000);
+  }
+
+  /* ---------- canvases ---------- */
+  function drawAll(){
+    if(!F.drawArea) return;
+    var hc = $("#heroCurve");
+    if(hc) F.drawArea(hc, "fluxfund", 60, true, CY);
+    var sp = $("#eqA");
+    if(sp) F.drawArea(sp, "eqA", 34, true, EM);
+  }
+  drawAll();
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(drawAll, 140);
+  });
+
+  /* ---------- model cards from FLUX.MODELS ---------- */
+  var grid = $("#modelGrid");
+  if(grid && F.MODELS){
+    F.MODELS.forEach(function(mo){
+      var el = document.createElement("div");
+      el.className = "glass glass-hover sheen feat ap-model reveal";
+      el.innerHTML = '<div class="top"><h3>' + mo.n + '</h3><span class="tag">' + mo.m + '</span></div>' +
+                     '<p>' + mo.d + '</p>';
+      grid.appendChild(el);
+    });
+  }
+
+  /* pick up any cards injected above */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>
