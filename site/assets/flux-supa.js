@@ -45,10 +45,18 @@
       });
     }catch(e){ readyResolve(false); return; }
     S.loaded = true;
+    // After an OAuth / magic-link redirect, clean the URL and reload once so the
+    // page (re)renders with the established session on first paint.
+    function cleanLandingIfNeeded(){
+      if(S._user && /[?&]code=|access_token=/.test(location.search + location.hash)){
+        try{ history.replaceState(null, "", location.pathname); }catch(e){}
+        location.reload();
+      }
+    }
     S.client.auth.onAuthStateChange(function(_e, sess){
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
-      if(S._user){ S.wrapBook(); S.hydrate(); }
+      if(S._user){ S.wrapBook(); S.hydrate(); cleanLandingIfNeeded(); }
     });
     S.client.auth.getSession().then(function(r){
       var sess = r && r.data && r.data.session;
