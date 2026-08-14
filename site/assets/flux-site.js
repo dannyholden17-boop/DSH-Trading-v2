@@ -222,15 +222,27 @@
   window.FLUXAuth=F.Auth;
 
   /* ---- prices + paper-trading book (client-side, simulated) ---- */
-  F.PRICES={NVDA:184.20,AMD:172.40,TSLA:248.90,AAPL:226.50,MSFT:428.10,SMCI:41.80,
-    COIN:251.30,PLTR:38.90,AMZN:201.40,META:612.30,GOOGL:178.60,NFLX:705.20,AVGO:172.90,
-    SPY:559.10,QQQ:486.40,MU:104.80,ARM:138.40,INTC:23.60,MARA:18.40,SOFI:9.80,
-    DELL:118.30,CRM:332.10,ORCL:188.70,UBER:74.20};
+  F.PRICES={NVDA:225.38,AMD:482.89,TSLA:340.04,AAPL:305.31,MSFT:496.84,SMCI:39.16,
+    COIN:153.76,PLTR:179.01,AMZN:265.16,META:594.73,GOOGL:346.42,NFLX:78.23,AVGO:417.83,
+    SPY:777.77,QQQ:732.06,MU:949.89,ARM:278.45,INTC:104.63,MARA:9.22,SOFI:18.42,
+    DELL:494.21,CRM:201.32,ORCL:156.30,UBER:75.87};
+  F.NAMES={NVDA:"NVIDIA",AMD:"Advanced Micro Devices",TSLA:"Tesla",AAPL:"Apple",MSFT:"Microsoft",
+    SMCI:"Super Micro Computer",COIN:"Coinbase",PLTR:"Palantir",AMZN:"Amazon",META:"Meta Platforms",
+    GOOGL:"Alphabet",NFLX:"Netflix",AVGO:"Broadcom",SPY:"SPDR S&P 500 ETF",QQQ:"Invesco QQQ",
+    MU:"Micron Technology",ARM:"Arm Holdings",INTC:"Intel",MARA:"MARA Holdings",SOFI:"SoFi Technologies",
+    DELL:"Dell Technologies",CRM:"Salesforce",ORCL:"Oracle",UBER:"Uber"};
+  // Live server prices override this when flux-supa.js has hydrated them.
+  F.LIVE=null; // {TICKER:{last,prev_close,name}}
   F.priceOf=function(t){
-    t=(t||"").toUpperCase();var b=F.PRICES[t];if(!b)return null;
+    t=(t||"").toUpperCase();
+    if(F.LIVE&&F.LIVE[t]&&F.LIVE[t].last)return +(+F.LIVE[t].last).toFixed(2);
+    var b=F.PRICES[t];if(!b)return null;
     var min=Math.floor(Date.now()/60000),r=F.seed(t+"|"+min),f=((r%2000)/2000-0.5)*0.014;
     return +(b*(1+f)).toFixed(2);
   };
+  F.prevClose=function(t){t=(t||"").toUpperCase();
+    if(F.LIVE&&F.LIVE[t]&&F.LIVE[t].prev_close)return +F.LIVE[t].prev_close;
+    return F.PRICES[t]||null;};
   F.Book={
     KEY:"flux_book",
     get:function(){
