@@ -76,6 +76,55 @@
   @media(max-width:520px){.brain-vault{grid-template-columns:repeat(2,1fr)}}
   .brain-vault .bn{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--glass-2);font-size:.76rem}
   .brain-vault .bn b{display:block;color:var(--cyan);font-family:var(--f-mono);font-size:.7rem;margin-bottom:4px}
+
+  /* ---- company research tool (cr-) ---- */
+  .cr-lede{max-width:60ch}
+  .cr-form{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+  .cr-form input{flex:1;min-width:200px;background:var(--well);border:1px solid var(--line);border-radius:100px;
+    color:var(--text);padding:13px 20px;font-size:15px;outline:none;font-family:var(--f-sans)}
+  .cr-form input:focus{border-color:rgba(0,242,255,.5);box-shadow:0 0 0 3px rgba(0,242,255,.1)}
+  .cr-form button{border:none;border-radius:100px;padding:0 26px;font-weight:700;cursor:pointer;
+    color:#03202a;background:var(--grad);flex:none}
+  .cr-picks{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .cr-pick{cursor:pointer;background:var(--glass);border:1px solid var(--line);color:var(--text-dim);transition:.15s}
+  .cr-pick:hover{border-color:rgba(0,242,255,.5);color:var(--cyan)}
+  .cr-pick.cr-on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,242,255,.08)}
+  .cr-brief{margin-top:30px;padding:0;overflow:hidden}
+  .cr-bhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;
+    border-bottom:1px solid var(--line-2);background:rgba(3,8,20,.5)}
+  .cr-tk{font-family:var(--f-mono);font-weight:700;font-size:1.15rem}
+  .cr-nm{color:var(--text-dim);font-size:.9rem}
+  .cr-badge{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);
+    font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:100px;padding:5px 12px}
+  .cr-badge .cr-cf{color:var(--text-faint);font-weight:400}
+  .cr-body{padding:18px 20px}
+  .cr-sec{margin-bottom:18px}
+  .cr-sec:last-child{margin-bottom:0}
+  .cr-sec h4{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--cyan);font-weight:600;margin:0 0 9px}
+  .cr-line{font-size:.92rem;line-height:1.6;color:var(--text-dim);margin-bottom:7px}
+  .cr-line:last-child{margin-bottom:0}
+  .cr-line b{color:var(--text);font-weight:600}
+  .cr-reveal{opacity:0;transform:translateY(6px)}
+  .cr-reveal.cr-in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
+  .cr-two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:640px){.cr-two{grid-template-columns:1fr;gap:18px}}
+  .cr-fl{display:flex;flex-direction:column;gap:9px}
+  .cr-fl .fi{display:flex;gap:10px;align-items:flex-start}
+  .cr-fl .fi span{flex:none;font-family:var(--f-mono)}
+  .cr-twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .cr-metrics{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:440px}
+  .cr-metrics th,.cr-metrics td{text-align:left;padding:8px 12px;border-bottom:1px dashed var(--line-2);white-space:nowrap}
+  .cr-metrics tr:last-child th,.cr-metrics tr:last-child td{border-bottom:0}
+  .cr-metrics th{color:var(--text-faint);font-weight:600;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+  .cr-metrics td{color:var(--text);font-weight:700}
+  .cr-levels{display:flex;gap:10px;flex-wrap:wrap}
+  .cr-lv{flex:1;min-width:130px;border:1px solid var(--line-2);border-radius:12px;padding:11px 14px;background:var(--glass-2)}
+  .cr-lv .cr-k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .cr-lv .cr-v{font-family:var(--f-mono);font-weight:700;font-size:1rem;margin-top:5px}
+  .cr-bfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px;
+    border-top:1px solid var(--line-2);font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .cr-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex:none}
 </style>
 </head>
 <body>
@@ -232,6 +281,27 @@
       </ul>
       <div class="btn-row"><a class="btn btn-ghost" href="./download.html">Get the desktop app →</a></div>
     </div>
+  </div>
+</section>
+
+<!-- ============ COMPANY RESEARCH TOOL ============ -->
+<section class="section" id="research-tool">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Company research</span>
+      <h2 class="h2" style="margin-top:16px">Ask Flux to research any company.</h2>
+      <p class="lede cr-lede" style="margin-top:16px">Type a ticker and Flux assembles the deep-dive — the
+        business, the bull and bear case, the numbers and the catalysts — in one page. Every figure below is
+        a simulated sample, not live data.</p>
+    </div>
+
+    <form class="cr-form reveal" id="crForm" autocomplete="off">
+      <input id="crInput" placeholder="Try NVDA, AAPL, TSLA, AMD…" aria-label="Ticker or company">
+      <button type="submit">Research →</button>
+    </form>
+    <div class="cr-picks reveal" id="crPicks"></div>
+
+    <div class="glass cr-brief reveal" id="crBrief" aria-live="polite"></div>
   </div>
 </section>
 
@@ -562,6 +632,235 @@ document.addEventListener("DOMContentLoaded",function(){
     },{threshold:.25});
     io.observe(rep);
   } else typeLine();
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  var F=window.FLUX||{};
+  var $=(F&&F.$)||function(s,r){return (r||document).querySelector(s)};
+  var $$=(F&&F.$$)||function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  var form=$("#crForm"), input=$("#crInput"), picks=$("#crPicks"), brief=$("#crBrief");
+  if(!form||!brief) return;
+
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- built-in, clearly-simulated dataset ---- */
+  var DATA={
+    NVDA:{name:"NVIDIA Corp.",sector:"Semiconductors",rating:"Constructive",conf:86,
+      summary:"Designs the accelerated-computing GPUs and networking that train and run modern AI, plus the CUDA software layer that keeps developers on its platform.",
+      thesis:["Data-center demand still runs ahead of supply as hyperscalers build out AI capacity.","CUDA and the software moat make the platform hard to leave once adopted.","Networking and full-rack systems widen the average deal well beyond a single chip."],
+      risks:["A single customer cohort — a handful of hyperscalers — drives an outsized share of revenue.","Any pause in AI capex would hit the most richly-valued part of the tape first.","Export rules and new silicon from rivals could chip at share over time."],
+      metrics:{mcap:"~$3.1T",pe:"51x",rev:"+94% YoY",gm:"74%",range:"$78 – $196",beta:"1.68"},
+      earn:"Late Nov (simulated)",cat:["GTC keynote — next-gen accelerator roadmap","Hyperscaler capex guidance on upcoming prints"],
+      support:"$168",resist:"$196",fair:"$175 – $205"},
+    AAPL:{name:"Apple Inc.",sector:"Consumer Electronics",rating:"Neutral",conf:71,
+      summary:"Sells iPhone, Mac and wearables hardware wrapped in a high-margin services layer — the App Store, iCloud, payments and subscriptions across a billion-plus active devices.",
+      thesis:["Services keeps compounding at a higher margin than hardware.","The installed base is enormous and unusually loyal.","On-device AI features could pull forward an upgrade cycle."],
+      risks:["iPhone is still the majority of revenue and the cycle is maturing.","Regulatory pressure on the App Store threatens services economics.","Greater-China demand and supply both carry real exposure."],
+      metrics:{mcap:"~$3.4T",pe:"33x",rev:"+6% YoY",gm:"46%",range:"$164 – $260",beta:"1.21"},
+      earn:"Early Feb (simulated)",cat:["Holiday-quarter iPhone mix","Services growth re-acceleration watch"],
+      support:"$225",resist:"$260",fair:"$230 – $255"},
+    MSFT:{name:"Microsoft Corp.",sector:"Software",rating:"Constructive",conf:82,
+      summary:"Runs the Azure cloud, the Office and Windows franchises, and a fast-growing AI copilots layer sold across its enterprise install base.",
+      thesis:["Azure keeps taking cloud share with AI workloads on top.","Copilot gives a clean path to monetize AI across Office seats.","Enterprise relationships make bundling new products unusually easy."],
+      risks:["AI infrastructure spend is heavy and pressures near-term margins.","Cloud growth decelerating would compress the premium multiple.","Antitrust and platform scrutiny is rising in several regions."],
+      metrics:{mcap:"~$3.2T",pe:"37x",rev:"+16% YoY",gm:"70%",range:"$380 – $500",beta:"0.92"},
+      earn:"Late Jan (simulated)",cat:["Azure growth rate on next print","Copilot seat-adoption disclosure"],
+      support:"$405",resist:"$500",fair:"$430 – $485"},
+    TSLA:{name:"Tesla Inc.",sector:"Autos & Clean Energy",rating:"Cautious",conf:64,
+      summary:"Builds electric vehicles and energy-storage systems, with an option value narrative around autonomy, robotaxi and humanoid robotics layered on top.",
+      thesis:["Cost leadership in EV manufacturing is real and durable.","Energy storage is a fast-growing, under-appreciated segment.","Autonomy, if it lands, re-rates the whole business."],
+      risks:["Auto gross margin has compressed under price cuts.","Autonomy timelines have slipped repeatedly.","Valuation prices in outcomes that are far from certain."],
+      metrics:{mcap:"~$820B",pe:"78x",rev:"+2% YoY",gm:"18%",range:"$138 – $358",beta:"2.10"},
+      earn:"Late Jan (simulated)",cat:["Delivery numbers vs. guidance","Robotaxi / FSD progress update"],
+      support:"$215",resist:"$300",fair:"$210 – $270"},
+    AMD:{name:"Advanced Micro Devices",sector:"Semiconductors",rating:"Constructive",conf:74,
+      summary:"Designs CPUs and GPUs for data center, PC and gaming, positioned as the clearest second source in AI accelerators.",
+      thesis:["Data-center GPU ramp gives a credible second-source story.","Server CPU share gains continue against a slower incumbent.","A broad chiplet roadmap keeps the product cadence fast."],
+      risks:["Trails the leader badly on AI software ecosystem.","PC and gaming demand is cyclical and can swing hard.","Foundry capacity is shared with larger, higher-priority buyers."],
+      metrics:{mcap:"~$260B",pe:"44x",rev:"+18% YoY",gm:"51%",range:"$94 – $228",beta:"1.72"},
+      earn:"Early Feb (simulated)",cat:["AI GPU revenue run-rate update","Server CPU share commentary"],
+      support:"$150",resist:"$228",fair:"$160 – $200"},
+    AMZN:{name:"Amazon.com Inc.",sector:"E-Commerce & Cloud",rating:"Constructive",conf:78,
+      summary:"Runs the largest online store, the AWS cloud platform, and a fast-scaling advertising business, with logistics and devices around them.",
+      thesis:["AWS is the profit engine and re-accelerating with AI demand.","Advertising is a high-margin business growing quickly.","Retail margins are structurally improving as fulfillment matures."],
+      risks:["Retail is exposed to consumer softness and freight costs.","AWS competition from rival hyperscalers is intense.","Heavy capex weighs on near-term free cash flow."],
+      metrics:{mcap:"~$2.2T",pe:"42x",rev:"+11% YoY",gm:"48%",range:"$151 – $242",beta:"1.15"},
+      earn:"Early Feb (simulated)",cat:["AWS growth re-acceleration","Holiday retail margin read"],
+      support:"$195",resist:"$242",fair:"$205 – $240"},
+    META:{name:"Meta Platforms Inc.",sector:"Interactive Media",rating:"Constructive",conf:80,
+      summary:"Operates the Facebook, Instagram and WhatsApp family of apps monetized through advertising, plus a large Reality Labs bet on AR and VR.",
+      thesis:["Ad engagement and pricing keep improving with AI ranking.","Enormous user base gives durable pricing power.","Cost discipline has restored margin and free cash flow."],
+      risks:["Reality Labs continues to burn heavily with unclear payoff.","Ad revenue is sensitive to macro and platform-policy shifts.","Regulatory and privacy headwinds persist globally."],
+      metrics:{mcap:"~$1.5T",pe:"27x",rev:"+22% YoY",gm:"81%",range:"$414 – $640",beta:"1.24"},
+      earn:"Late Jan (simulated)",cat:["Ad-pricing trend on next print","Reality Labs loss trajectory"],
+      support:"$540",resist:"$640",fair:"$560 – $625"},
+    GOOGL:{name:"Alphabet Inc.",sector:"Interactive Media",rating:"Constructive",conf:77,
+      summary:"Owns Google Search and YouTube advertising, the Google Cloud platform, and moonshot bets, with Gemini threading AI across all of it.",
+      thesis:["Search remains a cash machine with durable margins.","Cloud is growing fast and turning profitable.","AI leadership in research can translate into product edge."],
+      risks:["Search faces its first real disruption risk from AI answers.","Antitrust remedies could reshape parts of the business.","Cloud still trails the top two on scale."],
+      metrics:{mcap:"~$2.1T",pe:"24x",rev:"+14% YoY",gm:"58%",range:"$130 – $208",beta:"1.03"},
+      earn:"Early Feb (simulated)",cat:["Search-ad resilience vs. AI shift","Cloud operating-margin trend"],
+      support:"$170",resist:"$208",fair:"$180 – $205"},
+    SMCI:{name:"Super Micro Computer",sector:"IT Hardware",rating:"Cautious",conf:58,
+      summary:"Builds high-density AI servers and rack-scale systems, riding the data-center buildout but carrying a volatile, controversy-prone profile.",
+      thesis:["Direct beneficiary of AI server demand.","Liquid-cooling expertise fits where the market is heading.","Revenue has scaled rapidly off a small base."],
+      risks:["Governance and audit-quality overhang has hurt trust.","Gross margins are thin and can swing sharply.","Component supply and concentration risk are elevated."],
+      metrics:{mcap:"~$28B",pe:"22x",rev:"+61% YoY",gm:"12%",range:"$17 – $122",beta:"2.45"},
+      earn:"Early Feb (simulated)",cat:["Filing / audit status update","Gross-margin recovery watch"],
+      support:"$32",resist:"$70",fair:"$28 – $52"},
+    COIN:{name:"Coinbase Global",sector:"Financial Exchanges",rating:"Neutral",conf:62,
+      summary:"Runs a crypto exchange and custody platform earning transaction fees, plus a growing base of subscription and stablecoin-linked revenue.",
+      thesis:["Leading regulated venue with a trusted brand in the US.","Subscription revenue smooths the trading-fee cycle.","Any broadening of crypto adoption lifts volumes directly."],
+      risks:["Revenue swings hard with crypto price cycles.","Regulatory posture toward the sector is still unsettled.","Fee compression from competing venues is a real pressure."],
+      metrics:{mcap:"~$62B",pe:"33x",rev:"+45% YoY",gm:"—",range:"$142 – $349",beta:"3.10"},
+      earn:"Mid Feb (simulated)",cat:["Trading-volume trend with crypto tape","Regulatory clarity headlines"],
+      support:"$185",resist:"$300",fair:"$180 – $260"}
+  };
+
+  var RATING_COLOR={Constructive:"var(--emerald)",Neutral:"var(--amber)",Cautious:"var(--crimson)"};
+
+  function fallback(sym){
+    return {name:sym+" (uncovered)",sector:"Uncovered",rating:"Insufficient data",conf:null,
+      summary:"Flux does not have a research profile loaded for this name yet. Add it to your watchlist and the engines will begin building coverage — filings, transcripts, flow and forecasts — into a full brief.",
+      thesis:["Coverage not yet generated for this name.","No thesis on file — pending first research pass.","Add to a watchlist to queue this company for coverage."],
+      risks:["Risk profile not yet assessed.","No historical setup sample on file.","Fundamentals unread until coverage begins."],
+      metrics:{mcap:"—",pe:"—",rev:"—",gm:"—",range:"—",beta:"—"},
+      earn:"— (not scheduled)",cat:["No catalysts on file yet.","Coverage begins once the name is watched."],
+      support:"—",resist:"—",fair:"—",generic:true};
+  }
+
+  function esc(s){return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+  function fmtTime(){
+    var d=new Date(), hh=d.getHours(), ap=hh>=12?"PM":"AM", h12=hh%12; if(h12===0)h12=12;
+    var mm=String(d.getMinutes()); if(mm.length<2)mm="0"+mm;
+    return h12+":"+mm+" "+ap;
+  }
+
+  var phaseTimer=null, revealTimers=[];
+  function clearTimers(){
+    if(phaseTimer){clearInterval(phaseTimer);phaseTimer=null;}
+    revealTimers.forEach(function(t){clearTimeout(t);});
+    revealTimers=[];
+  }
+
+  function bullList(arr){
+    return '<div class="cr-fl">'+arr.map(function(x){
+      return '<div class="fi cr-line cr-reveal"><span>›</span><div>'+esc(x)+'</div></div>';
+    }).join("")+'</div>';
+  }
+
+  function build(rawSym){
+    var sym=(rawSym||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,5);
+    if(!sym) return;
+    var d=DATA[sym]||fallback(sym);
+    var col=RATING_COLOR[d.rating]||"var(--text-faint)";
+    var conf=d.conf==null?"":'<span class="cr-cf">'+d.conf+'% conf</span>';
+    var m=d.metrics;
+
+    var html=''+
+      '<div class="cr-bhead">'+
+        '<span class="cr-tk">'+esc(sym)+'</span>'+
+        '<span class="cr-nm">'+esc(d.name)+'</span>'+
+        '<span class="tag">'+esc(d.sector)+'</span>'+
+        '<span class="cr-badge" style="border-color:'+col+';color:'+col+'">'+esc(d.rating)+conf+'</span>'+
+      '</div>'+
+      '<div class="cr-body">'+
+        '<div class="cr-sec"><h4>Business</h4>'+
+          '<p class="cr-line cr-reveal">'+esc(d.summary)+'</p></div>'+
+        '<div class="cr-two">'+
+          '<div class="cr-sec"><h4>Thesis · bull case</h4>'+bullList(d.thesis)+'</div>'+
+          '<div class="cr-sec"><h4>Risks · bear case</h4>'+bullList(d.risks)+'</div>'+
+        '</div>'+
+        '<div class="cr-sec"><h4>Key metrics · simulated</h4>'+
+          '<div class="cr-twrap"><table class="cr-metrics"><tbody>'+
+            '<tr><th>Market cap</th><td>'+esc(m.mcap)+'</td><th>P/E</th><td>'+esc(m.pe)+'</td></tr>'+
+            '<tr><th>Rev growth YoY</th><td>'+esc(m.rev)+'</td><th>Gross margin</th><td>'+esc(m.gm)+'</td></tr>'+
+            '<tr><th>52-wk range</th><td>'+esc(m.range)+'</td><th>Beta</th><td>'+esc(m.beta)+'</td></tr>'+
+          '</tbody></table></div></div>'+
+        '<div class="cr-sec"><h4>Catalysts</h4>'+
+          '<p class="cr-line cr-reveal"><b>Next earnings:</b> '+esc(d.earn)+'</p>'+
+          '<p class="cr-line cr-reveal">'+esc(d.cat[0])+'</p>'+
+          (d.cat[1]?'<p class="cr-line cr-reveal">'+esc(d.cat[1])+'</p>':'')+
+        '</div>'+
+        '<div class="cr-sec"><h4>Price levels · illustrative</h4>'+
+          '<div class="cr-levels">'+
+            '<div class="cr-lv"><div class="cr-k">Support</div><div class="cr-v" style="color:var(--emerald)">'+esc(d.support)+'</div></div>'+
+            '<div class="cr-lv"><div class="cr-k">Resistance</div><div class="cr-v" style="color:var(--crimson)">'+esc(d.resist)+'</div></div>'+
+            '<div class="cr-lv"><div class="cr-k">AI fair value</div><div class="cr-v" style="color:var(--cyan)">'+esc(d.fair)+'</div></div>'+
+          '</div></div>'+
+      '</div>'+
+      '<div class="cr-bfoot">'+
+        '<span class="cr-dot"></span><span id="crStat">reading filings…</span>'+
+        '<span style="margin-left:auto">Illustrative research sample · figures simulated · not investment advice.</span>'+
+      '</div>';
+
+    clearTimers();
+    brief.innerHTML=html;
+
+    var lines=$$(".cr-reveal",brief);
+    var stat=$("#crStat",brief);
+
+    if(reduce){
+      lines.forEach(function(l){l.classList.add("cr-in");});
+      if(stat) stat.textContent="brief generated "+fmtTime()+" · simulated";
+      return;
+    }
+
+    var step=140;
+    lines.forEach(function(l,i){
+      revealTimers.push(setTimeout(function(){l.classList.add("cr-in");},120+i*step));
+    });
+    var settle=120+lines.length*step+400;
+
+    var phases=["reading filings…","parsing transcripts…","scoring the tape…","running models…"];
+    var pi=0;
+    phaseTimer=setInterval(function(){
+      if(!stat){return;}
+      stat.textContent=phases[pi%phases.length]; pi++;
+    },700);
+    revealTimers.push(setTimeout(function(){
+      if(phaseTimer){clearInterval(phaseTimer);phaseTimer=null;}
+      if(stat) stat.textContent="brief generated "+fmtTime()+" · simulated";
+    },settle));
+  }
+
+  function setActive(sym){
+    $$(".cr-pick",picks).forEach(function(b){
+      b.classList.toggle("cr-on",b.getAttribute("data-sym")===sym);
+    });
+  }
+
+  /* quick-pick chips */
+  var QUICK=["NVDA","AAPL","MSFT","TSLA","AMD","AMZN","META","GOOGL"];
+  if(picks){
+    picks.innerHTML=QUICK.map(function(t){
+      return '<button type="button" class="tag cr-pick" data-sym="'+t+'">'+t+'</button>';
+    }).join("");
+    $$(".cr-pick",picks).forEach(function(b){
+      b.addEventListener("click",function(){
+        var s=b.getAttribute("data-sym");
+        if(input) input.value=s;
+        setActive(s); build(s);
+      });
+    });
+  }
+
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    var v=input?input.value:"";
+    var sym=(v||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,5);
+    if(!sym) return;
+    setActive(sym); build(sym);
+  });
+
+  /* seed with a default company */
+  if(input) input.value="NVDA";
+  setActive("NVDA");
+  build("NVDA");
 });
 </script>
 </body>

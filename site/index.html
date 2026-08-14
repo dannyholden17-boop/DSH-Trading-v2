@@ -59,6 +59,54 @@
   .store b{font-size:.95rem;line-height:1.25}
   .marquee-track .mi{font-family:var(--f-mono);font-size:.8rem;color:var(--text-dim);display:inline-flex;gap:8px;align-items:center}
   .marquee-track .mi b{color:var(--text)} .marquee-track .mi .up{color:var(--emerald)} .marquee-track .mi .dn{color:var(--crimson)}
+
+  /* ---- Mac product-tour ---- */
+  .mac{position:relative;justify-self:center;width:min(560px,94vw)}
+  .macwin{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);
+    background:rgba(6,11,26,.92);box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.03),0 0 60px -20px rgba(0,242,255,.25)}
+  .macbar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line-2);
+    background:linear-gradient(180deg,rgba(20,28,50,.7),rgba(10,16,32,.6))}
+  .macbar .dot{width:11px;height:11px;border-radius:50%}
+  .macbar .r{background:#ff5f57} .macbar .y{background:#febc2e} .macbar .g{background:#28c840}
+  .macurl{margin-left:12px;flex:1;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);
+    background:rgba(2,6,20,.6);border:1px solid var(--line-2);border-radius:7px;padding:5px 12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .macurl b{color:var(--cyan)}
+  .macbody{display:grid;grid-template-columns:132px 1fr;height:330px}
+  @media(max-width:540px){.macbody{grid-template-columns:96px 1fr;height:300px}}
+  .macside{border-right:1px solid var(--line-2);padding:12px 8px;display:flex;flex-direction:column;gap:4px;background:rgba(3,8,20,.4)}
+  .macside .si{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;font-size:12.5px;
+    color:var(--text-dim);cursor:default;transition:.25s;white-space:nowrap}
+  .macside .si .g{font-size:14px;opacity:.85}
+  .macside .si.on{background:rgba(0,242,255,.1);color:var(--text);box-shadow:inset 0 0 0 1px rgba(0,242,255,.3)}
+  @media(max-width:540px){.macside .si span:last-child{display:none}.macside .si{justify-content:center}}
+  .macmain{position:relative;overflow:hidden}
+  .scr{position:absolute;inset:0;padding:16px 18px;opacity:0;transform:translateY(10px);
+    transition:opacity .5s ease,transform .5s ease;pointer-events:none;overflow:hidden}
+  .scr.on{opacity:1;transform:none}
+  .scr h5{font-size:13px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+  .scr .sub{font-family:var(--f-mono);font-size:10px;color:var(--text-faint);margin-bottom:12px}
+  .scr canvas{width:100%;display:block}
+  .scr-ln{font-size:11.5px;color:var(--text-dim);line-height:1.5;padding:5px 0;border-bottom:1px solid var(--line-2);opacity:0;transform:translateX(-6px);transition:.4s}
+  .scr.on .scr-ln{opacity:1;transform:none}
+  .scr-ln b{color:var(--text)}
+  .mrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:12px}
+  .mrow .tk{font-weight:700} .mrow .bar{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;max-width:120px}
+  .mrow .bar i{display:block;height:100%;border-radius:3px}
+  .mac-cur{position:absolute;left:0;top:0;width:20px;height:20px;z-index:8;pointer-events:none;
+    transition:transform 1s cubic-bezier(.5,.05,.2,1);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+  .mac-cur.tap{animation:macTap .5s ease}
+  @keyframes macTap{40%{transform:scale(.8)}}
+  .mac-ring{position:absolute;width:34px;height:34px;border-radius:50%;border:2px solid var(--cyan);opacity:0;z-index:7;pointer-events:none;transform:translate(-50%,-50%)}
+  .mac-ring.go{animation:macRing .6s ease-out}
+  @keyframes macRing{0%{opacity:.7;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4)}}
+  /* floating phone at corner */
+  .macphone{position:absolute;right:-18px;bottom:-30px;width:118px;z-index:9}
+  @media(max-width:540px){.macphone{display:none}}
+  .macphone .device-screen{padding:12px 10px}
+  .macphone .pt{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:8px;color:var(--text-faint)}
+  .macphone .pv{text-align:center;margin:8px 0 6px} .macphone .pv b{font-size:15px;font-weight:800}
+  .macphone .pv small{display:block;font-size:7px;color:var(--text-faint)}
+  .macphone canvas{width:100%;height:34px;display:block}
 </style>
 </head>
 <body>
@@ -113,14 +161,60 @@
       </div>
     </div>
 
-    <div class="reveal rr h-phone fx-float">
-      <div class="device tilt"><div class="device-screen">
-        <div class="p-top"><span>FLUX</span><span class="live" id="pClock">9:41</span></div>
-        <div class="orb p-orb"><div class="rg a"></div><div class="rg b"></div><div class="rg p"></div>
-          <div class="wave"><i></i><i></i><i></i><i></i><i></i></div></div>
-        <div class="p-val"><b id="pVal">$10,000</b><small>Flux Fund · simulated paper account</small></div>
-        <div class="p-eq"><canvas id="pEq"></canvas></div>
-        <div class="p-sig" id="pSig"></div>
+    <div class="reveal rr mac fx-float">
+      <div class="macwin tilt">
+        <div class="macbar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <div class="macurl"><b>flux.app</b>&thinsp;/&thinsp;<span id="macCrumb">brief</span></div>
+        </div>
+        <div class="macbody">
+          <aside class="macside" id="macSide">
+            <div class="si on" data-s="brief"><span class="g">◇</span><span>AI Brief</span></div>
+            <div class="si" data-s="ideas"><span class="g">⟁</span><span>Trade Ideas</span></div>
+            <div class="si" data-s="chart"><span class="g">△</span><span>Charts</span></div>
+            <div class="si" data-s="auto"><span class="g">◷</span><span>Autopilot</span></div>
+            <div class="si" data-s="folio"><span class="g">◎</span><span>Portfolio</span></div>
+          </aside>
+          <div class="macmain" id="macMain">
+            <section class="scr on" data-s="brief">
+              <h5>◇ Daily Brief <span class="tag">Flux-LM</span></h5>
+              <div class="sub" id="macBriefTime">generated 7:00 AM · simulated</div>
+              <div class="scr-ln"><b>Tone:</b> risk-on. Breadth positive, semis leading, VIX 13.9.</div>
+              <div class="scr-ln"><b>Your watchlist:</b> NVDA +2.1% on a call sweep; AMD breaking out.</div>
+              <div class="scr-ln"><b>Catalyst:</b> CPI Thursday — trim risk into the print.</div>
+              <div class="scr-ln"><b>Risk:</b> book is 62% semis, correlation 0.81. Consider a hedge.</div>
+              <div class="scr-ln" style="border:none"><b>Plan:</b> hold winners, no adds into earnings.</div>
+            </section>
+            <section class="scr" data-s="ideas">
+              <h5>⟁ Trade Ideas <span class="tag">ranked</span></h5>
+              <div class="sub">confidence = engine agreement · not advice</div>
+              <div id="macIdeas"></div>
+            </section>
+            <section class="scr" data-s="chart">
+              <h5 id="macChartHd">△ NVDA <span class="up">184.20 · +2.1%</span></h5>
+              <div class="sub">15-minute · MA(7) · simulated data</div>
+              <canvas id="macChart" style="height:210px"></canvas>
+            </section>
+            <section class="scr" data-s="auto">
+              <h5>◷ Flux Fund <span class="tag">paper · live</span></h5>
+              <div class="sub"><b id="macFund" style="color:var(--emerald)">$10,000</b> · simulated $10k account</div>
+              <canvas id="macAuto" style="height:120px"></canvas>
+              <div id="macLog" style="margin-top:8px"></div>
+            </section>
+            <section class="scr" data-s="folio">
+              <h5>◎ Portfolio <span class="tag">sample</span></h5>
+              <div class="sub"><b>$128,400</b> · <span class="up">+1.24% today</span> · illustrative</div>
+              <div id="macFolio"></div>
+            </section>
+          </div>
+        </div>
+        <div class="mac-ring" id="macRing"></div>
+        <svg class="mac-cur" id="macCur" viewBox="0 0 24 24" fill="none"><path d="M4 2l6 16 2.5-6.5L19 9 4 2z" fill="#fff" stroke="#0b1020" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="macphone device"><div class="device-screen">
+        <div class="pt"><span>FLUX</span><span class="live" id="pClock">9:41</span></div>
+        <div class="pv"><b id="pVal">$10,000</b><small>Flux Fund · paper</small></div>
+        <canvas id="pEq"></canvas>
       </div></div>
     </div>
   </div>
@@ -362,6 +456,7 @@ document.addEventListener("DOMContentLoaded",function(){
   "use strict";
   var F=window.FLUX||{};
   var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
   var reduced=F.reduced?F.reduced():false;
 
   var eng=$("#engines");
@@ -430,6 +525,65 @@ document.addEventListener("DOMContentLoaded",function(){
     }
     clock(); if(!reduced)setInterval(clock,10000);
   }
+
+  /* ---- Mac product tour ---- */
+  (function(){
+    var win=$(".macwin"); if(!win)return;
+    var side=$("#macSide"),main=$("#macMain"),crumb=$("#macCrumb"),cur=$("#macCur"),ring=$("#macRing");
+    // build screen content
+    if(F.SIGNALS){
+      var mi=$("#macIdeas");
+      if(mi)mi.innerHTML=F.SIGNALS.slice(0,4).map(function(s){var c=s.u?F.EM:F.CR;
+        return '<div class="mrow"><span class="tk">'+s.t+'</span><span class="'+(s.u?"up":"down")+'">'+s.mv+
+          '</span><span class="bar"><i style="width:'+s.c+'%;background:'+c+'"></i></span>'+
+          '<span class="mono" style="font-size:11px;color:'+c+'">'+s.c+'%</span></div>';}).join("");
+    }
+    var mf=$("#macFolio");
+    if(mf)mf.innerHTML=[["NVDA",42],["AMD",23],["TSLA",18],["AAPL",17]].map(function(h){
+      return '<div class="mrow"><span class="tk">'+h[0]+'</span><span class="bar"><i style="width:'+h[1]+'%;background:'+F.CY+'"></i></span>'+
+        '<span class="mono" style="font-size:11px;color:var(--text-faint)">'+h[1]+'%</span></div>';}).join("");
+    var ml=$("#macLog");
+    if(ml)ml.innerHTML=[["BUY","NVDA 12 @ 184.20",1],["SELL","AMD 20 @ 172.40",0]].map(function(t){
+      return '<div class="mono" style="font-size:10.5px;color:var(--text-faint);padding:2px 0"><span style="color:'+(t[2]?F.EM:F.CR)+'">'+t[0]+'</span> '+t[1]+'</div>';}).join("");
+
+    function drawScr(s){
+      if(s==="chart"&&F.drawCandles)F.drawCandles($("#macChart"),"NVDAq",38,true);
+      if(s==="auto"&&F.drawArea)F.drawArea($("#macAuto"),"fluxfund",44,true,F.EM);
+    }
+    function activate(s){
+      $$(".scr",main).forEach(function(e){e.classList.toggle("on",e.getAttribute("data-s")===s)});
+      $$(".si",side).forEach(function(e){e.classList.toggle("on",e.getAttribute("data-s")===s)});
+      if(crumb)crumb.textContent=s;
+      drawScr(s);
+    }
+    function place(si,tap){
+      var wr=win.getBoundingClientRect(),r=si.getBoundingClientRect();
+      var x=r.left-wr.left+r.width*0.6,y=r.top-wr.top+r.height/2;
+      cur.style.transform="translate("+x+"px,"+y+"px)";
+      if(tap)setTimeout(function(){
+        cur.classList.remove("tap");void cur.offsetWidth;cur.classList.add("tap");
+        ring.style.left=x+"px";ring.style.top=y+"px";ring.classList.remove("go");void ring.offsetWidth;ring.classList.add("go");
+      },1000);
+    }
+    var order=["brief","ideas","chart","auto","folio"],i=0,timer;
+    // initial cursor on the brief item
+    var first=$('.si[data-s="brief"]',side); if(first)place(first,false);
+    function next(){
+      i=(i+1)%order.length;var s=order[i],si=$('.si[data-s="'+s+'"]',side);
+      if(si)place(si,true);
+      setTimeout(function(){activate(s)},1150);
+      timer=setTimeout(next,3600);
+    }
+    // let users click the sidebar to jump (and pause the tour)
+    side.addEventListener("click",function(e){
+      var t=e.target.closest?e.target.closest(".si"):null;if(!t)return;
+      clearTimeout(timer);var s=t.getAttribute("data-s");i=order.indexOf(s);
+      place(t,true);activate(s);timer=setTimeout(next,4500);
+    });
+    activate("brief");
+    if(!reduced)timer=setTimeout(next,2600);
+    else{drawScr("chart");drawScr("auto");}
+  })();
 });
 </script>
 </body>

@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Flux</title>
+<meta name="description" content="Your Flux members dashboard: the AI Daily Brief, ranked AI trade recommendations, your sample portfolio, watchlist and quick links into the trading app. Simulated sample account — illustrative, not advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ============================================================
+     page-only LAYOUT: dashboard.html (db- prefixed)
+     Shared design-system classes/tokens are reused, never redefined.
+     ============================================================ */
+
+  /* ---- welcome bar ---- */
+  .db-welcome{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;flex-wrap:wrap}
+  .db-hello{min-width:0}
+  .db-hello h1{font-size:clamp(1.55rem,1.15rem + 2.2vw,2.4rem);font-weight:750;letter-spacing:-.02em;line-height:1.1}
+  .db-sub{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .db-date{font-family:var(--f-mono);font-size:.85rem;color:var(--text-faint);font-variant-numeric:tabular-nums}
+  .db-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  /* ---- section heads ---- */
+  .db-shead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .db-shead .lede{margin-top:12px}
+  .db-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:18px}
+
+  /* ---- AI daily brief ---- */
+  .db-brief{padding:22px;overflow:hidden}
+  .db-brief > *{position:relative;z-index:1}
+  .db-brief-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .db-brief-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+  .db-clock{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .db-lines{display:flex;flex-direction:column}
+  .db-line{font-size:.95rem;line-height:1.6;color:var(--text-dim);margin-bottom:9px;display:flex;gap:10px}
+  .db-line::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
+  .db-line b{color:var(--text);font-weight:600}
+  .db-line .up{font-weight:700}
+  .db-brief.typing .db-line{opacity:0;transform:translateY(6px)}
+  .db-brief.typing .db-line.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
+  .db-caret{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:-2px;
+    box-shadow:0 0 8px var(--cyan);animation:dbBlink 1s steps(1) infinite;margin-left:2px}
+  .db-caret.done{display:none}
+  @keyframes dbBlink{50%{opacity:0}}
+  .db-brief-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
+  .db-brief-foot .st{font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+  .db-brief-foot .cap{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+
+  /* ---- recommendation cards ---- */
+  .db-rec{padding:18px;display:flex;flex-direction:column}
+  .db-rec > *{position:relative;z-index:1}
+  .db-rec-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .db-rank{font-family:var(--f-mono);font-weight:700;font-size:12px;color:var(--cyan);flex:none;
+    border:1px solid rgba(0,242,255,.25);background:rgba(0,242,255,.08);border-radius:8px;padding:5px 8px;line-height:1}
+  .db-rec-id{min-width:0;flex:1}
+  .db-rec-tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+  .db-rec-tk span{font-size:.82rem}
+  .db-rec-sub{font-size:.76rem;color:var(--text-faint);margin-top:2px}
+  .db-eng{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;flex:none;
+    padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+  .db-thesis{font-size:.88rem;color:var(--text-dim);line-height:1.55;margin-top:14px}
+  .db-conf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;font-family:var(--f-mono)}
+  .db-conf .n{font-weight:700;font-size:1.05rem;line-height:1}
+  .db-conf .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .db-cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:9px 0 0}
+  .db-cbar i{display:block;height:100%;border-radius:3px}
+  .db-kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}
+  @media(max-width:480px){.db-kvs{grid-template-columns:1fr 1fr}}
+  .db-kv{border:1px solid var(--line-2);border-radius:10px;background:var(--well);padding:8px 9px;min-width:0}
+  .db-kv .k{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
+  .db-kv .v{font-family:var(--f-mono);font-weight:700;font-size:.85rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
+  .db-rec-spark{margin-top:14px;border:1px solid var(--line-2);border-radius:10px;background:var(--well);padding:8px}
+  .db-rec-spark canvas{width:100%;height:52px;display:block}
+  .db-rec-foot{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-2)}
+  .db-rec-foot .btn{flex:1 1 0;min-width:0}
+  .db-rec-foot .btn.added{opacity:.65;pointer-events:none}
+
+  /* ---- portfolio ---- */
+  .db-pf{align-items:start;margin-top:8px}
+  .db-hold-card{padding:22px}
+  .db-tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.db-hold{width:100%;min-width:520px;border-collapse:collapse;font-size:.88rem}
+  table.db-hold th{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 12px;white-space:nowrap}
+  table.db-hold th:first-child,table.db-hold td:first-child{text-align:left;padding-left:2px}
+  table.db-hold th:last-child,table.db-hold td:last-child{padding-right:2px}
+  table.db-hold td{text-align:right;padding:12px;border-top:1px solid var(--line-2);white-space:nowrap;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .db-tk b{font-weight:700;font-size:.92rem;letter-spacing:.03em}
+  .db-tk span{display:block;color:var(--text-faint);font-size:.72rem;line-height:1.3;font-family:var(--f-sans)}
+  .db-wt-bar{position:relative;display:inline-block;width:48px;height:6px;border-radius:3px;
+    background:rgba(255,255,255,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
+  .db-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--grad)}
+  .db-foot-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--text-faint);margin-top:16px;
+    display:flex;align-items:center;gap:8px}
+
+  .db-mstack{display:flex;flex-direction:column;gap:14px}
+  .db-metric{padding:16px 18px}
+  .db-metric .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .db-metric .s{font-size:.78rem;color:var(--text-faint);margin-top:4px}
+  .db-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-.03em;
+    font-size:clamp(1.7rem,1.3rem + 2vw,2.35rem);border-radius:9px;padding:1px 6px;margin-left:-6px;width:max-content}
+  .db-total-sub{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.92rem;font-weight:700;margin-top:6px}
+  .db-mrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:420px){.db-mrow{grid-template-columns:1fr}}
+  .db-metric .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:700;margin-top:7px;letter-spacing:-.02em}
+  .db-spark{width:100%;height:60px;display:block;margin-top:8px}
+  @keyframes dbFlash{from{background:color-mix(in srgb,var(--cyan) 20%,transparent)}to{background:transparent}}
+  .db-flash{animation:dbFlash .7s ease-out}
+
+  /* ---- watchlist ---- */
+  .db-wl-card{padding:20px}
+  .db-wl{display:flex;flex-direction:column}
+  .db-wl-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line-2)}
+  .db-wl-row:first-child{border-top:0}
+  .db-wl-av{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
+    font-weight:700;font-size:11px;border:1px solid var(--line);
+    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.16),rgba(139,92,246,.1))}
+  .db-wl-id{min-width:0;flex:1}
+  .db-wl-id b{font-family:var(--f-mono);font-weight:700;font-size:.92rem}
+  .db-wl-id span{display:block;font-size:.72rem;color:var(--text-faint)}
+  .db-wl-spark{width:66px;height:26px;flex:none;display:block}
+  @media(max-width:400px){.db-wl-spark{display:none}}
+  .db-wl-px{text-align:right;font-family:var(--f-mono);flex:none;font-variant-numeric:tabular-nums}
+  .db-wl-px .last{font-weight:700;font-size:.9rem}
+  .db-wl-px .chg{font-size:.78rem;font-weight:700;margin-top:2px}
+  .db-wl-hint{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:14px}
+
+  /* ---- autopilot status ---- */
+  .db-ap{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:24px}
+  @media(max-width:640px){.db-ap{grid-template-columns:1fr}}
+  .db-ap > *{position:relative;z-index:1}
+  .db-ap-eq{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .db-ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(1.6rem,1.2rem + 2vw,2.2rem);
+    letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .db-ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
+  .db-ap-note{color:var(--text-dim);font-size:.85rem;line-height:1.55;margin-top:12px;max-width:52ch}
+  .db-ap-stats{display:flex;gap:26px;flex-wrap:wrap}
+  .db-ap-stats .qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
+  .db-ap-stats .qs .l{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .db-ap-right{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+
+  /* ---- quick actions ---- */
+  .db-qa{padding:22px}
+  .db-qa .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-mono);font-size:20px;
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.16),rgba(139,92,246,.1));margin-bottom:14px}
+  .db-qa h3{font-size:1.02rem}
+  .db-qa p{color:var(--text-dim);font-size:.85rem;margin-top:6px;line-height:1.5}
+  .db-qa .go{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);margin-top:12px;display:inline-block}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
+      <a class="btn btn-primary btn-sm" href="./dashboard.html">Account</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ WELCOME BAR ============ -->
+<section class="section" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="db-welcome reveal">
+      <div class="db-hello">
+        <h1>Good <span id="dbGreet">morning</span>, <span data-auth-name>Trader</span></h1>
+        <div class="db-sub">
+          <span class="pill live">Markets open · simulated</span>
+          <span class="db-date" id="dbDate">—</span>
+        </div>
+      </div>
+      <div class="db-actions">
+        <a class="btn btn-primary btn-sm" href="./desktop.html">Open web terminal</a>
+        <a class="btn btn-ghost btn-sm" href="./app.html">Phone app</a>
+        <a class="btn btn-ghost btn-sm" data-signout href="./index.html">Sign out</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI DAILY BRIEF ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="glass sheen db-brief reveal" id="dbBrief">
+      <div class="db-brief-head">
+        <span class="pill pill-violet"><i></i> Flux-LM</span>
+        <span class="ttl grad-text grad-anim">AI Daily Brief</span>
+        <span class="db-clock" id="dbClock">—</span>
+      </div>
+      <div class="db-lines" id="dbBriefLines"></div>
+      <div class="db-brief-foot">
+        <span class="st" id="dbBriefStat">writing brief…</span>
+        <button class="btn btn-ghost btn-sm" id="dbRegen" type="button">Regenerate</button>
+        <span class="cap">Illustrative · not advice</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI TRADE RECOMMENDATIONS ============ -->
+<section class="section" style="padding-top:0" id="recs">
+  <div class="wrap">
+    <div class="db-shead reveal">
+      <div style="max-width:60ch">
+        <span class="eyebrow">AI trade recommendations</span>
+        <h2 class="h2" style="margin-top:14px">Ranked by engine agreement.</h2>
+        <p class="lede">Eight live research signals, sorted by confidence and expanded in full — the thesis,
+          the levels, and a price trace. Every one is a research signal, not advice.</p>
+      </div>
+      <span class="pill"><i></i> AI research signal · not advice</span>
+    </div>
+    <div class="grid g-3" id="dbRecs"></div>
+    <p class="db-cap">Confidence is the level of agreement across the six engines — not a probability of profit.
+      Levels are illustrative and derived from reference prices. You decide and place any trade yourself.</p>
+  </div>
+</section>
+
+<!-- ============ YOUR PORTFOLIO ============ -->
+<section class="section band">
+  <div class="wrap" style="display:block">
+    <div class="db-shead reveal">
+      <div style="max-width:60ch">
+        <span class="eyebrow">Your portfolio</span>
+        <h2 class="h2" style="margin-top:14px">Your book, at a glance.</h2>
+      </div>
+      <span class="tag">sample · simulated</span>
+    </div>
+
+    <div class="split wide-l db-pf">
+      <div class="glass sheen db-hold-card reveal">
+        <div class="db-shead" style="margin-bottom:14px">
+          <h3 class="h3">Holdings</h3>
+          <span class="pill" style="padding:5px 11px;font-size:10px"><i></i> live</span>
+        </div>
+        <div class="db-tscroll">
+          <table class="db-hold">
+            <thead>
+              <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">Shares</th>
+                <th scope="col">Price</th>
+                <th scope="col">Mkt value</th>
+                <th scope="col">Day %</th>
+                <th scope="col">Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="db-tk"><b>NVDA</b><span>NVIDIA</span></td>
+                <td>120</td><td>$184.20</td><td>$22,104</td>
+                <td class="up">+2.1%</td>
+                <td>29.5%<span class="db-wt-bar"><i style="width:29.5%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="db-tk"><b>AAPL</b><span>Apple</span></td>
+                <td>90</td><td>$226.50</td><td>$20,385</td>
+                <td class="up">+0.6%</td>
+                <td>27.2%<span class="db-wt-bar"><i style="width:27.2%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="db-tk"><b>MSFT</b><span>Microsoft</span></td>
+                <td>34</td><td>$428.60</td><td>$14,572</td>
+                <td class="up">+1.2%</td>
+                <td>19.4%<span class="db-wt-bar"><i style="width:19.4%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="db-tk"><b>AMD</b><span>Advanced Micro</span></td>
+                <td>60</td><td>$172.40</td><td>$10,344</td>
+                <td class="down">−0.8%</td>
+                <td>13.8%<span class="db-wt-bar"><i style="width:13.8%"></i></span></td>
+              </tr>
+              <tr>
+                <td class="db-tk"><b>COIN</b><span>Coinbase</span></td>
+                <td>30</td><td>$251.30</td><td>$7,539</td>
+                <td class="up">+4.1%</td>
+                <td>10.1%<span class="db-wt-bar"><i style="width:10.1%"></i></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="db-foot-cap"><span class="live"></span>Sample portfolio · simulated · not a real account.</p>
+      </div>
+
+      <div class="db-mstack reveal">
+        <div class="glass feat db-metric">
+          <div class="k">Total value · sample</div>
+          <div class="db-total mono" id="dbTotal">$92,180.00</div>
+          <div class="db-total-sub up" id="dbTotalDay">+$1,284.00 · +1.41%</div>
+        </div>
+        <div class="db-mrow">
+          <div class="glass feat db-metric">
+            <div class="k">Day P/L</div>
+            <div class="v mono up">+$1,284</div>
+            <div class="s">+1.4% on the book</div>
+          </div>
+          <div class="glass feat db-metric">
+            <div class="k">Buying power</div>
+            <div class="v mono">$17,304</div>
+            <div class="s">simulated cash</div>
+          </div>
+        </div>
+        <div class="glass feat db-metric">
+          <div class="k">Equity curve · sample</div>
+          <canvas class="db-spark" id="dbEquity" aria-label="Illustrative sample equity curve"></canvas>
+          <div class="s">30-session trace · hypothetical</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WATCHLIST ============ -->
+<section class="section">
+  <div class="wrap" style="display:block">
+    <div class="db-shead reveal">
+      <div style="max-width:60ch">
+        <span class="eyebrow">Watchlist</span>
+        <h2 class="h2" style="margin-top:14px">The names you're watching.</h2>
+      </div>
+      <span class="tag">simulated quotes</span>
+    </div>
+    <div class="glass sheen db-wl-card reveal">
+      <div class="db-wl" id="dbWatch"></div>
+      <p class="db-wl-hint">Add names from the recommendations above · quotes are illustrative and simulated.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUTOPILOT STATUS ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap" style="display:block">
+    <div class="db-shead reveal">
+      <div style="max-width:60ch">
+        <span class="eyebrow">Autopilot</span>
+        <h2 class="h2" style="margin-top:14px">The Flux Fund, running on paper.</h2>
+      </div>
+    </div>
+    <div class="glass sheen db-ap reveal">
+      <div>
+        <span class="pill live">Flux Fund · paper</span>
+        <div class="db-ap-eq">
+          <span class="val mono" id="dbApEq">$12,480.00</span>
+          <span class="chg up" id="dbApChg">+1.24%</span>
+        </div>
+        <p class="db-ap-note">Autopilot trades a simulated $10,000 paper account only. It never trades your real
+          account without your explicit approval and the guardrails you set — and you can pause it anytime.</p>
+      </div>
+      <div class="db-ap-right">
+        <div class="db-ap-stats">
+          <div class="qs"><div class="n mono up" id="dbApDay">+$153</div><div class="l">Day change</div></div>
+          <div class="qs"><div class="n mono">6</div><div class="l">Open positions</div></div>
+          <div class="qs"><div class="n mono up">63%</div><div class="l">Win rate</div></div>
+        </div>
+        <a class="btn btn-ghost btn-sm" href="./autopilot.html">Watch the fund →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUICK ACTIONS ============ -->
+<section class="section band">
+  <div class="wrap" style="display:block">
+    <div class="db-shead reveal">
+      <div style="max-width:60ch">
+        <span class="eyebrow">Quick actions</span>
+        <h2 class="h2" style="margin-top:14px">Jump back into Flux.</h2>
+      </div>
+    </div>
+    <div class="grid g-4">
+      <a class="glass glass-hover db-qa reveal" href="./ai.html">
+        <div class="ic">✦</div><h3>Ask Flux AI</h3>
+        <p>Put a question to the desk — a name, a sector, your own book — in plain English.</p>
+        <span class="go">Open Flux AI →</span>
+      </a>
+      <a class="glass glass-hover db-qa reveal" href="./research.html">
+        <div class="ic">§</div><h3>AI Research</h3>
+        <p>Filings, transcripts, the wire and the tape, read in full and written up for you.</p>
+        <span class="go">Read the research →</span>
+      </a>
+      <a class="glass glass-hover db-qa reveal" href="./trade-ideas.html">
+        <div class="ic">⟁</div><h3>Trade Ideas</h3>
+        <p>Ranked ideas with the thesis, the levels and a backtest attached to each one.</p>
+        <span class="go">See the ideas →</span>
+      </a>
+      <a class="glass glass-hover db-qa reveal" href="./markets.html">
+        <div class="ic">◔</div><h3>Markets</h3>
+        <p>Indices, movers and the tape at a glance across the whole simulated universe.</p>
+        <span class="go">Open markets →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The dashboard shows a simulated sample account with illustrative data; results are hypothetical and do not represent real trading. AI recommendations are research signals, not advice — you decide and place any trade yourself. Trading involves risk of loss, including loss of principal.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  "use strict";
+  if(!window.FLUXAuth || !FLUXAuth.guard()) return;
+
+  var F  = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s);};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var SIGNALS = F.SIGNALS || [];
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  function pad2(n){ n = String(n); return n.length < 2 ? "0" + n : n; }
+
+  /* reference prices used to derive the illustrative levels */
+  var PX = {NVDA:184.20, AMD:172.40, TSLA:248.90, AAPL:226.50, SMCI:41.80,
+            MSFT:428.60, COIN:251.30, PLTR:38.90};
+
+  /* ---------------- greeting + date ---------------- */
+  var hh = new Date().getHours();
+  var greet = hh < 12 ? "morning" : (hh < 18 ? "afternoon" : "evening");
+  var greetEl = $("#dbGreet"); if(greetEl) greetEl.textContent = greet;
+  var dateEl = $("#dbDate");
+  if(dateEl){
+    dateEl.textContent = new Date().toLocaleDateString(undefined,
+      {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+  }
+
+  /* ---------------- live clock (brief header) ---------------- */
+  var clockEl = $("#dbClock");
+  function tick(){
+    if(!clockEl) return;
+    var d = new Date(), h = d.getHours(), ap = h >= 12 ? "PM" : "AM", h12 = h % 12; if(h12 === 0) h12 = 12;
+    clockEl.textContent = "Flux-LM · " + h12 + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds()) + " " + ap;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* ---------------- AI daily brief (typing, 3 variants) ---------------- */
+  var BRIEFS = [
+    [
+      'Market tone is <b>risk-on</b> into the open — semis are leading, but breadth is narrow with 61% of the move sitting in three names.',
+      'Your watchlist is <b class="up">+1.4%</b> on the average; <b>NVDA</b> and <b>AMD</b> are carrying it, and <b>TSLA</b> is the lone red.',
+      'Top catalyst today: <b>MSFT</b> cloud update after the close — options skew has flipped bullish into it.',
+      'Unusual flow: a <b>14,200-lot call sweep</b> hit the NVDA $185 strike at the ask, 3 days to expiry (~$4.6M premium).',
+      'Risk flag on your book: it is <b>68% concentrated in semis</b> with 0.81 correlation across the top three — they move together, both ways.',
+      'One-line plan: hold the winners, keep stops tight on the two runners, and let MSFT confirm before you add.'
+    ],
+    [
+      'Tone has cooled to <b>mixed</b> — index futures flat, volatility ticking up, and rotation out of momentum into value.',
+      'Watchlist is <b class="up">+0.6%</b>; <b>COIN</b> leads on the BTC bid while <b>PLTR</b> fades a hot open.',
+      'Top catalyst today: <b>TSLA</b> filed an 8-K on the delivery outlook — a setup that historically preceded a <b class="down">−2.3%</b> five-day drift.',
+      'Unusual flow: <b>SMCI</b> entered the top 1% of the universe for volume, with short float at 18% and rising.',
+      'Risk flag on your book: two positions sit within 1.2% of their stops — the Risk engine has flagged both for review.',
+      'One-line plan: trim into strength, respect the stops on the two runners, and keep buying power for the TSLA reaction.'
+    ],
+    [
+      'Tone is <b>cautiously constructive</b> — the tape is grinding higher on thin volume, the kind that reverses on a single headline.',
+      'Watchlist is <b class="up">+2.0%</b> on the average, led by <b>SMCI</b> and <b>NVDA</b>; nothing on it is red this morning.',
+      'Top catalyst today: <b>AAPL</b> reclaimed VWAP and crossed bullish on the 15-minute — a level the tape has respected all week.',
+      'Unusual flow: put/call skew on <b>MSFT</b> turned bullish into the cloud update, and a gamma wall is building at $430.',
+      'Risk flag on your book: your top two names are <b>57%</b> of the portfolio — concentration the Risk radar is watching closely.',
+      'One-line plan: let the leaders run, add only on a pullback to support, and size every new idea against the book.'
+    ]
+  ];
+  var briefIdx = 0;
+  var briefEl   = $("#dbBrief");
+  var linesWrap = $("#dbBriefLines");
+  var briefStat = $("#dbBriefStat");
+  var phaseTimer = null;
+
+  function renderBrief(idx){
+    if(!linesWrap) return;
+    if(phaseTimer){ clearInterval(phaseTimer); phaseTimer = null; }
+    var set = BRIEFS[idx % BRIEFS.length];
+    linesWrap.innerHTML = set.map(function(t, i){
+      var caret = (i === set.length - 1) ? '<span class="db-caret" id="dbCaret"></span>' : '';
+      return '<p class="db-line">' + t + caret + '</p>';
+    }).join("");
+    var lines = $$(".db-line", linesWrap);
+    var caretEl = $("#dbCaret");
+    if(briefEl) briefEl.classList.add("typing");
+
+    if(reduce){
+      lines.forEach(function(l){ l.classList.add("in"); });
+      if(caretEl) caretEl.classList.add("done");
+      if(briefStat) briefStat.textContent = "brief complete · 412 documents read";
+      return;
+    }
+    if(briefStat) briefStat.textContent = "writing brief…";
+    var delay = 220;
+    lines.forEach(function(l, i){
+      setTimeout(function(){ l.classList.add("in"); }, delay + i * 200);
+    });
+    setTimeout(function(){
+      if(caretEl) caretEl.classList.add("done");
+      if(briefStat) briefStat.textContent = "brief complete · 412 documents read";
+    }, delay + lines.length * 200 + 500);
+    var phases = ["reading filings…","parsing transcripts…","scoring the wire…","running models…","writing brief…"];
+    var pi = 0;
+    phaseTimer = setInterval(function(){
+      if(!briefStat || briefStat.textContent.indexOf("complete") > -1){ clearInterval(phaseTimer); phaseTimer = null; return; }
+      briefStat.textContent = phases[pi % phases.length]; pi++;
+    }, 850);
+  }
+  renderBrief(briefIdx);
+  var regen = $("#dbRegen");
+  if(regen){
+    regen.addEventListener("click", function(){
+      briefIdx++;
+      renderBrief(briefIdx);
+    });
+  }
+
+  /* ---------------- recommendation cards ---------------- */
+  var recWrap = $("#dbRecs");
+  var recCanvases = [];
+  var recs = SIGNALS.slice().sort(function(a,b){ return b.c - a.c; });
+
+  function fmt(n){ return n.toFixed(2); }
+
+  if(recWrap){
+    recWrap.innerHTML = recs.map(function(s, idx){
+      var px = PX[s.t] || 100;
+      var long = !!s.u;
+      var risk = 0.052 - (s.c / 3000);
+      var reward = risk * (1.7 + (s.c - 60) / 100);
+      var entry = px;
+      var stop = long ? px * (1 - risk) : px * (1 + risk);
+      var target = long ? px * (1 + reward) : px * (1 - reward);
+      var rr = (Math.abs(target - entry) / Math.abs(entry - stop)).toFixed(1);
+      var col = long ? EM : CR;
+      var cid = "dbSpark" + idx;
+      recCanvases.push({id:cid, seed:s.t, up:long, col:col});
+      return '' +
+        '<article class="glass glass-hover db-rec reveal">' +
+          '<div class="db-rec-top">' +
+            '<span class="db-rank">#' + (idx + 1) + '</span>' +
+            '<div class="db-rec-id">' +
+              '<div class="db-rec-tk">' + s.t + ' <span class="' + (long ? "up" : "down") + '">' + s.mv + '</span></div>' +
+              '<div class="db-rec-sub">' + s.lbl + ' · ' + (long ? "long setup" : "short setup") + '</div>' +
+            '</div>' +
+            '<span class="db-eng">' + s.e + '</span>' +
+          '</div>' +
+          '<p class="db-thesis">' + s.i + '</p>' +
+          '<div class="db-conf"><span class="l">Confidence</span><span class="n" style="color:' + col + '">' + s.c + '%</span></div>' +
+          '<div class="db-cbar"><i style="width:' + s.c + '%;background:' + col + '"></i></div>' +
+          '<div class="db-kvs">' +
+            '<div class="db-kv"><div class="k">Entry</div><div class="v">' + fmt(entry) + '</div></div>' +
+            '<div class="db-kv"><div class="k">Stop</div><div class="v down">' + fmt(stop) + '</div></div>' +
+            '<div class="db-kv"><div class="k">Target</div><div class="v up">' + fmt(target) + '</div></div>' +
+            '<div class="db-kv"><div class="k">R : R</div><div class="v">' + rr + '</div></div>' +
+          '</div>' +
+          '<div class="db-rec-spark"><canvas id="' + cid + '" aria-label="Illustrative price trace for ' + s.t + '"></canvas></div>' +
+          '<div class="db-rec-foot">' +
+            '<button class="btn btn-ghost btn-sm" type="button" data-add="' + s.t + '" data-up="' + (long ? "1" : "0") + '" data-mv="' + s.mv + '">Add to watchlist</button>' +
+            '<a class="btn btn-primary btn-sm" href="./desktop.html">Trade</a>' +
+          '</div>' +
+        '</article>';
+    }).join("");
+  }
+
+  /* ---------------- watchlist ---------------- */
+  var watchWrap = $("#dbWatch");
+  var wlSet = {};
+  var wlCanvases = [];
+  var wlSeq = 0;
+
+  function addWatch(t, up, mv){
+    if(!watchWrap || wlSet[t]) return false;
+    wlSet[t] = true;
+    var px = PX[t] || 100;
+    var cid = "dbWl" + (wlSeq++);
+    var chgCls = up ? "up" : "down";
+    var row = document.createElement("div");
+    row.className = "db-wl-row";
+    row.setAttribute("data-wl-ticker", t);
+    row.innerHTML =
+      '<div class="db-wl-av">' + t.slice(0,3) + '</div>' +
+      '<div class="db-wl-id"><b>' + t + '</b><span>' + (up ? "long watch" : "short watch") + '</span></div>' +
+      '<canvas class="db-wl-spark" id="' + cid + '" aria-label="Illustrative trace for ' + t + '"></canvas>' +
+      '<div class="db-wl-px"><div class="last">$' + px.toFixed(2) + '</div>' +
+        '<div class="chg ' + chgCls + '">' + mv + '</div></div>';
+    watchWrap.appendChild(row);
+    wlCanvases.push({id:cid, seed:t, up:up});
+    var cv = document.getElementById(cid);
+    if(cv && F.drawArea) F.drawArea(cv, t, 30, up, up ? EM : CR);
+    return true;
+  }
+
+  [
+    {t:"SMCI", u:1, mv:"+5.9%"},
+    {t:"COIN", u:1, mv:"+4.1%"},
+    {t:"PLTR", u:1, mv:"+2.8%"},
+    {t:"TSLA", u:0, mv:"−1.8%"}
+  ].forEach(function(w){ addWatch(w.t, !!w.u, w.mv); });
+
+  /* delegated "Add to watchlist" wiring */
+  if(recWrap){
+    recWrap.addEventListener("click", function(ev){
+      var btn = ev.target.closest ? ev.target.closest("[data-add]") : null;
+      if(!btn) return;
+      ev.preventDefault();
+      var t = btn.getAttribute("data-add");
+      var up = btn.getAttribute("data-up") === "1";
+      var mv = btn.getAttribute("data-mv") || "";
+      var added = addWatch(t, up, mv);
+      btn.classList.add("added");
+      btn.textContent = added ? "Added ✓" : "In watchlist";
+    });
+  }
+
+  /* ---------------- live-ticking sample total value ---------------- */
+  var totalEl = $("#dbTotal"), totalDayEl = $("#dbTotalDay");
+  var prevClose = 90896.00, total = 92180.00;
+  function money(n){ return "$" + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function paintTotal(flash){
+    if(!totalEl) return;
+    totalEl.textContent = money(total);
+    var chg = total - prevClose, pct = chg / prevClose * 100, up = chg >= 0;
+    if(totalDayEl){
+      totalDayEl.textContent = (up ? "+" : "−") + "$" +
+        Math.abs(chg).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) +
+        " · " + (up ? "+" : "−") + Math.abs(pct).toFixed(2) + "%";
+      totalDayEl.className = "db-total-sub " + (up ? "up" : "down");
+    }
+    if(flash && !reduce){
+      totalEl.classList.remove("db-flash"); void totalEl.offsetWidth; totalEl.classList.add("db-flash");
+    }
+  }
+  paintTotal(false);
+  if(!reduce){
+    setInterval(function(){
+      if(document.hidden) return;
+      total = Math.max(prevClose * 0.9, total + (Math.random() - 0.46) * 42);
+      paintTotal(true);
+    }, 1700);
+  }
+
+  /* ---------------- autopilot paper equity ticker ---------------- */
+  var apEq = $("#dbApEq"), apChg = $("#dbApChg"), apDay = $("#dbApDay");
+  var AP_BASE = 12480, apOpen = 12327, eq = AP_BASE;
+  function renderAp(){
+    if(apEq) apEq.textContent = money(eq);
+    var pct = ((eq - apOpen) / apOpen) * 100, up = pct >= 0;
+    if(apChg){
+      apChg.textContent = (up ? "+" : "−") + Math.abs(pct).toFixed(2) + "%";
+      apChg.className = "chg " + (up ? "up" : "down");
+    }
+    if(apDay){
+      var dd = eq - apOpen;
+      apDay.textContent = (dd >= 0 ? "+" : "−") + "$" + Math.abs(Math.round(dd)).toLocaleString();
+      apDay.className = "n mono " + (dd >= 0 ? "up" : "down");
+    }
+  }
+  renderAp();
+  if(!reduce){
+    setInterval(function(){
+      if(document.hidden) return;
+      eq += (Math.random() - 0.5) * 14;
+      if(eq < AP_BASE - 160) eq = AP_BASE - 160;
+      if(eq > AP_BASE + 200) eq = AP_BASE + 200;
+      renderAp();
+    }, 1000);
+  }
+
+  /* ---------------- canvases (draw + debounced resize) ---------------- */
+  function drawAll(){
+    if(!F.drawArea) return;
+    var eqc = $("#dbEquity");
+    if(eqc) F.drawArea(eqc, "dashpf", 52, true, CY);
+    recCanvases.forEach(function(c){
+      var cv = document.getElementById(c.id);
+      if(cv) F.drawArea(cv, c.seed, 40, c.up, c.up ? EM : CR);
+    });
+    wlCanvases.forEach(function(c){
+      var cv = document.getElementById(c.id);
+      if(cv) F.drawArea(cv, c.seed, 30, c.up, c.up ? EM : CR);
+    });
+  }
+  drawAll();
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(drawAll, 140);
+  });
+
+  /* pick up dynamically injected reveal targets */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>
