@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI News — Flux</title>
+<meta name="description" content="An AI-summarized market news feed: the wire, filings and the tape read, scored for sentiment and linked to your holdings. A simulated, illustrative demo — not real headlines and not advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ---- page-only layout: news.html ---- */
+  .nw-hero{max-width:66ch}
+  .nw-hero .h2{margin-top:16px}
+  .nw-hero .lede{margin-top:16px}
+  .nw-hero .nw-badges{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:24px}
+  .nw-note{margin-top:16px;color:var(--text-faint);font-size:.85rem;max-width:64ch}
+  .nw-note b{color:var(--text-dim);font-weight:600}
+
+  /* ---- filter bar ---- */
+  .nw-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .nw-chips{display:flex;gap:8px;flex-wrap:wrap;min-width:0}
+  .nw-chip{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+    padding:8px 14px;border-radius:100px;cursor:pointer;color:var(--text-dim);
+    border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
+  .nw-chip:hover{color:var(--text)}
+  .nw-chip[aria-pressed="true"]{color:var(--cyan);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.08)}
+  .nw-chip:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
+  .nw-clock{margin-left:auto;font-family:var(--f-mono);font-size:.74rem;color:var(--text-faint);white-space:nowrap}
+  @media(max-width:560px){.nw-clock{margin-left:0;width:100%}}
+
+  /* ---- feed layout ---- */
+  .nw-main{align-items:start}
+  .nw-feed{display:flex;flex-direction:column;gap:14px;min-height:340px}
+  .nw-empty{padding:26px;text-align:center;color:var(--text-faint);font-size:.9rem}
+
+  /* ---- news card ---- */
+  .nw-card{padding:18px}
+  .nw-card>*{position:relative;z-index:1}
+  .nw-card.nw-new{animation:pop .5s both}
+  .nw-chead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+  .nw-sent{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:3px 9px;border-radius:6px;white-space:nowrap}
+  .nw-sent.bull{background:color-mix(in srgb,var(--emerald) 15%,transparent);color:#5ee9b5}
+  .nw-sent.bear{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#ff9a9a}
+  .nw-sent.neut{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
+  .nw-time{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);white-space:nowrap}
+  .nw-hl{font-size:1.02rem;font-weight:700;line-height:1.34;letter-spacing:-.01em}
+  .nw-sum{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-top:9px}
+  .nw-ai{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;font-weight:700;color:var(--cyan);
+    border:1px solid rgba(0,242,255,.3);border-radius:5px;padding:1px 5px;background:rgba(0,242,255,.08);
+    vertical-align:1px;margin-right:4px}
+  .nw-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .nw-tks{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
+  .nw-tk{font-family:var(--f-mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;
+    border:1px solid var(--line-2);background:var(--well)}
+  .nw-tk em{font-style:normal;font-weight:600;font-size:10px;margin-left:5px}
+  .nw-src{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
+  .nw-impact{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);
+    font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
+  .nw-impact .bars{display:inline-flex;gap:3px}
+  .nw-impact .bars i{width:5px;height:11px;border-radius:2px;background:rgba(255,255,255,.1)}
+  .nw-impact .bars i.on{background:var(--cyan);box-shadow:0 0 8px rgba(0,242,255,.5)}
+  @media(max-width:560px){.nw-impact{margin-left:0}}
+
+  /* ---- sidebar ---- */
+  .nw-side{display:flex;flex-direction:column;gap:18px;position:sticky;top:88px}
+  @media(max-width:900px){.nw-side{position:static}}
+  .nw-panel{padding:18px}
+  .nw-panel>*{position:relative;z-index:1}
+  .nw-phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .nw-phead h3{font-size:1.02rem}
+  .nw-phead .k{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--text-faint)}
+
+  /* pulse (typewriter reveal) */
+  .nw-pl{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px}
+  .nw-pl:last-child{margin-bottom:0}
+  .nw-pl b{color:var(--text);font-weight:600}
+  .nw-pulse.typing .nw-pl{opacity:0;transform:translateY(6px)}
+  .nw-pulse.typing .nw-pl.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
+  .nw-caret{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:-2px;
+    box-shadow:0 0 8px var(--cyan);animation:blink 1s steps(1) infinite;margin-left:2px}
+  .nw-caret.done{display:none}
+
+  .nw-movers{display:flex;flex-direction:column;gap:9px}
+
+  .nw-trend{display:flex;flex-direction:column}
+  .nw-trow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--line-2)}
+  .nw-trow:first-child{border-top:0}
+  .nw-trow .r{font-family:var(--f-mono);font-size:11px;color:var(--text-faint);width:16px;flex:none}
+  .nw-trow .t{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
+  .nw-trow .n{color:var(--text-faint);font-size:.8rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nw-trow .m{margin-left:auto;font-family:var(--f-mono);font-size:.82rem;font-weight:700}
+
+  /* ---- sector sentiment strip ---- */
+  .nw-sect{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+  .nw-sec{border:1px solid var(--line-2);border-radius:14px;background:var(--well);padding:14px 15px;min-width:0}
+  .nw-sec .nm{font-size:.86rem;font-weight:600;line-height:1.25}
+  .nw-sec .lb{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
+  .nw-sec .track{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:9px}
+  .nw-sec .track i{display:block;height:100%;border-radius:3px;transition:width .6s ease}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./signin.html">Sign in</a>
+      <a class="btn btn-primary btn-sm" href="./dashboard.html">Launch app</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="section phero">
+  <div class="wrap nw-hero reveal">
+    <span class="eyebrow">AI News</span>
+    <h2 class="h2">The wire, <span class="grad-text">read and ranked by AI.</span></h2>
+    <p class="lede">Every headline, filing and print that touches your universe — summarized in a line,
+      scored for sentiment, and linked to the tickers you actually hold. One feed, continuously re-ranked
+      by what matters to your book.</p>
+    <div class="nw-badges">
+      <span class="pill live">Live feed · simulated</span>
+      <span class="tag">FinBERT sentiment</span>
+      <span class="tag">Linked to your book</span>
+    </div>
+    <p class="nw-note">This page is an <b>illustrative, simulated</b> news feed built for demonstration.
+      The headlines and AI summaries are <b>fictional samples</b> generated in your browser — Flux never
+      invents real news, and nothing here comes from a real publisher or is investment advice.</p>
+  </div>
+</section>
+
+<!-- ============ FILTER BAR ============ -->
+<section class="section-sm" style="padding-top:0">
+  <div class="wrap reveal">
+    <div class="nw-filter">
+      <div class="nw-chips" id="nwChips" role="group" aria-label="Filter the feed by category">
+        <button class="nw-chip" type="button" data-cat="all" aria-pressed="true">All</button>
+        <button class="nw-chip" type="button" data-cat="markets" aria-pressed="false">Markets</button>
+        <button class="nw-chip" type="button" data-cat="earnings" aria-pressed="false">Earnings</button>
+        <button class="nw-chip" type="button" data-cat="tech" aria-pressed="false">Tech</button>
+        <button class="nw-chip" type="button" data-cat="macro" aria-pressed="false">Macro</button>
+        <button class="nw-chip" type="button" data-cat="crypto" aria-pressed="false">Crypto</button>
+        <button class="nw-chip" type="button" data-cat="watchlist" aria-pressed="false">Your watchlist</button>
+      </div>
+      <span class="nw-clock" id="nwClock">—</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEED + SIDEBAR ============ -->
+<section class="section" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="wrap split wide-l nw-main">
+
+    <!-- LEFT: article stream -->
+    <div class="reveal">
+      <div class="nw-feed" id="nwFeed" aria-live="polite" aria-label="AI-summarized news feed"></div>
+      <p class="disclaimer" style="margin-top:20px">Simulated feed · illustrative · not real headlines · not advice.
+        Headlines, summaries, sentiment scores, tickers and moves are generated in-browser for demonstration and
+        do not describe real events, real companies' disclosures or real market data.</p>
+    </div>
+
+    <!-- RIGHT: sidebar -->
+    <aside class="nw-side reveal">
+      <div class="glass nw-panel nw-pulse" id="nwPulse">
+        <div class="nw-phead">
+          <span class="pill pill-violet"><i></i> AI Market Pulse</span>
+          <span class="k" id="nwPulseTs">—</span>
+        </div>
+        <p class="nw-pl">Tape reads <b>risk-on</b>: breadth is widening and semis are carrying, with the wire net-positive across the last hour.</p>
+        <p class="nw-pl">The loudest print is <b>NVDA</b> options flow; <b>AMD</b> earnings and a <b>TSLA</b> 8-K are the two catalysts worth watching into the close.</p>
+        <p class="nw-pl">Sentiment skews <b>bullish</b> in tech and <b>bearish</b> in energy. This is a simulated synthesis, not advice<span class="nw-caret" id="nwCaret"></span></p>
+      </div>
+
+      <div class="glass nw-panel">
+        <div class="nw-phead">
+          <h3 class="h3">Top movers</h3>
+          <span class="k">from the scanner</span>
+        </div>
+        <div class="nw-movers" id="nwMovers"></div>
+        <p class="mono" style="margin-top:12px;font-size:.72rem;color:var(--text-faint)">
+          Sample engine output · confidence is model agreement, not a promise.</p>
+      </div>
+
+      <div class="glass nw-panel">
+        <div class="nw-phead">
+          <h3 class="h3">Trending tickers</h3>
+          <span class="k">by mentions</span>
+        </div>
+        <div class="nw-trend" id="nwTrend"></div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ============ SECTOR SENTIMENT ============ -->
+<section class="section band" style="padding-block:clamp(48px,6vw,80px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Sentiment map</span>
+      <h2 class="h2" style="margin-top:16px">How the wire is leaning, by sector.</h2>
+      <p class="lede" style="margin-top:14px">FinBERT scores every headline as bullish, bearish or neutral, then
+        Flux rolls those scores up by sector — so you can see where the tone is turning before the tape does.</p>
+    </div>
+    <div class="nw-sect reveal" id="nwSect" style="margin-top:32px"></div>
+    <p class="mono reveal" style="margin-top:16px;font-size:.72rem;color:var(--text-faint)">
+      Simulated sentiment · drifts in-browser for demonstration.</p>
+  </div>
+</section>
+
+<!-- ============ HOW FLUX READS THE NEWS ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">How it works</span>
+      <h2 class="h2" style="margin-top:16px">How Flux reads the news.</h2>
+      <p class="lede" style="margin-top:16px">A person can skim ten headlines and miss the one that mattered.
+        Flux reads the whole wire, scores every line, and only surfaces what actually touches your book.</p>
+    </div>
+    <div class="steps reveal" style="margin-top:44px">
+      <div class="step"><div class="n">01</div><h3>Ingest</h3>
+        <p>The wire, filings and exchange notices are pulled the moment they publish, deduplicated so one story
+          syndicated forty times counts once.</p></div>
+      <div class="step"><div class="n">02</div><h3>Score sentiment</h3>
+        <p>NewsSense — a FinBERT model — reads each item and scores it bullish, bearish or neutral, with the
+          confidence attached rather than a vibe.</p></div>
+      <div class="step"><div class="n">03</div><h3>Link to your book</h3>
+        <p>Every item is mapped to the tickers it names and cross-checked against your positions and watchlist,
+          so the feed is about <em>your</em> exposure, not the whole market's.</p></div>
+      <div class="step"><div class="n">04</div><h3>Surface what matters</h3>
+        <p>Ranked by impact and relevance, the loud-but-irrelevant is muted and the quiet-but-material rises —
+          then the Reporter writes it up in a line you can act on.</p></div>
+    </div>
+    <p class="faint reveal" style="font-size:.8rem;margin-top:22px;max-width:74ch">
+      Sentiment scores describe model agreement with a headline's tone. They are not predictions, not a
+      probability of profit, and no summary here is a recommendation to buy or sell.</p>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta reveal">
+      <span class="eyebrow c">Get started</span>
+      <h2 class="h2" style="margin-top:14px">Stop reading the wire. Let it read itself.</h2>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Your AI Daily Brief pulls the same feed
+        into one page each morning — the headlines that touched your book, summarized and scored, before the bell.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary btn-lg" href="./dashboard.html">See your AI Daily Brief</a>
+        <a class="btn btn-ghost btn-lg" href="./download.html">Get Flux</a>
+      </div>
+      <p class="disclaimer" style="margin:24px auto 0">The news feed shown on this page is a simulated,
+        illustrative demo with fictional sample headlines — not real news, not from real publishers, and not
+        investment advice.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The news feed shown here is a simulated, illustrative demo with fictional sample headlines — not real news and not from real publishers. Market data shown may be delayed or simulated. Trading involves risk of loss, including loss of principal.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  "use strict";
+  var F = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff", AM = F.AM || "#f5b544";
+  var reduce = (F.reduced && F.reduced()) ||
+    (window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches);
+  var seed = F.seed || function(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%233280;return h||7;};
+  var rnd  = F.rnd  || function(a){return a[Math.floor(Math.random()*a.length)]};
+
+  function sgn(v){ return (v>=0?"+":"") + v.toFixed(2); }
+
+  /* deterministic per-ticker move so the feed looks curated, not noisy */
+  function moveOf(t){
+    var r = (seed(t + "|mv") % 1000) / 1000;   /* 0..1 */
+    return +(((r - 0.45) * 7).toFixed(2));      /* ~ -3.15%..+3.85% */
+  }
+  function tkChip(t){
+    var m = moveOf(t), up = m >= 0;
+    return '<span class="nw-tk">' + t + '<em class="' + (up ? "up" : "down") + '">' + sgn(m) + '%</em></span>';
+  }
+  function impactHTML(n){
+    var bars = '<span class="bars">';
+    for(var i=1;i<=3;i++) bars += '<i class="' + (i<=n ? "on" : "") + '"></i>';
+    bars += '</span>';
+    var lbl = n>=3 ? "High" : (n===2 ? "Med" : "Low");
+    return '<span class="nw-impact">impact ' + lbl + bars + '</span>';
+  }
+
+  var CAT = {markets:"Markets", earnings:"Earnings", tech:"Tech", macro:"Macro", crypto:"Crypto"};
+
+  /* ---------- curated base feed (deterministic order) ---------- */
+  var FEED = [
+    {c:"tech",s:"bull",t:"2m",src:"Flux Scanner",im:3,tk:["NVDA","AVGO"],
+     h:"NVDA call sweep hits $4.6M as desks position into GTC",
+     sum:"14,200 contracts lifted at the $185 strike, 3DTE, all at ask — the options tape is leaning into the event before the story moves."},
+    {c:"markets",s:"bull",t:"6m",src:"Newswire",im:2,tk:["SPY","QQQ"],
+     h:"Desks add risk into the close as breadth widens across megacaps",
+     sum:"Advancers outnumber decliners for a third straight session; the move is no longer just three tickers, which points to a healthier tape."},
+    {c:"earnings",s:"bear",t:"11m",src:"Company filing",im:3,tk:["AMD"],
+     h:"Chipmaker guides next quarter below consensus on soft data-center orders",
+     sum:"Revenue outlook lands under the Street and margins tick lower; the print reads as a demand-timing wobble, not a broken thesis."},
+    {c:"macro",s:"neut",t:"18m",src:"Newswire",im:2,tk:["SPY","QQQ"],
+     h:"Rate futures little changed after an in-line inflation print",
+     sum:"Core came in as expected, so the curve barely moved — the market's read is that the path of cuts is unchanged for now."},
+    {c:"crypto",s:"bull",t:"23m",src:"Exchange notice",im:2,tk:["BTC","MARA","COIN"],
+     h:"Bitcoin reclaims its prior range high; miners lead the tape",
+     sum:"Spot cleared the level it failed at twice last week; high-beta proxies are moving roughly 2x the underlying on the reclaim."},
+    {c:"tech",s:"bear",t:"31m",src:"Newswire",im:2,tk:["MSFT","AMZN"],
+     h:"Cloud names slip as capex commentary spooks growth investors",
+     sum:"Heavier spend guidance is being read as a margin headwind; the wire tone on the group has cooled from neutral to negative intraday."},
+    {c:"markets",s:"neut",t:"44m",src:"Exchange notice",im:1,tk:["VIX","SPY"],
+     h:"Volatility gauge drifts lower into a quiet options-expiry week",
+     sum:"With no tier-one data until Thursday, implied vol is bleeding — a calm tape that historically reverses on a single headline."},
+    {c:"earnings",s:"bull",t:"52m",src:"Company filing",im:3,tk:["NFLX"],
+     h:"Streaming leader tops subscriber estimates and lifts its full-year outlook",
+     sum:"Net adds beat and the raised guide clears the bar; the reaction depends on whether the beat was already priced into the run-up."},
+    {c:"tech",s:"bull",t:"1h",src:"Company filing",im:2,tk:["AVGO","NVDA"],
+     h:"AI-infrastructure supplier flags a record backlog in a fresh filing",
+     sum:"Order book commentary points to demand extending into next year; read-through is constructive for the wider accelerator complex."},
+    {c:"macro",s:"bear",t:"1h",src:"Newswire",im:2,tk:["SPY"],
+     h:"Jobless claims tick up, cooling the soft-landing narrative",
+     sum:"The four-week average nudges higher for the first time in a month — not alarming on its own, but the tone of the wire turned cautious."},
+    {c:"crypto",s:"bear",t:"2h",src:"Exchange notice",im:1,tk:["COIN"],
+     h:"Exchange token slides after network fees fall to a multi-month low",
+     sum:"Thinner activity is pressuring fee-linked names; sentiment on the group flipped negative even as spot held its range."},
+    {c:"markets",s:"bull",t:"2h",src:"Newswire",im:1,tk:["IWM"],
+     h:"Small caps quietly outperform as a rotation into value builds",
+     sum:"The laggard index is leading for once; a broadening move is usually a healthier signal than another narrow megacap melt-up."},
+    {c:"tech",s:"neut",t:"3h",src:"Company filing",im:3,tk:["TSLA"],
+     h:"EV maker files an 8-K revising its delivery outlook for the quarter",
+     sum:"The revision is modest but the filing resets expectations; comparable filings historically preceded a small multi-day drift."},
+    {c:"earnings",s:"neut",t:"3h",src:"Company filing",im:1,tk:["CRM","ORCL"],
+     h:"Enterprise-software vendor reaffirms guidance with margins in line",
+     sum:"No surprises in the update — a reaffirm rather than a raise, which the tape tends to read as neither here nor there."},
+    {c:"tech",s:"bull",t:"4h",src:"Flux Scanner",im:2,tk:["SMCI"],
+     h:"Unusual volume flags a squeeze setup in a heavily shorted name",
+     sum:"The name is in the top 1% of the universe for relative volume with short float near 18% — a classic squeeze condition, not a call."},
+    {c:"macro",s:"neut",t:"5h",src:"Newswire",im:2,tk:["SPY","QQQ"],
+     h:"Central-bank minutes show members split on the pace of cuts",
+     sum:"The record reads more divided than the last statement implied; rates markets are treating it as noise until the next print."}
+  ];
+
+  /* ---------- synthetic wire items for the live prepend ---------- */
+  var WIRE = [
+    {c:"tech",s:"bull",src:"Flux Scanner",im:2,tk:["PLTR","NVDA"],
+     h:"Fresh call flow lights up a momentum name on the scanner",
+     sum:"A block print at the near-dated strike pushed the name into the top of the unusual-activity list this session."},
+    {c:"markets",s:"neut",src:"Newswire",im:1,tk:["SPY","DIA"],
+     h:"Indices churn sideways as the tape waits on the next catalyst",
+     sum:"Range-bound with light volume; no clear leadership as desks hold fire ahead of the data on the calendar."},
+    {c:"earnings",s:"bull",src:"Company filing",im:2,tk:["AAPL"],
+     h:"Hardware maker's filing points to steadier gross margins",
+     sum:"A supply-chain note in the disclosure reads constructive for the next quarter's margin line."},
+    {c:"crypto",s:"bull",src:"Exchange notice",im:1,tk:["BTC","MARA"],
+     h:"Miners extend gains as network activity picks back up",
+     sum:"On-chain throughput ticked higher overnight and the high-beta names are tracking it, roughly two-to-one against spot."},
+    {c:"macro",s:"bear",src:"Newswire",im:2,tk:["SPY","QQQ"],
+     h:"A firmer inflation whisper nudges rate expectations higher",
+     sum:"Chatter of a hotter print is lifting yields at the margin; the wire tone on rate-sensitive groups cooled into the afternoon."},
+    {c:"tech",s:"bear",src:"Newswire",im:2,tk:["INTC","AMD"],
+     h:"Legacy chip name drags the group on a cautious channel check",
+     sum:"A soft read on one supplier is spilling over into peers; sentiment on the sub-group flipped negative on the headline."},
+    {c:"markets",s:"bull",src:"Newswire",im:1,tk:["IWM","SPY"],
+     h:"Breadth thrust builds as laggards join the move",
+     sum:"More than two-thirds of the tape is green — the kind of participation that tends to precede follow-through, not fade it."},
+    {c:"crypto",s:"neut",src:"Exchange notice",im:1,tk:["COIN"],
+     h:"Exchange volumes steady after a volatile overnight session",
+     sum:"Flows normalized by the open; fee-linked names are flat as the group digests the move."}
+  ];
+
+  /* ---------- render ---------- */
+  var feed = $("#nwFeed");
+  function cardHTML(it, isNew){
+    var scls = it.s==="bull" ? "bull" : (it.s==="bear" ? "bear" : "neut");
+    var slbl = it.s==="bull" ? "Bullish" : (it.s==="bear" ? "Bearish" : "Neutral");
+    return '<article class="glass nw-card' + (isNew ? " nw-new" : "") + '" data-cat="' + it.c +
+        '" data-tk="' + it.tk.join(" ") + '">' +
+      '<div class="nw-chead">' +
+        '<span class="tag">' + (CAT[it.c] || "Wire") + '</span>' +
+        '<span class="nw-sent ' + scls + '">' + slbl + '</span>' +
+        '<span class="nw-time">' + it.t + '</span>' +
+      '</div>' +
+      '<div class="nw-hl">' + it.h + '</div>' +
+      '<p class="nw-sum"><span class="nw-ai">AI</span>' + it.sum + '</p>' +
+      '<div class="nw-meta">' +
+        '<span class="nw-tks">' + it.tk.map(tkChip).join("") + '</span>' +
+        '<span class="nw-src">' + it.src + '</span>' +
+        impactHTML(it.im) +
+      '</div>' +
+    '</article>';
+  }
+  if(feed){
+    feed.innerHTML = FEED.map(function(it){ return cardHTML(it, false); }).join("");
+  }
+
+  /* ---------- filtering ---------- */
+  var activeCat = "all";
+  function watchList(){
+    return (F.Watch && F.Watch.get) ? F.Watch.get() : ["NVDA","AMD","TSLA","AAPL"];
+  }
+  function matches(card, watch){
+    if(activeCat === "all") return true;
+    if(activeCat === "watchlist"){
+      var tks = (card.getAttribute("data-tk") || "").split(" ");
+      for(var i=0;i<tks.length;i++){ if(watch.indexOf(tks[i]) >= 0) return true; }
+      return false;
+    }
+    return card.getAttribute("data-cat") === activeCat;
+  }
+  function applyFilter(){
+    if(!feed) return;
+    var watch = watchList(), shown = 0;
+    $$(".nw-card", feed).forEach(function(card){
+      var ok = matches(card, watch);
+      card.style.display = ok ? "" : "none";
+      if(ok) shown++;
+    });
+    var empty = $("#nwEmpty");
+    if(shown === 0 && !empty){
+      empty = document.createElement("p");
+      empty.id = "nwEmpty"; empty.className = "nw-empty";
+      empty.textContent = "No items in this category right now — new ones land continuously.";
+      feed.appendChild(empty);
+    } else if(shown > 0 && empty){
+      empty.parentNode.removeChild(empty);
+    }
+  }
+  $$("#nwChips .nw-chip").forEach(function(b){
+    b.addEventListener("click", function(){
+      activeCat = b.getAttribute("data-cat");
+      $$("#nwChips .nw-chip").forEach(function(o){ o.setAttribute("aria-pressed", String(o === b)); });
+      applyFilter();
+    });
+  });
+
+  /* ---------- live prepend loop ---------- */
+  var wIdx = 0;
+  function prepend(){
+    if(!feed || document.hidden) return;
+    var it = WIRE[wIdx % WIRE.length]; wIdx++;
+    var holder = document.createElement("div");
+    holder.innerHTML = cardHTML({c:it.c,s:it.s,t:"just now",src:it.src,im:it.im,tk:it.tk,h:it.h,sum:it.sum}, true);
+    var node = holder.firstChild;
+    feed.insertBefore(node, feed.firstChild);
+    while(feed.querySelectorAll(".nw-card").length > 16) feed.removeChild(feed.querySelectorAll(".nw-card")[feed.querySelectorAll(".nw-card").length - 1]);
+    applyFilter();
+  }
+  if(!reduce) setInterval(prepend, 5000);
+
+  /* ---------- AI Market Pulse (typewriter reveal) ---------- */
+  var pulse = $("#nwPulse"), caret = $("#nwCaret"), pts = $("#nwPulseTs");
+  if(pts){
+    var d = new Date(), hh = d.getHours(), ap = hh>=12 ? "PM" : "AM", h12 = hh%12; if(h12===0) h12=12;
+    var mm = String(d.getMinutes()); if(mm.length<2) mm = "0"+mm;
+    pts.textContent = "synth " + h12 + ":" + mm + " " + ap;
+  }
+  if(pulse){
+    pulse.classList.add("typing");
+    var plines = $$(".nw-pl", pulse);
+    if(reduce){
+      plines.forEach(function(l){ l.classList.add("in"); });
+      if(caret) caret.classList.add("done");
+    } else {
+      plines.forEach(function(l, i){ setTimeout(function(){ l.classList.add("in"); }, 300 + i*520); });
+      setTimeout(function(){ if(caret) caret.classList.add("done"); }, 300 + plines.length*520 + 700);
+    }
+  }
+
+  /* ---------- top movers (shared signals) ---------- */
+  var movers = $("#nwMovers");
+  if(movers && F.sigHTML && F.SIGNALS){
+    F.SIGNALS.slice(0, 5).forEach(function(s){
+      var h = document.createElement("div");
+      h.innerHTML = F.sigHTML(s);
+      movers.appendChild(h.firstChild);
+    });
+  }
+
+  /* ---------- trending tickers ---------- */
+  var TREND = [
+    {t:"NVDA", n:"NVIDIA"},
+    {t:"BTC",  n:"Bitcoin"},
+    {t:"AMD",  n:"Advanced Micro"},
+    {t:"TSLA", n:"Tesla"},
+    {t:"SMCI", n:"Super Micro"},
+    {t:"NFLX", n:"Netflix"},
+    {t:"COIN", n:"Coinbase"},
+    {t:"AVGO", n:"Broadcom"}
+  ];
+  var trend = $("#nwTrend");
+  if(trend){
+    trend.innerHTML = TREND.map(function(x, i){
+      var m = moveOf(x.t), up = m >= 0;
+      return '<div class="nw-trow">' +
+        '<span class="r">' + (i+1) + '</span>' +
+        '<span class="t">' + x.t + '</span>' +
+        '<span class="n">' + x.n + '</span>' +
+        '<span class="m ' + (up ? "up" : "down") + '">' + sgn(m) + '%</span>' +
+      '</div>';
+    }).join("");
+  }
+
+  /* ---------- sector sentiment strip ---------- */
+  var SECT = [
+    {n:"Semiconductors",  v:0.72},
+    {n:"Megacap Tech",    v:0.46},
+    {n:"Software",        v:0.28},
+    {n:"Financials",      v:0.11},
+    {n:"Consumer Disc.",  v:0.20},
+    {n:"Healthcare",      v:-0.16},
+    {n:"Energy",          v:-0.34},
+    {n:"Crypto & Miners", v:0.55}
+  ];
+  var sectEl = $("#nwSect");
+  if(sectEl){
+    sectEl.innerHTML = SECT.map(function(s, i){
+      return '<div class="nw-sec" data-s="' + i + '">' +
+        '<div class="nm">' + s.n + '</div>' +
+        '<div class="lb"></div>' +
+        '<div class="track"><i></i></div>' +
+      '</div>';
+    }).join("");
+  }
+  function sentWord(v){ return v >= 0.25 ? "Bullish" : (v <= -0.25 ? "Bearish" : "Neutral"); }
+  function sentCol(v){ return v >= 0.25 ? EM : (v <= -0.25 ? CR : AM); }
+  function paintSectors(){
+    if(!sectEl) return;
+    SECT.forEach(function(s, i){
+      var el = sectEl.querySelector('[data-s="' + i + '"]');
+      if(!el) return;
+      var col = sentCol(s.v), lb = el.querySelector(".lb"), bar = el.querySelector(".track i");
+      lb.textContent = sentWord(s.v) + " · " + sgn(+(s.v*100).toFixed(0)).replace(".00","");
+      lb.style.color = col;
+      bar.style.width = (18 + Math.min(Math.abs(s.v), 1) * 82).toFixed(0) + "%";
+      bar.style.background = col;
+    });
+  }
+  paintSectors();
+  if(!reduce){
+    setInterval(function(){
+      if(document.hidden) return;
+      SECT.forEach(function(s){
+        s.v = Math.max(-1, Math.min(1, s.v + (Math.random() - 0.5) * 0.08));
+      });
+      paintSectors();
+    }, 2800);
+  }
+
+  /* ---------- simulated clock ---------- */
+  var clock = $("#nwClock");
+  function tick(){
+    if(!clock) return;
+    var d = new Date(), p = function(v){ return String(v).length < 2 ? "0"+v : String(v); };
+    clock.textContent = "simulated feed · " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* pick up any reveal targets */
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>

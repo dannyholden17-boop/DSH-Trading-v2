@@ -233,6 +233,111 @@
   </div>
 </section>
 
+<!-- ============ LIVE PAPER ACCOUNT + ALERTS ============ -->
+<section class="section" style="padding-top:0" id="paperAcct">
+  <div class="wrap">
+    <span class="eyebrow">Your paper account</span>
+    <h2 class="h2 reveal">Live from your terminal.</h2>
+    <p class="lede reveal" style="max-width:60ch">This is your real (simulated) paper account — every order you place in the trading terminal shows up here. $100,000 of virtual money to learn with.</p>
+    <div class="grid g-4 reveal" id="paChips" style="margin-top:24px"></div>
+    <div class="split wide-l reveal" style="margin-top:26px">
+      <div class="glass" style="padding:0;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2)">
+          <b style="font-size:14px">Positions</b>
+          <span class="mono" style="margin-left:auto;font-size:10.5px;color:var(--text-faint)">paper · live P/L</span>
+        </div>
+        <div style="overflow-x:auto"><table id="paPos" style="width:100%;border-collapse:collapse;font-size:.9rem;min-width:460px"></table></div>
+        <div style="display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line-2);flex-wrap:wrap">
+          <a class="btn btn-primary btn-sm" href="./terminal.html">Open trading terminal →</a>
+          <a class="btn btn-ghost btn-sm" href="./options.html">Trade options</a>
+          <button class="btn btn-ghost btn-sm" type="button" id="paReset">Reset paper account</button>
+        </div>
+      </div>
+      <div class="glass" style="padding:18px">
+        <b style="font-size:14px">Price alerts</b>
+        <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin:4px 0 12px">notify me when a symbol crosses a level</p>
+        <form id="alForm" novalidate style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input id="alTk" placeholder="Ticker" autocomplete="off" style="flex:1;min-width:90px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;outline:none;text-transform:uppercase">
+          <select id="alOp" style="background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px;font-size:13px"><option value="above">rises above</option><option value="below">falls below</option></select>
+          <input id="alPx" placeholder="Price" inputmode="decimal" autocomplete="off" style="width:92px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;outline:none">
+          <button class="btn btn-primary btn-sm" type="submit">Add</button>
+        </form>
+        <div id="alMsg" class="mono" style="font-size:11px;min-height:15px;margin-top:8px"></div>
+        <div id="alList" style="margin-top:6px;display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+    <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:14px">Simulated paper account · virtual money · not real trading · not advice.</p>
+  </div>
+</section>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  var F=window.FLUX||{},B=window.FLUXBook,A=window.FLUXAlerts;
+  if(!B)return;
+  var $=function(s){return document.querySelector(s)};
+  var reduced=F.reduced?F.reduced():false;
+  function money(n){return "$"+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+  function renderAcct(){
+    var bk=B.get(),eq=B.equity(),ret=eq-(bk.start||100000),pct=((eq/(bk.start||100000))-1)*100;
+    var chips=$("#paChips");
+    if(chips)chips.innerHTML=[
+      ["Account value",money(eq),""],
+      ["Cash",money(bk.cash),""],
+      ["Total P/L",(ret>=0?"+":"")+money(ret).replace("$-","-$").replace("$","$"),(ret>=0?"up":"down")],
+      ["Return",(pct>=0?"+":"")+pct.toFixed(2)+"%",(pct>=0?"up":"down")]
+    ].map(function(c){return '<div class="stat glass" style="padding:16px"><b style="font-size:1.4rem" class="'+c[2]+'">'+c[1]+'</b><span>'+c[0]+'</span></div>';}).join("");
+    var pos=B.positionsList(),tb=$("#paPos");
+    if(tb){
+      if(!pos.length){tb.innerHTML='<tr><td style="padding:22px 18px;color:var(--text-faint)">No paper positions yet — open the terminal to place your first trade.</td></tr>';}
+      else{
+        tb.innerHTML='<thead><tr>'+["Ticker","Qty","Avg","Last","Mkt value","P/L"].map(function(h,i){return '<th style="text-align:'+(i?"right":"left")+';padding:9px 14px;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--line-2)">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+
+        pos.map(function(p){return '<tr>'+
+          '<td style="padding:10px 14px;font-weight:700">'+p.ticker+'</td>'+
+          '<td style="padding:10px 14px;text-align:right">'+p.qty+'</td>'+
+          '<td style="padding:10px 14px;text-align:right" class="mono">'+money(p.avg)+'</td>'+
+          '<td style="padding:10px 14px;text-align:right" class="mono">'+money(p.price)+'</td>'+
+          '<td style="padding:10px 14px;text-align:right" class="mono">'+money(p.mkt)+'</td>'+
+          '<td style="padding:10px 14px;text-align:right" class="mono '+(p.pl>=0?"up":"down")+'">'+(p.pl>=0?"+":"")+money(p.pl)+' ('+(p.plpct>=0?"+":"")+p.plpct+'%)</td>'+
+        '</tr>';}).join("")+'</tbody>';
+      }
+    }
+  }
+  var rb=$("#paReset");
+  if(rb)rb.addEventListener("click",function(){if(confirm("Reset your paper account to $100,000 and clear all positions?")){B.reset();renderAcct();}});
+
+  // alerts
+  function renderAlerts(){
+    if(!A)return;var list=$("#alList");if(!list)return;
+    var a=A.get();
+    if(!a.length){list.innerHTML='<p class="mono" style="font-size:11px;color:var(--text-faint)">No alerts set.</p>';return;}
+    list.innerHTML=a.map(function(al){
+      var live=F.priceOf?F.priceOf(al.ticker):null;var trig=al.status==="triggered";
+      return '<div class="glass" style="padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12.5px;'+(trig?'border-color:rgba(16,185,129,.5)':'')+'">'+
+        '<b>'+al.ticker+'</b><span class="mono" style="color:var(--text-dim)">'+(al.op==="above"?"↑ above":"↓ below")+' $'+al.price.toFixed(2)+'</span>'+
+        '<span class="mono" style="margin-left:auto;font-size:10.5px;color:'+(trig?"var(--emerald)":"var(--text-faint)")+'">'+(trig?"TRIGGERED @ $"+(al.firedPrice||live||0).toFixed(2):(live!=null?"now $"+live.toFixed(2):"armed"))+'</span>'+
+        '<button class="btn btn-ghost btn-sm" type="button" data-del="'+al.id+'" style="padding:4px 9px">✕</button>'+
+      '</div>';
+    }).join("");
+    list.querySelectorAll("[data-del]").forEach(function(btn){btn.addEventListener("click",function(){A.remove(+btn.getAttribute("data-del"));renderAlerts();});});
+  }
+  var form=$("#alForm");
+  if(form&&A)form.addEventListener("submit",function(e){
+    e.preventDefault();var t=($("#alTk").value||"").toUpperCase().trim(),op=$("#alOp").value,px=parseFloat($("#alPx").value);
+    var msg=$("#alMsg");
+    if(!t||!px){msg.style.color="var(--crimson)";msg.textContent="Enter a ticker and a price.";return;}
+    var al=A.add(t,op,px);
+    if(!al){msg.style.color="var(--crimson)";msg.textContent="Unknown symbol — try NVDA, AMD, TSLA…";return;}
+    msg.style.color="var(--emerald)";msg.textContent="Alert set for "+t+" "+(op==="above"?"above":"below")+" $"+px.toFixed(2)+".";
+    $("#alTk").value="";$("#alPx").value="";renderAlerts();
+  });
+
+  renderAcct();renderAlerts();
+  if(!reduced)setInterval(function(){
+    renderAcct();
+    if(A){var fired=A.check();if(fired.length){renderAlerts();var m=$("#alMsg");if(m){m.style.color="var(--emerald)";m.textContent="🔔 "+fired.map(function(f){return f.ticker}).join(", ")+" alert"+(fired.length>1?"s":"")+" triggered!";}}}
+  },4000);
+});
+</script>
+
 <!-- ============ YOUR PORTFOLIO ============ -->
 <section class="section band">
   <div class="wrap" style="display:block">
@@ -417,8 +522,8 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>

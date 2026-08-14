@@ -259,6 +259,39 @@
   };
   window.FLUXBook=F.Book;
 
+  /* ---- shared watchlist ---- */
+  F.Watch={
+    KEY:"flux_watch",
+    get:function(){var a;try{a=JSON.parse(localStorage.getItem(this.KEY))}catch(e){}
+      if(!Array.isArray(a)){a=["NVDA","AMD","TSLA","AAPL"];this.save(a);}return a;},
+    save:function(a){try{localStorage.setItem(this.KEY,JSON.stringify(a))}catch(e){}},
+    add:function(t){t=(t||"").toUpperCase();var a=this.get();if(t&&a.indexOf(t)<0){a.unshift(t);this.save(a);}return a;},
+    remove:function(t){t=(t||"").toUpperCase();var a=this.get().filter(function(x){return x!==t});this.save(a);return a;},
+    toggle:function(t){return this.has(t)?this.remove(t):this.add(t);},
+    has:function(t){return this.get().indexOf((t||"").toUpperCase())>=0;}
+  };
+  window.FLUXWatch=F.Watch;
+
+  /* ---- price alerts ---- */
+  F.Alerts={
+    KEY:"flux_alerts",
+    get:function(){var a;try{a=JSON.parse(localStorage.getItem(this.KEY))}catch(e){}return Array.isArray(a)?a:[];},
+    save:function(a){try{localStorage.setItem(this.KEY,JSON.stringify(a))}catch(e){}},
+    add:function(t,op,price){t=(t||"").toUpperCase();price=+price;
+      if(!t||!price||F.priceOf(t)==null)return null;
+      var a=this.get(),al={id:Date.now()+Math.floor((Date.now()%997)),ticker:t,
+        op:(op==="below"?"below":"above"),price:+price.toFixed(2),status:"armed",ts:Date.now()};
+      a.unshift(al);this.save(a);return al;},
+    remove:function(id){this.save(this.get().filter(function(x){return x.id!==id}));},
+    clearTriggered:function(){this.save(this.get().filter(function(x){return x.status==="armed"}));},
+    check:function(){
+      var a=this.get(),fired=[];
+      a.forEach(function(al){if(al.status!=="armed")return;var p=F.priceOf(al.ticker);if(p==null)return;
+        if((al.op==="above"&&p>=al.price)||(al.op==="below"&&p<=al.price)){al.status="triggered";al.firedAt=Date.now();al.firedPrice=p;fired.push(al);}});
+      if(fired.length)this.save(a);return fired;}
+  };
+  window.FLUXAlerts=F.Alerts;
+
   F.initAuth=function(){
     var u=F.Auth.get(),cta=$(".nav-cta");
     if(cta){

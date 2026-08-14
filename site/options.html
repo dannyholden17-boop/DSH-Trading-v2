@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Options — Flux</title>
+<meta name="description" content="The Flux options-chain explorer: browse a simulated options chain, read illustrative greeks, and place simulated (paper) option trades. Simulated with an illustrative pricing model — not real quotes, not advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-site.js" defer></script>
+<style>
+  /* ============================================================
+     page-only LAYOUT: options.html (op- prefixed)
+     Shared design-system classes/tokens are reused, never redefined.
+     ============================================================ */
+
+  .op-shell{max-width:1320px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,30px)}
+
+  /* ---- top strip ---- */
+  .op-top{display:flex;align-items:center;gap:14px 20px;flex-wrap:wrap;padding:15px 20px}
+  .op-sym{display:flex;align-items:center;gap:13px;min-width:0}
+  .op-av{width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
+    font-weight:700;font-size:12.5px;border:1px solid var(--line);
+    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.16),rgba(139,92,246,.1))}
+  .op-field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .op-flab{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .op-sel{background:var(--well);border:1px solid var(--line);border-radius:10px;color:var(--text);
+    font-family:var(--f-mono);font-size:.9rem;font-weight:700;padding:9px 11px;cursor:pointer;max-width:100%}
+  .op-sel:focus{outline:1px solid rgba(0,242,255,.5);border-color:rgba(0,242,255,.45)}
+  .op-price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .op-big{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;
+    font-size:clamp(1.4rem,1.1rem + 1.5vw,1.95rem);letter-spacing:-.02em;border-radius:8px;padding:1px 6px;margin-left:-6px}
+  .op-chg{font-family:var(--f-mono);font-weight:700;font-size:.88rem}
+  .op-chips{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;align-items:center}
+  .op-chip{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:8px 12px;min-width:0}
+  .op-chip .k{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .op-chip .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem;margin-top:3px}
+  @keyframes opFlashUp{from{background:color-mix(in srgb,var(--emerald) 26%,transparent)}to{background:transparent}}
+  @keyframes opFlashDn{from{background:color-mix(in srgb,var(--crimson) 26%,transparent)}to{background:transparent}}
+  .op-fu{animation:opFlashUp .7s ease-out}
+  .op-fd{animation:opFlashDn .7s ease-out}
+
+  /* ---- app grid ---- */
+  .op-grid{display:grid;gap:16px;align-items:start;margin-top:16px;
+    grid-template-columns:minmax(0,1fr) 344px;grid-template-areas:"chain ticket"}
+  @media(max-width:1024px){.op-grid{grid-template-columns:1fr;grid-template-areas:"chain" "ticket"}}
+  .op-chainpane{grid-area:chain;min-width:0}
+  .op-rightcol{grid-area:ticket;display:flex;flex-direction:column;gap:16px;min-width:0}
+
+  .op-pane{padding:16px}
+  .op-phd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .op-phd h3{font-size:1rem}
+  .op-cap{font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+
+  /* ---- chain table ---- */
+  .op-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.op-chain{width:100%;border-collapse:collapse;min-width:880px}
+  table.op-chain th{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--text-faint);font-weight:600;text-align:right;padding:7px;white-space:nowrap}
+  table.op-chain thead tr.op-grp th{font-size:10px;letter-spacing:.12em;padding-bottom:2px;color:var(--text-dim)}
+  table.op-chain thead tr.op-grp th.op-cc{color:var(--emerald)}
+  table.op-chain thead tr.op-grp th.op-pc{color:#c4abff}
+  table.op-chain td{text-align:right;border-top:1px solid var(--line-2);white-space:nowrap;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.76rem;color:var(--text-dim)}
+  .op-cell{display:block;padding:9px 7px}
+  th.op-strike-h,td.op-strike{text-align:center}
+  td.op-strike{font-weight:700;color:var(--text);background:var(--well);padding:9px 12px;border-inline:1px solid var(--line-2)}
+  tr.op-atm{background:rgba(0,242,255,.05)}
+  tr.op-atm td.op-strike{color:var(--cyan)}
+  tr.op-sel-c td.op-cc-q,tr.op-sel-p td.op-pc-q{}
+  button.op-q{width:100%;border:0;background:none;color:inherit;font:inherit;text-align:right;
+    padding:9px 7px;cursor:pointer;border-radius:6px;font-variant-numeric:tabular-nums}
+  button.op-q:hover{background:rgba(0,242,255,.10);color:var(--text)}
+  button.op-q:focus-visible{outline:1px solid var(--cyan);outline-offset:-2px}
+  button.op-ask{color:var(--emerald)}
+  button.op-bid{color:var(--text-dim)}
+  td.op-onsel button.op-q{background:rgba(0,242,255,.12);color:var(--text)}
+  .op-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-family:var(--f-mono);font-size:10px;color:var(--text-faint)}
+  .op-legend b{color:var(--text-dim);font-weight:600}
+
+  /* ---- ticket ---- */
+  .op-selrow{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:12px 13px;margin-bottom:14px}
+  .op-selname{font-family:var(--f-mono);font-weight:700;font-size:1.02rem;letter-spacing:.01em}
+  .op-selmeta{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);margin-top:4px}
+  .op-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .op-seg button{font-family:var(--f-mono);font-weight:700;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase;
+    padding:11px 8px;border-radius:10px;cursor:pointer;border:1px solid var(--line);background:var(--well);color:var(--text-dim)}
+  .op-seg .op-tobuy[aria-pressed="true"]{border-color:rgba(16,185,129,.55);background:rgba(16,185,129,.12);color:var(--emerald)}
+  .op-seg .op-tosell[aria-pressed="true"]{border-color:rgba(239,68,68,.55);background:rgba(239,68,68,.12);color:var(--crimson)}
+  .op-tfield{margin-bottom:12px}
+  .op-lab{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+    margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
+  .op-lab span{color:var(--text-dim)}
+  .op-inwrap{display:flex;align-items:stretch;gap:8px}
+  .op-in{flex:1;min-width:0;background:var(--well);border:1px solid var(--line);border-radius:10px;color:var(--text);
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1rem;font-weight:700;padding:11px 12px;text-align:center}
+  .op-in:focus{outline:1px solid rgba(0,242,255,.5);border-color:rgba(0,242,255,.45)}
+  .op-step{width:44px;flex:none;border:1px solid var(--line);border-radius:10px;background:var(--well);color:var(--cyan);
+    font-size:1.2rem;font-weight:700;cursor:pointer;font-family:var(--f-mono);line-height:1}
+  .op-step:hover{border-color:rgba(0,242,255,.45)}
+  .op-est{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:.82rem;
+    padding:8px 0;border-top:1px solid var(--line-2)}
+  .op-est .k{color:var(--text-faint)}
+  .op-est .v{font-weight:700;font-variant-numeric:tabular-nums}
+  .op-place{width:100%;margin-top:12px;padding:14px;border-radius:12px;border:1px solid transparent;font-weight:700;
+    font-size:15px;cursor:pointer;font-family:var(--f-sans);letter-spacing:.01em}
+  .op-place.op-side-buy{background:linear-gradient(120deg,#10b981,#34d399);color:#04231a;
+    box-shadow:0 10px 30px -12px rgba(16,185,129,.6)}
+  .op-place.op-side-sell{background:linear-gradient(120deg,#ef4444,#f87171);color:#fff;
+    box-shadow:0 10px 30px -12px rgba(239,68,68,.6)}
+  @keyframes opPulse{0%{transform:scale(1)}45%{transform:scale(.965)}100%{transform:scale(1)}}
+  .op-pulse{animation:opPulse .4s ease}
+  .op-banner{margin-top:12px;border-radius:10px;padding:10px 12px;font-size:.85rem;font-weight:600;display:none}
+  .op-banner.show{display:block}
+  .op-banner.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:#6ee7b7}
+  .op-banner.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+
+  /* ---- greeks summary ---- */
+  .op-gk{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .op-gk .cellwrap{border:1px solid var(--line-2);border-radius:10px;background:var(--well);padding:9px 10px;min-width:0}
+  .op-gk .k{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint)}
+  .op-gk .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:.92rem;margin-top:4px}
+  .op-gk-empty{color:var(--text-faint);font-size:.84rem;padding:6px 2px}
+
+  /* ---- blotter ---- */
+  table.op-bl{width:100%;border-collapse:collapse;font-size:.82rem;min-width:640px}
+  table.op-bl th{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+    font-weight:600;text-align:right;padding:0 8px 10px;white-space:nowrap}
+  table.op-bl th:first-child,table.op-bl td:first-child{text-align:left;padding-left:2px}
+  table.op-bl th:last-child,table.op-bl td:last-child{padding-right:2px}
+  table.op-bl td{text-align:right;padding:9px 8px;border-top:1px solid var(--line-2);white-space:nowrap;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--text-dim)}
+  table.op-bl td b{font-weight:700;letter-spacing:.02em;color:var(--text)}
+  .op-empty{color:var(--text-faint);font-size:.84rem;padding:16px 2px;text-align:center}
+  .op-side-b{color:var(--emerald);font-weight:700}
+  .op-side-s{color:var(--crimson);font-weight:700}
+  .op-st{font-family:var(--f-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:5px;
+    background:rgba(16,185,129,.14);color:#6ee7b7}
+  .op-blfoot{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+  .op-clear{margin-left:auto;background:none;border:0;color:var(--text-faint);font-family:var(--f-mono);font-size:11px;
+    cursor:pointer;text-decoration:underline;padding:0}
+  .op-clear:hover{color:var(--crimson)}
+
+  /* ---- education ---- */
+  .op-edu{padding:18px}
+  .op-edu h3{font-size:1rem;margin-bottom:8px}
+  .op-edu p{color:var(--text-dim);font-size:.88rem;line-height:1.55}
+  .op-edu .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-family:var(--f-mono);font-size:18px;
+    color:var(--cyan);background:rgba(0,242,255,.07);border:1px solid rgba(0,242,255,.25);margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
+      <a class="btn btn-primary btn-sm" href="./terminal.html">Trade</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="op-shell">
+
+  <!-- ============ TOP STRIP ============ -->
+  <div class="glass sheen op-top reveal">
+    <div class="op-sym">
+      <div class="op-av" id="opAv">NVD</div>
+      <div class="op-field">
+        <label class="op-flab" for="opUnder">Underlying</label>
+        <select class="op-sel" id="opUnder" aria-label="Underlying symbol"></select>
+      </div>
+    </div>
+    <div class="op-price">
+      <span class="op-big mono" id="opBig">—</span>
+      <span class="op-chg mono" id="opChg">—</span>
+    </div>
+    <div class="op-field">
+      <label class="op-flab" for="opExp">Expiry</label>
+      <select class="op-sel" id="opExp" aria-label="Expiry"></select>
+    </div>
+    <div class="op-chips">
+      <span class="pill live">Paper · simulated</span>
+      <span class="pill" style="padding:6px 12px;font-size:10px"><i></i> Calls &amp; Puts</span>
+      <div class="op-chip"><div class="k">Cash</div><div class="v" id="opCashChip">—</div></div>
+    </div>
+  </div>
+
+  <!-- ============ APP GRID ============ -->
+  <div class="op-grid">
+
+    <!-- LEFT: options chain -->
+    <section class="glass op-pane op-chainpane reveal" aria-label="Options chain">
+      <div class="op-phd">
+        <h3 id="opChainTitle">Options chain</h3>
+        <span class="op-cap">Simulated · illustrative pricing · paper</span>
+      </div>
+      <div class="op-scroll">
+        <table class="op-chain" aria-label="Simulated options chain">
+          <thead>
+            <tr class="op-grp">
+              <th class="op-cc" colspan="7" scope="colgroup">Calls</th>
+              <th class="op-strike-h" scope="col">Strike</th>
+              <th class="op-pc" colspan="7" scope="colgroup">Puts</th>
+            </tr>
+            <tr>
+              <th scope="col">Bid</th><th scope="col">Ask</th><th scope="col">Last</th>
+              <th scope="col">IV</th><th scope="col">Δ</th><th scope="col">Vol</th><th scope="col">OI</th>
+              <th class="op-strike-h" scope="col">·</th>
+              <th scope="col">Bid</th><th scope="col">Ask</th><th scope="col">Last</th>
+              <th scope="col">IV</th><th scope="col">Δ</th><th scope="col">Vol</th><th scope="col">OI</th>
+            </tr>
+          </thead>
+          <tbody id="opChainBody"></tbody>
+        </table>
+      </div>
+      <div class="op-legend">
+        <span><b>Tap a Bid or Ask</b> to load that contract into the ticket · Ask = buy-to-open, Bid = sell-to-open</span>
+      </div>
+      <p class="op-cap" style="margin-top:12px">Prices, IV and greeks are produced by a simple illustrative model — not real quotes,
+        not a live chain, and not advice. Options can expire worthless.</p>
+    </section>
+
+    <!-- RIGHT: ticket + greeks -->
+    <div class="op-rightcol">
+
+      <section class="glass op-pane reveal" aria-label="Contract ticket">
+        <div class="op-phd">
+          <h3>Contract ticket</h3>
+          <span class="pill live" style="padding:5px 11px;font-size:10px">Paper</span>
+        </div>
+        <div class="op-selrow">
+          <div class="op-selname" id="opSelName">No contract selected</div>
+          <div class="op-selmeta" id="opSelMeta">Pick a strike from the chain →</div>
+        </div>
+        <form id="opForm" novalidate>
+          <div class="op-seg" id="opSideSeg" role="group" aria-label="Open side">
+            <button class="op-tobuy" type="button" data-oside="buy" aria-pressed="true">Buy to open</button>
+            <button class="op-tosell" type="button" data-oside="sell" aria-pressed="false">Sell to open</button>
+          </div>
+          <div class="op-tfield">
+            <label class="op-lab" for="opQty">Contracts <span>× 100 multiplier</span></label>
+            <div class="op-inwrap">
+              <button class="op-step" type="button" data-step="-1" aria-label="Decrease contracts">−</button>
+              <input class="op-in" id="opQty" type="text" inputmode="numeric" autocomplete="off" value="1" aria-label="Number of contracts">
+              <button class="op-step" type="button" data-step="1" aria-label="Increase contracts">+</button>
+            </div>
+          </div>
+          <div class="op-est"><span class="k">Price / share</span><span class="v" id="opPxShare">—</span></div>
+          <div class="op-est"><span class="k">Shares (contracts × 100)</span><span class="v" id="opShares">—</span></div>
+          <div class="op-est"><span class="k" id="opCostK">Estimated debit</span><span class="v" id="opCostV">—</span></div>
+          <div class="op-est"><span class="k">Buying power</span><span class="v" id="opBuyPow">—</span></div>
+          <button class="op-place op-side-buy" id="opPlace" type="submit">Buy to open</button>
+          <div class="op-banner" id="opBanner" role="status" aria-live="polite"></div>
+        </form>
+        <p class="op-cap" style="margin-top:12px">Simulated fill at the quoted illustrative price · virtual money · no real
+          option order is placed and no contract is bought or sold.</p>
+      </section>
+
+      <section class="glass op-pane reveal" aria-label="Position and greeks summary">
+        <div class="op-phd">
+          <h3>Position &amp; greeks</h3>
+          <span class="op-cap">illustrative</span>
+        </div>
+        <div id="opGreeks">
+          <p class="op-gk-empty">Select a contract to see its break-even, max loss and approximate greeks.</p>
+        </div>
+        <p class="op-cap" style="margin-top:12px">Delta, theta and vega are rough approximations for display only — not
+          exchange-computed greeks. Selling options can lose more than the premium received.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ============ OPTION BLOTTER ============ -->
+  <section class="glass op-pane reveal" style="margin-top:16px" aria-label="Option order blotter">
+    <div class="op-phd">
+      <h3>Option blotter</h3>
+      <span class="op-cap">simulated paper option orders</span>
+    </div>
+    <div class="op-scroll">
+      <table class="op-bl">
+        <thead>
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Side</th>
+            <th scope="col">Contract</th>
+            <th scope="col">Exp</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Price</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody id="opBlBody"></tbody>
+      </table>
+    </div>
+    <div class="op-blfoot">
+      <span class="op-cap" id="opBlCount">—</span>
+      <button class="op-clear" type="button" id="opClear">Clear option blotter</button>
+    </div>
+  </section>
+
+  <!-- ============ EDUCATION ============ -->
+  <section aria-label="Options basics" style="margin-top:22px">
+    <div class="grid g-4">
+      <div class="glass op-edu reveal">
+        <div class="ic">C</div>
+        <h3>Calls</h3>
+        <p>A call is the right to <b>buy</b> 100 shares at the strike before expiry. You pay a premium up front; the most you
+          can lose buying one call is that premium. Gains rise as the underlying climbs above the strike.</p>
+      </div>
+      <div class="glass op-edu reveal">
+        <div class="ic">P</div>
+        <h3>Puts</h3>
+        <p>A put is the right to <b>sell</b> 100 shares at the strike. Puts gain value when the underlying falls, so traders use
+          them to speculate on downside or to hedge shares they hold.</p>
+      </div>
+      <div class="glass op-edu reveal">
+        <div class="ic">⧗</div>
+        <h3>Expiry &amp; time decay</h3>
+        <p>Every option has an expiry. Time value bleeds away as that date nears — the theta drag — and an out-of-the-money
+          option can <b>expire worthless</b>, a total loss of the premium paid.</p>
+      </div>
+      <div class="glass op-edu reveal">
+        <div class="ic">⊘</div>
+        <h3>Assignment &amp; risk</h3>
+        <p>Selling (writing) options collects premium but can obligate you to buy or sell shares on assignment, and losses can
+          <b>exceed the premium received</b>. Options carry substantial risk — this tool is illustrative, not advice.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="disclaimer" style="margin-top:22px">Simulated options · illustrative pricing · paper. Every chain, quote, greek
+    and order on this page is generated locally by a simple illustrative model — these are not real quotes, not a live options
+    chain, and no real order is placed. Greeks and implied volatility are approximations for display only. Flux is not a
+    broker-dealer and this is not connected to any brokerage. Options involve substantial risk, can expire worthless, and
+    selling them can lose more than the premium received. Nothing here is investment advice. Trading involves risk of loss,
+    including loss of principal.</p>
+
+</div>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Options data and trades here are simulated with an illustrative pricing model on a paper account — not real quotes and no real orders are placed. Options carry substantial risk and can expire worthless. Trading involves risk of loss, including loss of principal.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  if(!window.FLUXAuth || !FLUXAuth.guard()) return;
+
+  var F  = window.FLUX || {};
+  var $  = F.$  || function(s,r){return (r||document).querySelector(s);};
+  var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var Book = window.FLUXBook;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  var PRICES = F.PRICES || {};
+  var NAMES = {
+    NVDA:"NVIDIA", AMD:"Advanced Micro", TSLA:"Tesla", AAPL:"Apple", MSFT:"Microsoft",
+    SMCI:"Super Micro", COIN:"Coinbase", PLTR:"Palantir", AMZN:"Amazon", META:"Meta Platforms",
+    GOOGL:"Alphabet", NFLX:"Netflix", AVGO:"Broadcom", SPY:"SPDR S&P 500", QQQ:"Invesco QQQ",
+    MU:"Micron", ARM:"Arm Holdings", INTC:"Intel", MARA:"Marathon Digital", SOFI:"SoFi Technologies",
+    DELL:"Dell Technologies", CRM:"Salesforce", ORCL:"Oracle", UBER:"Uber"
+  };
+  function coName(t){ return NAMES[t] || t; }
+
+  var TICKERS = Object.keys(PRICES);
+  var ACTIVE = PRICES.NVDA ? "NVDA" : (TICKERS[0] || "NVDA");
+  try { var qSym = (new URLSearchParams(location.search).get("symbol") || "").toUpperCase(); if(qSym && PRICES[qSym]) ACTIVE = qSym; } catch(e){}
+
+  var EXPS = [
+    {id:"w0",  lbl:"This Friday", days:3},
+    {id:"w1",  lbl:"Next Friday", days:10},
+    {id:"d30", lbl:"30 days",     days:30},
+    {id:"d60", lbl:"60 days",     days:60}
+  ];
+  var EXPI = 2; /* default 30 days */
+  var side = "buy";          /* buy = buy-to-open, sell = sell-to-open */
+  var SELECTED = null;
+  var lastPrice = null;
+  var lastChainDraw = 0;
+
+  var OKEY = "flux_option_orders";
+
+  /* ---------- helpers ---------- */
+  function money(n){ return "$" + Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmt2(n){ return Number(n).toFixed(2); }
+  function priceOf(t){ var p = F.priceOf ? F.priceOf(t) : null; return (p==null) ? (PRICES[t]||0) : p; }
+  function curSpot(){ return priceOf(ACTIVE); }
+  function curExp(){ return EXPS[EXPI]; }
+  function curDays(){ return curExp().days; }
+  function seed(s){ return F.seed ? F.seed(String(s)) : 7; }
+  function fmtStrike(s){ return (Math.round(s) === s) ? String(s) : s.toFixed(1); }
+  function optSym(under, strike, type){ return under + " " + fmtStrike(strike) + type; }
+
+  /* ---------- pricing model (simple + illustrative) ---------- */
+  function strikeStep(spot){
+    if(spot < 25)  return 1;
+    if(spot < 60)  return 2.5;
+    if(spot < 150) return 5;
+    if(spot < 400) return 10;
+    if(spot < 800) return 20;
+    return 25;
+  }
+  function ivBase(sym){ return 0.30 + (seed(sym + "|iv") % 40) / 100; } /* ~30%–69% per symbol */
+
+  function buildStrikes(spot){
+    var step = strikeStep(spot);
+    var center = Math.round(spot / step) * step;
+    var out = [];
+    for(var i = -5; i <= 5; i++){
+      var k = +( center + i * step ).toFixed(2);
+      if(k > 0) out.push(k);
+    }
+    return { step:step, center:center, list:out };
+  }
+
+  /* One deterministic contract for the current symbol/expiry at (strike,type). */
+  function computeContract(strike, type){
+    var spot = curSpot(), days = curDays(), t = days / 365;
+    var ivS = ivBase(ACTIVE) * (1 + 0.55 * Math.abs((strike - spot) / spot)); /* volatility smile */
+    var em = Math.max(0.01, spot * ivS * Math.sqrt(t));                        /* expected move */
+    var closeness = Math.exp(-0.5 * Math.pow((strike - spot) / em, 2));         /* 1 at ATM */
+    var tv = em * 0.4 * closeness;                                              /* time value */
+    var intrinsic = type === "C" ? Math.max(0, spot - strike) : Math.max(0, strike - spot);
+    var price = Math.max(0.01, intrinsic + tv);
+    var z = (spot - strike) / em;
+    var dc = 1 / (1 + Math.exp(-1.6 * z));                                      /* call delta 0..1 */
+    var delta = type === "C" ? dc : (dc - 1);                                   /* put delta -1..0 */
+    var sp = Math.max(0.02, price * 0.03);
+    var bid = Math.max(0.01, price - sp), ask = price + sp;
+    var theta = -(tv / Math.max(days, 1)) * 0.6;                                /* per-share, per day */
+    var vega = spot * Math.sqrt(t) * closeness * 0.4 / 100;                     /* per 1% IV, per share */
+    var key = ACTIVE + "|" + fmtStrike(strike) + type + "|" + curExp().id;
+    var vol = Math.round((seed(key + "v") % 900 + 40) * (0.25 + closeness));
+    var oi  = Math.round((seed(key + "o") % 6000 + 180) * (0.35 + closeness));
+    return {
+      under:ACTIVE, strike:strike, type:type, spot:spot, days:days, expLabel:curExp().lbl, expId:curExp().id,
+      iv:ivS, price:price, bid:+bid.toFixed(2), ask:+ask.toFixed(2), last:+price.toFixed(2),
+      delta:delta, theta:theta, vega:vega, closeness:closeness, intrinsic:intrinsic, vol:vol, oi:oi
+    };
+  }
+
+  /* ---------- element refs ---------- */
+  var avEl = $("#opAv"), underSel = $("#opUnder"), expSel = $("#opExp");
+  var bigEl = $("#opBig"), chgEl = $("#opChg"), cashChip = $("#opCashChip");
+  var chainBody = $("#opChainBody"), chainTitle = $("#opChainTitle");
+  var selName = $("#opSelName"), selMeta = $("#opSelMeta");
+  var form = $("#opForm"), qtyEl = $("#opQty");
+  var pxShare = $("#opPxShare"), sharesEl = $("#opShares"), costK = $("#opCostK"), costV = $("#opCostV"), buyPow = $("#opBuyPow");
+  var placeBtn = $("#opPlace"), banner = $("#opBanner");
+  var greeksEl = $("#opGreeks");
+  var blBody = $("#opBlBody"), blCount = $("#opBlCount"), clearBtn = $("#opClear");
+
+  /* ---------- selects ---------- */
+  function buildSelects(){
+    if(underSel){
+      underSel.innerHTML = TICKERS.map(function(t){
+        return '<option value="' + t + '"' + (t === ACTIVE ? ' selected' : '') + '>' + t + ' · ' + coName(t) + '</option>';
+      }).join("");
+    }
+    if(expSel){
+      expSel.innerHTML = EXPS.map(function(e, i){
+        return '<option value="' + i + '"' + (i === EXPI ? ' selected' : '') + '>' + e.lbl + '</option>';
+      }).join("");
+    }
+  }
+
+  /* ---------- header ---------- */
+  function chgOf(t){
+    var base = PRICES[t] || 0, px = priceOf(t), chg = px - base, pct = base ? (chg / base * 100) : 0;
+    return { px:px, chg:chg, pct:pct, up:chg >= 0 };
+  }
+  function paintHeader(doFlash){
+    var c = chgOf(ACTIVE);
+    if(avEl) avEl.textContent = ACTIVE.slice(0, 3);
+    if(bigEl){
+      bigEl.textContent = money(c.px);
+      if(doFlash && !reduce && lastPrice != null && c.px !== lastPrice){
+        bigEl.classList.remove("op-fu", "op-fd"); void bigEl.offsetWidth;
+        bigEl.classList.add(c.px >= lastPrice ? "op-fu" : "op-fd");
+      }
+    }
+    lastPrice = c.px;
+    if(chgEl){
+      chgEl.textContent = (c.up ? "+" : "−") + "$" + Math.abs(c.chg).toFixed(2) + " · " + (c.up ? "+" : "−") + Math.abs(c.pct).toFixed(2) + "%";
+      chgEl.className = "op-chg mono " + (c.up ? "up" : "down");
+    }
+    if(cashChip) cashChip.textContent = money((Book.get() || {}).cash || 0);
+    if(chainTitle) chainTitle.textContent = ACTIVE + " options · " + curExp().lbl;
+  }
+
+  /* ---------- chain ---------- */
+  function numCell(v){ return '<td><span class="op-cell">' + v + '</span></td>'; }
+  function qBtn(type, strike, kind, price){
+    var oside = kind === "ask" ? "buy" : "sell";
+    var lab = (oside === "buy" ? "Buy to open " : "Sell to open ") + optSym(ACTIVE, strike, type) +
+      " " + curExp().lbl + " at " + kind + " " + fmt2(price);
+    return '<td class="' + (type === "C" ? "op-cc-q" : "op-pc-q") +
+      '"><button type="button" class="op-q op-' + kind + '" data-type="' + type + '" data-strike="' + strike +
+      '" data-kind="' + kind + '" aria-label="' + lab + '">' + fmt2(price) + '</button></td>';
+  }
+  function sideCells(c, type){
+    return qBtn(type, c.strike, "bid", c.bid) +
+      qBtn(type, c.strike, "ask", c.ask) +
+      numCell(fmt2(c.last)) +
+      numCell((c.iv * 100).toFixed(1) + "%") +
+      numCell(c.delta.toFixed(2)) +
+      numCell(c.vol.toLocaleString()) +
+      numCell(c.oi.toLocaleString());
+  }
+  function renderChain(){
+    if(!chainBody) return;
+    var spot = curSpot();
+    var sk = buildStrikes(spot);
+    var atmStrike = sk.list.reduce(function(best, k){
+      return (Math.abs(k - spot) < Math.abs(best - spot)) ? k : best;
+    }, sk.list[0]);
+    chainBody.innerHTML = sk.list.map(function(strike){
+      var call = computeContract(strike, "C");
+      var put  = computeContract(strike, "P");
+      var atm = (strike === atmStrike);
+      var selC = SELECTED && SELECTED.type === "C" && SELECTED.strike === strike;
+      var selP = SELECTED && SELECTED.type === "P" && SELECTED.strike === strike;
+      return '<tr class="' + (atm ? "op-atm " : "") + (selC ? "op-onsel-c " : "") + (selP ? "op-onsel-p" : "") + '">' +
+        sideCells(call, "C") +
+        '<td class="op-strike">' + fmtStrike(strike) + '</td>' +
+        sideCells(put, "P") +
+        '</tr>';
+    }).join("");
+    /* mark the currently selected quote cell */
+    if(SELECTED){
+      var sel = '.op-' + (SELECTED.type === "C" ? "cc" : "pc") + '-q button[data-strike="' + SELECTED.strike +
+        '"][data-kind="' + (SELECTED.pickKind || "ask") + '"]';
+      var b = chainBody.querySelector(sel);
+      if(b && b.parentNode) b.parentNode.classList.add("op-onsel");
+    }
+    lastChainDraw = Date.now();
+  }
+  function maybeRedrawChain(){
+    /* throttle + never yank focus off a chain button mid-interaction */
+    if(Date.now() - lastChainDraw < 5500) return;
+    if(chainBody && chainBody.contains(document.activeElement)) return;
+    renderChain();
+  }
+
+  /* ---------- ticket ---------- */
+  function qtyVal(){ var n = parseInt(qtyEl && qtyEl.value, 10); return (isNaN(n) || n < 1) ? 0 : n; }
+  function selectContract(type, strike, kind){
+    var c = computeContract(strike, type);
+    c.pickKind = kind;
+    c.price = (kind === "bid") ? c.bid : c.ask;
+    SELECTED = c;
+    side = (kind === "bid") ? "sell" : "buy";
+    syncSideSeg();
+    renderChain();
+    renderTicket();
+    renderGreeks();
+    if(banner){ banner.className = "op-banner"; banner.textContent = ""; }
+  }
+  function syncSideSeg(){
+    $$("[data-oside]", form).forEach(function(o){ o.setAttribute("aria-pressed", String(o.getAttribute("data-oside") === side)); });
+  }
+  function renderTicket(){
+    var b = Book.get() || {};
+    if(!SELECTED){
+      if(selName) selName.textContent = "No contract selected";
+      if(selMeta) selMeta.textContent = "Pick a strike from the chain →";
+      if(pxShare) pxShare.textContent = "—";
+      if(sharesEl) sharesEl.textContent = "—";
+      if(costV) costV.textContent = "—";
+    }else{
+      if(selName) selName.textContent = optSym(SELECTED.under, SELECTED.strike, SELECTED.type);
+      if(selMeta) selMeta.textContent = (SELECTED.type === "C" ? "Call" : "Put") + " · exp " + SELECTED.expLabel +
+        " · " + SELECTED.days + "d · IV " + (SELECTED.iv * 100).toFixed(1) + "%";
+      var q = qtyVal(), shares = q * 100, cost = SELECTED.price * shares;
+      if(pxShare) pxShare.textContent = money(SELECTED.price);
+      if(sharesEl) sharesEl.textContent = shares.toLocaleString();
+      if(costV) costV.textContent = money(cost);
+    }
+    if(costK) costK.textContent = (side === "buy") ? "Estimated debit" : "Estimated credit";
+    if(buyPow) buyPow.textContent = money(b.cash || 0);
+    if(placeBtn){
+      placeBtn.textContent = (side === "buy" ? "Buy to open" : "Sell to open");
+      placeBtn.className = "op-place " + (side === "buy" ? "op-side-buy" : "op-side-sell");
+    }
+  }
+  function showBanner(ok, msg){
+    if(!banner) return;
+    banner.textContent = msg;
+    banner.className = "op-banner show " + (ok ? "ok" : "err");
+  }
+
+  /* ---------- greeks summary ---------- */
+  function renderGreeks(){
+    if(!greeksEl) return;
+    if(!SELECTED){
+      greeksEl.innerHTML = '<p class="op-gk-empty">Select a contract to see its break-even, max loss and approximate greeks.</p>';
+      return;
+    }
+    var c = SELECTED, q = Math.max(1, qtyVal()), shares = q * 100;
+    var be = (c.type === "C") ? (c.strike + c.price) : (c.strike - c.price);
+    var debit = c.price * shares;
+    var maxLoss = (side === "buy")
+      ? money(debit) + " debit"
+      : money(debit) + " credit · risk can exceed it";
+    var cells = [
+      ["Break-even", fmt2(be)],
+      ["Max loss (this order)", maxLoss],
+      ["Delta / share", c.delta.toFixed(2)],
+      ["Theta / share·day", c.theta.toFixed(3)],
+      ["Vega / 1% IV", c.vega.toFixed(3)],
+      ["Intrinsic / share", fmt2(c.intrinsic)]
+    ];
+    greeksEl.innerHTML = '<div class="op-gk">' + cells.map(function(kv){
+      return '<div class="cellwrap"><div class="k">' + kv[0] + '</div><div class="v">' + kv[1] + '</div></div>';
+    }).join("") + '</div>';
+  }
+
+  /* ---------- option orders (own localStorage log) ---------- */
+  function getOrders(){ try{ var a = JSON.parse(localStorage.getItem(OKEY)); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
+  function saveOrders(a){ try{ localStorage.setItem(OKEY, JSON.stringify(a)); }catch(e){} }
+  function two(n){ n = String(n); return n.length < 2 ? "0" + n : n; }
+  function renderBlotter(){
+    if(!blBody) return;
+    var orders = getOrders();
+    if(!orders.length){
+      blBody.innerHTML = '<tr><td colspan="8" class="op-empty">No option orders yet — select a contract and place your first paper trade.</td></tr>';
+    }else{
+      blBody.innerHTML = orders.map(function(o){
+        var d = new Date(o.ts), tm = two(d.getHours()) + ":" + two(d.getMinutes()) + ":" + two(d.getSeconds());
+        var sc = o.side === "buy" ? "op-side-b" : "op-side-s";
+        var lab = o.side === "buy" ? "BUY" : "SELL";
+        return '<tr>' +
+          '<td class="faint">' + tm + '</td>' +
+          '<td class="' + sc + '">' + lab + '</td>' +
+          '<td><b>' + o.under + " " + fmtStrike(o.strike) + o.type + '</b></td>' +
+          '<td class="faint">' + o.exp + '</td>' +
+          '<td>' + o.contracts + '</td>' +
+          '<td>$' + Number(o.price).toFixed(2) + '</td>' +
+          '<td>' + money(o.cost) + '</td>' +
+          '<td><span class="op-st">' + o.status + '</span></td>' +
+        '</tr>';
+      }).join("");
+    }
+    if(blCount) blCount.textContent = orders.length + (orders.length === 1 ? " order" : " orders") + " · simulated";
+  }
+
+  /* ---------- events ---------- */
+  if(underSel){
+    underSel.addEventListener("change", function(){
+      if(PRICES[underSel.value]){
+        ACTIVE = underSel.value;
+        SELECTED = null;
+        lastPrice = null;
+        renderAll();
+      }
+    });
+  }
+  if(expSel){
+    expSel.addEventListener("change", function(){
+      var i = parseInt(expSel.value, 10);
+      if(!isNaN(i) && EXPS[i]){
+        EXPI = i;
+        if(SELECTED) SELECTED = null; /* stale across expiries; user re-picks */
+        renderAll();
+      }
+    });
+  }
+  if(chainBody){
+    chainBody.addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest("button.op-q") : null;
+      if(!btn) return;
+      selectContract(btn.getAttribute("data-type"), parseFloat(btn.getAttribute("data-strike")), btn.getAttribute("data-kind"));
+    });
+  }
+  var sideSeg = $("#opSideSeg");
+  if(sideSeg){
+    sideSeg.addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest("[data-oside]") : null;
+      if(!b) return;
+      side = b.getAttribute("data-oside");
+      syncSideSeg();
+      renderTicket();
+      renderGreeks();
+    });
+  }
+  if(form){
+    form.addEventListener("click", function(e){
+      var st = e.target.closest ? e.target.closest("[data-step]") : null;
+      if(!st) return;
+      var d = parseInt(st.getAttribute("data-step"), 10) || 0;
+      var n = Math.max(1, qtyVal() + d);
+      if(qtyEl) qtyEl.value = String(n);
+      renderTicket();
+      renderGreeks();
+    });
+    form.addEventListener("input", function(e){
+      if(e.target === qtyEl){ renderTicket(); renderGreeks(); }
+    });
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      if(!SELECTED){ showBanner(false, "Select a contract from the chain first."); return; }
+      var q = qtyVal();
+      if(q < 1){ showBanner(false, "Enter a contract quantity of 1 or more."); return; }
+      var shares = q * 100, cost = +(SELECTED.price * shares).toFixed(2);
+      var cash = (Book.get() || {}).cash || 0;
+      if(side === "buy" && cost > cash + 0.001){
+        showBanner(false, "Not enough buying power (" + money(cash) + ") for this " + money(cost) + " debit.");
+        return;
+      }
+      var orders = getOrders();
+      var order = {
+        id: Date.now(),
+        ts: Date.now(),
+        side: side,
+        under: SELECTED.under,
+        strike: SELECTED.strike,
+        type: SELECTED.type,
+        exp: SELECTED.expLabel,
+        contracts: q,
+        price: +SELECTED.price.toFixed(2),
+        cost: cost,
+        status: "filled"
+      };
+      orders.unshift(order);
+      if(orders.length > 60) orders.length = 60;
+      saveOrders(orders);
+      showBanner(true, (side === "buy" ? "Bought " : "Sold ") + q + " × " + optSym(SELECTED.under, SELECTED.strike, SELECTED.type) +
+        " @ $" + SELECTED.price.toFixed(2) + " (simulated).");
+      if(placeBtn && !reduce){ placeBtn.classList.remove("op-pulse"); void placeBtn.offsetWidth; placeBtn.classList.add("op-pulse"); }
+      renderBlotter();
+    });
+  }
+  if(clearBtn){
+    clearBtn.addEventListener("click", function(){
+      if(!getOrders().length){ return; }
+      if(window.confirm("Clear your simulated option blotter? This removes all recorded paper option orders.")){
+        saveOrders([]);
+        renderBlotter();
+        showBanner(true, "Option blotter cleared.");
+      }
+    });
+  }
+
+  /* ---------- render orchestration ---------- */
+  function renderAll(){
+    paintHeader(false);
+    renderChain();
+    renderTicket();
+    renderGreeks();
+    renderBlotter();
+  }
+  function liveTick(){
+    paintHeader(true);
+    maybeRedrawChain();
+    if(buyPow){ buyPow.textContent = money((Book.get() || {}).cash || 0); }
+  }
+
+  /* ---------- boot ---------- */
+  buildSelects();
+  renderAll();
+  /* auto-select the ATM call for a useful starting state */
+  (function(){
+    var sk = buildStrikes(curSpot());
+    var spot = curSpot();
+    var atm = sk.list.reduce(function(best, k){ return (Math.abs(k - spot) < Math.abs(best - spot)) ? k : best; }, sk.list[0]);
+    if(atm) selectContract("C", atm, "ask");
+  })();
+
+  if(!reduce){
+    setInterval(function(){ if(!document.hidden) liveTick(); }, 3000);
+  }
+
+  if(F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>
