@@ -288,14 +288,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ---------------- index strip ---------------- */
   var IDX = [
-    {s:"SPY",  n:"S&P 500 ETF",  p:559.00, d:2, v:.055},
-    {s:"QQQ",  n:"Nasdaq 100",   p:486.00, d:2, v:.065},
+    {s:"SPY",  n:"S&P 500 ETF",  p:777.77, d:2, v:.055},
+    {s:"QQQ",  n:"Nasdaq 100",   p:732.06, d:2, v:.065},
     {s:"DIA",  n:"Dow 30",       p:421.00, d:2, v:.045},
     {s:"IWM",  n:"Russell 2000", p:218.00, d:2, v:.075},
     {s:"VIX",  n:"Volatility",   p:13.90,  d:2, v:.55},
     {s:"BTC",  n:"Bitcoin",      p:72400,  d:0, v:.09}
   ];
-  IDX.forEach(function(x){ x.base = x.p; });
+  IDX.forEach(function(x){ var lp = F.priceOf && F.priceOf(x.s); if(lp){ x.p = lp; } x.base = x.p; });
 
   var strip = $("#idxStrip");
   if(strip){
@@ -330,12 +330,13 @@ document.addEventListener("DOMContentLoaded", function(){
     {s:"COIN", n:"Coinbase",          p:241.70, v:14.9},
     {s:"PLTR", n:"Palantir",          p:38.90,  v:96.3},
     {s:"AMZN", n:"Amazon",            p:196.40, v:44.1},
-    {s:"GOOG", n:"Alphabet",          p:178.20, v:22.6},
+    {s:"GOOGL",n:"Alphabet",          p:346.42, v:22.6},
     {s:"NFLX", n:"Netflix",           p:704.10, v:4.8},
     {s:"MARA", n:"Marathon Digital",  p:18.40,  v:78.2},
     {s:"SPY",  n:"SPDR S&P 500",      p:559.10, v:64.5},
     {s:"QQQ",  n:"Invesco QQQ",       p:486.30, v:38.7}
   ];
+  UNIV.forEach(function(u){ var lp = F.priceOf && F.priceOf(u.s); if(lp) u.p = lp; });
   UNIV.forEach(function(u,i){
     var r = (F.seed ? F.seed(u.s) : i*97) % 1000 / 1000;
     u.base = u.p;
