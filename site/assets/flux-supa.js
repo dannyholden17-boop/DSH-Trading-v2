@@ -45,8 +45,9 @@
       });
     }catch(e){ readyResolve(false); return; }
     S.loaded = true;
-    S.syncPrices();
+    S.syncPrices(); S.syncForecasts();
     setInterval(function(){ S.syncPrices(); }, 20000);
+    setInterval(function(){ S.syncForecasts(); }, 60000);
     // After an OAuth / magic-link redirect, clean the URL and reload once so the
     // page (re)renders with the established session on first paint.
     function cleanLandingIfNeeded(){
@@ -147,6 +148,22 @@
       }
       return true;
     }).catch(function(){ return false; });
+  };
+
+  // ---- Kronos forecasts (public read) → feed FLUX.KFORECAST ----
+  S.syncForecasts = function(){
+    if(!S.client) return Promise.resolve(false);
+    return S.client.from("forecasts").select("ticker,pred_close,pred_return,confidence,horizon,model,path").then(function(r){
+      if(r && r.data && r.data.length){
+        var m = {}; r.data.forEach(function(f){ m[f.ticker] = {
+          pred_close:Number(f.pred_close), pred_return:Number(f.pred_return),
+          confidence: f.confidence!=null?Number(f.confidence):null, horizon:f.horizon,
+          model:f.model, path:f.path }; });
+        if(window.FLUX) window.FLUX.KFORECAST = m;
+        try{ window.dispatchEvent(new Event("flux-forecasts")); }catch(e){}
+      }
+      return true;
+    }).catch(function(){ return false; }); // table may not exist yet — harmless
   };
 
   // ---- autopilot fund (public read) ----
