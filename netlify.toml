@@ -6,12 +6,14 @@
   publish = "site"
   command = ""
 
-# Long-cache the fingerprint-free assets but always revalidate HTML,
-# so a redeploy is visible immediately.
+# Assets are NOT fingerprinted (stable filenames like flux.css), and pages
+# cache-bust them with a ?v= query string. So the browser may cache, but it
+# must revalidate every time — that way a redeploy (or a bumped ?v=) is visible
+# immediately instead of being stuck behind a long max-age.
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.html"
