@@ -415,7 +415,17 @@
           pl:+((px-p.avg)*p.qty).toFixed(2),plpct:p.avg?+(((px-p.avg)/p.avg)*100).toFixed(2):0});}
       return out.sort(function(a,c){return c.mkt-a.mkt});
     },
-    equity:function(){var b=this.get(),v=b.cash;for(var t in b.positions)v+=b.positions[t].qty*(F.priceOf(t)||b.positions[t].avg);return +v.toFixed(2);}
+    equity:function(){var b=this.get(),v=b.cash;for(var t in b.positions)v+=b.positions[t].qty*(F.priceOf(t)||b.positions[t].avg);return +v.toFixed(2);},
+    // performance since the account started (paper track record)
+    perf:function(){
+      var b=this.get(),eq=this.equity(),start=b.start||100000;
+      var ret=start?(eq-start)/start:0;
+      // record an equity snapshot (throttled to ~1/min) so a curve accrues
+      b.eqHist=b.eqHist||[];
+      var now=Date.now(),lastH=b.eqHist[b.eqHist.length-1];
+      if(!lastH||now-lastH.ts>60000){ b.eqHist.push({ts:now,eq:eq}); if(b.eqHist.length>500)b.eqHist=b.eqHist.slice(-500); this.save(b); }
+      return {equity:eq,start:start,ret:ret,pl:+(eq-start).toFixed(2),hist:b.eqHist};
+    }
   };
   window.FLUXBook=F.Book;
 
