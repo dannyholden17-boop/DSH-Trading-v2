@@ -294,15 +294,19 @@
           bs[1].onclick = function(){ tc.remove(); bubble("Cancelled — nothing placed.","a"); };
           b.appendChild(tc);
         }
+        busy = false;
         if(speak.checked && J.ttsSupported){
           setStatus("SPEAKING…","voice out"); orb.pulse(1);
           J.speak(res.text);
           // keep the orb alive while it talks
           var iv = setInterval(function(){ orb.pulse(0.8); }, 400);
-          setTimeout(function(){ clearInterval(iv); setStatus("FLUXI ONLINE","six engines · scanning"); },
-            Math.min(9000, 1800 + res.text.length*45));
+          var dur = Math.min(9000, 1800 + res.text.length*45);
+          setTimeout(function(){
+            clearInterval(iv); setStatus("FLUXI ONLINE","six engines · scanning");
+            // hands-free: after Fluxi finishes speaking, listen for your next line
+            if(handsFree && res.kind !== "trade"){ startListening(); }
+          }, dur);
         }
-        busy = false;
       }).catch(function(){ tp.remove(); bubble("Something glitched — try again.","a"); busy=false; setStatus("FLUXI ONLINE"); });
     }
     document.getElementById("send").onclick = function(){ send(); };
@@ -316,22 +320,41 @@
       el.onclick = function(){ send(c); }; cc.appendChild(el);
     });
 
-    /* ---- voice ---- */
+    /* ---- voice (tap-to-talk + hands-free conversation) ---- */
     var mic = document.getElementById("mic"), hint = document.getElementById("voiceHint");
-    if(!J.voiceSupported){ mic.disabled = true; hint.textContent = "Voice input needs Chrome or Safari."; }
-    else { hint.textContent = "Tap 🎙 and talk."; }
-    mic.onclick = function(){
-      if(J.isListening()){ J.stopListen(); return; }
-      var started = J.listen(function(txt, fin){
+    var handsFree = false;
+    // add a hands-free toggle next to "Speak replies"
+    (function(){
+      var row = document.querySelector(".voicerow");
+      if(row && J.voiceSupported){
+        var lbl = document.createElement("label"); lbl.className="tgl"; lbl.style.marginLeft="4px";
+        lbl.innerHTML = '<input type="checkbox" id="hf"> <span>Hands-free</span>';
+        row.insertBefore(lbl, row.children[1] || null);
+      }
+    })();
+    var hf = document.getElementById("hf");
+    if(hf) hf.addEventListener("change", function(){
+      handsFree = hf.checked;
+      if(handsFree){ speak.checked = true; startListening(); }
+      else { J.stopListen(); }
+    });
+    function startListening(){
+      if(J.isListening() || busy) return;
+      J.listen(function(txt, fin){
         input.value = txt;
         if(fin && txt){ mic.classList.remove("on"); send(txt); }
       }, function(state){
-        if(state==="start"){ mic.classList.add("on"); setStatus("LISTENING…","voice in"); orb.pulse(0.9); }
+        if(state==="start"){ mic.classList.add("on"); setStatus(handsFree?"CONVERSING…":"LISTENING…","voice in"); orb.pulse(0.9); }
         else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUXI ONLINE","six engines · scanning"); }
         else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked — allow microphone access."; setStatus("FLUXI ONLINE"); }
       });
-      // auto-speak replies when using voice
-      if(started && J.ttsSupported) speak.checked = true;
+    }
+    if(!J.voiceSupported){ mic.disabled = true; hint.textContent = "Voice needs Chrome or Safari."; }
+    else { hint.textContent = "Tap 🎙, or turn on Hands-free."; }
+    mic.onclick = function(){
+      if(J.isListening()){ J.stopListen(); return; }
+      if(J.ttsSupported) speak.checked = true;
+      startListening();
     };
 
     /* ---- greeting ---- */
