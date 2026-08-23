@@ -169,7 +169,7 @@
     <button class="nav-toggle" aria-label="Menu">☰</button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
-      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
     </div>
   </div>
 </header>
@@ -231,6 +231,11 @@
       <p class="lede" style="margin-top:16px">Every fill below is Flux acting on its own inside a $10,000
         paper account. No real orders, no real dollars — just a transparent record of what the AI decided
         and why, so you can judge it before it ever touches your book.</p>
+      <div class="btn-row" style="margin-top:26px">
+        <button type="button" class="btn btn-primary btn-lg" id="copyFundBtn">Copy the fund → my paper account</button>
+      </div>
+      <p class="faint" style="font-size:.78rem;margin-top:12px;max-width:60ch">Mirrors the fund's current stance
+        into your own simulated $10,000 paper account — equal-weight, in virtual money. Simulated, not advice.</p>
     </div>
 
     <div class="ap-fund-grid" style="margin-top:44px">
@@ -501,7 +506,7 @@
         reports, and only then connect a brokerage — on your rules, with your stop button.</p>
       <div class="btn-row" style="justify-content:center">
         <a class="btn btn-primary btn-lg" href="./portfolio.html">Connect your brokerage →</a>
-        <a class="btn btn-ghost btn-lg" href="./download.html">Download Flux</a>
+        <a class="btn btn-ghost btn-lg" href="./terminal.html">Open the desk</a>
       </div>
     </div>
   </div>
@@ -517,7 +522,7 @@
     </div>
     <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
     <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Get Flux</h4><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a><a href="./pricing.html">Pricing</a></div>
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account without your explicit approval and rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
@@ -971,6 +976,92 @@ document.addEventListener("DOMContentLoaded", function(){
     setInterval(function(){ if(DATA) renderEquity(); if(DATA) drawCurves(); }, 15000); // live equity refresh
     setInterval(pull, 60000);                                                          // refresh log/reports/positions
   }).catch(function(){});
+});
+</script>
+
+<!-- ============================================================
+     COPY THE FUND — mirrors the fund's current stance into the
+     viewer's local $100k paper account (FLUXBook / localStorage).
+     Prefers real server positions (FluxSupa.autopilot); falls back
+     to Kronos-ranked buys. Simulated only — no real orders.
+     ============================================================ -->
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX || {};
+  var btn = document.getElementById("copyFundBtn");
+  if(!btn) return;
+
+  function toast(msg){ if(F.toast) F.toast(msg, {icon:"⚡", ttl:6000}); }
+
+  /* place equal-weight paper buys across up to 5 tickers */
+  function equalWeightBuy(tickers){
+    var Book = window.FLUXBook;
+    if(!Book || typeof Book.place !== "function") return 0;
+    tickers = (tickers || []).filter(Boolean).slice(0, 5);
+    var acct = (typeof Book.get === "function") ? Book.get() : null;
+    var cash = acct && typeof acct.cash === "number" ? acct.cash : 0;
+    if(!tickers.length || cash <= 0) return 0;
+    var per = (cash * 0.9) / tickers.length;
+    var n = 0;
+    tickers.forEach(function(t){
+      var px = F.priceOf ? Number(F.priceOf(t)) : NaN;
+      if(!isFinite(px) || px <= 0) return;
+      var qty = Math.floor(per / px);
+      if(qty < 1) return;
+      var r = Book.place({ side:"buy", ticker:t, qty:qty, type:"market" });
+      if(r && r.ok) n++;
+    });
+    return n;
+  }
+
+  /* Kronos fallback: top BUY-ranked names with predReturn > 0.01 */
+  function kronosTickers(){
+    if(!(F.Kronos && typeof F.Kronos.rank === "function" && F.PRICES)) return [];
+    var ranked;
+    try { ranked = F.Kronos.rank(Object.keys(F.PRICES)) || []; }
+    catch(e){ ranked = []; }
+    return ranked
+      .filter(function(r){ return r && Number(r.predReturn) > 0.01; })
+      .slice(0, 5)
+      .map(function(r){ return r.ticker; });
+  }
+
+  function finish(tickers, prevText){
+    if(!tickers || !tickers.length) tickers = kronosTickers();
+    var n = equalWeightBuy(tickers);
+    if(n > 0) toast("⚡ Copied the fund into your paper account — " + n + " positions.");
+    else toast("⚡ Nothing to copy right now — no ranked buys or no spare paper cash.");
+    btn.disabled = false;
+    btn.textContent = prevText;
+  }
+
+  function run(){
+    if(!window.FLUXBook){ toast("⚡ Paper account isn't available right now."); return; }
+    var prevText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Copying…";
+
+    /* prefer the real server fund's positions if they resolve */
+    var FS = window.FluxSupa;
+    if(FS && typeof FS.autopilot === "function"){
+      var p;
+      try { p = FS.autopilot(); } catch(e){ p = null; }
+      if(p && typeof p.then === "function"){
+        var done = false;
+        p.then(function(d){
+          if(done) return; done = true;
+          var tickers = (d && Array.isArray(d.positions))
+            ? d.positions.map(function(pos){ return pos && pos.ticker; }).filter(Boolean).slice(0, 5)
+            : [];
+          finish(tickers, prevText);
+        }).catch(function(){ if(!done){ done = true; finish([], prevText); } });
+        return;
+      }
+    }
+    finish([], prevText);
+  }
+
+  btn.addEventListener("click", function(e){ e.preventDefault(); run(); });
 });
 </script>
 </body>

@@ -448,6 +448,10 @@
       if(pos.qty>0)b.positions[t]=pos;else delete b.positions[t];
       var ord={id:b.orders.length+1,ts:Date.now(),side:o.side,ticker:t,qty:qty,price:px,type:o.type||"market",status:"filled"};
       b.orders.unshift(ord);if(b.orders.length>60)b.orders.length=60;this.save(b);
+      // broadcast so every open surface (terminal, dashboard, activity, account) refreshes
+      try{ window.dispatchEvent(new CustomEvent("flux-book-updated",{detail:ord})); }catch(e){}
+      // toast a confirmation unless the caller opts out (o.silent) — e.g. the terminal shows its own banner
+      if(!o.silent && F.toast){ try{ F.toast((o.side==="buy"?"🟢 Bought ":"🔴 Sold ")+qty+" <b>"+t+"</b> @ $"+px.toFixed(2)+".",{icon:o.side==="buy"?"🟢":"🔴",ttl:5000}); }catch(e){} }
       return{ok:true,msg:(o.side==="buy"?"Bought ":"Sold ")+qty+" "+t+" @ $"+px.toFixed(2),order:ord,book:b};
     },
     positionsList:function(){
