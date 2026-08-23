@@ -447,3 +447,20 @@ body{
 @keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
 @media(max-width:520px){.fx-toasts{right:10px;left:10px;bottom:10px;max-width:none}}
+
+/* ---- global ticker search ("/" to open) ---- */
+.fx-search{position:fixed;inset:0;z-index:2100;display:none;align-items:flex-start;justify-content:center;
+  padding-top:14vh;background:rgba(1,4,9,.72);backdrop-filter:blur(6px)}
+.fx-search.on{display:flex;animation:fadein .16s ease}
+.fx-search-box{width:min(520px,92vw);background:rgba(11,18,32,.98);border:1px solid rgba(var(--glow-c),.4);
+  border-radius:16px;box-shadow:0 30px 90px -30px #000, 0 0 40px -16px rgba(var(--glow),.6);overflow:hidden}
+.fx-search-box input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);
+  color:var(--text);font-size:1.05rem;padding:16px 18px;outline:none;font-family:var(--f-sans)}
+.fx-search-list{max-height:46vh;overflow-y:auto}
+.fx-search-list .it{display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-bottom:1px solid var(--line-2)}
+.fx-search-list .it:last-child{border-bottom:none}
+.fx-search-list .it.sel,.fx-search-list .it:hover{background:rgba(var(--glow),.1)}
+.fx-search-list .it .sy{font-family:var(--f-mono);font-weight:700;min-width:52px}
+.fx-search-list .it .nm{color:var(--text-dim);font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fx-search-list .it .pr{margin-left:auto;font-family:var(--f-mono);font-size:.86rem}
+.fx-search-hint{padding:9px 18px;font-family:var(--f-mono);font-size:.68rem;color:var(--text-faint);border-top:1px solid var(--line-2)}

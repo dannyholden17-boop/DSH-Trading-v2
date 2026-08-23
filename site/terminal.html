@@ -965,7 +965,7 @@ document.addEventListener("DOMContentLoaded", function(){
     form.addEventListener("input", function(e){ if(e.target===qtyEl||e.target===limitEl) paintTicket(); });
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      var order={side:side,ticker:ACTIVE,qty:qtyVal(),type:otype,limit:(otype==="limit"?limitEl.value:undefined)};
+      var order={side:side,ticker:ACTIVE,qty:qtyVal(),type:otype,limit:(otype==="limit"?limitEl.value:undefined),silent:true};
       var res=Book.place(order);
       showBanner(res.ok,res.msg);
       if(res.ok){

@@ -160,6 +160,7 @@
         <div class="acc-chips">
           <div class="acc-chip"><b id="accEquity">$—</b><span>Equity</span></div>
           <div class="acc-chip"><b id="accCash">$—</b><span>Cash</span></div>
+          <div class="acc-chip"><b id="accReturn">—</b><span>Total return</span></div>
         </div>
         <div class="acc-pact">
           <a class="btn btn-ghost btn-sm" href="./activity.html">View activity &amp; P&amp;L →</a>
@@ -316,6 +317,13 @@ document.addEventListener("DOMContentLoaded", function(){
     var cash = (B && B.get) ? B.get().cash : 0;
     var eqEl = $("#accEquity"); if(eqEl) eqEl.textContent = money(eq);
     var cashEl = $("#accCash"); if(cashEl) cashEl.textContent = money(cash);
+    var rEl = $("#accReturn");
+    if(rEl && B && B.perf){
+      var p = B.perf();
+      rEl.textContent = (p.ret>=0?"+":"") + (p.ret*100).toFixed(2) + "%";
+      rEl.style.color = p.ret>=0 ? "var(--emerald)" : "var(--crimson)";
+      rEl.title = (p.pl>=0?"+":"") + money(p.pl) + " since $" + money(p.start).replace("$","") + " start";
+    }
   }
   renderPaper();
   var resetBtn = $("#accReset");

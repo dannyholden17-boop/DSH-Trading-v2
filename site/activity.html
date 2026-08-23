@@ -69,8 +69,8 @@
 
     <div class="glass ac-chartwrap">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-        <b style="font-size:1rem">Cumulative realized P&amp;L</b>
-        <span class="ac-pill" id="acChartNote">since first trade</span>
+        <b style="font-size:1rem">Account value over time</b>
+        <span class="ac-pill" id="acChartNote">since $100k start</span>
       </div>
       <canvas id="acChart" style="margin-top:10px"></canvas>
     </div>
@@ -105,7 +105,7 @@
     </div>
     <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
     <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Activity shown is from a simulated paper account using virtual money; results are hypothetical and do not represent real trading. Trading involves risk of loss, including loss of principal.</p>
@@ -146,13 +146,15 @@ document.addEventListener("DOMContentLoaded", function(){
     // unrealized from current positions
     var unreal = 0, posList = (B && B.positionsList) ? B.positionsList() : [];
     posList.forEach(function(p){ unreal += p.pl; });
-    var equity = (B && B.equity) ? B.equity() : book.cash;
-    var start = book.start || 100000;
-    return { orders:orders, realized:realized, unreal:unreal, equity:equity, start:start, cash:book.cash, curve:curve, trades:trades, posList:posList };
+    var perf = (B && B.perf) ? B.perf() : null;
+    var equity = perf ? perf.equity : ((B && B.equity) ? B.equity() : book.cash);
+    var start = (perf ? perf.start : book.start) || 100000;
+    return { orders:orders, realized:realized, unreal:unreal, equity:equity, start:start, cash:book.cash, curve:curve, trades:trades, posList:posList, perf:perf };
   }
 
   function renderCards(a){
-    var ret = a.equity - a.start, pct = ((a.equity/a.start)-1)*100;
+    var ret = (a.perf && a.perf.pl != null) ? a.perf.pl : (a.equity - a.start);
+    var pct = a.start ? ((a.equity/a.start)-1)*100 : 0;
     var cards = [
       ["Account value", money(a.equity), ""],
       ["Total return", (ret>=0?"+":"")+money(ret)+" ("+(pct>=0?"+":"")+pct.toFixed(2)+"%)", ret>=0?"up":"down"],
@@ -167,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function renderOrders(a){
     var t = $("#ordersT");
-    if(!a.orders.length){ t.innerHTML = '<tbody><tr><td class="ac-empty" colspan="6">No orders yet — <a href="./terminal.html" style="color:var(--cyan)">place your first paper trade</a>.</td></tr></tbody>'; return; }
+    if(!a.orders.length){ t.innerHTML = '<tbody><tr><td class="ac-empty" colspan="6">No paper trades yet — head to the <a href="./terminal.html" style="color:var(--cyan)">terminal</a> to place one.</td></tr></tbody>'; return; }
     var rows = a.orders.slice().sort(function(x,y){return (y.ts||0)-(x.ts||0);}); // newest first for display
     t.innerHTML = '<thead><tr><th>Time</th><th>Side</th><th>Symbol</th><th>Qty</th><th>Price</th><th>Value</th></tr></thead><tbody>' +
       rows.map(function(o){
@@ -191,15 +193,18 @@ document.addEventListener("DOMContentLoaded", function(){
     var cv = $("#acChart"); if(!cv || !cv.clientWidth) return;
     var dpr = window.devicePixelRatio||1, w = cv.clientWidth, h = cv.clientHeight;
     cv.width = w*dpr; cv.height = h*dpr; var c = cv.getContext("2d"); c.scale(dpr,dpr); c.clearRect(0,0,w,h);
-    var data = a.curve.map(function(p){return p.realized;});
-    if(data.length < 2){ data = [0, a.realized||0]; }
-    var mn = Math.min.apply(null, data.concat([0])), mx = Math.max.apply(null, data.concat([0]));
+    // equity over time from the paper book's perf history
+    var base = a.start || 100000;
+    var hist = (a.perf && a.perf.hist) ? a.perf.hist : [];
+    var data = hist.map(function(p){ return Number(p.eq); }).filter(function(v){ return !isNaN(v); });
+    if(data.length < 2){ data = [base, (a.equity!=null?a.equity:base)]; } // flat line at start if no history
+    var mn = Math.min.apply(null, data.concat([base])), mx = Math.max.apply(null, data.concat([base]));
     var rg = (mx-mn)||1, pad = 10, n = data.length;
     function X(i){ return pad + i*(w-2*pad)/(n-1); }
     function Y(v){ return pad + (h-2*pad)*(1-(v-mn)/rg); }
-    // zero line
-    c.strokeStyle="rgba(255,255,255,.10)"; c.setLineDash([4,4]); c.beginPath(); c.moveTo(0,Y(0)); c.lineTo(w,Y(0)); c.stroke(); c.setLineDash([]);
-    var up = (data[data.length-1] >= 0), col = up ? (F.EM||"#10b981") : (F.CR||"#ef4444");
+    // start-value baseline
+    c.strokeStyle="rgba(255,255,255,.10)"; c.setLineDash([4,4]); c.beginPath(); c.moveTo(0,Y(base)); c.lineTo(w,Y(base)); c.stroke(); c.setLineDash([]);
+    var up = (data[data.length-1] >= base), col = up ? (F.EM||"#10b981") : (F.CR||"#ef4444");
     var g = c.createLinearGradient(0,0,0,h); g.addColorStop(0, col+"3a"); g.addColorStop(1, col+"00");
     c.beginPath(); c.moveTo(X(0),Y(data[0])); for(var i=1;i<n;i++) c.lineTo(X(i),Y(data[i]));
     c.lineTo(X(n-1),h); c.lineTo(X(0),h); c.closePath(); c.fillStyle=g; c.fill();
@@ -218,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // re-render when the server hydrates the book or prices tick
   window.addEventListener("flux-book-updated", renderAll);
-  window.addEventListener("flux-prices", function(){ if(A){ renderCards(analyze()); renderPos(analyze()); } });
+  window.addEventListener("flux-prices", function(){ if(A){ A = analyze(); renderCards(A); renderPos(A); drawCurve(A); } });
   var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt=setTimeout(function(){ if(A) drawCurve(A); }, 160); });
 });
 </script>

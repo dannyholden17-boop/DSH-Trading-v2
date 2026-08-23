@@ -117,7 +117,7 @@
     <button class="nav-toggle" aria-label="Menu">☰</button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
-      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Download</a>
     </div>
   </div>
 </header>
@@ -146,7 +146,7 @@
     <div class="glass fx-float sheen pf-summary reveal">
       <div class="pf-sum-head">
         <span class="pill"><i></i> Portfolio</span>
-        <span class="lb">total value · <b class="up">sample</b></span>
+        <span class="lb">total value · <b class="up" id="pfSrcLbl">sample</b></span>
       </div>
       <div class="pf-total-row">
         <div class="pf-total mono" id="pfTotal">$92,180.00</div>
@@ -154,11 +154,11 @@
       </div>
       <canvas class="pf-spark" id="pfSpark" aria-label="Illustrative sample equity curve"></canvas>
       <div class="pf-quick">
-        <div class="pf-q"><div class="k">Positions</div><div class="v">5</div></div>
-        <div class="pf-q"><div class="k">Day P/L</div><div class="v up">+$1,284</div></div>
-        <div class="pf-q"><div class="k">Buying power</div><div class="v">$17,304</div></div>
+        <div class="pf-q"><div class="k">Positions</div><div class="v" id="pfPos">5</div></div>
+        <div class="pf-q"><div class="k">Day P/L</div><div class="v up" id="pfDayPL">+$1,284</div></div>
+        <div class="pf-q"><div class="k">Buying power</div><div class="v" id="pfBP">$17,304</div></div>
       </div>
-      <p class="pf-cap"><span class="live"></span>Sample portfolio · illustrative</p>
+      <p class="pf-cap" id="pfHeroCap"><span class="live"></span>Sample portfolio · illustrative</p>
     </div>
   </div>
 </section>
@@ -252,7 +252,7 @@
       <div class="glass sheen pf-donut reveal" style="padding:24px">
         <div class="pf-sum-head" style="margin-bottom:6px">
           <h3 class="h3">Holdings</h3>
-          <span class="tag" style="margin-left:auto">sample</span>
+          <span class="tag" style="margin-left:auto" id="pfHoldTag">sample</span>
         </div>
         <div class="pf-tscroll">
           <table class="pf-hold">
@@ -266,7 +266,7 @@
                 <th scope="col">Weight</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="pfHoldBody">
               <tr>
                 <td class="pf-tk"><b>NVDA</b><span>NVIDIA</span></td>
                 <td>120</td><td>$184.20</td><td>$22,104</td>
@@ -300,7 +300,7 @@
             </tbody>
           </table>
         </div>
-        <p class="pf-cap" style="margin-top:16px">Sample portfolio · illustrative · figures are not a real account.</p>
+        <p class="pf-cap" style="margin-top:16px" id="pfHoldCap">Sample portfolio · illustrative · figures are not a real account.</p>
       </div>
 
       <div class="reveal">
@@ -316,18 +316,18 @@
         <div class="pf-metrics">
           <div class="glass feat pf-metric">
             <div class="k">Total value</div>
-            <div class="v mono">$74,876</div>
-            <div class="s">across 5 positions</div>
+            <div class="v mono" id="pfMetVal">$74,876</div>
+            <div class="s" id="pfMetValSub">across 5 positions</div>
           </div>
           <div class="glass feat pf-metric">
             <div class="k">Day P/L</div>
-            <div class="v mono up">+$1,284</div>
-            <div class="s">+1.4% on the book</div>
+            <div class="v mono up" id="pfMetDay">+$1,284</div>
+            <div class="s" id="pfMetDaySub">+1.4% on the book</div>
           </div>
           <div class="glass feat pf-metric" style="grid-column:1/-1">
             <div class="k">Diversification</div>
-            <div class="v mono">3 sectors · <span class="down">high</span> concentration</div>
-            <div class="s">Top two names are 57% of the book — Risk radar is watching.</div>
+            <div class="v mono" id="pfMetConc">3 sectors · <span class="down">high</span> concentration</div>
+            <div class="s" id="pfMetConcSub">Top two names are 57% of the book — Risk radar is watching.</div>
           </div>
         </div>
       </div>
@@ -579,7 +579,7 @@
     </div>
     <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
     <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Portfolio figures shown are an illustrative sample. Brokerage connections are read-only unless you explicitly enable trading, and Autopilot never trades your account without your approval and your rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
@@ -648,7 +648,10 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   drawSpark();
 
-  /* ---------------- allocation donut ---------------- */
+  /* ---------------- allocation donut + holdings (real paper book) ---------------- */
+  var COLORS = [CY, VI, EM, AM, BL, "#f472b6", "#34d399", "#fbbf24", "#22d3ee", "#c084fc"];
+
+  /* fallback (only used if the paper-account engine isn't loaded) */
   var HOLD = [
     {t:"NVDA", w:29.5, c:CY},
     {t:"AAPL", w:27.5, c:VI},
@@ -656,7 +659,113 @@ document.addEventListener("DOMContentLoaded", function(){
     {t:"AMD",  w:13.8, c:AM},
     {t:"COIN", w:9.7,  c:BL}
   ];
+  /* book-level figures shown in the donut centre + hero ticker (fallback defaults) */
+  var pfIsReal = false, pfMktSum = 74876, pfPosCount = 5,
+      pfTotalVal = 92180.00, pfPrevTotal = 90896.00, pfDayChg = 1284.00;
 
+  function money2(n){ return "$" + Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function money0(n){ return "$" + Math.round(Number(n)).toLocaleString(); }
+  function signed0(n){ return (n>=0?"+":"−") + "$" + Math.abs(Math.round(Number(n))).toLocaleString(); }
+  function kfmt(n){ n=Number(n); return Math.abs(n)>=1000 ? "$" + (n/1000).toFixed(1) + "k" : "$" + Math.round(n); }
+  function setTxt(id,v){ var el=$("#"+id); if(el) el.textContent=v; }
+
+  if(window.FLUXBook){
+    var pl = [];
+    try{ pl = FLUXBook.positionsList() || []; }catch(e){ pl = []; }
+    pfIsReal = pl.length > 0;
+
+    var rows;
+    if(pfIsReal){
+      rows = pl.map(function(p){
+        var prev = (F.prevClose && F.prevClose(p.ticker)) || p.price;
+        return {t:p.ticker, name:(F.NAMES && F.NAMES[p.ticker]) || p.ticker,
+          qty:p.qty, price:p.price, prev:prev, mkt:p.mkt};
+      });
+      pfMktSum = rows.reduce(function(a,r){ return a + r.mkt; }, 0);
+      pfTotalVal = FLUXBook.equity();
+    } else {
+      /* no real positions yet — clearly-labelled sample, but priced off real current prices */
+      var SAMPLE = [{t:"NVDA",qty:120},{t:"AAPL",qty:90},{t:"MSFT",qty:34},{t:"AMD",qty:60},{t:"COIN",qty:30}];
+      var sampleCash = 17304;
+      rows = SAMPLE.map(function(s){
+        var price = (F.priceOf && F.priceOf(s.t)) || 0;
+        var prev  = (F.prevClose && F.prevClose(s.t)) || price;
+        return {t:s.t, name:(F.NAMES && F.NAMES[s.t]) || s.t,
+          qty:s.qty, price:price, prev:prev, mkt:+(s.qty*price).toFixed(2)};
+      });
+      pfMktSum = rows.reduce(function(a,r){ return a + r.mkt; }, 0);
+      pfTotalVal = +(pfMktSum + sampleCash).toFixed(2);
+    }
+
+    pfDayChg  = rows.reduce(function(a,r){ return a + (r.price - r.prev) * r.qty; }, 0);
+    pfPrevTotal = +(pfTotalVal - pfDayChg).toFixed(2);
+    pfPosCount = rows.length;
+    var pfCash = pfIsReal ? (FLUXBook.get().cash) : (pfTotalVal - pfMktSum);
+    var pfDayPct = pfPrevTotal ? (pfDayChg / pfPrevTotal * 100) : 0;
+
+    /* donut weights + colours from real market values */
+    HOLD = rows.map(function(r,i){
+      return {t:r.t, w: pfMktSum ? (r.mkt / pfMktSum * 100) : 0, c: COLORS[i % COLORS.length]};
+    });
+
+    /* ---- holdings table ---- */
+    var tbody = $("#pfHoldBody");
+    if(tbody){
+      tbody.innerHTML = rows.map(function(r,i){
+        var w = HOLD[i].w, dp = r.prev ? (r.price - r.prev) / r.prev * 100 : 0;
+        var cls = dp >= 0 ? "up" : "down";
+        var dstr = (dp >= 0 ? "+" : "−") + Math.abs(dp).toFixed(1) + "%";
+        return '<tr>' +
+          '<td class="pf-tk"><b>' + r.t + '</b><span>' + r.name + '</span></td>' +
+          '<td>' + r.qty + '</td>' +
+          '<td>' + money2(r.price) + '</td>' +
+          '<td>' + money0(r.mkt) + '</td>' +
+          '<td class="' + cls + '">' + dstr + '</td>' +
+          '<td>' + w.toFixed(1) + '%<span class="pf-wt-bar"><i style="width:' + w.toFixed(1) + '%"></i></span></td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    /* ---- hero quick stats + labels ---- */
+    setTxt("pfPos", String(pfPosCount));
+    var dayPLEl = $("#pfDayPL");
+    if(dayPLEl){ dayPLEl.textContent = signed0(pfDayChg); dayPLEl.className = "v " + (pfDayChg >= 0 ? "up" : "down"); }
+    setTxt("pfBP", money0(pfCash));
+
+    var srcLbl = $("#pfSrcLbl"), holdTag = $("#pfHoldTag"),
+        heroCap = $("#pfHeroCap"), holdCap = $("#pfHoldCap");
+    if(pfIsReal){
+      if(srcLbl){ srcLbl.textContent = "live"; }
+      if(holdTag){ holdTag.textContent = "live"; }
+      if(heroCap){ heroCap.innerHTML = '<span class="live"></span>Live paper account · your Flux book'; }
+      if(holdCap){ holdCap.textContent = "Live paper account · prices update through the session."; }
+    } else {
+      if(heroCap){ heroCap.innerHTML = '<span class="live"></span>Sample — <a href="./terminal.html" style="color:var(--cyan)">start paper trading</a> to see your real book here.'; }
+      if(holdCap){ holdCap.innerHTML = 'Sample · priced off live quotes — <a href="./terminal.html" style="color:var(--cyan)">start paper trading</a> to see your real holdings.'; }
+    }
+
+    /* ---- allocation metric cards ---- */
+    setTxt("pfMetVal", money0(pfMktSum));
+    setTxt("pfMetValSub", "across " + pfPosCount + " position" + (pfPosCount === 1 ? "" : "s"));
+    var metDay = $("#pfMetDay");
+    if(metDay){ metDay.textContent = signed0(pfDayChg); metDay.className = "v mono " + (pfDayChg >= 0 ? "up" : "down"); }
+    setTxt("pfMetDaySub", (pfDayPct >= 0 ? "+" : "−") + Math.abs(pfDayPct).toFixed(1) + "% on the book");
+
+    var secs = {};
+    rows.forEach(function(r){ var f = F.PRICES && F.PRICES[r.t]; if(f && f.sec) secs[f.sec] = 1; });
+    var secCount = Object.keys(secs).length || pfPosCount;
+    var top2 = (HOLD[0] ? HOLD[0].w : 0) + (HOLD[1] ? HOLD[1].w : 0);
+    var level = top2 >= 50 ? "high" : (top2 >= 30 ? "moderate" : "low");
+    var lvlCls = level === "high" ? "down" : (level === "low" ? "up" : "");
+    var metConc = $("#pfMetConc");
+    if(metConc){ metConc.innerHTML = secCount + " sector" + (secCount === 1 ? "" : "s") +
+      ' · <span class="' + lvlCls + '">' + level + '</span> concentration'; }
+    setTxt("pfMetConcSub", pfPosCount >= 2
+      ? ("Top two names are " + Math.round(top2) + "% of the book — Risk radar is watching.")
+      : "A single position — Risk radar is watching.");
+  }
+
+  /* ---- allocation legend (works for real book or fallback) ---- */
   var legend = $("#donutLegend");
   if(legend){
     legend.innerHTML = HOLD.map(function(s){
@@ -690,10 +799,10 @@ document.addEventListener("DOMContentLoaded", function(){
     c.textAlign = "center";
     c.fillStyle = "#dce1fb";
     c.font = "700 " + Math.round(R * 0.30) + "px 'JetBrains Mono', monospace";
-    c.fillText("$74.9k", cx, cy - 1);
+    c.fillText(kfmt(pfMktSum), cx, cy - 1);
     c.fillStyle = "#6b7a9c";
     c.font = "600 " + Math.round(R * 0.13) + "px 'JetBrains Mono', monospace";
-    c.fillText("5 HOLDINGS", cx, cy + R * 0.24);
+    c.fillText(pfPosCount + " HOLDING" + (pfPosCount === 1 ? "" : "S"), cx, cy + R * 0.24);
   }
 
   var donut = $("#donut"), donutDone = false;
@@ -747,7 +856,8 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---------------- brief signal rows (only the holdings' names) ---------------- */
   var sigWrap = $("#briefSigs");
   if(sigWrap && F.SIGNALS && F.sigHTML){
-    var names = {NVDA:1, AAPL:1, MSFT:1, AMD:1, COIN:1};
+    var names = {};
+    HOLD.forEach(function(s){ names[s.t] = 1; });
     F.SIGNALS.filter(function(s){ return names[s.t]; }).slice(0, 2).forEach(function(s){
       var box = document.createElement("div");
       box.innerHTML = F.sigHTML(s);
@@ -757,12 +867,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ---------------- live-ticking total value ---------------- */
   var totalEl = $("#pfTotal"), dayEl = $("#pfDay");
-  var prevClose = 90896.00, total = 92180.00;
+  var prevClose = pfPrevTotal, total = pfTotalVal;
   function fmt(n){ return "$" + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
   function paintTotal(flash){
     if(!totalEl) return;
     totalEl.textContent = fmt(total);
-    var chg = total - prevClose, pct = chg / prevClose * 100, up = chg >= 0;
+    var chg = total - prevClose, pct = prevClose ? chg / prevClose * 100 : 0, up = chg >= 0;
     if(dayEl){
       dayEl.textContent = (up ? "+" : "−") + "$" + Math.abs(chg).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) +
         " · " + (up ? "+" : "−") + Math.abs(pct).toFixed(2) + "%";
@@ -776,7 +886,13 @@ document.addEventListener("DOMContentLoaded", function(){
   if(!reduce){
     setInterval(function(){
       if(document.hidden) return;
-      total = Math.max(prevClose * 0.9, total + (Math.random() - 0.46) * 42);
+      if(pfIsReal && window.FLUXBook){
+        /* real book: reflect actual equity (prices refresh through the session) */
+        try{ total = FLUXBook.equity(); }catch(e){}
+      } else {
+        /* sample: illustrative drift */
+        total = Math.max(prevClose * 0.9, total + (Math.random() - 0.46) * 42);
+      }
       paintTotal(true);
     }, 1700);
   }
