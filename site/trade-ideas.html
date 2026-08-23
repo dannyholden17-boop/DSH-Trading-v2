@@ -445,16 +445,56 @@ document.addEventListener("DOMContentLoaded", function(){
         '</div>' +
       '</div>' +
       '<div class="idea-foot">' +
-        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + s.t + '">Paper trade ' + s.t + '</a>' +
+        '<button type="button" class="btn btn-primary btn-sm" data-paper="' + s.t + '" data-side="' + (long ? "buy" : "sell") + '">Paper trade ' + s.t + '</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + s.t + '">' + (F.Watch && F.Watch.has(s.t) ? "★ Watching" : "☆ Watch") + '</button>' +
+        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + s.t + '">Open in terminal</a>' +
         '<a class="btn btn-ghost btn-sm" href="./ai.html">Ask Fluxi</a>' +
         '<span class="gate"><b>✓</b> Model estimate · size to your own risk</span>' +
-      '</div>';
+      '</div>' +
+      '<p class="disclaimer" style="margin-top:12px">Paper trade — simulated fills on your $100k practice account. Not investment advice.</p>';
     list.appendChild(el);
     canvases.push({id: cid, seed: s.t, up: long, col: col});
   });
 
   if(!picks.length && list){
     list.innerHTML = '<div class="glass idea"><p class="thesis">Loading live setups…</p></div>';
+  }
+
+  /* ---- wire the action row: real paper orders + shared watchlist ---- */
+  function placePaper(ticker, side, btn){
+    var Book = window.FLUXBook;
+    if(!Book || !Book.place){ if(F.toast) F.toast("Paper book unavailable"); return; }
+    var px = F.priceOf ? F.priceOf(ticker) : 0;
+    var qty = Math.max(1, Math.round(1500 / (px || 1)));
+    /* never short a name not held — book rejects it anyway, so default to buy */
+    if(side === "sell"){
+      var pos = (Book.get && Book.get().positions) || {};
+      var held = pos[ticker];
+      var heldQty = (held && typeof held === "object") ? (held.qty || held.shares || 0) : (+held || 0);
+      if(!(heldQty > 0)) side = "buy";
+    }
+    var res = Book.place({ side:side, ticker:ticker, qty:qty, type:"market" });
+    if(res && res.ok){
+      btn.textContent = "✓ Added to paper book";
+      btn.classList.remove("btn-primary");
+      btn.classList.add("btn-ghost");
+      btn.disabled = true;
+    }
+  }
+
+  function toggleWatch(ticker, btn){
+    if(!F.Watch || !F.Watch.toggle){ return; }
+    F.Watch.toggle(ticker);
+    btn.textContent = F.Watch.has(ticker) ? "★ Watching" : "☆ Watch";
+  }
+
+  if(list){
+    list.addEventListener("click", function(ev){
+      var pb = ev.target.closest ? ev.target.closest("[data-paper]") : null;
+      if(pb){ placePaper(pb.getAttribute("data-paper"), pb.getAttribute("data-side"), pb); return; }
+      var wb = ev.target.closest ? ev.target.closest("[data-watch]") : null;
+      if(wb){ toggleWatch(wb.getAttribute("data-watch"), wb); return; }
+    });
   }
 
   /* ---- sparklines ---- */
