@@ -11,7 +11,18 @@
 <script src="./assets/flux-supa.js?v=2" defer></script>
 <script src="./assets/flux-site.js?v=2" defer></script>
 <script src="./assets/flux-kronos.js?v=2" defer></script>
+<script src="./assets/flux-jarvis.js?v=2" defer></script>
 <style>
+  /* interactive research tool */
+  .rtool{display:flex;gap:9px;margin:16px 0 6px;flex-wrap:wrap}
+  .rtool input{flex:1;min-width:160px;background:#040914;border:1px solid var(--line);border-radius:11px;color:var(--text);
+    padding:12px 14px;font-family:var(--f-mono);font-size:15px;letter-spacing:.04em;text-transform:uppercase;outline:none}
+  .rtool input:focus{border-color:rgba(0,242,255,.55);box-shadow:0 0 0 3px rgba(0,242,255,.12)}
+  .rout{white-space:pre-wrap;font-size:.95rem;line-height:1.65;color:var(--text);margin-top:6px}
+  .rchips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .rchip{font-family:var(--f-mono);font-size:.72rem;padding:6px 11px;border-radius:100px;cursor:pointer;
+    border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
+  .rchip:hover{border-color:rgba(0,242,255,.5);color:var(--cyan)}
   /* ---- page-only layout: research.html ---- */
   .r-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:start}
   @media(max-width:960px){.r-hero{grid-template-columns:1fr;gap:36px}}
@@ -133,47 +144,51 @@
     <div class="glass report reveal" id="report">
       <div class="rep-head">
         <span class="pill pill-violet"><i></i> Reporter</span>
-        <span class="ttl grad-text">Morning Brief</span>
-        <span class="ts" id="repTs">—</span>
+        <span class="ttl grad-text">Research any name</span>
+        <span class="ts" id="repTs">live</span>
       </div>
+      <div class="rtool">
+        <input id="rTicker" type="text" placeholder="Type a ticker — e.g. NVDA" aria-label="Ticker to research" maxlength="6" autocomplete="off">
+        <button class="btn btn-primary btn-sm" id="rGo">Generate report</button>
+      </div>
+      <div class="rchips" id="rChips"></div>
       <div class="rep-body">
-        <div class="rsec">
-          <h4>Summary</h4>
-          <p class="rline">Semis carried the tape overnight; your watchlist is <b>+1.4%</b> on the average, led by
-            <b>NVDA</b> and <b>AMD</b>.</p>
-          <p class="rline">Two names changed state since yesterday's close: <b>TSLA</b> filed an 8-K after the bell,
-            and <b>SMCI</b> entered the top 1% of the universe for unusual volume.</p>
-          <p class="rline">Breadth is narrow — 61% of the move sits in three tickers, which is the kind of tape that
-            reverses on a single headline.</p>
-        </div>
-        <div class="rsec">
-          <h4>Model forecasts</h4>
-          <div class="rline mrow"><span class="nm">PriceNet</span><span class="dd">next-session drift</span><span class="vv up">+0.9%</span></div>
-          <div class="rline mrow"><span class="nm">VolRegime</span><span class="dd">current regime</span><span class="vv" style="color:var(--amber)">Elevated</span></div>
-          <div class="rline mrow"><span class="nm">NewsSense</span><span class="dd">wire sentiment, 24h</span><span class="vv up">+0.32</span></div>
-          <div class="rline mrow" style="border-bottom:0"><span class="nm">MonteCarlo</span><span class="dd">1-day VaR, 95%</span><span class="vv down">−2.6%</span></div>
-        </div>
-        <div class="rsec">
-          <h4>Catalysts</h4>
-          <p class="rline"><b>TSLA</b> — 8-K, delivery outlook revised. Similar filings historically preceded a
-            <b class="down">−2.3%</b> five-day drift across 14 comparable events.</p>
-          <p class="rline"><b>MSFT</b> — cloud update Thursday. Skew has flipped bullish and a gamma wall is building at $430.</p>
-        </div>
-        <div class="rsec">
-          <h4>Risk</h4>
-          <p class="rline">Your book is <b>68% concentrated in semis</b>. Correlation across the top three positions
-            is 0.81 — they will move together, in both directions.</p>
-          <p class="rline">Two open positions sit inside 1.2% of their stops. The Risk engine has flagged both for review<span class="caret" id="caret"></span></p>
-        </div>
+        <div class="rout" id="rOut">Type a ticker and I'll pull a real report — valuation, the model's target, where it sits in its 52-week range, and my read.</div>
       </div>
       <div class="rep-foot">
-        <span id="repStat">writing report…</span>
-        <span style="margin-left:auto">Illustrative sample · not advice</span>
+        <span id="repStat">Powered by the Kronos model · real fundamentals</span>
+        <span style="margin-left:auto">Model estimate · not advice</span>
       </div>
     </div>
   </div>
 </section>
-<script>document.getElementById("report").classList.add("typing");</script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  function ready(){
+    var J = window.JARVIS, F = window.FLUX;
+    if(!J || !J.research || !F || !F.Kronos){ return setTimeout(ready, 120); }
+    var out = document.getElementById("rOut"), inp = document.getElementById("rTicker"), go = document.getElementById("rGo");
+    function run(t){
+      t = (t || inp.value || "").trim().toUpperCase(); if(!t) return;
+      inp.value = t;
+      var brief = J.research(t);
+      out.textContent = brief || ("I don't cover " + t + " yet — try NVDA, TSLA, COIN, AMD, MSFT or another large-cap.");
+    }
+    go.addEventListener("click", function(){ run(); });
+    inp.addEventListener("keydown", function(e){ if(e.key==="Enter") run(); });
+    // quick chips from the current top-ranked names
+    var chips = document.getElementById("rChips");
+    var uni = F.PRICES ? Object.keys(F.PRICES) : [];
+    var top = (F.Kronos.rank ? F.Kronos.rank(uni) : []).slice(0,3).map(function(r){return r.ticker;});
+    ["NVDA","TSLA","COIN"].concat(top).filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,5).forEach(function(t){
+      var c = document.createElement("span"); c.className="rchip"; c.textContent=t; c.onclick=function(){ run(t); }; chips.appendChild(c);
+    });
+    // generate one on load so the card is never empty
+    run(top[0] || "NVDA");
+  }
+  ready();
+});
+</script>
 
 <!-- ============ BAND ============ -->
 <div class="band">
