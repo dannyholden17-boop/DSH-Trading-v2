@@ -20,6 +20,8 @@
   "use strict";
   var F = window.FLUX || (window.FLUX = {});
   var J = (window.JARVIS = window.JARVIS || {});
+  window.FLUXI = J; // Fluxi — the assistant's name
+  J.name = "Fluxi";
 
   /* ------------------------------------------------------------
      1)  THE ORB — an Iron-Man style arc reactor rendered on a
@@ -212,6 +214,133 @@
   };
 
   /* ------------------------------------------------------------
+     3.5) MEMORY & LEARNING — Fluxi learns two ways:
+        • from humans: facts you teach it ("remember I hold NVDA",
+          "my rule is max 8% per name") + 👍/👎 feedback on answers.
+        • from itself: it journals every signal it gives, later scores
+          those calls against real price moves, tracks its hit-rate,
+          and distills "lessons" it can cite. It can also research a
+          name on demand and save the finding as a learned note.
+        Persisted to localStorage now, and mirrored to Supabase
+        (fluxi_memory) when signed in so it follows you across devices.
+        Honest by design: this is pattern memory + self-scoring, not a
+        promise of profit.
+     ------------------------------------------------------------ */
+  var MEM_KEY = "fluxi_mem_v1";
+  var Mem = { facts: [], lessons: [], journal: [], stats: { taught: 0, up: 0, down: 0, calls: 0, hits: 0, scored: 0 } };
+
+  function memLoad() {
+    try { var raw = localStorage.getItem(MEM_KEY); if (raw) { var m = JSON.parse(raw); if (m && m.facts) Mem = m; } } catch (e) {}
+    // pull server copy if signed in (merges, server wins on facts)
+    try {
+      var S = window.FluxSupa;
+      if (S && S.loadMemory) S.loadMemory().then(function (srv) {
+        if (srv && srv.facts) { Mem = mergeMem(Mem, srv); memSave(true); if (J.onLearn) J.onLearn(); }
+      });
+    } catch (e) {}
+  }
+  function mergeMem(a, b) {
+    var seen = {}, facts = [];
+    (b.facts || []).concat(a.facts || []).forEach(function (f) { var k = (f.text || "").toLowerCase(); if (k && !seen[k]) { seen[k] = 1; facts.push(f); } });
+    return { facts: facts.slice(0, 100), lessons: (b.lessons || a.lessons || []).slice(0, 60),
+      journal: (a.journal || []).slice(-200), stats: b.stats || a.stats || Mem.stats };
+  }
+  function memSave(skipServer) {
+    try { localStorage.setItem(MEM_KEY, JSON.stringify(Mem)); } catch (e) {}
+    if (!skipServer) { try { var S = window.FluxSupa; if (S && S.saveMemory && S._user) S.saveMemory(Mem); } catch (e) {} }
+  }
+
+  J.remember = function (fact) {
+    fact = (fact || "").trim(); if (!fact) return false;
+    var k = fact.toLowerCase();
+    if (Mem.facts.some(function (f) { return f.text.toLowerCase() === k; })) return false;
+    Mem.facts.unshift({ text: fact, at: Date.now() }); Mem.facts = Mem.facts.slice(0, 100);
+    Mem.stats.taught++; memSave(); if (J.onLearn) J.onLearn(); return true;
+  };
+  J.forget = function (needle) {
+    needle = (needle || "").toLowerCase(); var before = Mem.facts.length;
+    Mem.facts = Mem.facts.filter(function (f) { return f.text.toLowerCase().indexOf(needle) === -1; });
+    memSave(); if (J.onLearn) J.onLearn(); return before - Mem.facts.length;
+  };
+  J.facts = function () { return Mem.facts.slice(); };
+  J.lessons = function () { return Mem.lessons.slice(); };
+  J.memStats = function () { return Mem.stats; };
+  J.feedback = function (good, aboutText) {
+    if (good) Mem.stats.up++; else Mem.stats.down++;
+    // a thumbs-down becomes a lesson to be more careful on that topic
+    if (!good && aboutText) J.addLesson("A user pushed back on: \"" + aboutText.slice(0, 80) + "\" — weight that read more cautiously.", "human");
+    memSave(); if (J.onLearn) J.onLearn();
+  };
+  J.addLesson = function (text, src) {
+    if (!text) return; var k = text.toLowerCase();
+    if (Mem.lessons.some(function (l) { return l.text.toLowerCase() === k; })) return;
+    Mem.lessons.unshift({ text: text, src: src || "self", at: Date.now() }); Mem.lessons = Mem.lessons.slice(0, 60);
+    memSave(); if (J.onLearn) J.onLearn();
+  };
+
+  // journal a signal Fluxi gives, so it can score itself later
+  function journalSignal(t, predReturn, price) {
+    Mem.journal.push({ t: t, er: predReturn, p0: price, at: Date.now(), scored: false });
+    Mem.journal = Mem.journal.slice(-200); Mem.stats.calls++; memSave(true);
+  }
+  // self-review: grade past calls against the current price, learn from it
+  J.review = function () {
+    var now = Date.now(), changed = false, MIN_AGE = 90 * 1000; // grade calls >90s old (demo-fast)
+    Mem.journal.forEach(function (j) {
+      if (j.scored || (now - j.at) < MIN_AGE) return;
+      var p = F.priceOf && F.priceOf(j.t); if (!p || !j.p0) return;
+      var realized = (p - j.p0) / j.p0;
+      var directionRight = (j.er >= 0 && realized >= 0) || (j.er < 0 && realized < 0);
+      j.scored = true; Mem.stats.scored++; if (directionRight) Mem.stats.hits++; changed = true;
+    });
+    if (changed) {
+      var acc = Mem.stats.scored ? Math.round(Mem.stats.hits / Mem.stats.scored * 100) : null;
+      if (acc != null && Mem.stats.scored >= 5) {
+        if (acc >= 60) J.addLesson("My directional calls are running " + acc + "% so far — the momentum read is holding; keep sizing to conviction.", "self");
+        else if (acc <= 40) J.addLesson("My directional calls are only " + acc + "% lately — chop is high; widen the confidence bar before calling BUY/SELL.", "self");
+      }
+      memSave();
+    }
+    return Mem.stats;
+  };
+
+  // research a name on demand -> a saved learned note
+  J.research = function (t) {
+    var K = F.Kronos; if (!K || !t) return null;
+    var f = K.forecast(t), s = K.signal(t);
+    if (!f) return null;
+    var note = t + ": model target " + money(f.predClose) + " (" + pct(f.predReturn) + ", " +
+      Math.round(f.confidence) + "% conf) -> " + s.action + ". Logged " + new Date().toLocaleDateString() + ".";
+    J.addLesson(note, "research");
+    journalSignal(t, f.predReturn, f.last);
+    return note;
+  };
+
+  J.learnedSummary = function () {
+    var st = Mem.stats;
+    var acc = st.scored ? Math.round(st.hits / st.scored * 100) : null;
+    var lines = ["Here's what I've learned so far:"];
+    lines.push("• You've taught me " + Mem.facts.length + " thing" + (Mem.facts.length === 1 ? "" : "s") +
+      ", and I've logged " + st.calls + " of my own calls" + (acc != null ? " (running " + acc + "% directional so far)" : "") + ".");
+    if (Mem.facts.length) lines.push("What you told me: " + Mem.facts.slice(0, 5).map(function (f) { return "“" + f.text + "”"; }).join("; ") + ".");
+    if (Mem.lessons.length) lines.push("Lessons I've drawn: " + Mem.lessons.slice(0, 3).map(function (l) { return l.text; }).join(" "));
+    if (Mem.facts.length + Mem.lessons.length === 0) lines.push("Nothing yet — teach me with “remember …”, ask me to “research NVDA”, or thumbs-rate my answers and I'll adapt.");
+    lines.push("(Pattern memory + self-scoring — not a promise of profit.)");
+    return lines.join("\n");
+  };
+
+  // relevant taught facts for a topic (naive keyword recall)
+  function recallFacts(q) {
+    var ql = (q || "").toLowerCase();
+    return Mem.facts.filter(function (f) {
+      var words = f.text.toLowerCase().split(/\W+/).filter(function (w) { return w.length > 3; });
+      return words.some(function (w) { return ql.indexOf(w) !== -1; });
+    }).slice(0, 3);
+  }
+
+  memLoad();
+
+  /* ------------------------------------------------------------
      4)  GROUNDED NLU ENGINE — understands common desk questions and
          answers from real data. Falls back to the LLM (if wired) or
          a helpful capability prompt.
@@ -252,6 +381,7 @@
   function signalAnswer(t) {
     var K = F.Kronos; if (!K) return "The forecast engine isn't loaded yet.";
     var s = K.signal(t), f = K.forecast(t);
+    if (f) journalSignal(t, f.predReturn, f.last);   // learn from this call later
     var verdict = s.action === "BUY" ? "leans undervalued" : s.action === "SELL" ? "leans overvalued" : "looks fairly valued";
     return "Kronos on " + t + ": " + s.action + " — it " + verdict + ". Predicted move " + pct(s.predReturn) +
       " over the next " + (f ? f.horizon : 5) + " candles to a model target of " + money(f ? f.predClose : 0) +
@@ -293,13 +423,15 @@
   }
 
   function riskAnswer() {
+    var taught = recallFacts("risk hold own rule position");
+    var pre = taught.length ? "Going off what you told me (" + taught.map(function (f) { return "“" + f.text + "”"; }).join("; ") + "): " : "";
     var B = F.Book && F.Book.get ? F.Book.get() : null;
     if (B && B.positions && Object.keys(B.positions).length) {
       var syms = Object.keys(B.positions);
-      return "Your paper book holds " + syms.length + " names: " + syms.join(", ") +
+      return pre + "Your paper book holds " + syms.length + " names: " + syms.join(", ") +
         ". Watch concentration — if they move together, one bad print hits them all. Want a Kronos read on any of them?";
     }
-    return "Concentration and correlation are the usual risks — too much in names that move together. Load up a paper book on the terminal and I'll watch it in real time.";
+    return pre + "Concentration and correlation are the usual risks — too much in names that move together. Load up a paper book on the terminal and I'll watch it in real time.";
   }
 
   function moversAnswer() {
@@ -313,7 +445,7 @@
     return "Top movers (simulated): ▲ " + up.join(", ") + "  ▼ " + dn.join(", ") + ".";
   }
 
-  var CAP = "I'm Flux — your AI desk. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\n• \"What's my biggest risk?\"\nEverything I show is simulated / a model estimate — never investment advice.";
+  var CAP = "I'm Fluxi — your AI desk, and I learn as we go. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\n• \"What's my biggest risk?\"\nTeach me anything: \"remember I hold NVDA\" or \"my rule is max 8% per name.\" Ask me to \"research TSLA\" and I'll save what I find. Say \"what have you learned?\" anytime.\nEverything I show is simulated / a model estimate — never investment advice.";
 
   // Try the optional LLM edge function for free-form questions.
   function llm(q) {
@@ -332,10 +464,34 @@
     if (!q) return Promise.resolve({ text: CAP, kind: "help" });
 
     // greetings / identity / help
-    if (/^(hi|hey|hello|yo|sup|jarvis|flux)\b/.test(ql) && ql.length < 24)
-      return Promise.resolve({ text: "Online. Flux desk is live and scanning. What do you want to look at?", kind: "greet" });
-    if (has(ql, ["what can you", "help", "commands", "who are you", "what are you"]))
+    if (/^(hi|hey|hello|yo|sup|jarvis|fluxi|flux)\b/.test(ql) && ql.length < 24)
+      return Promise.resolve({ text: "Fluxi online. Six engines scanning, and I remember what you teach me. What are we looking at?", kind: "greet" });
+    if (has(ql, ["your name", "who are you", "what are you", "what's your name", "whats your name"]))
+      return Promise.resolve({ text: "I'm Fluxi — your AI trading desk. I read live signals, rank under/overvalued names, run the fund, and I learn from you and from how my own calls play out. Not a financial advisor — a research desk.", kind: "id" });
+    if (has(ql, ["what can you", "help", "commands", "what do you do"]))
       return Promise.resolve({ text: CAP, kind: "help" });
+
+    // ---- LEARNING: teach me / forget / what have you learned / research ----
+    var teach = q.match(/^\s*(?:remember|note|keep in mind|don'?t forget|fyi|my rule is|my rules are|i hold|i own|i'm holding|im holding)\b[:,]?\s*(.*)$/i);
+    if (teach) {
+      var fact = teach[1] && teach[1].trim() ? teach[1].trim() : q.trim();
+      // if they said "I hold NVDA" keep the whole phrase
+      if (/^(i hold|i own|i'm holding|im holding|my rule)/i.test(q)) fact = q.trim();
+      var ok = J.remember(fact);
+      return Promise.resolve({ text: ok ? "Got it — I'll remember that: “" + fact + "”. It'll shape how I read your book." : "I already had that noted.", kind: "learn" });
+    }
+    if (has(ql, ["forget "])) {
+      var n = J.forget(q.replace(/.*forget/i, "").trim());
+      return Promise.resolve({ text: n ? "Done — dropped " + n + " note" + (n === 1 ? "" : "s") + "." : "I didn't have anything matching that.", kind: "learn" });
+    }
+    if (has(ql, ["what have you learned", "what did you learn", "what do you know", "your memory", "what did i teach", "show your memory", "what you know about me"]))
+      return Promise.resolve({ text: J.learnedSummary(), kind: "learned" });
+    var res = q.match(/\bresearch\s+([A-Za-z.]{1,6})\b/i);
+    if (res) {
+      var rt = findTicker(res[1]) || res[1].toUpperCase();
+      var note = J.research(rt);
+      return Promise.resolve({ text: note ? "Researched " + rt + " and saved it to memory:\n" + note + "\nI'll score this call against what price actually does." : "I couldn't model " + rt + " — is it in the universe?", kind: "research", ticker: rt });
+    }
 
     // ticker-specific FIRST when a symbol is named (so "is NVDA undervalued?"
     // answers about NVDA, not the global list). Global lists handled below.
