@@ -570,6 +570,39 @@
       return Promise.resolve({ text: note ? note + "\n\n(Saved to memory — I'll grade this call against what price actually does.)" : "I couldn't model " + rt + " — is it in my universe? Try a name like NVDA, TSLA or COIN.", kind: "research", ticker: rt });
     }
 
+    // ---- ACTIONS: watchlist ----
+    var actT = findTicker(q);
+    if (actT && /\b(unwatch|unfollow|stop watching|remove .*watch|take .*off .*watch)\b/i.test(ql)) {
+      if (F.Watch) F.Watch.remove(actT);
+      return Promise.resolve({ text: "Done — took " + actT + " off your watchlist.", kind: "action" });
+    }
+    if (actT && /\b(watch|watchlist|watch list|follow|track|keep an eye)\b/i.test(ql)) {
+      if (F.Watch) F.Watch.add(actT);
+      return Promise.resolve({ text: "Added " + actT + " to your watchlist — I'll keep an eye on it. Want a price alert on it too?", kind: "action" });
+    }
+    if (/\b(watch ?list)\b/i.test(ql) && /\b(show|what|my|see|list|on my|whats)\b/i.test(ql)) {
+      var wl = F.Watch ? F.Watch.get() : [];
+      return Promise.resolve({ text: wl.length ? "Your watchlist: " + wl.join(", ") + "." : "Your watchlist is empty — say \"watch NVDA\" and I'll add it.", kind: "action" });
+    }
+    // ---- ACTIONS: price alerts ----
+    var wantAlert = /\b(alert|notify me|ping me|remind me|watch for)\b/i.test(ql) ||
+      (/\b(when|if|once)\b/i.test(ql) && /\b(hits?|reach\w*|above|below|over|under|crosses?|drops?|falls?|gets? to|rises?)\b/i.test(ql));
+    if (actT && wantAlert) {
+      var numM = q.match(/\$?\s*([\d]+(?:\.\d+)?)/);
+      var cur = F.priceOf(actT);
+      if (numM) {
+        var price = parseFloat(numM[1]);
+        var op = /\b(below|under|drops?|falls?|dips?|lose)\b/i.test(ql) ? "below"
+          : /\b(above|over|hits?|reach\w*|crosses?|gets? to|rises?|break)\b/i.test(ql) ? "above"
+            : (price >= cur ? "above" : "below");
+        var a = (F.Alerts && F.Alerts.add) ? F.Alerts.add(actT, op, price) : null;
+        return Promise.resolve({ text: a === null
+          ? "I couldn't set that — double-check the symbol and a valid price."
+          : "Alert armed 🔔 — I'll flag " + actT + " when it goes " + op + " " + money(price) + " (it's " + money(cur) + " now).", kind: "action" });
+      }
+      return Promise.resolve({ text: "What level for " + actT + "? Try \"alert me when " + actT + " hits " + money(Math.round(cur * 1.05)) + "\" or \"...drops below " + money(Math.round(cur * 0.95)) + "\".", kind: "action" });
+    }
+
     // trade command -> confirm card (paper). "buy 10 NVDA", "sell $2k TSLA".
     // Checked before the ticker/advice intents so an explicit order wins.
     var tr = parseTrade(q);
