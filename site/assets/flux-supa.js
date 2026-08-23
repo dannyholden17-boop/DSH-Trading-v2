@@ -59,13 +59,13 @@
     S.client.auth.onAuthStateChange(function(_e, sess){
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
-      if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); cleanLandingIfNeeded(); }
+      if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); S.wrapWatch(); S.hydrateWatch(); cleanLandingIfNeeded(); }
     });
     S.client.auth.getSession().then(function(r){
       var sess = r && r.data && r.data.session;
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
-      if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); }
+      if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); S.wrapWatch(); S.hydrateWatch(); }
       readyResolve(true);
     }).catch(function(){ readyResolve(true); });
   }
@@ -202,6 +202,41 @@
         else { throw new Error((res && res.data && res.data.error) || "Checkout unavailable — is billing configured?"); }
       });
   };
+
+  // ---- profile ----
+  S.updateName = function(name){
+    if(!S.client || !S._user || !name) return Promise.resolve();
+    return S.client.auth.updateUser({ data: { full_name: name } }).then(function(){
+      S._user.name = name; window.__fluxUser = S._user;
+      if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
+      return S.client.from("profiles").update({ display_name: name }).eq("id", S._user.id);
+    }).catch(function(){});
+  };
+
+  // ---- watchlist persistence (server-backed FLUXWatch) ----
+  S.hydrateWatch = function(){
+    if(!S.client || !S._user || !window.FLUXWatch) return Promise.resolve();
+    return S.client.from("watchlist").select("ticker").eq("user_id", S._user.id).then(function(r){
+      if(r && r.data && r.data.length){
+        try{ localStorage.setItem("flux_watch", JSON.stringify(r.data.map(function(x){ return x.ticker; }))); }catch(e){}
+        try{ window.dispatchEvent(new Event("flux-watch")); }catch(e){}
+      }
+    }).catch(function(){});
+  };
+  S.wrapWatch = function(){
+    if(!window.FLUXWatch || window.FLUXWatch.__wrapped) return;
+    var W = window.FLUXWatch, oa = W.add.bind(W), orm = W.remove.bind(W);
+    W.add = function(t){ var r = oa(t); if(S.client && S._user) S.client.from("watchlist").upsert({ user_id:S._user.id, ticker:(t||"").toUpperCase() }).then(function(){}); return r; };
+    W.remove = function(t){ var r = orm(t); if(S.client && S._user) S.client.from("watchlist").delete().eq("user_id",S._user.id).eq("ticker",(t||"").toUpperCase()).then(function(){}); return r; };
+    W.__wrapped = true;
+  };
+
+  // ---- onboarding flag (stored on the profile) ----
+  S.setOnboarded = function(){
+    try{ localStorage.setItem("flux_onboarded","1"); }catch(e){}
+    if(S.client && S._user) S.client.from("profiles").update({ onboarded: true }).eq("id", S._user.id).then(function(){}).catch(function(){});
+  };
+  S.isOnboarded = function(){ try{ return localStorage.getItem("flux_onboarded")==="1"; }catch(e){ return false; } };
 
   window.FluxSupa = S;
 })();
