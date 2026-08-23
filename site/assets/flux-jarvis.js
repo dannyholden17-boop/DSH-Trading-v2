@@ -570,6 +570,26 @@
       return Promise.resolve({ text: note ? note + "\n\n(Saved to memory — I'll grade this call against what price actually does.)" : "I couldn't model " + rt + " — is it in my universe? Try a name like NVDA, TSLA or COIN.", kind: "research", ticker: rt });
     }
 
+    // ---- COMPARE two names: "NVDA vs AMD", "compare TSLA and COIN" ----
+    if (/\b(vs\.?|versus|compare|or)\b/i.test(ql)) {
+      var syms = [], seen = {};
+      (q.toUpperCase().match(/[A-Z]{1,5}/g) || []).forEach(function (w) {
+        if (F.PRICES && F.PRICES[w] && !seen[w]) { seen[w] = 1; syms.push(w); }
+      });
+      if (syms.length >= 2) {
+        var K2 = F.Kronos, a = syms[0], b = syms[1];
+        function line(t) {
+          var f = K2 && K2.forecast(t), fu = fundOf(t), s = K2 && K2.signal(t);
+          return t + ": " + money(F.priceOf(t)) + ", model " + (s ? s.action : "—") + " (" + (f ? pct(f.predReturn) : "?") + ")" +
+            (fu && fu.pe != null ? ", P/E " + fu.pe : "") + (fu ? ", " + fu.sec : "");
+        }
+        var fa = K2 && K2.forecast(a), fb = K2 && K2.forecast(b);
+        var winner = (fa && fb) ? (fa.predReturn >= fb.predReturn ? a : b) : a;
+        return Promise.resolve({ text: a + " vs " + b + ":\n• " + line(a) + "\n• " + line(b) +
+          "\nMy model leans " + winner + " here on forward return — but they're different animals; size to your own view. Model estimate, not advice.", kind: "compare" });
+      }
+    }
+
     // ---- ACTIONS: watchlist ----
     var actT = findTicker(q);
     if (actT && /\b(unwatch|unfollow|stop watching|remove .*watch|take .*off .*watch)\b/i.test(ql)) {
