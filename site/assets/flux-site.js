@@ -222,8 +222,43 @@
     }
     requestAnimationFrame(frame);
   };
+  /* ---- toast notifications ---- */
+  F.toast=function(html,opts){
+    opts=opts||{};
+    var host=$(".fx-toasts");
+    if(!host){ host=document.createElement("div"); host.className="fx-toasts"; host.setAttribute("aria-live","polite"); document.body.appendChild(host); }
+    var t=document.createElement("div"); t.className="fx-toast";
+    t.innerHTML='<span class="ic">'+(opts.icon||"🔔")+'</span><div class="tx">'+html+'</div><button class="x" aria-label="Dismiss">✕</button>';
+    var kill=function(){ t.classList.add("out"); setTimeout(function(){ t.remove(); }, 320); };
+    t.querySelector(".x").onclick=kill;
+    host.appendChild(t);
+    if(opts.ttl!==0) setTimeout(kill, opts.ttl||7000);
+    return t;
+  };
+
+  /* ---- price-alert checker: fires alerts + toasts when a level is crossed ---- */
+  F.initAlerts=function(){
+    if(F._alertsRunning||!F.Alerts||!F.Alerts.check) return; F._alertsRunning=true;
+    var run=function(){
+      try{
+        var fired=F.Alerts.check();
+        if(fired&&fired.length){
+          fired.forEach(function(al){
+            var dir=al.op==="above"?"rose above":"dropped below";
+            F.toast("<b>"+al.ticker+"</b> "+dir+" $"+(+al.price).toFixed(2)+" — now $"+(+al.firedPrice).toFixed(2)+".",{icon:al.op==="above"?"📈":"📉",ttl:9000});
+          });
+        }
+      }catch(e){}
+    };
+    run();
+    setInterval(run, 12000);
+    // also re-check whenever the server pushes fresh prices
+    window.addEventListener("flux-prices", run);
+  };
+
   F.initFX=function(){
     var body=document.body;
+    F.initAlerts();
     // animated aurora backdrop (once) — fallback layer behind the shader
     if(!F.reduced()&&!$(".fx-aurora")){
       var a=document.createElement("div");a.className="fx-aurora";a.setAttribute("aria-hidden","true");
