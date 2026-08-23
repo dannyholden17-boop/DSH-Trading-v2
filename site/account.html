@@ -7,10 +7,10 @@
 <meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=3">
-<script src="./assets/flux-supa.js?v=3" defer></script>
-<script src="./assets/flux-site.js?v=3" defer></script>
-<script src="./assets/flux-kronos.js?v=3" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=4">
+<script src="./assets/flux-supa.js?v=4" defer></script>
+<script src="./assets/flux-site.js?v=4" defer></script>
+<script src="./assets/flux-kronos.js?v=4" defer></script>
 <style>
   /* page-only LAYOUT: account.html (acc- prefixed). Shared tokens/classes reused, never redefined. */
   .acc-stack{display:flex;flex-direction:column;gap:18px;margin-top:26px}
@@ -167,6 +167,26 @@
           <button class="btn btn-ghost btn-sm" type="button" id="accReset">Reset paper account</button>
         </div>
         <p class="acc-note">$100,000 of virtual money to learn with. Resetting clears every paper position and order and restores the starting balance. Nothing here is real money or real trading.</p>
+      </div>
+
+      <!-- PAPER TRADING ACCOUNT (management) -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Paper trading account</h2><span class="acc-cap">simulated · virtual money</span></div>
+        <div class="acc-chips">
+          <div class="acc-chip"><b id="ptaEquity">$—</b><span>Equity</span></div>
+          <div class="acc-chip"><b id="ptaCash">$—</b><span>Cash / buying power</span></div>
+          <div class="acc-chip"><b id="ptaInvested">$—</b><span>Invested</span></div>
+          <div class="acc-chip"><b id="ptaPositions">—</b><span>Open positions</span></div>
+          <div class="acc-chip"><b id="ptaReturn">—</b><span>Total return</span></div>
+          <div class="acc-chip"><b id="ptaOrders">—</b><span>Orders placed</span></div>
+        </div>
+        <div class="acc-pact">
+          <button class="btn btn-primary btn-sm" type="button" id="ptaDeposit">Add $10,000 buying power</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="ptaExport">Export trade history (CSV)</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="ptaCloseAll">Close all positions</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="ptaReset">Reset paper account</button>
+        </div>
+        <p class="acc-note">Add virtual buying power, export your simulated trade history, close everything at market, or start over. This is a paper account funded with virtual money — nothing here is real trading, and none of it is investment advice.</p>
       </div>
 
       <!-- PREFERENCES -->
@@ -336,6 +356,72 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   window.addEventListener("flux-book-updated", renderPaper);
   window.addEventListener("flux-prices", renderPaper);
+
+  /* ---------------- paper trading account (management) ---------------- */
+  function renderPTA(){
+    if(!B) return;
+    var book = (B.get ? B.get() : {}) || {};
+    var eq = (B.equity ? B.equity() : 0) || 0;
+    var cash = book.cash || 0;
+    var invested = eq - cash;
+    var posCount = book.positions ? Object.keys(book.positions).length : 0;
+    var orderCount = (book.orders && book.orders.length) || 0;
+    var eqEl = $("#ptaEquity"); if(eqEl) eqEl.textContent = money(eq);
+    var cashEl = $("#ptaCash"); if(cashEl) cashEl.textContent = money(cash);
+    var invEl = $("#ptaInvested"); if(invEl) invEl.textContent = money(invested);
+    var posEl = $("#ptaPositions"); if(posEl) posEl.textContent = String(posCount);
+    var ordEl = $("#ptaOrders"); if(ordEl) ordEl.textContent = String(orderCount);
+    var rEl = $("#ptaReturn");
+    if(rEl && B.perf){
+      var p = B.perf();
+      rEl.textContent = (p.ret>=0?"+":"") + (p.ret*100).toFixed(2) + "%";
+      rEl.style.color = p.ret>=0 ? "var(--emerald)" : "var(--crimson)";
+    }
+  }
+  renderPTA();
+
+  var ptaDeposit = $("#ptaDeposit");
+  if(ptaDeposit && B && B.deposit){
+    ptaDeposit.addEventListener("click", function(){
+      B.deposit(10000); renderPTA();
+    });
+  }
+  var ptaExport = $("#ptaExport");
+  if(ptaExport && B){
+    ptaExport.addEventListener("click", function(){
+      var orders = (B.get && B.get().orders) || [];
+      var rows = orders.map(function(o){
+        return {
+          date: new Date(o.ts).toLocaleString(),
+          side: o.side,
+          ticker: o.ticker,
+          qty: o.qty,
+          price: o.price,
+          type: o.type,
+          value: (o.qty * o.price).toFixed(2)
+        };
+      });
+      if(F && F.exportCSV) F.exportCSV("flux-trades.csv", rows);
+    });
+  }
+  var ptaCloseAll = $("#ptaCloseAll");
+  if(ptaCloseAll && B && B.closeAll){
+    ptaCloseAll.addEventListener("click", function(){
+      if(confirm("Close all open paper positions at the current market price?")){
+        B.closeAll(); renderPTA();
+      }
+    });
+  }
+  var ptaReset = $("#ptaReset");
+  if(ptaReset && B && B.reset){
+    ptaReset.addEventListener("click", function(){
+      if(confirm("Reset your paper account? This wipes every paper position and your entire trade history, and restores the $100,000 starting balance.")){
+        B.reset(); renderPTA();
+      }
+    });
+  }
+  window.addEventListener("flux-book-updated", renderPTA);
+  window.addEventListener("flux-prices", renderPTA);
 
   /* ---------------- preferences (localStorage flux_pref_*) ---------------- */
   function wirePref(id, key){
