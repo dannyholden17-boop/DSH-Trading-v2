@@ -138,7 +138,7 @@
           <li>Live trading through your own broker</li>
           <li>Phone and email alerts</li>
         </ul>
-        <a class="btn btn-primary" href="./download.html">Start 14-day trial</a>
+        <a class="btn btn-primary" href="./signin.html?next=pricing.html" data-plan="trader">Start 14-day trial</a>
       </div>
 
       <div class="glass plan">
@@ -154,7 +154,7 @@
           <li>API access</li>
           <li>Dedicated support</li>
         </ul>
-        <a class="btn btn-ghost" href="./download.html">Talk to us</a>
+        <a class="btn btn-ghost" href="./signin.html?next=pricing.html" data-plan="desk">Get Desk</a>
       </div>
 
     </div>
@@ -363,6 +363,24 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   setCycle("m");
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var S = window.FluxSupa;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-plan]"), function(btn){
+    btn.addEventListener("click", function(ev){
+      if(!S || !S.checkout) return;           // graceful fallback → href (sign in)
+      ev.preventDefault();
+      var plan = btn.getAttribute("data-plan"), orig = btn.textContent;
+      btn.textContent = "Redirecting…"; btn.style.pointerEvents = "none";
+      (S.ready || Promise.resolve()).then(function(){ return S.checkout(plan); })
+        .catch(function(e){
+          btn.textContent = orig; btn.style.pointerEvents = "";
+          alert((e && e.message) || "Checkout isn't available yet — billing is still being set up.");
+        });
+    });
+  });
 });
 </script>
 </body></html>

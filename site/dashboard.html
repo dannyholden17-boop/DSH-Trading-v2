@@ -236,6 +236,51 @@
   </div>
 </section>
 
+<!-- ============ KRONOS AI SIGNALS ============ -->
+<section class="section" style="padding-top:0" id="kronosSignals">
+  <div class="wrap">
+    <span class="eyebrow">Kronos AI</span>
+    <h2 class="h2 reveal">Today's forecast signals.</h2>
+    <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return — <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:.8rem">Forecast-driven · not advice.</span></p>
+    <div class="grid g-3 reveal" id="kSignals" style="margin-top:22px"></div>
+    <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
+  </div>
+</section>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX, K = F && F.Kronos;
+  var host = document.querySelector("#kSignals");
+  if(!K || !host) return;
+  function render(){
+    var ranked = K.rank();                       // desc by predicted return
+    var top = ranked.slice(0, 3);                // most bullish
+    var bot = ranked.slice(-3).reverse();        // most bearish
+    var seen = {}, picks = [];
+    top.concat(bot).forEach(function(r){ if(!seen[r.ticker]){ seen[r.ticker]=1; picks.push(r); } });
+    host.innerHTML = picks.map(function(r){
+      var col = r.action==="BUY" ? F.EM : (r.action==="SELL" ? F.CR : "var(--text-faint)");
+      var nm = (F.NAMES && F.NAMES[r.ticker]) || "";
+      return '<a class="glass feat glass-hover sheen" style="text-decoration:none;color:inherit" href="./terminal.html?symbol='+r.ticker+'">'+
+        '<div style="display:flex;align-items:center;gap:10px"><b style="font-family:var(--f-mono);font-size:1.05rem">'+r.ticker+'</b>'+
+        '<span style="font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:6px;border:1px solid '+col+';color:'+col+'">'+r.action+'</span>'+
+        '<span class="mono" style="margin-left:auto;font-size:9px;color:var(--text-faint)">'+(r.model||"Kronos")+'</span></div>'+
+        '<div class="muted" style="font-size:.78rem;margin-top:6px">'+nm+'</div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-family:var(--f-mono)">'+
+          '<div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Pred. return</div>'+
+          '<div style="font-weight:700;font-size:1.15rem;color:'+col+'">'+K.fmtPct(r.predReturn)+'</div></div>'+
+          '<div style="text-align:right"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Confidence</div>'+
+          '<div style="font-weight:700;font-size:1.15rem">'+r.confidence+'%</div></div>'+
+        '</div></a>';
+    }).join("");
+    var src = document.querySelector("#kSrc");
+    if(src) src.textContent = (F.KFORECAST ? "Live Kronos model" : "Kronos-approx model") + " · 5-candle horizon · updates as forecasts refresh.";
+  }
+  render();
+  window.addEventListener("flux-prices", render);
+  window.addEventListener("flux-forecasts", render);
+});
+</script>
+
 <!-- ============ LIVE PAPER ACCOUNT + ALERTS ============ -->
 <section class="section" style="padding-top:0" id="paperAcct">
   <div class="wrap">

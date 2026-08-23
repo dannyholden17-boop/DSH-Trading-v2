@@ -59,13 +59,13 @@
     S.client.auth.onAuthStateChange(function(_e, sess){
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
-      if(S._user){ S.wrapBook(); S.hydrate(); cleanLandingIfNeeded(); }
+      if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); cleanLandingIfNeeded(); }
     });
     S.client.auth.getSession().then(function(r){
       var sess = r && r.data && r.data.session;
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
-      if(S._user){ S.wrapBook(); S.hydrate(); }
+      if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); }
       readyResolve(true);
     }).catch(function(){ readyResolve(true); });
   }
@@ -179,6 +179,28 @@
       return { fund:(r[0]&&r[0].data)||null, positions:(r[1]&&r[1].data)||[], orders:(r[2]&&r[2].data)||[],
         equity:(r[3]&&r[3].data)||[], reports:(r[4]&&r[4].data)||[] };
     }).catch(function(){ return null; });
+  };
+
+  // ---- subscriptions / billing (Stripe via edge functions) ----
+  S.sub = null;
+  S.subscription = function(){
+    if(!S.client || !S._user) return Promise.resolve(null);
+    return S.client.from("subscriptions").select("plan,status,current_period_end").eq("user_id", S._user.id).maybeSingle()
+      .then(function(r){ S.sub = (r && r.data) || null; if(window.FLUX) window.FLUX.SUB = S.sub;
+        try{ window.dispatchEvent(new Event("flux-sub")); }catch(e){} return S.sub; })
+      .catch(function(){ return null; });
+  };
+  S.hasActivePlan = function(){ return !!(S.sub && (S.sub.status === "active" || S.sub.status === "trialing")); };
+  // Start Stripe Checkout for a plan ("trader" | "desk"); redirects to Stripe.
+  S.checkout = function(plan){
+    if(!S.client) return Promise.reject(new Error("not ready"));
+    if(!S._user){ location.href = "./signin.html?next=pricing.html"; return Promise.resolve(); }
+    return S.client.functions.invoke("create-checkout", { body: { plan: plan, origin: location.origin } })
+      .then(function(res){
+        var url = res && res.data && res.data.url;
+        if(url){ location.href = url; }
+        else { throw new Error((res && res.data && res.data.error) || "Checkout unavailable — is billing configured?"); }
+      });
   };
 
   window.FluxSupa = S;
