@@ -430,3 +430,20 @@ body{
 
 /* keep aurora blobs on-palette (cyan/green rather than violet-heavy) */
 .fx-aurora b:nth-child(2){background:radial-gradient(circle at 60% 40%,rgba(var(--glow),.45),transparent 62%)}
+
+/* ---- toast notifications (price alerts, confirmations) ---- */
+.fx-toasts{position:fixed;right:16px;bottom:16px;z-index:2000;display:flex;flex-direction:column;gap:10px;
+  max-width:min(360px,92vw);pointer-events:none}
+.fx-toast{pointer-events:auto;background:rgba(11,18,32,.96);border:1px solid rgba(var(--glow-c),.45);
+  border-radius:13px;padding:13px 15px;box-shadow:0 10px 40px -12px #000, 0 0 30px -14px rgba(var(--glow),.7);
+  backdrop-filter:blur(12px);display:flex;gap:11px;align-items:flex-start;
+  animation:toastIn .32s cubic-bezier(.2,.9,.3,1) both}
+.fx-toast.out{animation:toastOut .3s ease forwards}
+.fx-toast .ic{font-size:1.15rem;line-height:1;flex:none;filter:drop-shadow(0 0 6px rgba(var(--glow),.7))}
+.fx-toast .tx{min-width:0;font-size:.9rem;line-height:1.4;color:var(--text)}
+.fx-toast .tx b{color:var(--cyan)}
+.fx-toast .x{margin-left:auto;flex:none;background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:1rem;padding:0 2px}
+.fx-toast .x:hover{color:var(--text)}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+@media(max-width:520px){.fx-toasts{right:10px;left:10px;bottom:10px;max-width:none}}

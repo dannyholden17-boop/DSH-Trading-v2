@@ -11,6 +11,7 @@
 <script src="./assets/flux-supa.js?v=3" defer></script>
 <script src="./assets/flux-site.js?v=3" defer></script>
 <script src="./assets/flux-kronos.js?v=3" defer></script>
+<script src="./assets/flux-jarvis.js?v=3" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: dashboard.html (db- prefixed)
@@ -196,8 +197,44 @@
         <a class="btn btn-ghost btn-sm" data-signout href="./index.html">Sign out</a>
       </div>
     </div>
+
+    <!-- Live personalized Fluxi brief -->
+    <div class="glass reveal" id="dbBrief" style="margin-top:18px;padding:16px 18px;display:flex;gap:13px;align-items:flex-start">
+      <span style="font-size:1.3rem;line-height:1.2;filter:drop-shadow(0 0 8px rgba(var(--glow-c),.6))">◇</span>
+      <div style="min-width:0;flex:1">
+        <div class="mono" style="font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">Fluxi · your morning read</div>
+        <p id="dbBriefText" style="margin-top:6px;color:var(--text-dim);font-size:.95rem;line-height:1.55">Reading the tape…</p>
+        <a class="btn btn-ghost btn-sm" href="./ai.html" style="margin-top:10px">Ask Fluxi anything →</a>
+      </div>
+    </div>
   </div>
 </section>
+<script>
+(function(){
+  function go(){
+    var J=window.JARVIS, F=window.FLUX;
+    if(!J||!J.brief||!F||!F.Kronos){ return setTimeout(go,120); }
+    var el=document.getElementById("dbBriefText"); if(!el) return;
+    try{
+      var parts=[];
+      // personalized: your watchlist's best/worst today
+      var wl=(F.Watch&&F.Watch.get)?F.Watch.get():[];
+      if(wl.length){
+        var moves=wl.map(function(t){var p=F.priceOf(t),pr=F.prevClose(t);return {t:t,chg:pr?(p-pr)/pr:0};}).sort(function(a,b){return b.chg-a.chg;});
+        var top=moves[0],bot=moves[moves.length-1];
+        parts.push("Your watchlist: "+top.t+" leads "+(top.chg>=0?"+":"")+(top.chg*100).toFixed(1)+"%"+(moves.length>1?", "+bot.t+" lags "+(bot.chg*100).toFixed(1)+"%":"")+".");
+      }
+      // model's top idea
+      var v=J.valuation(); if(v.under&&v.under[0]){ var u=v.under[0]; parts.push("Model's top idea: "+u.ticker+" — sees "+(u.upside*100).toFixed(1)+"% upside toward $"+(+u.fair).toFixed(2)+"."); }
+      // fund
+      parts.push("The Autopilot fund is trading live on Kronos signals.");
+      parts.push("Simulated · model estimates · not advice.");
+      el.textContent = parts.join(" ");
+    }catch(e){ el.textContent = "Ask me for a brief, a valuation, or what I think of any ticker."; }
+  }
+  document.addEventListener("DOMContentLoaded",go);
+})();
+</script>
 
 <!-- ============ ONBOARDING ============ -->
 <section class="section" style="padding-top:8px;padding-bottom:0;display:none" id="onboard">

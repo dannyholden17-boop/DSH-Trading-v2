@@ -407,25 +407,25 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ---------------- sector heatmap ---------------- */
-  var SECT = [
-    {n:"Technology",      w:"28.4%", v:1.42},
-    {n:"Semis",           w:"9.1%",  v:2.61},
-    {n:"Financials",      w:"13.2%", v:0.38},
-    {n:"Energy",          w:"3.9%",  v:-1.14},
-    {n:"Healthcare",      w:"11.6%", v:-0.42},
-    {n:"Consumer Disc.",  w:"10.3%", v:0.87},
-    {n:"Industrials",     w:"8.2%",  v:0.21},
-    {n:"Utilities",       w:"2.4%",  v:-0.93},
-    {n:"Materials",       w:"2.2%",  v:-0.16},
-    {n:"Real Estate",     w:"2.1%",  v:-1.68},
-    {n:"Comm. Services",  w:"8.6%",  v:1.09}
-  ];
+  /* ---------------- sector heatmap (REAL: our universe grouped by sector) ---------------- */
+  var SECT = (function(){
+    var groups = {};
+    (F.PRICES ? Object.keys(F.PRICES) : []).forEach(function(t){
+      var fu = F.FUND && F.FUND[t]; if(!fu || !fu.sec) return;
+      var sec = fu.sec.split(" · ")[0];               // "ETF · S&P 500" -> "ETF"
+      var p = F.priceOf(t), pr = F.prevClose(t); var chg = pr ? (p - pr) / pr * 100 : 0;
+      (groups[sec] = groups[sec] || []).push(chg);
+    });
+    return Object.keys(groups).map(function(sec){
+      var arr = groups[sec], avg = arr.reduce(function(a,b){return a+b;},0) / arr.length;
+      return { n: sec, w: arr.length + (arr.length===1?" name":" names"), v: +avg.toFixed(2) };
+    }).sort(function(a,b){ return b.v - a.v; });
+  })();
   var heat = $("#heat");
   if(heat){
     heat.innerHTML = SECT.map(function(s,i){
       return '<div class="sec" data-s="'+i+'"><div class="nm">'+s.n+'</div>'+
-        '<div class="pc mono"></div><div class="wt">wt '+s.w+'</div></div>';
+        '<div class="pc mono"></div><div class="wt">'+s.w+'</div></div>';
     }).join("");
   }
   function paintSectors(){
