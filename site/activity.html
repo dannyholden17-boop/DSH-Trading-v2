@@ -116,7 +116,8 @@
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   "use strict";
-  if(!window.FLUXAuth || !FLUXAuth.guard()) return;
+  // no auth gate — your paper track record lives in the local book and works without login,
+  // consistent with the terminal/portfolio paper surfaces.
   var F = window.FLUX || {}, B = window.FLUXBook;
   var $ = function(s){return document.querySelector(s)};
   function money(n){ return (n<0?"-$":"$") + Math.abs(Number(n)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
