@@ -255,6 +255,22 @@
         tp.remove();
         var b = bubble(res.text, "a");
         setStatus("FLUXI ONLINE","six engines · scanning"); orb.pulse(0.6);
+        // trade hand-off: swap feedback row for Confirm / Cancel
+        if(res.kind === "trade" && res.action){
+          var old = b.querySelector(".fbrow"); if(old) old.remove();
+          var tc = document.createElement("div"); tc.className = "fbrow";
+          tc.innerHTML = '<button class="btn btn-primary btn-sm" style="padding:7px 16px">Confirm</button>'+
+                         '<button class="btn btn-ghost btn-sm" style="padding:7px 16px">Cancel</button>';
+          var bs = tc.querySelectorAll("button");
+          bs[0].onclick = function(){
+            var r = J.executeTrade(res.action);
+            tc.remove();
+            bubble(r.ok ? ("✅ "+r.msg+" — logged to your paper book.") : ("⚠️ "+r.msg), "a");
+            if(r.ok){ orb.pulse(1); refreshFund(); }
+          };
+          bs[1].onclick = function(){ tc.remove(); bubble("Cancelled — nothing placed.","a"); };
+          b.appendChild(tc);
+        }
         if(speak.checked && J.ttsSupported){
           setStatus("SPEAKING…","voice out"); orb.pulse(1);
           J.speak(res.text);

@@ -457,6 +457,40 @@
   function short(r) { return { ticker: r.ticker, price: r.price, fair: r.fair, edge: r.edge }; }
   function safe(fn) { try { return fn(); } catch (e) { return null; } }
 
+  /* ---- TRADE hand-off: parse "buy 10 NVDA" / "sell $2k TSLA" ---- */
+  function parseTrade(q) {
+    var ql = q.toLowerCase();
+    // don't treat advice questions as orders
+    if (/\b(should|would|could|can i|do i|is it|worth|think|what if)\b/.test(ql)) return null;
+    var sideM = ql.match(/\b(buy|sell|short|go long|long)\b/);
+    if (!sideM) return null;
+    var side = /sell|short/.test(sideM[1]) ? "sell" : "buy";
+    var t = findTicker(q); if (!t) return { side: side, ticker: null, qty: null, need: "ticker" };
+    // notional ($) or share count
+    var mNotional = ql.match(/\$\s?([\d,]+(?:\.\d+)?)\s*(k|m)?/);
+    var mShares = ql.match(/\b([\d,]+(?:\.\d+)?)\s*(k)?\s*(?:shares?|sh)?\b/);
+    var price = (F.priceOf && F.priceOf(t)) || 0;
+    var qty = null, notional = null;
+    if (mNotional) {
+      notional = parseFloat(mNotional[1].replace(/,/g, "")) * (mNotional[2] === "k" ? 1e3 : mNotional[2] === "m" ? 1e6 : 1);
+      qty = price ? Math.floor(notional / price) : null;
+    } else if (mShares && mShares[1]) {
+      qty = Math.floor(parseFloat(mShares[1].replace(/,/g, "")) * (mShares[2] === "k" ? 1e3 : 1));
+    }
+    if (!qty || qty < 1) return { side: side, ticker: t, qty: null, price: price, need: "qty" };
+    return { side: side, ticker: t, qty: qty, price: price, cost: +(qty * price).toFixed(2) };
+  }
+
+  // Execute a confirmed paper trade against the local $100k book.
+  J.executeTrade = function (a) {
+    if (!a || !a.ticker || !a.qty) return { ok: false, msg: "Nothing to place." };
+    if (!F.Book || !F.Book.place) return { ok: false, msg: "The paper book isn't loaded." };
+    var res = F.Book.place({ side: a.side, ticker: a.ticker, qty: a.qty, type: "market" });
+    // learn from the user's actual action
+    if (res.ok) J.remember(a.side === "buy" ? ("I bought " + a.qty + " " + a.ticker) : ("I sold " + a.qty + " " + a.ticker));
+    return res;
+  };
+
   // Main entry — returns a Promise<{text, kind}>
   J.ask = function (input) {
     var q = (input || "").trim();
@@ -491,6 +525,20 @@
       var rt = findTicker(res[1]) || res[1].toUpperCase();
       var note = J.research(rt);
       return Promise.resolve({ text: note ? "Researched " + rt + " and saved it to memory:\n" + note + "\nI'll score this call against what price actually does." : "I couldn't model " + rt + " — is it in the universe?", kind: "research", ticker: rt });
+    }
+
+    // trade command -> confirm card (paper). "buy 10 NVDA", "sell $2k TSLA".
+    // Checked before the ticker/advice intents so an explicit order wins.
+    var tr = parseTrade(q);
+    if (tr) {
+      if (tr.need === "ticker") return Promise.resolve({ text: "Which name do you want to " + tr.side + "? e.g. \"" + tr.side + " 10 NVDA\".", kind: "chat" });
+      if (tr.need === "qty") return Promise.resolve({ text: "How many shares of " + tr.ticker + " (at " + money(tr.price) + ")? Say a number or a dollar amount — e.g. \"" + tr.side + " 10 " + tr.ticker + "\" or \"" + tr.side + " $2000 " + tr.ticker + "\".", kind: "chat" });
+      var verb = tr.side === "buy" ? "Buy" : "Sell";
+      return Promise.resolve({
+        text: verb + " " + tr.qty + " " + tr.ticker + " @ ~" + money(tr.price) + " ≈ " + money(tr.cost) +
+          " on your paper account. Confirm?\n(Simulated $100k book. For a real brokerage, connect it on the Portfolio page.)",
+        kind: "trade", action: tr
+      });
     }
 
     // ticker-specific FIRST when a symbol is named (so "is NVDA undervalued?"
