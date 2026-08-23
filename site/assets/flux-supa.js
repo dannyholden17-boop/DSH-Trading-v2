@@ -217,6 +217,27 @@
       }).catch(function(){ return null; });
   };
 
+  // ---- latest server-generated brief (24/7 pg_cron writes public.briefs) ----
+  S.latestBrief = function(){
+    if(!S.client) return Promise.resolve(null);
+    return S.client.from("briefs").select("tone,headline,under,over,text,created_at")
+      .order("id", { ascending: false }).limit(1).then(function(res){
+        return (res && res.data && res.data[0]) || null;
+      }).catch(function(){ return null; });
+  };
+
+  // ---- Fluxi memory (per-user learning store; jsonb blob) ----
+  S.loadMemory = function(){
+    if(!S.client || !S._user) return Promise.resolve(null);
+    return S.client.from("fluxi_memory").select("data").eq("user_id", S._user.id).maybeSingle()
+      .then(function(res){ return (res && res.data && res.data.data) || null; }).catch(function(){ return null; });
+  };
+  S.saveMemory = function(data){
+    if(!S.client || !S._user) return Promise.resolve(false);
+    return S.client.from("fluxi_memory").upsert({ user_id: S._user.id, data: data, updated_at: new Date().toISOString() })
+      .then(function(){ return true; }).catch(function(){ return false; });
+  };
+
   // ---- profile ----
   S.updateName = function(name){
     if(!S.client || !S._user || !name) return Promise.resolve();

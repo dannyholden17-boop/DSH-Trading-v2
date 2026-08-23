@@ -83,6 +83,14 @@
   .pos{color:var(--emerald)}.neg{color:var(--crimson)}
   .flux-note{font-family:var(--f-mono);font-size:.64rem;color:var(--text-faint);margin-top:10px;letter-spacing:.04em}
   .live-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);display:inline-block;animation:blink 1.6s infinite}
+  .fbrow{display:flex;gap:6px;margin-top:8px}
+  .fb{background:transparent;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:.8rem;padding:2px 8px;transition:.15s;filter:grayscale(.3)}
+  .fb:hover{border-color:rgba(var(--glow-c),.5);filter:none;box-shadow:0 0 12px -5px rgba(var(--glow),.6)}
+  .fbok{font-family:var(--f-mono);font-size:.7rem;color:var(--emerald)}
+  .memitem{font-size:.82rem;color:var(--text-dim);padding:7px 0;border-bottom:1px solid var(--line-2);line-height:1.45}
+  .memitem:last-child{border-bottom:none}
+  .memitem .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-right:6px}
+  .memitem.self .k{color:var(--emerald)}.memitem.research .k{color:#c4abff}
 </style>
 </head>
 <body class="jbg">
@@ -124,8 +132,8 @@
             <div class="wave2" id="orbSub">six engines · scanning</div>
           </div>
         </div>
-        <h1 class="grad-text">Ask Flux anything.</h1>
-        <p class="sub">Your always-on AI desk — grounded in live signals, valuation models and the fund. Type or talk.</p>
+        <h1 class="grad-text">Meet Fluxi.</h1>
+        <p class="sub">Your always-on AI desk — grounded in live signals and valuation models, and it learns from you and from its own calls. Type or talk.</p>
       </div>
 
       <div class="glass cyber-card chatbox">
@@ -170,6 +178,13 @@
         <div class="briefline" id="fund">Reading the fund…</div>
         <a class="btn btn-ghost btn-sm" href="./autopilot.html" style="margin-top:12px">Watch it trade →</a>
       </div>
+
+      <div class="glass panel cyber-card">
+        <h3><span class="glyph2">❖</span> Fluxi's memory</h3>
+        <div class="subh" id="memStat">learning…</div>
+        <div id="mem" style="margin-top:8px"></div>
+        <div class="flux-note">Teach me: type “remember …” · rate my answers 👍/👎 · pattern memory, not a profit promise</div>
+      </div>
     </aside>
   </div>
 
@@ -204,7 +219,7 @@
     var orb = J.Orb(document.getElementById("orb"));
     var stEl = document.getElementById("orbSt"), subEl = document.getElementById("orbSub");
     function setStatus(s, sub){ stEl.textContent = s; if(sub!=null) subEl.textContent = sub; }
-    setTimeout(function(){ setStatus("FLUX ONLINE","six engines · scanning"); }, 500);
+    setTimeout(function(){ setStatus("FLUXI ONLINE","six engines · scanning"); }, 500);
 
     /* ---- chat ---- */
     var log = document.getElementById("clog"), input = document.getElementById("cin");
@@ -214,7 +229,16 @@
       var d = document.createElement("div"); d.className = "msg " + who;
       // light markdown: **bold**
       d.innerHTML = esc(text).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
-      log.appendChild(d); log.scrollTop = log.scrollHeight; return d;
+      log.appendChild(d);
+      if(who === "a" && window.JARVIS && JARVIS.feedback){
+        var fb = document.createElement("div"); fb.className = "fbrow";
+        fb.innerHTML = '<button class="fb" title="Good answer">👍</button><button class="fb" title="Off — I\'ll learn">👎</button>';
+        var btns = fb.querySelectorAll(".fb");
+        btns[0].onclick = function(){ JARVIS.feedback(true, text); fb.innerHTML = '<span class="fbok">✓ thanks — noted</span>'; };
+        btns[1].onclick = function(){ JARVIS.feedback(false, text); fb.innerHTML = '<span class="fbok">✓ got it — I\'ll weight that read more carefully</span>'; };
+        d.appendChild(fb);
+      }
+      log.scrollTop = log.scrollHeight; return d;
     }
     function typing(){
       var d = document.createElement("div"); d.className="typing";
@@ -230,17 +254,17 @@
       J.ask(text).then(function(res){
         tp.remove();
         var b = bubble(res.text, "a");
-        setStatus("FLUX ONLINE","six engines · scanning"); orb.pulse(0.6);
+        setStatus("FLUXI ONLINE","six engines · scanning"); orb.pulse(0.6);
         if(speak.checked && J.ttsSupported){
           setStatus("SPEAKING…","voice out"); orb.pulse(1);
           J.speak(res.text);
           // keep the orb alive while it talks
           var iv = setInterval(function(){ orb.pulse(0.8); }, 400);
-          setTimeout(function(){ clearInterval(iv); setStatus("FLUX ONLINE","six engines · scanning"); },
+          setTimeout(function(){ clearInterval(iv); setStatus("FLUXI ONLINE","six engines · scanning"); },
             Math.min(9000, 1800 + res.text.length*45));
         }
         busy = false;
-      }).catch(function(){ tp.remove(); bubble("Something glitched — try again.","a"); busy=false; setStatus("FLUX ONLINE"); });
+      }).catch(function(){ tp.remove(); bubble("Something glitched — try again.","a"); busy=false; setStatus("FLUXI ONLINE"); });
     }
     document.getElementById("send").onclick = function(){ send(); };
     input.addEventListener("keydown", function(e){ if(e.key==="Enter") send(); });
@@ -264,8 +288,8 @@
         if(fin && txt){ mic.classList.remove("on"); send(txt); }
       }, function(state){
         if(state==="start"){ mic.classList.add("on"); setStatus("LISTENING…","voice in"); orb.pulse(0.9); }
-        else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUX ONLINE","six engines · scanning"); }
-        else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked — allow microphone access."; setStatus("FLUX ONLINE"); }
+        else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUXI ONLINE","six engines · scanning"); }
+        else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked — allow microphone access."; setStatus("FLUXI ONLINE"); }
       });
       // auto-speak replies when using voice
       if(started && J.ttsSupported) speak.checked = true;
@@ -273,7 +297,7 @@
 
     /* ---- greeting ---- */
     setTimeout(function(){
-      bubble("Flux online. I'm scanning "+ (F.PRICES?Object.keys(F.PRICES).length:"the")+" names across six engines. Ask me for a brief, a valuation, or what I think of any ticker — type it or tap the mic.", "a");
+      bubble("Fluxi online. I'm scanning "+ (F.PRICES?Object.keys(F.PRICES).length:"the")+" names across six engines — and I learn as we go. Ask me for a brief or a valuation, tell me to \"remember\" something, or say \"research NVDA.\" Type it or tap the mic.", "a");
     }, 700);
 
     /* ---- live intel panels (always refreshing) ---- */
@@ -283,16 +307,49 @@
       return '<div class="vrow"><div class="tk">'+r.ticker+'<small>'+(r.name||"")+'</small></div>'+
         '<div class="rt"><div class="e">'+pctHtml(r.upside)+'</div><small>'+money(r.price)+' → '+money(r.fair)+'</small></div></div>';
     }
+    function renderVal(v){
+      document.getElementById("under").innerHTML = v.under.length ? v.under.map(vrow).join("") : '<div class="briefline">Nothing screening undervalued right now.</div>';
+      document.getElementById("over").innerHTML = v.over.length ? v.over.map(vrow).join("") : '<div class="briefline">Nothing screening overvalued right now.</div>';
+    }
     function refresh(){
       try{
-        var b = J.brief();
-        document.getElementById("brief").textContent = b.text;
-        var v = b.val;
-        document.getElementById("under").innerHTML = v.under.length ? v.under.map(vrow).join("") : '<div class="briefline">Nothing screening undervalued right now.</div>';
-        document.getElementById("over").innerHTML = v.over.length ? v.over.map(vrow).join("") : '<div class="briefline">Nothing screening overvalued right now.</div>';
-        orb.pulse(0.35); // heartbeat while it "thinks"
+        var b = J.brief();                       // local compute (instant, always available)
+        renderVal(b.val);
+        var localText = b.text;
+        document.getElementById("brief").textContent = localText;
+        // prefer the 24/7 server brief when the pg_cron job has written one
+        var S = window.FluxSupa;
+        if(S && S.latestBrief){
+          S.latestBrief().then(function(sb){
+            if(sb && sb.text){
+              document.getElementById("brief").textContent = sb.text;
+              if(sb.under && sb.over){
+                var mapv = function(a){ return (a||[]).map(function(r){ return {ticker:r.ticker,name:(F.NAMES&&F.NAMES[r.ticker])||r.ticker,price:+r.price,fair:+r.fair,upside:+r.edge}; }); };
+                renderVal({ under: mapv(sb.under), over: mapv(sb.over) });
+              }
+            }
+          });
+        }
+        if(J.review) J.review();                 // self-learning: grade past calls
+        orb.pulse(0.35);                          // heartbeat while it "thinks"
       }catch(e){}
     }
+    /* ---- Fluxi memory panel ---- */
+    function renderMem(){
+      try{
+        var st = J.memStats ? J.memStats() : null, facts = J.facts?J.facts():[], lessons = J.lessons?J.lessons():[];
+        var acc = (st && st.scored) ? Math.round(st.hits/st.scored*100) : null;
+        document.getElementById("memStat").innerHTML =
+          (facts.length + " taught · " + (st?st.calls:0) + " calls logged" + (acc!=null?" · "+acc+"% directional":""));
+        var items = [];
+        facts.slice(0,4).forEach(function(f){ items.push('<div class="memitem human"><span class="k">you</span>'+esc(f.text)+'</div>'); });
+        lessons.slice(0,4).forEach(function(l){ items.push('<div class="memitem '+(l.src||"self")+'"><span class="k">'+(l.src||"self")+'</span>'+esc(l.text)+'</div>'); });
+        document.getElementById("mem").innerHTML = items.length ? items.join("") :
+          '<div class="briefline">Nothing yet. Try “remember I hold NVDA” or “research AMD”.</div>';
+      }catch(e){}
+    }
+    J.onLearn = renderMem;   // re-render whenever Fluxi learns something
+    renderMem();
     function refreshFund(){
       var el = document.getElementById("fund"), S = window.FluxSupa;
       if(S && S.autopilot){
