@@ -360,50 +360,62 @@
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
-  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
 </div></footer>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $ = F.$ || function(s,r){return (r||document).querySelector(s)};
-  var SIGNALS = F.SIGNALS || [];
+  var K = F.Kronos;
   var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  function money(n){ return "$" + (+n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function pctS(x){ return (x>=0?"+":"") + (x*100).toFixed(1) + "%"; }
 
-  /* reference prices used to derive the illustrative levels below */
-  var PX = {NVDA:184.20, AMD:172.40, TSLA:248.90, AAPL:226.50, SMCI:41.80,
-            MSFT:428.60, COIN:251.30, PLTR:38.90};
+  /* Build REAL ranked setups from the Kronos model + live prices + fundamentals. */
+  function buildIdeas(){
+    var universe = F.PRICES ? Object.keys(F.PRICES) : [];
+    var ranked = K ? K.rank(universe) : [];              // sorted by predicted return, desc
+    var bulls = ranked.filter(function(r){ return r.predReturn > 0.01; }).slice(0,4);
+    var bears = ranked.filter(function(r){ return r.predReturn < -0.008; }).slice(-2).reverse();
+    var picks = bulls.concat(bears);
+    if(picks.length < 5) picks = ranked.slice(0,5);
+    return picks.map(function(r){
+      var t = r.ticker, f = K.forecast(t), fu = (F.FUND && F.FUND[t]) || {};
+      var px = F.priceOf(t), long = r.predReturn >= 0;
+      var target = f ? f.predClose : px*(1+r.predReturn);
+      var risk = Math.max(0.02, Math.min(0.08, Math.abs(r.predReturn)*0.9 + 0.02));
+      var stop = long ? px*(1-risk) : px*(1+risk);
+      var rr = (Math.abs(target-px) / Math.abs(px-stop)) || 0;
+      var rp = (fu.hi && fu.lo) ? Math.round((px-fu.lo)/(fu.hi-fu.lo)*100) : null;
+      var thesis = (long ? "Model forecasts upside toward " + money(target) : "Model forecasts a pullback toward " + money(target)) + ". "
+        + (fu.pe!=null ? "P/E " + fu.pe + (fu.pe>60 ? " — growth-priced" : fu.pe<20 ? " — reasonable" : "") + ". " : "")
+        + (rp!=null ? rp + "% of its 52-week range. " : "")
+        + (fu.sec ? fu.sec + "." : "");
+      return { t:t, name:(F.NAMES&&F.NAMES[t])||t, px:px, long:long, conf:Math.round(r.confidence),
+        mv:pctS(F.prevClose&&F.prevClose(t) ? (px-F.prevClose(t))/F.prevClose(t) : 0),
+        entry:px, stop:stop, target:target, rr:rr.toFixed(1), thesis:thesis, er:r.predReturn };
+    });
+  }
 
-  /* ---- hero feed (shared .sig rows) ---- */
+  /* ---- hero feed rows (shared .sig component) from the same real ranking ---- */
   var rows = $("#feedRows");
-  if(rows && F.sigHTML){
-    SIGNALS.slice(0, 4).forEach(function(s){
-      var d = document.createElement("div");
-      d.innerHTML = F.sigHTML(s);
-      rows.appendChild(d.firstChild);
+  if(rows && F.sigHTML && K){
+    buildIdeas().slice(0,4).forEach(function(d){
+      var sig = { t:d.t, u:d.long, c:d.conf, mv:d.mv, lbl:(d.long?"long setup":"short setup"), e:"Kronos", i:d.thesis };
+      var w = document.createElement("div"); w.innerHTML = F.sigHTML(sig);
+      if(w.firstChild) rows.appendChild(w.firstChild);
     });
   }
 
   /* ---- expanded idea cards ---- */
   var list = $("#ideaList");
-  var picks = SIGNALS.slice(0, 5);
+  var picks = K ? buildIdeas() : [];
   var canvases = [];
-
-  function fmt(n){ return n.toFixed(2); }
+  function fmt(n){ return (+n).toFixed(2); }
 
   picks.forEach(function(s, idx){
-    var px = PX[s.t] || 100;
-    var long = !!s.u;
-    /* higher confidence -> tighter invalidation; reward scales with conviction */
-    var risk = 0.052 - (s.c / 3000);
-    var reward = risk * (1.7 + (s.c - 60) / 100);
-    var entry = px;
-    var stop = long ? px * (1 - risk) : px * (1 + risk);
-    var target = long ? px * (1 + reward) : px * (1 - reward);
-    var rr = (Math.abs(target - entry) / Math.abs(entry - stop)).toFixed(1);
-    var col = long ? EM : CR;
-    var cid = "spark" + idx;
-
+    var long = s.long, col = long ? EM : CR, cid = "spark" + idx;
     var el = document.createElement("article");
     el.className = "glass idea reveal";
     el.innerHTML =
@@ -411,36 +423,39 @@ document.addEventListener("DOMContentLoaded", function(){
         '<div class="av">' + s.t.slice(0,3) + '</div>' +
         '<div class="id">' +
           '<div class="tk">' + s.t + ' <span class="' + (long ? "up" : "down") + '" style="font-size:.85rem">' + s.mv + '</span></div>' +
-          '<div class="sub">' + s.lbl + ' · ' + (long ? "long setup" : "short setup") + '</div>' +
+          '<div class="sub">' + s.name + ' · ' + (long ? "long setup" : "short setup") + '</div>' +
         '</div>' +
-        '<span class="eng-tag">' + s.e + ' engine</span>' +
-        '<div class="cf"><div class="n" style="color:' + col + '">' + s.c + '%</div><div class="l">confidence</div></div>' +
+        '<span class="eng-tag">Kronos engine</span>' +
+        '<div class="cf"><div class="n" style="color:' + col + '">' + s.conf + '%</div><div class="l">conviction</div></div>' +
       '</div>' +
-      '<div class="cbar"><i style="width:' + s.c + '%;background:' + col + '"></i></div>' +
+      '<div class="cbar"><i style="width:' + s.conf + '%;background:' + col + '"></i></div>' +
       '<div class="idea-body">' +
         '<div>' +
-          '<p class="thesis">' + s.i + '</p>' +
+          '<p class="thesis">' + s.thesis + '</p>' +
           '<div class="kvs">' +
-            '<div class="kv"><div class="k">Entry</div><div class="v">' + fmt(entry) + '</div></div>' +
-            '<div class="kv"><div class="k">Stop</div><div class="v down">' + fmt(stop) + '</div></div>' +
-            '<div class="kv"><div class="k">Target</div><div class="v up">' + fmt(target) + '</div></div>' +
-            '<div class="kv"><div class="k">R : R</div><div class="v">' + rr + '</div></div>' +
+            '<div class="kv"><div class="k">Entry</div><div class="v">' + fmt(s.entry) + '</div></div>' +
+            '<div class="kv"><div class="k">Stop</div><div class="v down">' + fmt(s.stop) + '</div></div>' +
+            '<div class="kv"><div class="k">Target</div><div class="v up">' + fmt(s.target) + '</div></div>' +
+            '<div class="kv"><div class="k">R : R</div><div class="v">' + s.rr + '</div></div>' +
           '</div>' +
         '</div>' +
         '<div class="idea-chart">' +
-          '<canvas id="' + cid + '" aria-label="Illustrative price trace for ' + s.t + '"></canvas>' +
-          '<div class="cl">20-session trace · illustrative</div>' +
+          '<canvas id="' + cid + '" aria-label="Recent price trace for ' + s.t + '"></canvas>' +
+          '<div class="cl">recent trace</div>' +
         '</div>' +
       '</div>' +
       '<div class="idea-foot">' +
-        '<a class="btn btn-ghost btn-sm" href="./download.html">Paper trade</a>' +
-        '<a class="btn btn-ghost btn-sm" href="./download.html">Backtest</a>' +
-        '<span class="gate"><b>✓</b> Risk gate passed · sized to your book</span>' +
+        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + s.t + '">Paper trade ' + s.t + '</a>' +
+        '<a class="btn btn-ghost btn-sm" href="./ai.html">Ask Fluxi</a>' +
+        '<span class="gate"><b>✓</b> Model estimate · size to your own risk</span>' +
       '</div>';
-
     list.appendChild(el);
     canvases.push({id: cid, seed: s.t, up: long, col: col});
   });
+
+  if(!picks.length && list){
+    list.innerHTML = '<div class="glass idea"><p class="thesis">Loading live setups…</p></div>';
+  }
 
   /* ---- sparklines ---- */
   function drawAll(){
