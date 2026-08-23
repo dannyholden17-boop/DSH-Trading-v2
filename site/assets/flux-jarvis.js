@@ -1,0 +1,439 @@
+/* ============================================================
+   FLUX — JARVIS engine
+   A living arc-reactor orb + a grounded conversational assistant
+   + a live valuation model + voice control.
+
+   Everything is grounded in the site's real data layer:
+     FLUX.PRICES / priceOf / prevClose / NAMES
+     FLUX.Kronos.forecast / signal / rank   (predicted returns)
+     FluxSupa.autopilot()                    (live paper fund)
+     FLUX.Book                               (the user's paper account)
+
+   No external dependency. If a Supabase `ai-chat` edge function is
+   deployed (with an API key), free-form questions are upgraded to a
+   full LLM; otherwise the grounded engine answers on its own.
+
+   Nothing here is investment advice. All figures are simulated /
+   model estimates and are labelled as such.
+   ============================================================ */
+(function () {
+  "use strict";
+  var F = window.FLUX || (window.FLUX = {});
+  var J = (window.JARVIS = window.JARVIS || {});
+
+  /* ------------------------------------------------------------
+     1)  THE ORB — an Iron-Man style arc reactor rendered on a
+         canvas: a pulsing core, concentric rotating rings ("chains"),
+         an orbiting node network, all reactive to an energy level
+         that spikes while the AI is thinking or speaking.
+     ------------------------------------------------------------ */
+  J.Orb = function (canvas, opts) {
+    opts = opts || {};
+    var ctx = canvas.getContext("2d");
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, cx = 0, cy = 0, R = 0;
+    var energy = 0.15;          // current energy 0..1
+    var target = 0.15;          // eased toward
+    var t = 0, raf = null, alive = true;
+    var CY = "76,215,246";      // neon cyan
+    var GR = "74,225,118";      // green
+
+    // orbiting nodes (the "network / chains")
+    var nodes = [];
+    for (var i = 0; i < 22; i++) {
+      nodes.push({
+        a: Math.random() * Math.PI * 2,
+        r: 0.42 + Math.random() * 0.5,     // fraction of R
+        sp: (Math.random() * 0.4 + 0.15) * (Math.random() < 0.5 ? 1 : -1),
+        sz: Math.random() * 1.8 + 1
+      });
+    }
+
+    function resize() {
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = Math.floor(W * DPR); canvas.height = Math.floor(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      cx = W / 2; cy = H / 2; R = Math.min(W, H) * 0.42;
+    }
+
+    function ring(radius, width, alpha, dash, rot, color) {
+      ctx.save();
+      ctx.translate(cx, cy); ctx.rotate(rot);
+      ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.lineWidth = width;
+      ctx.strokeStyle = "rgba(" + (color || CY) + "," + alpha + ")";
+      if (dash) ctx.setLineDash(dash);
+      ctx.shadowColor = "rgba(" + (color || CY) + ",0.9)";
+      ctx.shadowBlur = 12 * (0.4 + energy);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // tick marks around a ring (mechanical "chain" look)
+    function ticks(radius, count, len, alpha, rot) {
+      ctx.save();
+      ctx.translate(cx, cy); ctx.rotate(rot);
+      ctx.strokeStyle = "rgba(" + CY + "," + alpha + ")";
+      ctx.lineWidth = 1.4;
+      for (var k = 0; k < count; k++) {
+        var a = (k / count) * Math.PI * 2;
+        var x1 = Math.cos(a) * radius, y1 = Math.sin(a) * radius;
+        var x2 = Math.cos(a) * (radius + len), y2 = Math.sin(a) * (radius + len);
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function frame() {
+      if (!alive) return;
+      t += 0.016;
+      energy += (target - energy) * 0.08;
+      target += (0.15 - target) * 0.02;       // decay back to idle
+      var e = energy, pulse = 1 + Math.sin(t * 2.2) * 0.03 * (0.5 + e);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // glow halo
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.7);
+      g.addColorStop(0, "rgba(" + CY + "," + (0.20 + e * 0.35) + ")");
+      g.addColorStop(0.5, "rgba(" + CY + "," + (0.05 + e * 0.1) + ")");
+      g.addColorStop(1, "rgba(2,6,23,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+      // outer rings / chains
+      ring(R * 1.02 * pulse, 1.5, 0.25 + e * 0.3, [2, 10], t * 0.25, CY);
+      ticks(R * 0.98 * pulse, 60, 6 + e * 6, 0.18 + e * 0.25, -t * 0.18);
+      ring(R * 0.86 * pulse, 2.2, 0.35 + e * 0.4, null, -t * 0.4, CY);
+      ring(R * 0.72 * pulse, 1.2, 0.22, [1, 6], t * 0.7, CY);
+      ticks(R * 0.60 * pulse, 36, 5, 0.16 + e * 0.2, t * 0.5);
+      ring(R * 0.48 * pulse, 2.6, 0.4 + e * 0.4, null, t * 0.9, e > 0.5 ? GR : CY);
+
+      // node network (orbiting particles + connective chains)
+      var pts = [];
+      for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        n.a += n.sp * 0.01 * (0.6 + e * 1.6);
+        var rad = R * n.r * pulse;
+        var x = cx + Math.cos(n.a) * rad, y = cy + Math.sin(n.a) * rad;
+        pts.push({ x: x, y: y, sz: n.sz });
+      }
+      ctx.strokeStyle = "rgba(" + CY + "," + (0.05 + e * 0.12) + ")";
+      ctx.lineWidth = 0.7;
+      for (var a2 = 0; a2 < pts.length; a2++) {
+        for (var b = a2 + 1; b < pts.length; b++) {
+          var dx = pts[a2].x - pts[b].x, dy = pts[a2].y - pts[b].y;
+          var d = dx * dx + dy * dy;
+          if (d < (R * 0.5) * (R * 0.5)) {
+            ctx.beginPath(); ctx.moveTo(pts[a2].x, pts[a2].y); ctx.lineTo(pts[b].x, pts[b].y); ctx.stroke();
+          }
+        }
+      }
+      for (var p = 0; p < pts.length; p++) {
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(" + CY + "," + (0.6 + e * 0.4) + ")";
+        ctx.shadowColor = "rgba(" + CY + ",1)"; ctx.shadowBlur = 8;
+        ctx.arc(pts[p].x, pts[p].y, pts[p].sz, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+
+      // core
+      var coreR = R * (0.30 + e * 0.06) * pulse;
+      var cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+      cg.addColorStop(0, "rgba(230,253,255," + (0.85 + e * 0.15) + ")");
+      cg.addColorStop(0.4, "rgba(" + CY + "," + (0.6 + e * 0.3) + ")");
+      cg.addColorStop(1, "rgba(" + CY + ",0)");
+      ctx.fillStyle = cg;
+      ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2); ctx.fill();
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    if (!(F.reduced && F.reduced())) raf = requestAnimationFrame(frame);
+    else { // static single frame for reduced-motion
+      resize(); frame(); alive = false; if (raf) cancelAnimationFrame(raf);
+    }
+
+    return {
+      // pulse the orb (0..1). thinking/speaking call this repeatedly.
+      pulse: function (v) { target = Math.max(target, Math.min(1, v)); },
+      setEnergy: function (v) { target = Math.min(1, Math.max(0, v)); },
+      idle: function () { target = 0.15; },
+      destroy: function () { alive = false; if (raf) cancelAnimationFrame(raf); window.removeEventListener("resize", resize); }
+    };
+  };
+
+  /* ------------------------------------------------------------
+     2)  VALUATION MODEL — ranks the universe into under- / over-
+         valued using Kronos's predicted return (the model's view of
+         where price is heading vs where it is now). Model estimate,
+         not advice.
+     ------------------------------------------------------------ */
+  function pct(x) { return (x >= 0 ? "+" : "") + (x * 100).toFixed(1) + "%"; }
+  function money(x) { return "$" + (+x).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  J.valuation = function () {
+    var K = F.Kronos;
+    var universe = F.PRICES ? Object.keys(F.PRICES) : [];
+    var rows = universe.map(function (t) {
+      var f = K ? K.forecast(t) : null;
+      var price = (F.priceOf && F.priceOf(t)) || (f && f.last) || 0;
+      var edge = f ? f.predReturn : 0;              // model view of fair value gap
+      return {
+        ticker: t, name: (F.NAMES && F.NAMES[t]) || t,
+        price: price, fair: f ? f.predClose : price,
+        edge: edge, upside: edge, conf: f ? f.confidence : 0,
+        action: f ? (edge > 0.02 ? "BUY" : edge < -0.02 ? "SELL" : "HOLD") : "HOLD",
+        real: f ? !!f.real : false
+      };
+    }).filter(function (r) { return r.price > 0; });
+
+    rows.sort(function (a, b) { return b.edge - a.edge; });
+    var under = rows.filter(function (r) { return r.edge > 0.015; }).slice(0, 6);
+    var over = rows.filter(function (r) { return r.edge < -0.015; }).sort(function (a, b) { return a.edge - b.edge; }).slice(0, 6);
+    return { all: rows, under: under, over: over };
+  };
+
+  /* ------------------------------------------------------------
+     3)  LIVE BRIEF — composes a market brief from real signals.
+     ------------------------------------------------------------ */
+  J.brief = function () {
+    var v = J.valuation();
+    var bull = v.under.length, bear = v.over.length;
+    var tone = bull > bear + 1 ? "risk-on" : bear > bull + 1 ? "risk-off" : "balanced";
+    var top = v.under[0], wk = v.over[0];
+    var lines = [];
+    lines.push("Market read: " + tone + ". The model sees " + bull + " names with upside and " + bear + " stretched.");
+    if (top) lines.push("Most undervalued: " + top.ticker + " (" + top.name + ") — model fair value " + money(top.fair) + " vs " + money(top.price) + ", " + pct(top.upside) + " edge.");
+    if (wk) lines.push("Most overvalued: " + wk.ticker + " — model sees " + pct(wk.upside) + " downside from " + money(wk.price) + ".");
+    lines.push("This is a simulated model estimate, not advice.");
+    return { tone: tone, text: lines.join(" "), bullets: lines, val: v };
+  };
+
+  /* ------------------------------------------------------------
+     4)  GROUNDED NLU ENGINE — understands common desk questions and
+         answers from real data. Falls back to the LLM (if wired) or
+         a helpful capability prompt.
+     ------------------------------------------------------------ */
+  var TICKERS = function () { return F.PRICES ? Object.keys(F.PRICES) : []; };
+
+  function findTicker(q) {
+    var up = " " + q.toUpperCase() + " ";
+    var list = TICKERS();
+    // direct symbol match
+    for (var i = 0; i < list.length; i++) {
+      var re = new RegExp("[^A-Z]" + list[i] + "[^A-Z]");
+      if (re.test(up)) return list[i];
+    }
+    // company name match
+    if (F.NAMES) {
+      var ql = q.toLowerCase();
+      for (var k in F.NAMES) {
+        var nm = (F.NAMES[k] || "").toLowerCase().split(" ")[0];
+        if (nm && nm.length > 2 && ql.indexOf(nm) !== -1) return k;
+      }
+    }
+    return null;
+  }
+
+  function has(q, words) {
+    for (var i = 0; i < words.length; i++) if (q.indexOf(words[i]) !== -1) return true;
+    return false;
+  }
+
+  function priceAnswer(t) {
+    var p = F.priceOf && F.priceOf(t), prev = F.prevClose && F.prevClose(t);
+    var chg = prev ? (p - prev) / prev : 0;
+    return t + " (" + ((F.NAMES && F.NAMES[t]) || t) + ") is at " + money(p) +
+      (prev ? ", " + pct(chg) + " vs prior close" : "") + ". (Simulated market data.)";
+  }
+
+  function signalAnswer(t) {
+    var K = F.Kronos; if (!K) return "The forecast engine isn't loaded yet.";
+    var s = K.signal(t), f = K.forecast(t);
+    var verdict = s.action === "BUY" ? "leans undervalued" : s.action === "SELL" ? "leans overvalued" : "looks fairly valued";
+    return "Kronos on " + t + ": " + s.action + " — it " + verdict + ". Predicted move " + pct(s.predReturn) +
+      " over the next " + (f ? f.horizon : 5) + " candles to a model target of " + money(f ? f.predClose : 0) +
+      ", confidence " + Math.round(s.confidence) + "%. " +
+      "That's a model estimate on a simulated feed — not advice. You decide.";
+  }
+
+  function valuationAnswer(kind) {
+    var v = J.valuation();
+    var rows = kind === "over" ? v.over : v.under;
+    if (!rows.length) return "Nothing is crossing the model's " + (kind === "over" ? "overvalued" : "undervalued") + " threshold right now.";
+    var label = kind === "over" ? "Most overvalued (model sees downside):" : "Most undervalued (model sees upside):";
+    var body = rows.map(function (r, i) {
+      return (i + 1) + ". " + r.ticker + " — " + money(r.price) + " → fair " + money(r.fair) + " (" + pct(r.upside) + ", " + Math.round(r.conf) + "% conf)";
+    }).join("\n");
+    return label + "\n" + body + "\nModel estimates on a simulated feed — not advice.";
+  }
+
+  function fundAnswer() {
+    // best-effort live fund; resolves async
+    return new Promise(function (resolve) {
+      var S = window.FluxSupa;
+      if (S && S.autopilot) {
+        Promise.resolve(S.autopilot()).then(function (fund) {
+          if (fund && (fund.equity != null || fund.positions)) {
+            var eq = fund.equity != null ? fund.equity : (fund.cash || 0);
+            var pnl = fund.pnl != null ? fund.pnl : (fund.day_change != null ? fund.day_change : null);
+            var pos = (fund.positions && fund.positions.length) || 0;
+            resolve("The Flux Autopilot fund is at " + money(eq) +
+              (pnl != null ? " (" + (pnl >= 0 ? "+" : "") + money(pnl) + " P&L)" : "") +
+              " across " + pos + " positions. It trades a live $10k simulated account and posts its reasoning. Simulated — not real money.");
+          } else { resolve(fundStatic()); }
+        }).catch(function () { resolve(fundStatic()); });
+      } else { resolve(fundStatic()); }
+    });
+  }
+  function fundStatic() {
+    return "The Flux Autopilot runs a live $10,000 simulated paper fund, scanning and trading on Kronos signals and posting hourly/daily reports. Open the Autopilot page to watch it. Simulated — not real money.";
+  }
+
+  function riskAnswer() {
+    var B = F.Book && F.Book.get ? F.Book.get() : null;
+    if (B && B.positions && Object.keys(B.positions).length) {
+      var syms = Object.keys(B.positions);
+      return "Your paper book holds " + syms.length + " names: " + syms.join(", ") +
+        ". Watch concentration — if they move together, one bad print hits them all. Want a Kronos read on any of them?";
+    }
+    return "Concentration and correlation are the usual risks — too much in names that move together. Load up a paper book on the terminal and I'll watch it in real time.";
+  }
+
+  function moversAnswer() {
+    var list = TICKERS().map(function (t) {
+      var p = F.priceOf && F.priceOf(t), pr = F.prevClose && F.prevClose(t);
+      return { t: t, chg: pr ? (p - pr) / pr : 0 };
+    }).filter(function (r) { return r.chg; });
+    list.sort(function (a, b) { return b.chg - a.chg; });
+    var up = list.slice(0, 3).map(function (r) { return r.t + " " + pct(r.chg); });
+    var dn = list.slice(-3).reverse().map(function (r) { return r.t + " " + pct(r.chg); });
+    return "Top movers (simulated): ▲ " + up.join(", ") + "  ▼ " + dn.join(", ") + ".";
+  }
+
+  var CAP = "I'm Flux — your AI desk. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\n• \"What's my biggest risk?\"\nEverything I show is simulated / a model estimate — never investment advice.";
+
+  // Try the optional LLM edge function for free-form questions.
+  function llm(q) {
+    var S = window.FluxSupa;
+    if (!S || !S.aiChat) return Promise.resolve(null);
+    var ctx = { brief: safe(function () { return J.brief().text; }), valuation: safe(function () { var v = J.valuation(); return { under: v.under.map(short), over: v.over.map(short) }; }) };
+    return Promise.resolve(S.aiChat(q, ctx)).catch(function () { return null; });
+  }
+  function short(r) { return { ticker: r.ticker, price: r.price, fair: r.fair, edge: r.edge }; }
+  function safe(fn) { try { return fn(); } catch (e) { return null; } }
+
+  // Main entry — returns a Promise<{text, kind}>
+  J.ask = function (input) {
+    var q = (input || "").trim();
+    var ql = q.toLowerCase();
+    if (!q) return Promise.resolve({ text: CAP, kind: "help" });
+
+    // greetings / identity / help
+    if (/^(hi|hey|hello|yo|sup|jarvis|flux)\b/.test(ql) && ql.length < 24)
+      return Promise.resolve({ text: "Online. Flux desk is live and scanning. What do you want to look at?", kind: "greet" });
+    if (has(ql, ["what can you", "help", "commands", "who are you", "what are you"]))
+      return Promise.resolve({ text: CAP, kind: "help" });
+
+    // ticker-specific FIRST when a symbol is named (so "is NVDA undervalued?"
+    // answers about NVDA, not the global list). Global lists handled below.
+    var t0 = findTicker(q);
+    if (t0) {
+      if (has(ql, ["buy", "sell", "should i", "worth", "think", "signal", "forecast", "target",
+                   "undervalued", "overvalued", "cheap", "expensive", "call", "prediction", "outlook", "bullish", "bearish"]))
+        return Promise.resolve({ text: signalAnswer(t0), kind: "signal", ticker: t0 });
+      if (has(ql, ["price", " at", "quote", "cost", "trading", "how much"]))
+        return Promise.resolve({ text: priceAnswer(t0), kind: "price", ticker: t0 });
+      return Promise.resolve({ text: priceAnswer(t0) + "\n" + signalAnswer(t0), kind: "signal", ticker: t0 });
+    }
+
+    // valuation (universe-wide — no specific ticker named)
+    if (has(ql, ["undervalued", "cheap", "bargain", "oversold", "best buys", "top buys", "bullish"]))
+      return Promise.resolve({ text: valuationAnswer("under"), kind: "valuation" });
+    if (has(ql, ["overvalued", "expensive", "overbought", "shorts", "short ", "bearish", "avoid"]))
+      return Promise.resolve({ text: valuationAnswer("over"), kind: "valuation" });
+
+    // brief / market
+    if (has(ql, ["brief", "summary", "what's happening", "whats happening", "market", "today", "overview", "rundown"]))
+      return Promise.resolve({ text: J.brief().text, kind: "brief" });
+
+    // fund / autopilot
+    if (has(ql, ["fund", "autopilot", "auto pilot", "the desk trade", "how is it doing"]))
+      return fundAnswer().then(function (txt) { return { text: txt, kind: "fund" }; });
+
+    // risk
+    if (has(ql, ["risk", "exposure", "concentration", "hedge"]))
+      return Promise.resolve({ text: riskAnswer(), kind: "risk" });
+
+    // movers
+    if (has(ql, ["movers", "gainers", "losers", "moving", "up today", "down today"]))
+      return Promise.resolve({ text: moversAnswer(), kind: "movers" });
+
+    // free-form -> LLM if available, else capability prompt
+    return llm(q).then(function (ans) {
+      if (ans && ans.text) return { text: ans.text, kind: "llm" };
+      if (ans && typeof ans === "string") return { text: ans, kind: "llm" };
+      return { text: "I don't have that wired to real data yet, so I won't guess. " + CAP, kind: "fallback" };
+    });
+  };
+
+  /* ------------------------------------------------------------
+     5)  VOICE — speech recognition (listen) + synthesis (speak),
+         using the browser's built-in Web Speech API. Free, no key.
+     ------------------------------------------------------------ */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  J.voiceSupported = !!SR;
+  J.ttsSupported = !!window.speechSynthesis;
+  var rec = null, listening = false, voice = null;
+
+  function pickVoice() {
+    if (!J.ttsSupported) return;
+    var vs = window.speechSynthesis.getVoices() || [];
+    // prefer a crisp English male-ish/neutral voice for the "JARVIS" feel
+    voice = vs.filter(function (v) { return /en(-|_)?(GB|US)/i.test(v.lang); })
+      .sort(function (a, b) { return (/Daniel|Google UK|Arthur|male/i.test(b.name) ? 1 : 0) - (/Daniel|Google UK|Arthur|male/i.test(a.name) ? 1 : 0); })[0] || vs[0] || null;
+  }
+  if (J.ttsSupported) {
+    pickVoice();
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+  }
+
+  J.speak = function (text) {
+    if (!J.ttsSupported || !text) return;
+    try {
+      window.speechSynthesis.cancel();
+      // strip the bullet/newline formatting for speech; keep it short-ish
+      var say = text.replace(/[•▲▼]/g, "").replace(/\n+/g, ". ").slice(0, 380);
+      var u = new SpeechSynthesisUtterance(say);
+      if (voice) u.voice = voice;
+      u.rate = 1.02; u.pitch = 0.92; u.volume = 1;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  };
+  J.stopSpeaking = function () { try { window.speechSynthesis.cancel(); } catch (e) {} };
+
+  // onResult(transcript, isFinal); onState(state) where state in start|end|error
+  J.listen = function (onResult, onState) {
+    if (!SR) { onState && onState("error"); return false; }
+    if (listening) { J.stopListen(); return false; }
+    rec = new SR();
+    rec.lang = "en-US"; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+    rec.onstart = function () { listening = true; onState && onState("start"); };
+    rec.onend = function () { listening = false; onState && onState("end"); };
+    rec.onerror = function (e) { listening = false; onState && onState("error", e && e.error); };
+    rec.onresult = function (e) {
+      var txt = "", fin = false;
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        txt += e.results[i][0].transcript;
+        if (e.results[i].isFinal) fin = true;
+      }
+      onResult && onResult(txt.trim(), fin);
+    };
+    try { rec.start(); } catch (e) { listening = false; onState && onState("error"); return false; }
+    return true;
+  };
+  J.stopListen = function () { try { rec && rec.stop(); } catch (e) {} listening = false; };
+  J.isListening = function () { return listening; };
+})();

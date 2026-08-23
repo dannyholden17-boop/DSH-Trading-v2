@@ -203,6 +203,20 @@
       });
   };
 
+  // ---- AI chat (optional LLM upgrade) ----
+  // Routes a free-form question to the `ai-chat` Edge Function, which calls a
+  // real LLM (Claude) with live market context injected. Returns {text} or null
+  // if the function isn't deployed / no API key — the grounded engine then answers.
+  S.aiChat = function(question, context){
+    if(!S.client) return Promise.resolve(null);
+    return S.client.functions.invoke("ai-chat", { body: { question: question, context: context||{} } })
+      .then(function(res){
+        var d = res && res.data;
+        if(d && d.text) return { text: d.text };
+        return null;
+      }).catch(function(){ return null; });
+  };
+
   // ---- profile ----
   S.updateName = function(name){
     if(!S.client || !S._user || !name) return Promise.resolve();
