@@ -309,11 +309,27 @@
     var K = F.Kronos; if (!K || !t) return null;
     var f = K.forecast(t), s = K.signal(t);
     if (!f) return null;
-    var note = t + ": model target " + money(f.predClose) + " (" + pct(f.predReturn) + ", " +
-      Math.round(f.confidence) + "% conf) -> " + s.action + ". Logged " + new Date().toLocaleDateString() + ".";
-    J.addLesson(note, "research");
+    var name = (F.NAMES && F.NAMES[t]) || t, fu = fundOf(t), rp = rangePos(t);
+    var price = (F.priceOf && F.priceOf(t)) || f.last;
+    var L = [];
+    L.push("📋 " + t + " — " + name + (fu && fu.sec ? " · " + fu.sec : ""));
+    L.push("Price " + money(price) + (fu && capStr(fu.mc) ? " · " + capStr(fu.mc) + " market cap" : ""));
+    var val = [];
+    if (fu && fu.pe != null) val.push("P/E " + fu.pe + (fu.pe > 60 ? " (rich, growth-priced)" : fu.pe < 20 ? " (reasonable)" : " (fair)"));
+    if (fu && fu.hi && fu.lo) val.push("52-wk " + money(fu.lo) + "–" + money(fu.hi) + (rp != null ? " (" + rp + "% of range)" : ""));
+    if (val.length) L.push("Valuation: " + val.join(" · "));
+    L.push("Model view: " + s.action + ", targeting " + money(f.predClose) + " (" + pct(f.predReturn) + ", " + Math.round(f.confidence) + "% conviction).");
+    var take = s.action === "BUY"
+      ? "The forecast leans higher" + (rp != null && rp <= 30 ? " and it's still low in its range — that's the kind of asymmetry I like" : "") + "."
+      : s.action === "SELL"
+        ? "The forecast leans lower" + (rp != null && rp >= 75 ? " and it's extended near highs — I'd tread carefully" : "") + "."
+        : "It's balanced here — I'd wait for a cleaner setup.";
+    L.push("My take: " + take);
+    L.push("(Model estimate on simulated data — not advice.)");
+    var brief = L.join("\n");
+    J.addLesson(t + " researched " + new Date().toLocaleDateString() + ": " + s.action + " @ " + money(price) + " → " + money(f.predClose), "research");
     journalSignal(t, f.predReturn, f.last);
-    return note;
+    return brief;
   };
 
   J.learnedSummary = function () {
@@ -371,22 +387,49 @@
     return false;
   }
 
+  function fundOf(t) { return (F.FUND && F.FUND[t]) || null; }
+  function capStr(mc) { return mc == null ? null : (mc >= 1000 ? "$" + (mc / 1000).toFixed(2) + "T" : "$" + mc + "B"); }
+  function rangePos(t) {
+    var f = fundOf(t), p = F.priceOf && F.priceOf(t);
+    if (!f || !f.hi || !f.lo || !p || f.hi === f.lo) return null;
+    return Math.max(0, Math.min(100, Math.round((p - f.lo) / (f.hi - f.lo) * 100)));
+  }
+  function fundLine(t) {
+    var f = fundOf(t); if (!f) return "";
+    var bits = [];
+    if (f.pe != null) bits.push("P/E " + f.pe);
+    var c = capStr(f.mc); if (c) bits.push(c + " cap");
+    var rp = rangePos(t); if (rp != null) bits.push(rp + "% of its 52-wk range");
+    if (f.sec) bits.push(f.sec);
+    return bits.join(" · ");
+  }
+
   function priceAnswer(t) {
     var p = F.priceOf && F.priceOf(t), prev = F.prevClose && F.prevClose(t);
     var chg = prev ? (p - prev) / prev : 0;
-    return t + " (" + ((F.NAMES && F.NAMES[t]) || t) + ") is at " + money(p) +
-      (prev ? ", " + pct(chg) + " vs prior close" : "") + ". (Simulated market data.)";
+    var move = !prev ? "" : Math.abs(chg) < 0.001 ? ", flat on the day" : ", " + pct(chg) + " on the day";
+    var fl = fundLine(t);
+    return t + " (" + ((F.NAMES && F.NAMES[t]) || t) + ") is trading " + money(p) + move + "." +
+      (fl ? "\n" + fl + "." : "");
   }
 
   function signalAnswer(t) {
     var K = F.Kronos; if (!K) return "The forecast engine isn't loaded yet.";
     var s = K.signal(t), f = K.forecast(t);
     if (f) journalSignal(t, f.predReturn, f.last);   // learn from this call later
-    var verdict = s.action === "BUY" ? "leans undervalued" : s.action === "SELL" ? "leans overvalued" : "looks fairly valued";
-    return "Kronos on " + t + ": " + s.action + " — it " + verdict + ". Predicted move " + pct(s.predReturn) +
-      " over the next " + (f ? f.horizon : 5) + " candles to a model target of " + money(f ? f.predClose : 0) +
-      ", confidence " + Math.round(s.confidence) + "%. " +
-      "That's a model estimate on a simulated feed — not advice. You decide.";
+    var f2 = fundOf(t), rp = rangePos(t);
+    // broker-style read
+    var lead = s.action === "BUY" ? "I like the setup here" : s.action === "SELL" ? "I'd be cautious here" : "It's a coin-flip right now";
+    var out = t + " — " + lead + ". My model reads " + s.action + ", predicting " + pct(s.predReturn) +
+      " over the next few sessions to a target around " + money(f ? f.predClose : 0) + " (" + Math.round(s.confidence) + "% conviction).";
+    // fundamental colour a broker would add
+    var notes = [];
+    if (rp != null) notes.push(rp <= 25 ? "It's near the low end of its 52-week range — value territory if the story holds" :
+      rp >= 80 ? "It's stretched near 52-week highs, so I'd respect the risk" : "It's mid-range, room either way");
+    if (f2 && f2.pe != null) notes.push(f2.pe > 60 ? "P/E of " + f2.pe + " is rich — priced for growth" : f2.pe < 20 ? "P/E of " + f2.pe + " is reasonable" : "P/E of " + f2.pe + " is fair");
+    if (notes.length) out += " " + notes.join("; ") + ".";
+    out += " Model estimate, not advice — you call it. Want me to place a paper trade?";
+    return out;
   }
 
   function valuationAnswer(kind) {
@@ -524,7 +567,7 @@
     if (res) {
       var rt = findTicker(res[1]) || res[1].toUpperCase();
       var note = J.research(rt);
-      return Promise.resolve({ text: note ? "Researched " + rt + " and saved it to memory:\n" + note + "\nI'll score this call against what price actually does." : "I couldn't model " + rt + " — is it in the universe?", kind: "research", ticker: rt });
+      return Promise.resolve({ text: note ? note + "\n\n(Saved to memory — I'll grade this call against what price actually does.)" : "I couldn't model " + rt + " — is it in my universe? Try a name like NVDA, TSLA or COIN.", kind: "research", ticker: rt });
     }
 
     // trade command -> confirm card (paper). "buy 10 NVDA", "sell $2k TSLA".

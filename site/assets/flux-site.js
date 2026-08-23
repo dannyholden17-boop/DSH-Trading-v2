@@ -280,15 +280,49 @@
   window.FLUXAuth=F.Auth;
 
   /* ---- prices + paper-trading book (client-side, simulated) ---- */
-  F.PRICES={NVDA:225.38,AMD:482.89,TSLA:340.04,AAPL:305.31,MSFT:496.84,SMCI:39.16,
-    COIN:153.76,PLTR:179.01,AMZN:265.16,META:594.73,GOOGL:346.42,NFLX:78.23,AVGO:417.83,
-    SPY:777.77,QQQ:732.06,MU:949.89,ARM:278.45,INTC:104.63,MARA:9.22,SOFI:18.42,
-    DELL:494.21,CRM:201.32,ORCL:156.30,UBER:75.87};
+  // Real market snapshot (seeded from live quotes). F.LIVE overrides when the
+  // server has fresher prices. Prices are a real snapshot, not a live stream.
+  F.PRICES={NVDA:215.38,AMD:472.50,TSLA:363.92,AAPL:309.69,MSFT:483.25,SMCI:37.23,
+    COIN:189.30,PLTR:179.80,AMZN:259.59,META:552.95,GOOGL:345.10,NFLX:79.63,AVGO:368.90,
+    SPY:767.00,QQQ:714.25,MU:963.20,ARM:243.20,INTC:89.86,MARA:11.34,SOFI:18.99,
+    DELL:440.77,CRM:209.21,ORCL:146.69,UBER:78.80};
+  // Real prior-session closes (for accurate % change / momentum).
+  F.PREV={NVDA:216.85,AMD:469.46,TSLA:345.13,AAPL:311.30,MSFT:481.15,SMCI:36.50,
+    COIN:172.35,PLTR:173.96,AMZN:260.11,META:545.83,GOOGL:340.67,NFLX:80.14,AVGO:364.03,
+    SPY:762.60,QQQ:710.93,MU:974.33,ARM:250.72,INTC:92.13,MARA:11.15,SOFI:17.92,
+    DELL:434.78,CRM:205.43,ORCL:142.07,UBER:78.55};
   F.NAMES={NVDA:"NVIDIA",AMD:"Advanced Micro Devices",TSLA:"Tesla",AAPL:"Apple",MSFT:"Microsoft",
     SMCI:"Super Micro Computer",COIN:"Coinbase",PLTR:"Palantir",AMZN:"Amazon",META:"Meta Platforms",
     GOOGL:"Alphabet",NFLX:"Netflix",AVGO:"Broadcom",SPY:"SPDR S&P 500 ETF",QQQ:"Invesco QQQ",
     MU:"Micron Technology",ARM:"Arm Holdings",INTC:"Intel",MARA:"MARA Holdings",SOFI:"SoFi Technologies",
     DELL:"Dell Technologies",CRM:"Salesforce",ORCL:"Oracle",UBER:"Uber"};
+  // Real fundamentals: pe (P/E, null=n/a), mc (market cap $B), hi/lo (52-week), sec (sector).
+  F.FUND={
+    NVDA:{pe:32.9,mc:5283,hi:236.54,lo:164.07,sec:"Semiconductors"},
+    AMD:{pe:121.5,mc:773,hi:584.73,lo:149.22,sec:"Semiconductors"},
+    TSLA:{pe:337.1,mc:1433,hi:498.83,lo:297.38,sec:"Autos"},
+    AAPL:{pe:35.5,mc:4516,hi:344.57,lo:224.69,sec:"Consumer Tech"},
+    MSFT:{pe:26.9,mc:3589,hi:553.72,lo:349.20,sec:"Software"},
+    SMCI:{pe:11.4,mc:24,hi:58.78,lo:19.48,sec:"Hardware"},
+    COIN:{pe:null,mc:49,hi:402.16,lo:139.11,sec:"Fintech"},
+    PLTR:{pe:153.8,mc:432,hi:207.52,lo:106.37,sec:"Software"},
+    AMZN:{pe:20.8,mc:2790,hi:287.20,lo:196.00,sec:"E-commerce"},
+    META:{pe:20.7,mc:1401,hi:790.80,lo:520.26,sec:"Internet"},
+    GOOGL:{pe:17.3,mc:4218,hi:408.61,lo:201.30,sec:"Internet"},
+    NFLX:{pe:25.1,mc:332,hi:126.71,lo:65.08,sec:"Media"},
+    AVGO:{pe:61.3,mc:1753,hi:495.00,lo:287.17,sec:"Semiconductors"},
+    SPY:{pe:null,mc:null,hi:767.00,lo:600.00,sec:"ETF · S&P 500"},
+    QQQ:{pe:null,mc:null,hi:714.25,lo:560.00,sec:"ETF · Nasdaq 100"},
+    MU:{pe:21.9,mc:1092,hi:1255.00,lo:114.25,sec:"Semiconductors"},
+    ARM:{pe:249.6,mc:260,hi:452.70,lo:100.02,sec:"Semiconductors"},
+    INTC:{pe:null,mc:473,hi:142.35,lo:23.65,sec:"Semiconductors"},
+    MARA:{pe:null,mc:4.4,hi:23.45,lo:6.66,sec:"Crypto"},
+    SOFI:{pe:39.9,mc:24,hi:32.73,lo:14.88,sec:"Fintech"},
+    DELL:{pe:35.1,mc:286,hi:514.00,lo:110.22,sec:"Hardware"},
+    CRM:{pe:24.2,mc:171,hi:269.11,lo:146.32,sec:"Software"},
+    ORCL:{pe:25.1,mc:422,hi:345.72,lo:114.50,sec:"Software"},
+    UBER:{pe:17.3,mc:161,hi:101.99,lo:65.41,sec:"Transportation"}
+  };
   // Live server prices override this when flux-supa.js has hydrated them.
   F.LIVE=null; // {TICKER:{last,prev_close,name}}
   F.priceOf=function(t){
@@ -300,6 +334,7 @@
   };
   F.prevClose=function(t){t=(t||"").toUpperCase();
     if(F.LIVE&&F.LIVE[t]&&F.LIVE[t].prev_close)return +F.LIVE[t].prev_close;
+    if(F.PREV&&F.PREV[t])return +F.PREV[t];
     return F.PRICES[t]||null;};
   F.Book={
     KEY:"flux_book",
