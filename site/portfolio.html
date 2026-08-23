@@ -184,6 +184,28 @@
         on and set the rules yourself.</p>
     </div>
 
+    <!-- Live brokerage linking: waitlist (real linking via aggregation is in private beta) -->
+    <div class="glass reveal" id="pfWaitCard" style="margin-top:28px;padding:22px;max-width:640px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="pill"><i></i> Private beta</span>
+        <b style="font-size:1.05rem">Get early access to live brokerage linking</b>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:.94rem">Live linking to Robinhood, Fidelity, Schwab and more (read-only) is rolling out. Drop your email and pick your broker — we'll invite you the moment it's live for you.</p>
+      <form id="pfWaitForm" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
+        <input id="pfWaitEmail" type="email" required placeholder="you@email.com" aria-label="Your email"
+          style="flex:1;min-width:180px;background:#040914;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:12px 14px;font-size:16px;outline:none">
+        <select id="pfWaitBroker" aria-label="Your broker"
+          style="background:#040914;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:12px 14px;font-size:16px">
+          <option value="Robinhood">Robinhood</option><option value="Fidelity">Fidelity</option>
+          <option value="Schwab">Schwab</option><option value="Webull">Webull</option>
+          <option value="E*TRADE">E*TRADE</option><option value="Coinbase">Coinbase</option>
+          <option value="Interactive Brokers">Interactive Brokers</option><option value="Other">Other</option>
+        </select>
+        <button class="btn btn-primary" type="submit" id="pfWaitBtn">Join waitlist</button>
+      </form>
+      <div id="pfWaitMsg" class="mono" style="margin-top:10px;font-size:.82rem;color:var(--text-faint);min-height:1em"></div>
+    </div>
+
     <div class="steps reveal" style="margin-top:44px">
       <div class="step">
         <span class="n">01</span>
@@ -586,6 +608,28 @@ document.addEventListener("DOMContentLoaded", function(){
       track.className = "pf-chips pf-static";
       track.innerHTML = one;
     }
+  }
+
+  /* ---------------- brokerage waitlist ---------------- */
+  var waitForm = $("#pfWaitForm");
+  if(waitForm){
+    waitForm.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      var email = ($("#pfWaitEmail").value||"").trim();
+      var broker = $("#pfWaitBroker").value;
+      var msg = $("#pfWaitMsg"), btn = $("#pfWaitBtn");
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.style.color="var(--crimson)"; msg.textContent="Enter a valid email."; return; }
+      msg.style.color="var(--text-faint)"; msg.textContent="Adding you…";
+      if(btn) btn.disabled=true;
+      var done=function(ok){
+        if(btn) btn.disabled=false;
+        if(ok){ msg.style.color="var(--emerald)"; msg.textContent="✓ You're on the list for "+broker+" — we'll email "+email+" when it's live."; waitForm.reset(); }
+        else { msg.style.color="var(--crimson)"; msg.textContent="Couldn't save that — try again in a moment."; }
+      };
+      if(window.FluxSupa && FluxSupa.joinWaitlist){
+        FluxSupa.joinWaitlist(email, broker, "portfolio").then(function(r){ done(r && r.ok); });
+      } else { done(false); }
+    });
   }
 
   /* ---------------- timestamp ---------------- */

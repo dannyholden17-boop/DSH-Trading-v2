@@ -490,12 +490,42 @@
 
   var CAP = "I'm Fluxi — your AI desk, and I learn as we go. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\n• \"What's my biggest risk?\"\nTeach me anything: \"remember I hold NVDA\" or \"my rule is max 8% per name.\" Ask me to \"research TSLA\" and I'll save what I find. Say \"what have you learned?\" anytime.\nEverything I show is simulated / a model estimate — never investment advice.";
 
-  // Try the optional LLM edge function for free-form questions.
+  // Rich live context so every LLM answer is grounded in real data.
+  function buildContext(q) {
+    var ctx = {};
+    ctx.brief = safe(function () { return J.brief().text; });
+    ctx.valuation = safe(function () { var v = J.valuation(); return { under: v.under.map(short), over: v.over.map(short) }; });
+    // top movers today
+    ctx.movers = safe(function () {
+      var list = (F.PRICES ? Object.keys(F.PRICES) : []).map(function (t) {
+        var p = F.priceOf(t), pr = F.prevClose(t); return { t: t, chg: pr ? (p - pr) / pr : 0, price: p };
+      }).filter(function (r) { return r.chg; }).sort(function (a, b) { return b.chg - a.chg; });
+      return { up: list.slice(0, 3).map(function (r) { return r.t + " " + pct(r.chg); }), down: list.slice(-3).map(function (r) { return r.t + " " + pct(r.chg); }) };
+    });
+    // the user's watchlist + paper positions
+    ctx.watchlist = safe(function () { return F.Watch && F.Watch.get ? F.Watch.get() : []; });
+    ctx.paper_positions = safe(function () {
+      var b = F.Book && F.Book.get ? F.Book.get() : null; if (!b) return null;
+      return { cash: b.cash, holdings: Object.keys(b.positions).map(function (t) { return t + ":" + b.positions[t].qty; }) };
+    });
+    // things Fluxi has learned about this user
+    ctx.known_facts = safe(function () { return Mem.facts.slice(0, 6).map(function (f) { return f.text; }); });
+    // deep data for any ticker named in the question
+    var t = findTicker(q);
+    if (t) ctx.focus_ticker = safe(function () {
+      var f = F.Kronos && F.Kronos.forecast(t), fu = fundOf(t);
+      return { ticker: t, name: (F.NAMES && F.NAMES[t]) || t, price: F.priceOf(t),
+        change_today: F.prevClose(t) ? pct((F.priceOf(t) - F.prevClose(t)) / F.prevClose(t)) : null,
+        model_target: f ? f.predClose : null, model_view: f ? (f.predReturn > 0.02 ? "BUY" : f.predReturn < -0.02 ? "SELL" : "HOLD") : null,
+        pe: fu && fu.pe, market_cap_b: fu && fu.mc, wk52_low: fu && fu.lo, wk52_high: fu && fu.hi, sector: fu && fu.sec };
+    });
+    return ctx;
+  }
+  // Try the LLM edge function for free-form / conversational questions.
   function llm(q) {
     var S = window.FluxSupa;
     if (!S || !S.aiChat) return Promise.resolve(null);
-    var ctx = { brief: safe(function () { return J.brief().text; }), valuation: safe(function () { var v = J.valuation(); return { under: v.under.map(short), over: v.over.map(short) }; }) };
-    return Promise.resolve(S.aiChat(q, ctx)).catch(function () { return null; });
+    return Promise.resolve(S.aiChat(q, buildContext(q))).catch(function () { return null; });
   }
   function short(r) { return { ticker: r.ticker, price: r.price, fair: r.fair, edge: r.edge }; }
   function safe(fn) { try { return fn(); } catch (e) { return null; } }

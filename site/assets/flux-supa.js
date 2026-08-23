@@ -222,6 +222,14 @@
       }).catch(function(){ return null; });
   };
 
+  // ---- brokerage / feature waitlist ----
+  S.joinWaitlist = function(email, broker, source){
+    if(!S.client) return Promise.resolve({ ok:false });
+    return S.client.from("waitlist").insert({ email: email, broker: broker||null, source: source||"portfolio" })
+      .then(function(res){ return { ok: !res.error, error: res.error }; })
+      .catch(function(e){ return { ok:false, error:e }; });
+  };
+
   // ---- latest server-generated brief (24/7 pg_cron writes public.briefs) ----
   S.latestBrief = function(){
     if(!S.client) return Promise.resolve(null);
