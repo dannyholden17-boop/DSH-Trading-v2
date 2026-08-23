@@ -313,3 +313,86 @@ details p{padding:0 20px 20px;color:var(--text-dim);font-size:.93rem}
 /* count-flash used by live tick numbers */
 .flash-up{animation:flU .6s ease} .flash-dn{animation:flD .6s ease}
 @keyframes flU{0%{color:var(--emerald)}100%{}} @keyframes flD{0%{color:var(--crimson)}100%{}}
+
+/* ============================================================
+   SYNTHETIC INTELLIGENCE TERMINAL — premium theme upgrade
+   A cyberpunk "trading desk HUD": true-black void, an animated
+   neon-cyan shader field, glass panels that glow when powered on,
+   monospaced data, and scanline accents. Appended last so it
+   layers over the base system site-wide.
+   ============================================================ */
+:root{
+  --cyan:#4cd7f6;              /* neon primary */
+  --cyan-deep:#06b6d4;         /* backlit key */
+  --emerald:#4ae176;           /* success green (brighter) */
+  --glow:6,182,212;            /* rgba glow channel */
+  --glow-c:76,215,246;
+}
+
+/* animated shader canvas — the signature "terminal void" */
+.fx-shader{position:fixed;inset:0;width:100vw;height:100vh;z-index:-3;pointer-events:none;display:block}
+/* when the shader is present, the aurora just adds faint colour bloom on top */
+.fx-shader ~ .fx-aurora{opacity:.28;z-index:-2}
+
+/* body: darken to true-void so the neon reads as a light source */
+body{
+  background:
+    radial-gradient(760px 480px at 8% -8%, rgba(var(--glow),.10), transparent 60%),
+    radial-gradient(820px 520px at 104% 4%, rgba(139,92,246,.08), transparent 60%),
+    radial-gradient(900px 700px at 50% 118%, rgba(var(--glow),.06), transparent 65%),
+    #010409;
+}
+
+/* ---- luminous accents ---- */
+.brand{text-shadow:0 0 18px rgba(var(--glow-c),.45)}
+.brand .glyph{box-shadow:0 0 20px -2px rgba(var(--glow-c),.75)}
+.grad-text,.grad-anim{filter:drop-shadow(0 0 16px rgba(var(--glow-c),.35))}
+.eyebrow{text-shadow:0 0 10px rgba(var(--glow-c),.4)}
+.eyebrow::before{box-shadow:0 0 8px rgba(var(--glow-c),.7)}
+
+/* ---- glass panels: backlit, glow on hover ---- */
+.glass{border-color:rgba(var(--glow-c),.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 24px 60px -40px #000, 0 0 40px -28px rgba(var(--glow),.55)}
+.glass-hover:hover{border-color:rgba(var(--glow-c),.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 26px 60px -36px #000, 0 0 44px -18px rgba(var(--glow),.6)}
+
+/* ---- buttons: backlit terminal keys ---- */
+.btn-primary{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#022530;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 10px 30px -10px rgba(var(--glow),.6), 0 0 22px -6px rgba(var(--glow-c),.7)}
+.btn-primary:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 16px 44px -10px rgba(var(--glow),.75), 0 0 40px -6px rgba(var(--glow-c),.9)}
+.btn-ghost{border-color:rgba(var(--glow-c),.5);color:var(--cyan);text-shadow:0 0 8px rgba(var(--glow-c),.4)}
+.btn-ghost:hover{border-color:var(--cyan);box-shadow:0 0 26px -4px rgba(var(--glow),.6)}
+
+/* ---- pills / tags: hardware-stamped ---- */
+.pill{border-color:rgba(var(--glow-c),.5);background:rgba(var(--glow),.08);color:var(--cyan);
+  box-shadow:0 0 20px -6px rgba(var(--glow),.55);text-shadow:0 0 8px rgba(var(--glow-c),.4)}
+.pill i{box-shadow:0 0 10px var(--cyan)}
+.tag{background:rgba(var(--glow),.12);color:var(--cyan)}
+
+/* ---- nav: neon underlit bar when scrolled ---- */
+.nav.scrolled{background:rgba(1,4,9,.82);border-color:rgba(var(--glow-c),.22);
+  box-shadow:0 6px 30px -18px rgba(var(--glow),.6)}
+.nav-links a:hover{text-shadow:0 0 10px rgba(var(--glow-c),.7)}
+.nav-links a.on::after{box-shadow:0 0 8px var(--cyan)}
+
+/* ---- feature / step accents ---- */
+.feat .ic,.fi .k{border-color:rgba(var(--glow-c),.3);box-shadow:0 0 22px -10px rgba(var(--glow),.6);
+  color:var(--cyan)}
+.step::before{box-shadow:0 0 14px -2px rgba(var(--glow),.6)}
+
+/* ---- scanline sweep: add .cyber-card to any glass module ---- */
+.cyber-card{position:relative;overflow:hidden}
+.cyber-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;z-index:5;pointer-events:none;
+  background:rgba(var(--glow),.6);box-shadow:0 0 12px rgba(var(--glow),.9);animation:fxScan 5s linear infinite}
+@keyframes fxScan{0%{transform:translateY(-2px)}100%{transform:translateY(calc(100% + 2px))}}
+
+/* ---- pulse-glow: for "powered on / live" modules ---- */
+.pulse-glow{animation:fxPulse 2.4s cubic-bezier(.4,0,.6,1) infinite}
+@keyframes fxPulse{0%,100%{box-shadow:0 0 12px -4px rgba(var(--glow),.35)}50%{box-shadow:0 0 30px -4px rgba(var(--glow),.8)}}
+
+/* selection + focus rings in neon */
+::selection{background:rgba(var(--glow),.3);color:#eafcff}
+:focus-visible{outline:2px solid rgba(var(--glow-c),.7);outline-offset:2px}
+
+/* keep aurora blobs on-palette (cyan/green rather than violet-heavy) */
+.fx-aurora b:nth-child(2){background:radial-gradient(circle at 60% 40%,rgba(var(--glow),.45),transparent 62%)}
