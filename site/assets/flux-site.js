@@ -256,9 +256,51 @@
     window.addEventListener("flux-prices", run);
   };
 
+  /* ---- global ticker search: press "/" to open, type, Enter to open terminal ---- */
+  F.initSearch=function(){
+    if(F._searchRunning) return; F._searchRunning=true;
+    var ov=document.createElement("div"); ov.className="fx-search"; ov.setAttribute("aria-hidden","true");
+    ov.innerHTML='<div class="fx-search-box"><input type="text" placeholder="Search a ticker or company…" aria-label="Search ticker" autocomplete="off">'+
+      '<div class="fx-search-list"></div><div class="fx-search-hint">↑↓ to move · Enter to open · Esc to close</div></div>';
+    document.body.appendChild(ov);
+    var inp=ov.querySelector("input"), list=ov.querySelector(".fx-search-list"), sel=0, rows=[];
+    function universe(){ return F.PRICES?Object.keys(F.PRICES):[]; }
+    function render(q){
+      q=(q||"").trim().toUpperCase();
+      rows=universe().filter(function(t){ var nm=(F.NAMES&&F.NAMES[t]||"").toUpperCase(); return !q||t.indexOf(q)===0||t.indexOf(q)>=0||nm.indexOf(q)>=0; })
+        .slice(0,8);
+      sel=0;
+      list.innerHTML=rows.map(function(t,i){
+        var p=F.priceOf?F.priceOf(t):null, pr=F.prevClose?F.prevClose(t):null, chg=pr?(p-pr)/pr*100:0;
+        return '<div class="it'+(i===0?" sel":"")+'" data-t="'+t+'"><span class="sy">'+t+'</span>'+
+          '<span class="nm">'+((F.NAMES&&F.NAMES[t])||"")+'</span>'+
+          '<span class="pr '+(chg>=0?"up":"down")+'">'+(p!=null?"$"+p.toFixed(2):"")+' '+(pr?(chg>=0?"+":"")+chg.toFixed(1)+"%":"")+'</span></div>';
+      }).join("")||'<div class="fx-search-hint" style="border:none">No match.</div>';
+    }
+    function open(){ ov.classList.add("on"); inp.value=""; render(""); setTimeout(function(){inp.focus();},30); }
+    function close(){ ov.classList.remove("on"); }
+    function goTo(t){ if(t){ close(); location.href="./terminal.html?symbol="+t; } }
+    inp.addEventListener("input",function(){ render(inp.value); });
+    inp.addEventListener("keydown",function(e){
+      if(e.key==="ArrowDown"){ e.preventDefault(); sel=Math.min(sel+1,rows.length-1); }
+      else if(e.key==="ArrowUp"){ e.preventDefault(); sel=Math.max(sel-1,0); }
+      else if(e.key==="Enter"){ e.preventDefault(); goTo(rows[sel]); return; }
+      else if(e.key==="Escape"){ close(); return; }
+      else return;
+      Array.prototype.forEach.call(list.children,function(el,i){ el.classList.toggle("sel",i===sel); });
+    });
+    list.addEventListener("click",function(e){ var it=e.target.closest(".it"); if(it) goTo(it.getAttribute("data-t")); });
+    ov.addEventListener("click",function(e){ if(e.target===ov) close(); });
+    document.addEventListener("keydown",function(e){
+      var el=document.activeElement, typing=el&&(el.tagName==="INPUT"||el.tagName==="TEXTAREA"||el.isContentEditable);
+      if(e.key==="/"&&!typing&&!ov.classList.contains("on")){ e.preventDefault(); open(); }
+    });
+  };
+
   F.initFX=function(){
     var body=document.body;
     F.initAlerts();
+    F.initSearch();
     // animated aurora backdrop (once) — fallback layer behind the shader
     if(!F.reduced()&&!$(".fx-aurora")){
       var a=document.createElement("div");a.className="fx-aurora";a.setAttribute("aria-hidden","true");
