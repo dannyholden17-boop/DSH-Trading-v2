@@ -84,6 +84,11 @@
   };
   S.signInEmail = function(email, pw){ return S.client.auth.signInWithPassword({ email:email, password:pw }); };
   S.signInMagic = function(email){ return S.client.auth.signInWithOtp({ email:email, options:{ emailRedirectTo:redir() } }); };
+  // Send a password-reset email. User clicks the link and lands back to set a new password.
+  S.resetPassword = function(email){
+    if(!S.client) return Promise.reject(new Error("not ready"));
+    return S.client.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname.replace(/[^\/]*$/, "") + "signin.html?reset=1" });
+  };
   S.signInGoogle = function(){ return S.client.auth.signInWithOAuth({ provider:"google", options:{ redirectTo:redir() } }); };
   S.signOut = function(){ try{ return S.client ? S.client.auth.signOut() : Promise.resolve(); }catch(e){ return Promise.resolve(); } };
 
