@@ -265,7 +265,7 @@
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
-  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
 </div></footer>
 
 <script>
@@ -337,13 +337,14 @@ document.addEventListener("DOMContentLoaded", function(){
     {s:"SPY",  n:"SPDR S&P 500",      p:559.10, v:64.5},
     {s:"QQQ",  n:"Invesco QQQ",       p:486.30, v:38.7}
   ];
-  UNIV.forEach(function(u){ var lp = F.priceOf && F.priceOf(u.s); if(lp) u.p = lp; });
   UNIV.forEach(function(u,i){
+    var real = F.priceOf && F.priceOf(u.s);
+    var prev = F.prevClose && F.prevClose(u.s);
+    if(real) u.p = real;                       /* REAL price */
+    u.base = prev || u.p;
+    u.chg  = u.base ? (u.p - u.base) / u.base * 100 : 0;   /* REAL % change vs prior close */
     var r = (F.seed ? F.seed(u.s) : i*97) % 1000 / 1000;
-    u.base = u.p;
-    u.chg  = (r - .42) * 11;                 /* seeded starting % change */
-    u.p    = u.base * (1 + u.chg/100);
-    u.rvol = 0.4 + r * 3.6;
+    u.rvol = 0.4 + r * 3.6;                     /* relative-volume estimate */
     u.dir  = u.chg >= 0;
     u.hist = [];
     var h = 0;
@@ -397,7 +398,7 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   function openSym(tr){
-    if(tr && tr.dataset.sym) window.location.href = "./download.html";
+    if(tr && tr.dataset.sym) window.location.href = "./terminal.html?symbol=" + tr.dataset.sym;
   }
   if(body){
     body.addEventListener("click", function(e){ openSym(e.target.closest("tr")); });
