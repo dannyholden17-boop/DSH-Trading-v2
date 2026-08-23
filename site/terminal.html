@@ -444,7 +444,8 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-  if(!window.FLUXAuth || !FLUXAuth.guard()) return;
+  // Paper terminal is open to everyone — it's virtual money in your browser.
+  // When you're signed in, flux-supa syncs the book/watchlist to your account.
 
   var F  = window.FLUX || {};
   var $  = F.$  || function(s,r){return (r||document).querySelector(s);};
@@ -892,7 +893,10 @@ document.addEventListener("DOMContentLoaded", function(){
     wlAdd.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); addToWatch(wlAdd.value); } });
     wlAdd.addEventListener("change", function(){ if(wlAdd.value) addToWatch(wlAdd.value); });
   }
-  if(wlAddBtn) wlAddBtn.addEventListener("click", function(){ if(wlAdd){ wlAdd.focus(); } });
+  if(wlAddBtn) wlAddBtn.addEventListener("click", function(){
+    if(wlAdd && wlAdd.value.trim()){ addToWatch(wlAdd.value); }
+    else if(wlAdd){ wlAdd.focus(); }
+  });
 
   if(symInput){
     var applySym=function(){
