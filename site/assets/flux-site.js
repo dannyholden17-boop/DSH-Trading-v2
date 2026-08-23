@@ -156,13 +156,71 @@
 
   /* ---- FX: aurora backdrop, scroll progress, tilt, marquee ---- */
   F.reduced=function(){return window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches};
+
+  /* Animated "synthetic intelligence terminal" background: a dark liquid field
+     with faint neon-cyan scanlines. Full-screen WebGL quad, fixed behind content.
+     Silently no-ops if WebGL is unavailable (aurora fallback remains). */
+  F.initShader=function(body){
+    var canvas=document.createElement("canvas");
+    canvas.className="fx-shader";canvas.setAttribute("aria-hidden","true");
+    var gl=null;
+    try{ gl=canvas.getContext("webgl")||canvas.getContext("experimental-webgl"); }catch(e){ gl=null; }
+    if(!gl){ return; } // keep aurora fallback
+    body.insertBefore(canvas,body.firstChild);
+    var vsrc="attribute vec2 position;varying vec2 vUv;void main(){vUv=position*0.5+0.5;gl_Position=vec4(position,0.0,1.0);}";
+    var fsrc=[
+      "precision highp float;varying vec2 vUv;uniform float u_time;uniform vec2 u_res;",
+      "void main(){",
+      "  vec2 uv=vUv;vec2 p=-1.0+2.0*uv;p.x*=u_res.x/u_res.y;",
+      "  float t=u_time*0.35;",
+      "  for(float i=1.0;i<4.0;i++){",
+      "    p.x+=0.28/i*sin(i*3.0*p.y+t+i*1.5);",
+      "    p.y+=0.28/i*sin(i*3.0*p.x+t+i*1.2);",
+      "  }",
+      "  float v=0.5+0.5*sin(p.x+p.y);",
+      "  vec3 base=vec3(0.008,0.024,0.055);",              // deep-midnight #020617-ish
+      "  vec3 color=mix(base,vec3(0.02,0.42,0.52),v*0.30);",
+      "  color+=vec3(0.02,0.71,0.83)*abs(0.006/(sin(uv.y*10.0+t)+1.12))*0.45;", // scanline glow
+      "  gl_FragColor=vec4(color,1.0);",
+      "}"
+    ].join("\n");
+    function mk(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return s;}
+    var prog=gl.createProgram();
+    gl.attachShader(prog,mk(gl.VERTEX_SHADER,vsrc));
+    gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,fsrc));
+    gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){ canvas.remove(); return; }
+    gl.useProgram(prog);
+    var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(prog,"position");
+    gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var uT=gl.getUniformLocation(prog,"u_time"),uR=gl.getUniformLocation(prog,"u_res");
+    var dpr=Math.min(window.devicePixelRatio||1,1.5),running=true;
+    function size(){
+      var w=Math.floor(canvas.clientWidth*dpr),h=Math.floor(canvas.clientHeight*dpr);
+      if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);}
+    }
+    // pause when tab hidden to save battery
+    document.addEventListener("visibilitychange",function(){running=!document.hidden;if(running)requestAnimationFrame(frame);});
+    function frame(ts){
+      if(!running)return;
+      size();
+      gl.uniform1f(uT,ts*0.001);gl.uniform2f(uR,canvas.width,canvas.height);
+      gl.drawArrays(gl.TRIANGLES,0,6);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
   F.initFX=function(){
     var body=document.body;
-    // animated aurora backdrop (once)
+    // animated aurora backdrop (once) — fallback layer behind the shader
     if(!F.reduced()&&!$(".fx-aurora")){
       var a=document.createElement("div");a.className="fx-aurora";a.setAttribute("aria-hidden","true");
       a.innerHTML="<b></b><b></b><b></b>";body.insertBefore(a,body.firstChild);
     }
+    // animated WebGL "terminal void" shader backdrop (once) — the signature backdrop
+    if(!F.reduced()&&!$(".fx-shader")){ F.initShader(body); }
     // scroll progress bar (once)
     if(!$(".fx-progress")){
       var bar=document.createElement("div");bar.className="fx-progress";bar.setAttribute("aria-hidden","true");
