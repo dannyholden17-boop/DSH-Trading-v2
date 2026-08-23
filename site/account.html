@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account — Flux</title>
+<meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css">
+<script src="./assets/flux-supa.js" defer></script>
+<script src="./assets/flux-site.js" defer></script>
+<script src="./assets/flux-kronos.js" defer></script>
+<style>
+  /* page-only LAYOUT: account.html (acc- prefixed). Shared tokens/classes reused, never redefined. */
+  .acc-stack{display:flex;flex-direction:column;gap:18px;margin-top:26px}
+  .acc-card{padding:24px}
+  .acc-ctop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .acc-ctop h2{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
+  .acc-cap{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.05em;color:var(--text-faint);margin-left:auto}
+  .acc-note{font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint);margin-top:14px;line-height:1.5}
+
+  /* profile */
+  .acc-prow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .acc-av{width:64px;height:64px;border-radius:16px;flex:none;display:grid;place-items:center;
+    font-family:var(--f-mono);font-weight:700;font-size:1.35rem;letter-spacing:.02em;color:var(--text);
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.2),rgba(139,92,246,.14))}
+  .acc-pid{min-width:0}
+  .acc-pid b{font-size:1.05rem;font-weight:700}
+  .acc-pid span{display:block;color:var(--text-faint);font-family:var(--f-mono);font-size:.8rem;margin-top:3px;
+    overflow:hidden;text-overflow:ellipsis}
+
+  .acc-fields{display:flex;flex-direction:column;gap:16px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line-2)}
+  .acc-field{display:flex;flex-direction:column;gap:8px}
+  .acc-lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .acc-inrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .acc-input{flex:1;min-width:160px;background:var(--well);border:1px solid var(--line);border-radius:12px;
+    color:var(--text);padding:12px 14px;font-size:14px;font-family:var(--f-sans);outline:none;
+    transition:border-color .2s}
+  .acc-input:focus{border-color:rgba(0,242,255,.45)}
+  .acc-input[readonly]{color:var(--text-dim);cursor:default}
+  .acc-saved{font-family:var(--f-mono);font-size:12px;color:var(--emerald);opacity:0;transition:opacity .25s}
+  .acc-saved.show{opacity:1}
+
+  /* subscription */
+  .acc-sub{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .acc-sub-id{min-width:0}
+  .acc-plan{font-size:1.45rem;font-weight:750;letter-spacing:-.02em}
+  .acc-plan-sub{color:var(--text-dim);font-size:.88rem;margin-top:6px}
+  .acc-pill-ok{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+    padding:5px 11px;border-radius:100px;border:1px solid rgba(16,185,129,.5);background:rgba(16,185,129,.1);color:var(--emerald)}
+  .acc-sub-act{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  /* paper account */
+  .acc-chips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:440px){.acc-chips{grid-template-columns:1fr}}
+  .acc-chip{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:16px}
+  .acc-chip b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:750;
+    letter-spacing:-.02em;display:block}
+  .acc-chip span{color:var(--text-faint);font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;margin-top:5px;display:block}
+  .acc-pact{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+
+  /* preferences */
+  .acc-toggle{display:flex;align-items:flex-start;gap:14px;padding:14px 2px;border-top:1px solid var(--line-2);cursor:pointer}
+  .acc-toggle:first-child{border-top:0;padding-top:0}
+  .acc-toggle input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--cyan);cursor:pointer}
+  .acc-toggle .t b{font-size:.95rem;font-weight:600}
+  .acc-toggle .t span{display:block;color:var(--text-faint);font-size:.82rem;margin-top:3px;line-height:1.45}
+
+  /* danger / session */
+  .acc-danger{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .acc-danger .sp{flex:1;min-width:0}
+  .acc-del-note{font-family:var(--f-mono);font-size:11.5px;color:var(--text-dim);margin-top:12px;display:none}
+  .acc-del-note.show{display:block}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./terminal.html">Trade</a>
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./trade-ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
+      <a class="btn btn-primary btn-sm" href="./terminal.html">Trade</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">Account</span>
+    <h1 class="h2" style="margin-top:10px">Your account</h1>
+    <p class="lede" style="max-width:58ch">Your profile, plan, paper account and preferences — all in one place. <span class="mono" style="font-size:.8rem">Simulated · virtual money · not advice.</span></p>
+
+    <div class="acc-stack">
+
+      <!-- PROFILE -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Profile</h2><span class="acc-cap">signed in</span></div>
+        <div class="acc-prow">
+          <div class="acc-av" id="accAv">—</div>
+          <div class="acc-pid">
+            <b data-auth-name id="accNameLabel">Trader</b>
+            <span id="accEmailLabel">—</span>
+          </div>
+        </div>
+        <div class="acc-fields">
+          <div class="acc-field">
+            <label class="acc-lbl" for="accName">Display name</label>
+            <div class="acc-inrow">
+              <input class="acc-input" id="accName" type="text" autocomplete="name" placeholder="Your name">
+              <button class="btn btn-primary btn-sm" type="button" id="accSave">Save</button>
+              <span class="acc-saved" id="accSaved">Saved ✓</span>
+            </div>
+          </div>
+          <div class="acc-field">
+            <label class="acc-lbl" for="accEmail">Email</label>
+            <div class="acc-inrow">
+              <input class="acc-input" id="accEmail" type="email" readonly value="—">
+            </div>
+          </div>
+          <div class="acc-field">
+            <span class="acc-lbl">Member since</span>
+            <div class="acc-inrow"><span class="mono" style="color:var(--text-dim);font-size:.9rem">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTION -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Subscription</h2><span class="acc-cap">billing via Stripe</span></div>
+        <div class="acc-sub">
+          <div class="acc-sub-id">
+            <div class="acc-plan" id="accPlan">Loading…</div>
+            <div class="acc-plan-sub" id="accPlanSub">Checking your plan…</div>
+          </div>
+          <div class="acc-sub-act" id="accSubAct">
+            <a class="btn btn-ghost btn-sm" href="./pricing.html">Manage plan</a>
+          </div>
+        </div>
+        <p class="acc-note">Payments and renewals are handled securely by Stripe. Changing or cancelling your plan happens on the pricing page.</p>
+      </div>
+
+      <!-- PAPER ACCOUNT -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Paper account</h2><span class="acc-cap">simulated · virtual money</span></div>
+        <div class="acc-chips">
+          <div class="acc-chip"><b id="accEquity">$—</b><span>Equity</span></div>
+          <div class="acc-chip"><b id="accCash">$—</b><span>Cash</span></div>
+        </div>
+        <div class="acc-pact">
+          <a class="btn btn-ghost btn-sm" href="./activity.html">View activity &amp; P&amp;L →</a>
+          <button class="btn btn-ghost btn-sm" type="button" id="accReset">Reset paper account</button>
+        </div>
+        <p class="acc-note">$100,000 of virtual money to learn with. Resetting clears every paper position and order and restores the starting balance. Nothing here is real money or real trading.</p>
+      </div>
+
+      <!-- PREFERENCES -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Preferences</h2><span class="acc-cap">saved on this device</span></div>
+        <label class="acc-toggle">
+          <input type="checkbox" id="prefBrief">
+          <span class="t"><b>Email me the daily brief</b><span>A morning summary of your watchlist and the AI signals. Email delivery coming soon.</span></span>
+        </label>
+        <label class="acc-toggle">
+          <input type="checkbox" id="prefAlerts">
+          <span class="t"><b>Price-alert notifications</b><span>Get notified when a symbol crosses a level you set. Email delivery coming soon.</span></span>
+        </label>
+        <p class="acc-note">These settings are stored in your browser only.</p>
+      </div>
+
+      <!-- DANGER / SESSION -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Session</h2></div>
+        <div class="acc-danger">
+          <div class="sp">
+            <b style="font-weight:600">Sign out of Flux</b>
+            <p class="muted" style="font-size:.85rem;margin-top:4px">End your session on this device.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" type="button" data-signout>Sign out</button>
+        </div>
+        <div class="acc-danger" style="margin-top:18px;padding-top:18px;border-top:1px solid var(--line-2)">
+          <div class="sp">
+            <b style="font-weight:600">Delete account</b>
+            <p class="muted" style="font-size:.85rem;margin-top:4px">Permanently remove your Flux account and data.</p>
+            <p class="acc-del-note" id="accDelNote">Email <a href="mailto:support@dsh-trading.com" style="color:var(--cyan)">support@dsh-trading.com</a> to delete your account.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" type="button" id="accDel" style="opacity:.7">Delete account</button>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:20px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The paper account is simulated with virtual money; results are hypothetical.</p>
+  </div>
+</section>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+    </div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./trade-ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Activity shown is from a simulated paper account using virtual money; results are hypothetical and do not represent real trading. Trading involves risk of loss, including loss of principal.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not investment advice · Trade at your own risk</span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  "use strict";
+  if(!window.FLUXAuth || !FLUXAuth.guard()) return;
+
+  var F = window.FLUX || {}, B = window.FLUXBook, Supa = window.FluxSupa;
+  var $ = function(s){ return document.querySelector(s); };
+
+  function currentUser(){
+    if(Supa && Supa.user && Supa.user()) return Supa.user();
+    if(FLUXAuth.get) return FLUXAuth.get();
+    return null;
+  }
+  function money(n){ return "$" + Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function initials(name){
+    var n = (name||"").trim();
+    if(!n) return "—";
+    var parts = n.split(/\s+/);
+    if(parts.length >= 2) return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+    return n.slice(0,2).toUpperCase();
+  }
+
+  /* ---------------- profile ---------------- */
+  function renderProfile(){
+    var u = currentUser() || {};
+    var name = u.name || "Trader", email = u.email || "—";
+    var av = $("#accAv"); if(av) av.textContent = initials(name);
+    var nl = $("#accNameLabel"); if(nl) nl.textContent = name;
+    var el = $("#accEmailLabel"); if(el) el.textContent = email;
+    var ni = $("#accName"); if(ni && document.activeElement !== ni) ni.value = u.name || "";
+    var ei = $("#accEmail"); if(ei) ei.value = email;
+  }
+  renderProfile();
+
+  var saveBtn = $("#accSave"), nameInput = $("#accName"), savedEl = $("#accSaved");
+  if(saveBtn && nameInput){
+    saveBtn.addEventListener("click", function(){
+      var val = (nameInput.value || "").trim();
+      if(!val){ nameInput.focus(); return; }
+      saveBtn.disabled = true;
+      function done(){
+        renderProfile();
+        if(savedEl){ savedEl.classList.add("show"); setTimeout(function(){ savedEl.classList.remove("show"); }, 2200); }
+        saveBtn.disabled = false;
+      }
+      if(Supa && Supa.updateName){
+        Supa.updateName(val).then(done).catch(done);
+      } else {
+        done();
+      }
+    });
+  }
+
+  /* ---------------- subscription ---------------- */
+  var PLAN_NAMES = { trader:"Trader", desk:"Desk" };
+  function fmtRenew(v){
+    if(!v) return "";
+    var d = new Date(v); if(isNaN(d)) { d = new Date(Number(v)*1000); }
+    if(isNaN(d)) return "";
+    return d.toLocaleDateString(undefined,{month:"long", day:"numeric", year:"numeric"});
+  }
+  function renderSub(sub){
+    var planEl = $("#accPlan"), subEl = $("#accPlanSub"), actEl = $("#accSubAct");
+    var active = sub && (sub.status === "active" || sub.status === "trialing");
+    if(active){
+      var pname = PLAN_NAMES[(sub.plan||"").toLowerCase()] || (sub.plan ? (sub.plan.charAt(0).toUpperCase()+sub.plan.slice(1)) : "Flux");
+      var statusLabel = sub.status === "trialing" ? "Trialing" : "Active";
+      if(planEl) planEl.innerHTML = pname + ' plan <span class="acc-pill-ok" style="vertical-align:middle;margin-left:8px">' + statusLabel + '</span>';
+      var renew = fmtRenew(sub.current_period_end);
+      if(subEl) subEl.textContent = renew ? ("Renews " + renew) : "Your plan is active.";
+      if(actEl) actEl.innerHTML = '<a class="btn btn-ghost btn-sm" href="./pricing.html">Manage plan</a>';
+    } else {
+      if(planEl) planEl.textContent = "Free — Scout plan";
+      if(subEl) subEl.textContent = "You're on the free plan. Upgrade for the full desk.";
+      if(actEl) actEl.innerHTML =
+        '<a class="btn btn-primary btn-sm" href="./pricing.html">Upgrade →</a>' +
+        '<a class="btn btn-ghost btn-sm" href="./pricing.html">Manage plan</a>';
+    }
+  }
+  if(Supa && Supa.ready){
+    Supa.ready.then(function(){ return Supa.subscription ? Supa.subscription() : null; })
+      .then(renderSub).catch(function(){ renderSub(null); });
+  } else {
+    renderSub((F && F.SUB) || null);
+  }
+
+  /* ---------------- paper account ---------------- */
+  function renderPaper(){
+    var eq = (B && B.equity) ? B.equity() : 0;
+    var cash = (B && B.get) ? B.get().cash : 0;
+    var eqEl = $("#accEquity"); if(eqEl) eqEl.textContent = money(eq);
+    var cashEl = $("#accCash"); if(cashEl) cashEl.textContent = money(cash);
+  }
+  renderPaper();
+  var resetBtn = $("#accReset");
+  if(resetBtn && B){
+    resetBtn.addEventListener("click", function(){
+      if(confirm("Reset your paper account to $100,000 and clear all positions?")){
+        B.reset(); renderPaper();
+      }
+    });
+  }
+  window.addEventListener("flux-book-updated", renderPaper);
+  window.addEventListener("flux-prices", renderPaper);
+
+  /* ---------------- preferences (localStorage flux_pref_*) ---------------- */
+  function wirePref(id, key){
+    var el = $("#" + id); if(!el) return;
+    try{ el.checked = localStorage.getItem(key) === "1"; }catch(e){}
+    el.addEventListener("change", function(){
+      try{ localStorage.setItem(key, el.checked ? "1" : "0"); }catch(e){}
+    });
+  }
+  wirePref("prefBrief", "flux_pref_daily_brief");
+  wirePref("prefAlerts", "flux_pref_price_alerts");
+
+  /* ---------------- delete account (info only) ---------------- */
+  var delBtn = $("#accDel"), delNote = $("#accDelNote");
+  if(delBtn && delNote){
+    delBtn.addEventListener("click", function(){ delNote.classList.add("show"); });
+  }
+
+  /* ---------------- keep profile fresh after auth hydrates ---------------- */
+  window.addEventListener("flux-sub", function(){ if(F && F.SUB) renderSub(F.SUB); });
+  if(Supa && Supa.ready){ Supa.ready.then(renderProfile); }
+});
+</script>
+</body>
+</html>

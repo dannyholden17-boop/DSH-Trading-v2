@@ -320,7 +320,7 @@
       if(u){
         var nm=(u.name||"Trader");
         cta.innerHTML='<a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>'+
-          '<a class="btn btn-primary btn-sm" href="./dashboard.html" title="'+nm.replace(/"/g,"")+'">'+nm.slice(0,14)+'</a>';
+          '<a class="btn btn-primary btn-sm" href="./account.html" title="'+nm.replace(/"/g,"")+'">'+nm.slice(0,14)+'</a>';
       }else{
         cta.innerHTML='<a class="btn btn-ghost btn-sm" href="./signin.html">Sign in</a>'+
           '<a class="btn btn-primary btn-sm" href="./dashboard.html">Launch app</a>';

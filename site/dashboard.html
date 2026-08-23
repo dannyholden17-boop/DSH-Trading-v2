@@ -199,6 +199,67 @@
   </div>
 </section>
 
+<!-- ============ ONBOARDING ============ -->
+<section class="section" style="padding-top:8px;padding-bottom:0;display:none" id="onboard">
+  <div class="wrap">
+    <div class="glass sheen" style="padding:22px;position:relative;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span class="pill live">Getting started</span>
+        <b style="font-size:1.05rem">Welcome to Flux — <span id="obCount">0/5</span> done. Let's get you trading.</b>
+        <button class="btn btn-ghost btn-sm" type="button" id="obDismiss" style="margin-left:auto">Dismiss</button>
+      </div>
+      <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin:16px 0">
+        <i id="obBar" style="display:block;height:100%;border-radius:3px;background:var(--grad);width:0;transition:width .5s ease"></i></div>
+      <div class="grid g-3" id="obList"></div>
+    </div>
+  </div>
+</section>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX, B = window.FLUXBook, S = window.FluxSupa;
+  var sec = document.getElementById("onboard"); if(!sec) return;
+  if(S && S.isOnboarded && S.isOnboarded()) return;   // already onboarded
+  var lg = function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  var steps = [
+    { k:"trade", ic:"⟁", t:"Place your first paper trade", d:"Buy or sell any stock in the terminal — free virtual money.", href:"./terminal.html", done:function(){ return B && B.get().orders.length>0; } },
+    { k:"watch", ic:"★", t:"Build your watchlist", d:"Track the names you care about, synced to your account.", href:"./terminal.html", done:function(){ return lg("flux_ob_watch") || (window.FLUXWatch && window.FLUXWatch.get().length>4); } },
+    { k:"alert", ic:"🔔", t:"Set a price alert", d:"Get flagged when a stock crosses your level.", href:"#alForm", done:function(){ return window.FLUXAlerts && window.FLUXAlerts.get().length>0; } },
+    { k:"ai", ic:"◇", t:"Ask Flux AI", d:"Research any company or your risk in plain English.", href:"./ai.html", done:function(){ return lg("flux_ob_ai"); } },
+    { k:"fund", ic:"◷", t:"Watch the Kronos fund", d:"See the AI trade its own $10k live, with reports.", href:"./autopilot.html", done:function(){ return lg("flux_ob_fund"); } }
+  ];
+  function render(){
+    var doneN = 0;
+    document.getElementById("obList").innerHTML = steps.map(function(s,i){
+      var ok = !!s.done(); if(ok) doneN++;
+      var mark = ok ? '<span style="color:var(--emerald);font-weight:800">✓</span>'
+        : '<span style="font-family:var(--f-mono);color:var(--cyan)">'+(i+1)+'</span>';
+      return '<a class="glass glass-hover" data-ob="'+s.k+'" href="'+s.href+'" style="text-decoration:none;color:inherit;padding:15px;display:block;'+(ok?'opacity:.7':'')+'">'+
+        '<div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;flex:none">'+mark+'</span>'+
+        '<b style="font-size:.95rem">'+s.ic+' '+s.t+'</b></div>'+
+        '<div class="muted" style="font-size:.82rem;margin-top:8px">'+s.d+'</div></a>';
+    }).join("");
+    document.getElementById("obCount").textContent = doneN+"/"+steps.length;
+    document.getElementById("obBar").style.width = (doneN/steps.length*100)+"%";
+    if(doneN >= steps.length){ if(S && S.setOnboarded) S.setOnboarded(); }
+  }
+  sec.style.display = "";
+  render();
+  // mark visited flags for link-based steps
+  document.getElementById("obList").addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("[data-ob]") : null; if(!a) return;
+    var k = a.getAttribute("data-ob");
+    if(k==="ai") try{ localStorage.setItem("flux_ob_ai","1"); }catch(x){}
+    if(k==="fund") try{ localStorage.setItem("flux_ob_fund","1"); }catch(x){}
+    if(k==="watch") try{ localStorage.setItem("flux_ob_watch","1"); }catch(x){}
+  });
+  document.getElementById("obDismiss").addEventListener("click", function(){
+    if(S && S.setOnboarded) S.setOnboarded();
+    sec.style.display = "none";
+  });
+  window.addEventListener("flux-book-updated", render);
+});
+</script>
+
 <!-- ============ AI DAILY BRIEF ============ -->
 <section class="section">
   <div class="wrap">
@@ -299,6 +360,7 @@ document.addEventListener("DOMContentLoaded", function(){
           <a class="btn btn-primary btn-sm" href="./terminal.html">Open trading terminal →</a>
           <a class="btn btn-ghost btn-sm" href="./options.html">Trade options</a>
           <a class="btn btn-ghost btn-sm" href="./activity.html">Activity &amp; P&amp;L</a>
+          <button class="btn btn-primary btn-sm" type="button" id="paCopyKronos">⚡ Copy the Kronos fund</button>
           <button class="btn btn-ghost btn-sm" type="button" id="paReset">Reset paper account</button>
         </div>
       </div>
@@ -352,6 +414,27 @@ document.addEventListener("DOMContentLoaded",function(){
   }
   var rb=$("#paReset");
   if(rb)rb.addEventListener("click",function(){if(confirm("Reset your paper account to $100,000 and clear all positions?")){B.reset();renderAcct();}});
+
+  // ---- Copy the Kronos fund: mirror the live autopilot positions into your paper book ----
+  var ck=$("#paCopyKronos");
+  if(ck)ck.addEventListener("click",function(){
+    if(!window.FluxSupa||!window.FluxSupa.autopilot){ return; }
+    ck.disabled=true; var label=ck.textContent; ck.textContent="Copying the fund…";
+    function reset(t){ ck.textContent=t; setTimeout(function(){ck.disabled=false;ck.textContent=label;},2600); }
+    window.FluxSupa.autopilot().then(function(ap){
+      if(!ap||!ap.positions||!ap.positions.length){ reset("Fund has no open positions"); return; }
+      var bk=B.get(), invest=Math.min(bk.cash, 25000), fundVal=0;
+      ap.positions.forEach(function(p){ fundVal += p.qty*((F.priceOf&&F.priceOf(p.ticker))||p.avg); });
+      if(fundVal<=0 || invest<50){ reset("Not enough buying power"); return; }
+      var placed=0;
+      ap.positions.forEach(function(p){
+        var px=(F.priceOf&&F.priceOf(p.ticker))||p.avg, w=(p.qty*px)/fundVal, qty=Math.floor((invest*w)/px);
+        if(qty>=1){ var r=B.place({side:"buy",ticker:p.ticker,qty:qty,type:"market"}); if(r&&r.ok)placed++; }
+      });
+      renderAcct();
+      reset(placed? ("Copied "+placed+" positions ✓") : "Not enough buying power");
+    }).catch(function(){ reset("Couldn't reach the fund"); });
+  });
 
   // alerts
   function renderAlerts(){
