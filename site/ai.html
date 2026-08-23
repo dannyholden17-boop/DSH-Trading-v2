@@ -3,140 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flux AI — The agent that runs your desk</title>
-<meta name="description" content="Ask Flux anything about the market and get a real answer. Six models run all day, research writes itself, and every idea arrives with the homework attached.">
+<title>Flux AI — your JARVIS trading desk</title>
+<meta name="description" content="Talk to Flux — an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/flux.css?v=2">
 <script src="./assets/flux-supa.js?v=2" defer></script>
 <script src="./assets/flux-site.js?v=2" defer></script>
 <script src="./assets/flux-kronos.js?v=2" defer></script>
+<script src="./assets/flux-jarvis.js?v=2" defer></script>
 <style>
-  /* ---- hero orb ---- */
-  .ai-hero{position:relative;text-align:center;padding-top:clamp(30px,5vw,60px)}
-  .ai-hero .orb{--sz:clamp(150px,20vw,200px);margin-bottom:22px}
-  .ai-hero h1{margin-top:6px}
-  .ai-hero .lede{margin:20px auto 30px;text-align:center}
+  .jbg{position:relative;overflow:clip}
+  .jwrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter);padding-top:18px}
+  .jgrid{display:grid;grid-template-columns:1.35fr .85fr;gap:26px;align-items:start}
+  @media(max-width:980px){.jgrid{grid-template-columns:1fr;gap:20px}}
 
-  /* ---- chat demo ---- */
-  .chat{max-width:820px;margin-inline:auto;overflow:hidden;padding:0}
-  .chat-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2);
-    background:rgba(3,8,20,.5)}
-  .chat-head .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);animation:blink 1.8s infinite}
-  .chat-head b{font-size:14px}
-  .chat-head .st{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
-  .chat-log{padding:18px;display:flex;flex-direction:column;gap:12px;min-height:330px;max-height:460px;overflow-y:auto}
-  .msg{max-width:82%;padding:11px 15px;border-radius:14px;font-size:14px;line-height:1.55;animation:pop .3s both}
-  .msg.user{align-self:flex-end;background:rgba(0,242,255,.1);border:1px solid rgba(0,242,255,.28)}
-  .msg.ai{align-self:flex-start;background:var(--well);border:1px solid var(--line-2)}
-  .msg.ai b{color:var(--cyan);font-weight:600}
-  .msg .think{display:inline-flex;gap:4px;padding:2px 0}
-  .msg .think i{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 1s infinite}
-  .msg .think i:nth-child(2){animation-delay:.2s} .msg .think i:nth-child(3){animation-delay:.4s}
-  .msg .cite{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-  .msg .cite span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
-    border:1px solid var(--line);border-radius:20px;padding:2px 9px;color:var(--text-faint)}
-  .msg .sig{margin-top:11px}
-  .chat-in{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--line-2);background:rgba(3,8,20,.5)}
-  .chat-in input{flex:1;background:var(--well);border:1px solid var(--line);border-radius:100px;color:var(--text);
-    padding:12px 18px;font-size:14px;outline:none;font-family:var(--f-sans);min-width:0}
-  .chat-in input:focus{border-color:rgba(0,242,255,.5);box-shadow:0 0 0 3px rgba(0,242,255,.1)}
-  .chat-in button{border:none;border-radius:100px;padding:0 22px;font-weight:700;cursor:pointer;
-    color:#03202a;background:var(--grad);flex:none}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
-  .chip{font-size:12.5px;padding:8px 15px;border-radius:100px;border:1px solid var(--line);
-    background:var(--glass);color:var(--text-dim);cursor:pointer;font-family:var(--f-sans);transition:.15s}
-  .chip:hover{border-color:rgba(0,242,255,.5);color:var(--cyan)}
+  /* ---- orb stage ---- */
+  .jstage{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
+    padding:20px 0 6px}
+  .orb-wrap{position:relative;width:min(360px,72vw);aspect-ratio:1;margin-inline:auto}
+  .orb-wrap canvas{width:100%;height:100%;display:block}
+  .orb-status{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    pointer-events:none}
+  .orb-status .st{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--cyan);text-shadow:0 0 12px rgba(var(--glow-c),.7)}
+  .orb-status .wave2{font-family:var(--f-mono);font-size:.66rem;color:var(--text-faint);margin-top:6px;letter-spacing:.1em}
+  .jstage h1{font-size:clamp(1.5rem,1.1rem + 1.6vw,2.1rem);margin-top:14px;letter-spacing:-.02em}
+  .jstage .sub{color:var(--text-dim);font-size:.95rem;margin-top:8px;max-width:44ch}
 
-  /* ---- agents grid ---- */
-  .agent{padding:20px;display:flex;flex-direction:column;gap:9px}
-  .agent .top{display:flex;align-items:center;gap:9px}
-  .agent .st{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);
-    animation:blink 1.8s infinite;flex:none}
-  .agent b{font-size:14px}
-  .agent .mdl{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;color:#c4abff;
-    border:1px solid rgba(139,92,246,.35);border-radius:5px;padding:2px 7px}
-  .agent p{font-size:12.5px;color:var(--text-dim);line-height:1.5}
-  .agent .prog{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}
-  .agent .prog i{display:block;height:100%;background:var(--grad);transition:width .5s linear}
-  .agent .out{font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint);white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis;min-height:14px}
+  /* ---- chat ---- */
+  .chatbox{margin-top:10px;padding:16px}
+  .clog{display:flex;flex-direction:column;gap:12px;max-height:340px;overflow-y:auto;padding:4px 4px 8px;scroll-behavior:smooth}
+  .clog::-webkit-scrollbar{width:6px}.clog::-webkit-scrollbar-thumb{background:rgba(var(--glow-c),.3);border-radius:3px}
+  .msg{max-width:88%;padding:11px 14px;border-radius:14px;font-size:.94rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+  .msg.u{align-self:flex-end;background:rgba(var(--glow),.12);border:1px solid rgba(var(--glow-c),.32);color:#eafcff}
+  .msg.a{align-self:flex-start;background:var(--glass-2);border:1px solid var(--line);color:var(--text)}
+  .msg.a b,.msg.a strong{color:var(--cyan)}
+  .typing{align-self:flex-start;display:inline-flex;gap:5px;padding:12px 14px}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--cyan);opacity:.5;animation:tdot 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes tdot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
 
-  /* ---- report mock ---- */
-  .report{padding:22px 24px;font-size:13.5px;line-height:1.65}
-  .report h4{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--cyan);margin:16px 0 7px;font-weight:600}
-  .report h4:first-child{margin-top:0}
-  .report p{color:var(--text-dim);margin-bottom:9px}
-  .report .ln{font-family:var(--f-mono);font-size:11.5px;color:var(--text-dim);padding:2px 0}
-  .report .ln b{color:var(--text)}
-  .rep-head{display:flex;align-items:center;gap:10px;padding:13px 24px;border-bottom:1px solid var(--line-2);
-    background:rgba(3,8,20,.5)}
+  .cinput{display:flex;gap:9px;margin-top:14px;align-items:center}
+  .cinput input{flex:1;background:#040914;border:1px solid var(--line);border-radius:12px;color:var(--text);
+    padding:13px 15px;font-size:.95rem;font-family:var(--f-sans);outline:none;transition:border-color .2s,box-shadow .2s}
+  .cinput input:focus{border-color:rgba(var(--glow-c),.6);box-shadow:0 0 0 3px rgba(var(--glow),.12)}
+  .iconbtn{width:46px;height:46px;flex:none;border-radius:12px;border:1px solid rgba(var(--glow-c),.4);
+    background:rgba(var(--glow),.08);color:var(--cyan);cursor:pointer;display:grid;place-items:center;font-size:1.2rem;
+    transition:.18s}
+  .iconbtn:hover{border-color:var(--cyan);box-shadow:0 0 20px -4px rgba(var(--glow),.7)}
+  .iconbtn.send{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#022530;border:none}
+  .iconbtn.mic.on{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ff9d9d;animation:micPulse 1.2s infinite}
+  @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+  .iconbtn[disabled]{opacity:.4;cursor:not-allowed}
 
-  .conv{display:flex;flex-direction:column;gap:10px}
-  .brain-vault{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-  @media(max-width:520px){.brain-vault{grid-template-columns:repeat(2,1fr)}}
-  .brain-vault .bn{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--glass-2);font-size:.76rem}
-  .brain-vault .bn b{display:block;color:var(--cyan);font-family:var(--f-mono);font-size:.7rem;margin-bottom:4px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-family:var(--f-mono);font-size:.74rem;padding:7px 12px;border-radius:100px;cursor:pointer;
+    border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
+  .chip:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan);box-shadow:0 0 16px -6px rgba(var(--glow),.6)}
+  .voicerow{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;font-size:.82rem;color:var(--text-dim)}
+  .tgl{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+  .tgl input{appearance:none;width:38px;height:22px;border-radius:100px;background:#1a2338;position:relative;cursor:pointer;transition:.2s;border:1px solid var(--line)}
+  .tgl input:checked{background:rgba(var(--glow),.4);border-color:rgba(var(--glow-c),.6)}
+  .tgl input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cfe9f2;transition:.2s}
+  .tgl input:checked::after{transform:translateX(16px);background:#eafcff}
 
-  /* ---- company research tool (cr-) ---- */
-  .cr-lede{max-width:60ch}
-  .cr-form{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
-  .cr-form input{flex:1;min-width:200px;background:var(--well);border:1px solid var(--line);border-radius:100px;
-    color:var(--text);padding:13px 20px;font-size:15px;outline:none;font-family:var(--f-sans)}
-  .cr-form input:focus{border-color:rgba(0,242,255,.5);box-shadow:0 0 0 3px rgba(0,242,255,.1)}
-  .cr-form button{border:none;border-radius:100px;padding:0 26px;font-weight:700;cursor:pointer;
-    color:#03202a;background:var(--grad);flex:none}
-  .cr-picks{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-  .cr-pick{cursor:pointer;background:var(--glass);border:1px solid var(--line);color:var(--text-dim);transition:.15s}
-  .cr-pick:hover{border-color:rgba(0,242,255,.5);color:var(--cyan)}
-  .cr-pick.cr-on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,242,255,.08)}
-  .cr-brief{margin-top:30px;padding:0;overflow:hidden}
-  .cr-bhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;
-    border-bottom:1px solid var(--line-2);background:rgba(3,8,20,.5)}
-  .cr-tk{font-family:var(--f-mono);font-weight:700;font-size:1.15rem}
-  .cr-nm{color:var(--text-dim);font-size:.9rem}
-  .cr-badge{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);
-    font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:100px;padding:5px 12px}
-  .cr-badge .cr-cf{color:var(--text-faint);font-weight:400}
-  .cr-body{padding:18px 20px}
-  .cr-sec{margin-bottom:18px}
-  .cr-sec:last-child{margin-bottom:0}
-  .cr-sec h4{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--cyan);font-weight:600;margin:0 0 9px}
-  .cr-line{font-size:.92rem;line-height:1.6;color:var(--text-dim);margin-bottom:7px}
-  .cr-line:last-child{margin-bottom:0}
-  .cr-line b{color:var(--text);font-weight:600}
-  .cr-reveal{opacity:0;transform:translateY(6px)}
-  .cr-reveal.cr-in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
-  .cr-two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-  @media(max-width:640px){.cr-two{grid-template-columns:1fr;gap:18px}}
-  .cr-fl{display:flex;flex-direction:column;gap:9px}
-  .cr-fl .fi{display:flex;gap:10px;align-items:flex-start}
-  .cr-fl .fi span{flex:none;font-family:var(--f-mono)}
-  .cr-twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .cr-metrics{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:440px}
-  .cr-metrics th,.cr-metrics td{text-align:left;padding:8px 12px;border-bottom:1px dashed var(--line-2);white-space:nowrap}
-  .cr-metrics tr:last-child th,.cr-metrics tr:last-child td{border-bottom:0}
-  .cr-metrics th{color:var(--text-faint);font-weight:600;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
-  .cr-metrics td{color:var(--text);font-weight:700}
-  .cr-levels{display:flex;gap:10px;flex-wrap:wrap}
-  .cr-lv{flex:1;min-width:130px;border:1px solid var(--line-2);border-radius:12px;padding:11px 14px;background:var(--glass-2)}
-  .cr-lv .cr-k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .cr-lv .cr-v{font-family:var(--f-mono);font-weight:700;font-size:1rem;margin-top:5px}
-  .cr-bfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px;
-    border-top:1px solid var(--line-2);font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
-  .cr-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex:none}
+  /* ---- live intel panels ---- */
+  .panel{padding:16px 16px 14px;margin-bottom:16px}
+  .panel h3{font-size:.95rem;display:flex;align-items:center;gap:8px}
+  .panel .glyph2{color:var(--cyan);font-size:1.05rem}
+  .panel .subh{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:2px}
+  .vrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2)}
+  .vrow:last-child{border-bottom:none}
+  .vrow .tk{font-family:var(--f-mono);font-weight:700;font-size:.86rem}
+  .vrow .tk small{display:block;color:var(--text-faint);font-weight:400;font-size:.68rem;letter-spacing:0}
+  .vrow .rt{text-align:right;font-family:var(--f-mono);font-size:.82rem}
+  .vrow .rt .e{font-weight:700}.vrow .rt small{display:block;color:var(--text-faint);font-size:.66rem}
+  .briefline{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-top:8px}
+  .pos{color:var(--emerald)}.neg{color:var(--crimson)}
+  .flux-note{font-family:var(--f-mono);font-size:.64rem;color:var(--text-faint);margin-top:10px;letter-spacing:.04em}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);display:inline-block;animation:blink 1.6s infinite}
 </style>
 </head>
-<body>
+<body class="jbg">
 
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
       <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
+      <a href="./ai.html" class="on">Flux AI</a>
       <a href="./autopilot.html">Autopilot</a>
       <a href="./portfolio.html">Portfolio</a>
       <a href="./research.html">Research</a>
@@ -152,275 +108,72 @@
   </div>
 </header>
 
-<main>
-
-<!-- ============ HERO ============ -->
-<section class="section-sm ai-hero">
-  <div class="wrap">
-    <div class="orb">
-      <span class="rg a"></span><span class="rg b"></span><span class="rg p"></span>
-      <div class="wave"><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-    <span class="pill pill-violet"><i></i> Flux AI · 6 agents running</span>
-    <h1 class="h1" style="margin-top:18px">Ask your desk<br><span class="grad-text">anything.</span></h1>
-    <p class="lede">Flux AI reads the tape, the filings and your own portfolio — then answers in plain
-      English, with the numbers and the backtest attached. Six models keep working while you're away.</p>
+<main class="jwrap section-sm">
+  <div class="center" style="margin-bottom:18px">
+    <span class="pill"><i></i> FLUX AI · ALWAYS ON</span>
   </div>
-</section>
 
-<!-- ============ LIVE CHAT DEMO ============ -->
-<section class="section-sm">
-  <div class="wrap">
-    <div class="chat glass reveal">
-      <div class="chat-head">
-        <span class="dot"></span><b>Flux AI</b>
-        <span class="st" id="chatSt">connected · reading live desk state</span>
-      </div>
-      <div class="chat-log" id="chatLog"></div>
-      <form class="chat-in" id="chatForm">
-        <input id="chatIn" placeholder="Ask about a stock, your risk, or the market…" autocomplete="off">
-        <button type="submit">Ask</button>
-      </form>
-    </div>
-    <div class="chips" id="chips"></div>
-    <p class="faint center" style="font-size:.78rem;margin-top:16px">
-      A working demo running on simulated desk data. In the app it reads your real positions and live prices.
-    </p>
-  </div>
-</section>
-
-<!-- ============ WHAT IT CAN DO ============ -->
-<section class="section">
-  <div class="wrap">
-    <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Capabilities</span>
-      <h2 class="h2" style="margin-top:16px">Not a chatbot bolted onto a chart.</h2>
-      <p class="lede" style="margin-top:16px">Flux AI is wired into the same engines, order book and
-        portfolio the platform runs on. It answers from your actual state, not a generic model of the market.</p>
-    </div>
-    <div class="grid g-3 reveal" style="margin-top:40px">
-      <div class="glass feat glass-hover"><div class="ic">◎</div><h3>Reads your portfolio</h3>
-        <p>"What's my biggest risk?" returns your worst position by name, its size, live P&amp;L and a Monte-Carlo VaR number.</p></div>
-      <div class="glass feat glass-hover"><div class="ic">⌁</div><h3>Runs the models</h3>
-        <p>Ask for a forecast and it calls PriceNet, checks RSI and regime, and hands back a number with a confidence score.</p></div>
-      <div class="glass feat glass-hover"><div class="ic">⚗</div><h3>Backs it with history</h3>
-        <p>Every setup can be replayed across years of sessions before you act. Win rate, Sharpe, and whether the edge is decaying.</p></div>
-      <div class="glass feat glass-hover"><div class="ic">✎</div><h3>Writes your reports</h3>
-        <p>Morning brief, midday pulse, portfolio review — composed from live state on a schedule, or on demand.</p></div>
-      <div class="glass feat glass-hover"><div class="ic">⊘</div><h3>Refuses to guess</h3>
-        <p>Ask "should I buy?" and it stacks the evidence instead of pretending to know. It never gives advice.</p></div>
-      <div class="glass feat glass-hover"><div class="ic">⇄</div><h3>Ends in an action</h3>
-        <p>Every answer carries buttons — load the chart, paper trade, flag it, run the backtest. No dead ends.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ AGENTS ============ -->
-<section class="section band">
-  <div class="wrap">
-    <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Always running</span>
-      <h2 class="h2" style="margin-top:16px">Six models that never clock out.</h2>
-      <p class="lede" style="margin-top:16px">They run on their own cadence all day — forecasting, classifying
-        the regime, scoring headlines, simulating your book. You can pause any of them.</p>
-    </div>
-    <div class="grid g-3 reveal" id="agents" style="margin-top:40px"></div>
-    <p class="faint" style="font-size:.78rem;margin-top:22px;text-align:center">
-      Live simulation of the agent loop. Model names describe the technique each agent uses.
-    </p>
-  </div>
-</section>
-
-<!-- ============ REPORTS ============ -->
-<section class="section">
-  <div class="wrap split wide-l">
-    <div class="reveal">
-      <span class="eyebrow">Autonomous research</span>
-      <h2 class="h2" style="margin-top:16px">Reports that write themselves.</h2>
-      <p class="lede" style="margin-top:16px">The Reporter agent publishes on a schedule — built from your live
-        positions, the day's movers, model forecasts and open risk. You wake up to the work already done.</p>
-      <div class="flist">
-        <div class="fi"><span class="k">7:00</span><div><b>Morning Brief</b>
-          <p>Overnight moves, the day's catalysts, and what changed in your book while you slept.</p></div></div>
-        <div class="fi"><span class="k">12:30</span><div><b>Midday Pulse</b>
-          <p>What the engines surfaced since the open, re-ranked by confidence.</p></div></div>
-        <div class="fi"><span class="k">16:15</span><div><b>Closing Wrap</b>
-          <p>Where you finished, realized and open P&amp;L, and the setups carrying into tomorrow.</p></div></div>
-      </div>
-      <a class="btn btn-primary" style="margin-top:26px" href="./research.html">See AI Research →</a>
-    </div>
-    <div class="glass reveal" style="padding:0;overflow:hidden">
-      <div class="rep-head"><span class="pill pill-violet" style="padding:4px 11px;font-size:10px"><i></i> Flux-LM</span>
-        <b style="font-size:13px">Morning Brief</b>
-        <span class="mono" style="margin-left:auto;font-size:10.5px;color:var(--text-faint)">7:00 AM</span></div>
-      <div class="report" id="report"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FLUX BRAIN / OBSIDIAN ============ -->
-<section class="section" id="brain">
-  <div class="wrap split wide-l">
-    <div class="glass sheen reveal rl" style="padding:24px">
-      <div class="mono" style="color:var(--text-faint);font-size:.72rem;margin-bottom:12px">Your vault → Flux Brain</div>
-      <div class="brain-vault">
-        <div class="bn"><b>#thesis</b>Long semis into GTC — AI capex still accelerating.</div>
-        <div class="bn"><b>#rules</b>Max 8% per name. No adds into earnings.</div>
-        <div class="bn"><b>#journal</b>Trimmed AMD too early. Let winners run.</div>
-        <div class="bn"><b>#watch</b>SMCI — audit overhang, size small.</div>
-        <div class="bn"><b>#mistakes</b>Chased TSLA. Wait for the retest.</div>
-        <div class="bn"><b>#macro</b>CPI Thu. Trim risk into the print.</div>
-      </div>
-      <p class="mono" style="color:var(--text-faint);font-size:.72rem;margin-top:12px">Illustrative notes · synced from your Obsidian vault</p>
-    </div>
-    <div class="reveal rr">
-      <span class="eyebrow">Flux Brain</span>
-      <h2 class="h2">Give it a memory. <span class="grad-text grad-anim">Yours.</span></h2>
-      <p class="lede">Connect your Obsidian vault and Flux reads your theses, rules and trade journal as long-term memory. Its answers start sounding like <em>you</em> — it remembers your playbook, flags when you're about to repeat a mistake, and cites your own notes back to you.</p>
-      <ul class="flist">
-        <li class="fi"><span>❖</span><div><b>Bring your notes.</b> Your Obsidian vault, journal and watchlists become the AI's context.</div></li>
-        <li class="fi"><span>◇</span><div><b>It remembers your rules.</b> "You said max 8% per name — this order is 11%."</div></li>
-        <li class="fi"><span>⊘</span><div><b>Private by design.</b> Your vault stays yours; live sync runs through the desktop app.</div></li>
-      </ul>
-      <div class="btn-row"><a class="btn btn-ghost" href="./download.html">Get the desktop app →</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ COMPANY RESEARCH TOOL ============ -->
-<section class="section" id="research-tool">
-  <div class="wrap">
-    <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Company research</span>
-      <h2 class="h2" style="margin-top:16px">Ask Flux to research any company.</h2>
-      <p class="lede cr-lede" style="margin-top:16px">Type a ticker and Flux assembles the deep-dive — the
-        business, the bull and bear case, the numbers and the catalysts — in one page. Every figure below is
-        a simulated sample, not live data.</p>
-    </div>
-
-    <form class="cr-form reveal" id="crForm" autocomplete="off">
-      <input id="crInput" placeholder="Try NVDA, AAPL, TSLA, AMD…" aria-label="Ticker or company">
-      <button type="submit">Research →</button>
-    </form>
-    <div class="cr-picks reveal" id="crPicks"></div>
-
-    <div class="glass cr-brief reveal" id="crBrief" aria-live="polite"></div>
-  </div>
-</section>
-
-<!-- ============ HOW IT ANSWERS ============ -->
-<section class="section band">
-  <div class="wrap">
-    <div class="reveal center" style="max-width:60ch;margin-inline:auto">
-      <span class="eyebrow c">Under the hood</span>
-      <h2 class="h2" style="margin-top:16px">How an answer gets built.</h2>
-    </div>
-    <div class="steps reveal" style="margin-top:40px">
-      <div class="step"><div class="n">01</div><h3>Read state</h3>
-        <p>Your positions, orders, watchlist and the live tape — the question is grounded in what's actually true right now.</p></div>
-      <div class="step"><div class="n">02</div><h3>Call the models</h3>
-        <p>Forecast, regime, sentiment and risk models run against the symbols in scope.</p></div>
-      <div class="step"><div class="n">03</div><h3>Check history</h3>
-        <p>Any claimed edge is replayed across years of sessions before it's put in front of you.</p></div>
-      <div class="step"><div class="n">04</div><h3>Answer + act</h3>
-        <p>Plain English, the supporting numbers, a confidence score, and the buttons to do something about it.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ GUARDRAILS ============ -->
-<section class="section">
-  <div class="wrap split">
-    <div class="reveal">
-      <span class="eyebrow">Guardrails</span>
-      <h2 class="h2" style="margin-top:16px">It works for you.<br>Not the other way around.</h2>
-      <p class="lede" style="margin-top:16px">An AI with access to a trading account is only useful if it's
-        bounded. Flux AI is built to inform and execute what you approve — never to act on its own.</p>
-      <div class="flist">
-        <div class="fi"><span class="k">⊘</span><div><b>It never trades on its own</b>
-          <p>No order is placed without you confirming it. There is no autonomous execution mode.</p></div></div>
-        <div class="fi"><span class="k">🛡</span><div><b>Risk gates every order</b>
-          <p>Position size, stop distance, correlation and exposure are checked before anything routes.</p></div></div>
-        <div class="fi"><span class="k">🔑</span><div><b>Your keys, your broker</b>
-          <p>Flux connects with your credentials. We never take custody of your funds.</p></div></div>
-        <div class="fi"><span class="k">≡</span><div><b>Everything is logged</b>
-          <p>Every question, model run, report and order is written to an activity trail you can audit.</p></div></div>
-      </div>
-    </div>
-    <div class="glass reveal" style="padding:26px">
-      <div class="conv">
-        <div class="msg user" style="max-width:100%;animation:none">Should I buy NVDA right now?</div>
-        <div class="msg ai" style="max-width:100%;animation:none">
-          I don't give advice — but I'll stack the evidence so you can decide.
-          <div class="cite"><span>PriceNet</span><span>RSI 14</span><span>Options tape</span><span>5y backtest</span></div>
-          <div class="sig" style="margin-top:12px">
-            <div class="av">NVD</div>
-            <div class="mid"><div class="tk">NVDA <span>+2.1%</span></div>
-              <div class="lbl">Unusual Flow · $4.6M call sweep at ask</div>
-              <div class="bar"><i style="width:88%;background:#10b981"></i></div></div>
-            <div><div class="conf" style="color:#10b981">88%</div><div class="cl">conf</div></div>
+  <div class="jgrid">
+    <!-- LEFT: orb + chat -->
+    <section>
+      <div class="jstage">
+        <div class="orb-wrap">
+          <canvas id="orb" aria-hidden="true"></canvas>
+          <div class="orb-status">
+            <div class="st" id="orbSt">BOOTING…</div>
+            <div class="wave2" id="orbSub">six engines · scanning</div>
           </div>
-          <p style="margin-top:11px;font-size:13px;color:var(--text-dim)">The catch: IV at 62% means the move is
-            largely priced. Backtest on this setup is 71% over 5 years — but that's history, not a promise.</p>
+        </div>
+        <h1 class="grad-text">Ask Flux anything.</h1>
+        <p class="sub">Your always-on AI desk — grounded in live signals, valuation models and the fund. Type or talk.</p>
+      </div>
+
+      <div class="glass cyber-card chatbox">
+        <div class="clog" id="clog"></div>
+        <div class="cinput">
+          <input id="cin" type="text" autocomplete="off" placeholder="Ask about a stock, a valuation, the fund…" aria-label="Ask Flux">
+          <button class="iconbtn mic" id="mic" title="Talk to Flux" aria-label="Voice">🎙</button>
+          <button class="iconbtn send" id="send" title="Send" aria-label="Send">➤</button>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="voicerow">
+          <label class="tgl"><input type="checkbox" id="spk"> <span>Speak replies</span></label>
+          <span id="voiceHint" class="mono" style="font-size:.72rem;color:var(--text-faint)"></span>
         </div>
       </div>
-      <p class="faint" style="font-size:.75rem;margin-top:16px">Flux is research software, not a financial adviser.</p>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ============ STATS ============ -->
-<section class="section-sm">
-  <div class="wrap stats reveal">
-    <div class="stat"><div class="v"><span data-count="6412">0</span></div><div class="k">Tickers scanned</div></div>
-    <div class="stat"><div class="v"><span data-count="6">0</span></div><div class="k">Models running</div></div>
-    <div class="stat"><div class="v"><span data-count="127">0</span></div><div class="k">Findings a day</div></div>
-    <div class="stat"><div class="v"><span data-count="24" data-suffix="/7">0</span></div><div class="k">Always on</div></div>
-  </div>
-</section>
-
-<!-- ============ FAQ ============ -->
-<section class="section" id="faq">
-  <div class="wrap">
-    <div class="reveal center" style="max-width:58ch;margin-inline:auto">
-      <span class="eyebrow c">Questions</span>
-      <h2 class="h2" style="margin-top:16px">What people ask about the AI.</h2>
-    </div>
-    <div class="faq reveal" style="margin-top:36px">
-      <details open><summary>Does Flux AI place trades by itself?</summary>
-        <p>No. It researches, forecasts and drafts orders, but nothing routes until you confirm it. There is no
-          setting that lets it trade autonomously — that's a deliberate design decision, not a missing feature.</p></details>
-      <details><summary>Is this just ChatGPT with a stock prompt?</summary>
-        <p>No. The language layer is one part of it. Underneath are six purpose-built models — a sequence forecaster,
-          a volatility-regime classifier, a sentiment scorer, a Monte-Carlo portfolio simulator, a signal re-ranker,
-          and a report writer — plus direct access to your live positions and the engines' output.</p></details>
-      <details><summary>Can it predict the market?</summary>
-        <p>No, and it won't claim to. It produces probabilistic forecasts with explicit confidence scores, and shows
-          you the historical base rate behind any setup. Confidence is a measure of model agreement, not a guarantee.</p></details>
-      <details><summary>What does it actually read?</summary>
-        <p>Price and volume history, the options tape, SEC filings and 8-Ks, earnings material, the news wire, and
-          your own portfolio and order history. It cites which of those a given answer drew on.</p></details>
-      <details><summary>Where does my data go?</summary>
-        <p>Your positions and activity stay tied to your account. Flux connects to your broker with your own
-          credentials and never takes custody of funds.</p></details>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CTA ============ -->
-<section class="section" style="padding-top:0">
-  <div class="wrap">
-    <div class="cta reveal">
-      <span class="eyebrow c">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Put six models on your desk tonight.</h2>
-      <p class="lede center" style="margin:18px auto 28px">They'll have been working for hours by the time you open it.</p>
-      <div class="btn-row" style="justify-content:center">
-        <a class="btn btn-primary btn-lg" href="./download.html">Launch Flux — free</a>
-        <a class="btn btn-ghost btn-lg" href="./download.html">Download</a>
+    <!-- RIGHT: live intel -->
+    <aside>
+      <div class="glass panel pulse-glow">
+        <h3><span class="glyph2">◇</span> Live Brief</h3>
+        <div class="subh"><span class="live-dot"></span> auto-updating</div>
+        <div class="briefline" id="brief">Composing the desk brief…</div>
+        <div class="flux-note">Model estimate · simulated · not advice</div>
       </div>
-    </div>
+
+      <div class="glass panel">
+        <h3><span class="glyph2">▲</span> Most undervalued</h3>
+        <div class="subh">model sees upside</div>
+        <div id="under" style="margin-top:6px"></div>
+      </div>
+
+      <div class="glass panel">
+        <h3><span class="glyph2">▼</span> Most overvalued</h3>
+        <div class="subh">model sees downside</div>
+        <div id="over" style="margin-top:6px"></div>
+      </div>
+
+      <div class="glass panel">
+        <h3><span class="glyph2">◷</span> Autopilot fund</h3>
+        <div class="subh">live $10k paper desk</div>
+        <div class="briefline" id="fund">Reading the fund…</div>
+        <a class="btn btn-ghost btn-sm" href="./autopilot.html" style="margin-top:12px">Watch it trade →</a>
+      </div>
+    </aside>
   </div>
-</section>
+
+  <p class="disclaimer center" style="margin-top:34px">Flux AI is research and automation software, not investment advice, and is not a broker-dealer. Everything shown is a model estimate on simulated data. Trading involves risk of loss. The AI never trades a real brokerage account without your explicit rules.</p>
 </main>
 
 <footer class="footer"><div class="wrap">
@@ -439,432 +192,126 @@
 </div></footer>
 
 <script>
-document.addEventListener("DOMContentLoaded",function(){
-  var F=window.FLUX; if(!F) return;
-  var $=F.$, $$=F.$$;
+(function(){
+  function boot(){
+    var J = window.JARVIS, F = window.FLUX;
+    if(!J || !F || !F.Kronos){ return setTimeout(boot, 120); }
 
-  /* ================= CHAT DEMO ================= */
-  var log=$("#chatLog");
-  function add(who,html){
-    var d=document.createElement("div"); d.className="msg "+who; d.innerHTML=html;
-    log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
-  }
-  function sigOf(t){ return F.SIGNALS.find(function(s){return s.t===t}); }
-  function sigBlock(s){
-    var col=s.u?F.EM:F.CR;
-    return '<div class="sig"><div class="av">'+s.t.slice(0,3)+'</div><div class="mid">'+
-      '<div class="tk">'+s.t+' <span>'+s.mv+'</span></div><div class="lbl">'+s.lbl+' · '+s.e+'</div>'+
-      '<div class="bar"><i style="width:'+s.c+'%;background:'+col+'"></i></div></div>'+
-      '<div><div class="conf" style="color:'+col+'">'+s.c+'%</div><div class="cl">conf</div></div></div>';
-  }
-  function cites(list){ return '<div class="cite">'+list.map(function(c){return '<span>'+c+'</span>'}).join("")+'</div>'; }
+    if(F.initNav) F.initNav();
+    if(F.initFX) F.initFX();
 
-  /* a small deterministic "portfolio" so answers feel grounded */
-  var BOOK=[{sym:"NVDA",side:"long",qty:120,entry:181.40,last:185.42},
-            {sym:"TSLA",side:"long",qty:60,entry:246.10,last:241.18},
-            {sym:"AMD",side:"long",qty:200,entry:169.80,last:172.90}];
-  function pnl(p){return (p.last-p.entry)*p.qty}
-  function money(n){return (n<0?"-$":"$")+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+    /* ---- orb ---- */
+    var orb = J.Orb(document.getElementById("orb"));
+    var stEl = document.getElementById("orbSt"), subEl = document.getElementById("orbSub");
+    function setStatus(s, sub){ stEl.textContent = s; if(sub!=null) subEl.textContent = sub; }
+    setTimeout(function(){ setStatus("FLUX ONLINE","six engines · scanning"); }, 500);
 
-  function answer(q){
-    var ql=q.toLowerCase();
-    var m=q.toUpperCase().match(/\b[A-Z]{2,5}\b/g)||[];
-    var known=F.SIGNALS.map(function(s){return s.t});
-    var sym=null; for(var i=0;i<m.length;i++){ if(known.indexOf(m[i])>=0){sym=m[i];break;} }
+    /* ---- chat ---- */
+    var log = document.getElementById("clog"), input = document.getElementById("cin");
+    var speak = document.getElementById("spk");
+    function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function bubble(text, who){
+      var d = document.createElement("div"); d.className = "msg " + who;
+      // light markdown: **bold**
+      d.innerHTML = esc(text).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+      log.appendChild(d); log.scrollTop = log.scrollHeight; return d;
+    }
+    function typing(){
+      var d = document.createElement("div"); d.className="typing";
+      d.innerHTML="<i></i><i></i><i></i>"; log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
+    }
+    var busy = false;
+    function send(text){
+      text = (text||input.value).trim(); if(!text || busy) return;
+      busy = true; input.value = "";
+      bubble(text, "u");
+      setStatus("THINKING…","processing query"); orb.pulse(0.95);
+      var tp = typing();
+      J.ask(text).then(function(res){
+        tp.remove();
+        var b = bubble(res.text, "a");
+        setStatus("FLUX ONLINE","six engines · scanning"); orb.pulse(0.6);
+        if(speak.checked && J.ttsSupported){
+          setStatus("SPEAKING…","voice out"); orb.pulse(1);
+          J.speak(res.text);
+          // keep the orb alive while it talks
+          var iv = setInterval(function(){ orb.pulse(0.8); }, 400);
+          setTimeout(function(){ clearInterval(iv); setStatus("FLUX ONLINE","six engines · scanning"); },
+            Math.min(9000, 1800 + res.text.length*45));
+        }
+        busy = false;
+      }).catch(function(){ tp.remove(); bubble("Something glitched — try again.","a"); busy=false; setStatus("FLUX ONLINE"); });
+    }
+    document.getElementById("send").onclick = function(){ send(); };
+    input.addEventListener("keydown", function(e){ if(e.key==="Enter") send(); });
 
-    if(/risk|drawdown|exposure|var\b|worst/.test(ql)){
-      var worst=BOOK.slice().sort(function(a,b){return pnl(a)-pnl(b)})[0];
-      var p=pnl(worst), pct=(p/(worst.entry*worst.qty))*100;
-      return "Your biggest risk is <b>"+worst.sym+"</b> — "+worst.side+" "+worst.qty+" from $"+worst.entry.toFixed(2)+
-        ", now "+money(p)+" ("+pct.toFixed(1)+"%). MonteCarlo puts your 1-day VaR(95) at <b>$1,847</b>, and "+
-        worst.sym+"'s correlation to SPX has risen to 0.81 — so this position is moving with the index, not hedging it."+
-        cites(["Your positions","MonteCarlo · 10k paths","Risk engine"]);
-    }
-    if(/forecast|predict|target|next|tomorrow/.test(ql)&&sym){
-      var s1=sigOf(sym);
-      return "<b>PriceNet</b> (LSTM v4) on <b>"+sym+"</b>: next session <b>"+(s1&&s1.u?"+1.4%":"−0.9%")+
-        "</b> with <b>"+(s1?s1.c:70)+"%</b> confidence. VolRegime currently labels the tape <b>normal</b>, "+
-        "which historically makes this setup's base rate hold. That's a probabilistic read, not a promise."+
-        cites(["PriceNet · LSTM v4","VolRegime · HMM-3","5y backtest"])+(s1?sigBlock(s1):"");
-    }
-    if(/oversold|overbought|rsi|macd|technical/.test(ql)){
-      var t=sym||"TSLA", s2=sigOf(t);
-      return "<b>"+t+"</b> daily RSI is <b>"+(s2&&s2.u?"61":"34")+"</b> — "+
-        (s2&&s2.u?"upper-neutral. No mean-reversion edge from RSI alone here; the move is trend, not exhaustion."
-                 :"approaching oversold. Historically, reversion setups in this range resolve higher about 6 times in 10 — thin, but real.")+
-        cites(["Technicals engine","RSI 14 · daily"])+(s2?sigBlock(s2):"");
-    }
-    if(/flow|options|sweep|gamma|unusual/.test(ql)){
-      var o=F.SIGNALS.find(function(s){return s.e==="Options"});
-      return "Loudest options activity on the tape right now:<br>"+o.i+
-        " Open interest at that strike is up 38%, and the put/call ratio flipped to 4.8:1 in the last hour."+
-        cites(["Options engine","Live options tape"])+sigBlock(o);
-    }
-    if(/report|brief|summary/.test(ql)){
-      return "I've published your <b>Morning Brief</b> — equity, open and realized P&L, model forecasts across "+
-        "your watchlist, today's movers and any open risk. The Reporter agent runs it at 7:00, 12:30 and 16:15, "+
-        "or on demand."+cites(["Reporter · Flux-LM","Your positions","All six engines"]);
-    }
-    if(/position|portfolio|p&l|pnl|how am i|doing/.test(ql)){
-      var tot=BOOK.reduce(function(a,p){return a+pnl(p)},0);
-      return "You're holding <b>"+BOOK.length+" positions</b> with a combined open P&L of <b>"+money(tot)+"</b>. "+
-        BOOK.map(function(p){return p.sym+" "+money(pnl(p))}).join(" · ")+
-        ". Nothing is near a stop, and your largest single exposure is NVDA at 41% of deployed capital — "+
-        "concentrated enough that I'd flag it."+cites(["Your positions","Risk engine"]);
-    }
-    if(/should i (buy|sell)|good buy|worth buying/.test(ql)){
-      var s3=sigOf(sym||"NVDA");
-      return "I don't give advice — but here's the evidence stacked up so you can decide."+
-        cites(["PriceNet","RSI 14","Options tape","5y backtest"])+sigBlock(s3)+
-        "<p style='margin-top:10px;font-size:13px;color:var(--text-dim)'>Backtested at 71% over five years. "+
-        "That's a base rate, not a forecast — and it says nothing about this particular trade.</p>";
-    }
-    if(/gainer|loser|mover|active|volume/.test(ql)){
-      var top=F.SIGNALS.slice(0,3);
-      return "Biggest movers the engines are tracking: "+top.map(function(s){return "<b>"+s.t+"</b> "+s.mv}).join(" · ")+
-        ". "+top[0].t+" is the one with real conviction behind it — "+top[0].c+"% after re-ranking."+
-        cites(["Scanner engine","AlphaRank · GBM"])+sigBlock(top[0]);
-    }
-    if(sym){
-      var s4=sigOf(sym);
-      return "<b>"+sym+"</b> — "+s4.i+" AlphaRank re-scored this at <b>"+s4.c+"%</b> after checking it against "+
-        "five years of similar setups."+cites([s4.e+" engine","AlphaRank · GBM","5y backtest"])+sigBlock(s4);
-    }
-    return "I can read your <b>portfolio</b>, run <b>forecasts</b>, screen <b>movers</b>, check <b>options flow</b>, "+
-      "and write <b>reports</b>. Try asking about a ticker, your risk, or what's moving."+
-      cites(["6 engines","6 models"]);
-  }
+    /* ---- suggestion chips ---- */
+    var chips = ["Give me a market brief","Is NVDA undervalued?","Most overvalued stocks","How's the fund doing?","What's my biggest risk?","What's AMD at?"];
+    var cc = document.getElementById("chips");
+    chips.forEach(function(c){
+      var el = document.createElement("span"); el.className="chip"; el.textContent=c;
+      el.onclick = function(){ send(c); }; cc.appendChild(el);
+    });
 
-  var busy=false;
-  function ask(q){
-    if(busy||!q.trim())return; busy=true;
-    add("user",q.replace(/</g,"&lt;"));
-    var t=add("ai",'<span class="think"><i></i><i></i><i></i></span>');
-    $("#chatSt").textContent="thinking · calling models";
+    /* ---- voice ---- */
+    var mic = document.getElementById("mic"), hint = document.getElementById("voiceHint");
+    if(!J.voiceSupported){ mic.disabled = true; hint.textContent = "Voice input needs Chrome or Safari."; }
+    else { hint.textContent = "Tap 🎙 and talk."; }
+    mic.onclick = function(){
+      if(J.isListening()){ J.stopListen(); return; }
+      var started = J.listen(function(txt, fin){
+        input.value = txt;
+        if(fin && txt){ mic.classList.remove("on"); send(txt); }
+      }, function(state){
+        if(state==="start"){ mic.classList.add("on"); setStatus("LISTENING…","voice in"); orb.pulse(0.9); }
+        else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUX ONLINE","six engines · scanning"); }
+        else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked — allow microphone access."; setStatus("FLUX ONLINE"); }
+      });
+      // auto-speak replies when using voice
+      if(started && J.ttsSupported) speak.checked = true;
+    };
+
+    /* ---- greeting ---- */
     setTimeout(function(){
-      t.innerHTML=answer(q);
-      log.scrollTop=log.scrollHeight;
-      $("#chatSt").textContent="connected · reading live desk state";
-      busy=false;
-    },850+Math.random()*500);
-  }
-  $("#chatForm").addEventListener("submit",function(e){
-    e.preventDefault(); var v=$("#chatIn").value; $("#chatIn").value=""; ask(v);
-  });
+      bubble("Flux online. I'm scanning "+ (F.PRICES?Object.keys(F.PRICES).length:"the")+" names across six engines. Ask me for a brief, a valuation, or what I think of any ticker — type it or tap the mic.", "a");
+    }, 700);
 
-  var QUICK=["What's my biggest risk?","Forecast NVDA","Any unusual options flow?","Is TSLA oversold?",
-             "How are my positions?","What's moving today?","Should I buy NVDA?","Write me a report"];
-  $("#chips").innerHTML=QUICK.map(function(q){return '<button class="chip">'+q+'</button>'}).join("");
-  $$("#chips .chip").forEach(function(b){b.addEventListener("click",function(){ask(b.textContent)})});
-
-  /* opening exchange */
-  add("ai","Desk is live. Six engines scanning, six models running. Ask me anything — or tap a suggestion below."+
-      cites(["Scanner","Catalyst","Options","Technicals","Risk","Backtest"]));
-  setTimeout(function(){ask("What's my biggest risk?")},1400);
-
-  /* ================= AGENTS ================= */
-  var host=$("#agents");
-  var state=F.MODELS.map(function(m,i){
-    return {m:m,p:Math.random()*.8,int:14+i*5,runs:F.ri(3,40),last:"warming up…"};
-  });
-  var OUT={
-    PriceNet:function(){var s=F.rnd(F.SIGNALS);return s.t+" next-session "+(s.u?"+":"−")+(Math.random()*2+.2).toFixed(2)+"% · conf "+s.c+"%"},
-    VolRegime:function(){return "regime: "+F.rnd(["low-vol grind","normal","elevated · squeeze risk"])+" (p="+(0.6+Math.random()*.35).toFixed(2)+")"},
-    NewsSense:function(){var s=F.rnd(F.SIGNALS);return s.t+" sentiment "+(Math.random()>.4?"+":"−")+(Math.random()*.8).toFixed(2)+" — "+F.rnd(["bullish","neutral","bearish"])},
-    MonteCarlo:function(){return "1-day VaR(95): $"+(1200+F.ri(0,1400)).toLocaleString()+" · P(dd>5%) "+F.ri(4,14)+"%"},
-    AlphaRank:function(){var s=F.rnd(F.SIGNALS);return "re-scored "+s.t+" ("+s.e+") → "+Math.min(97,s.c+F.ri(-4,7))+"%"},
-    Reporter:function(){return "published: "+F.rnd(["Morning Brief","Midday Pulse","Portfolio Review","Closing Wrap"])}
-  };
-  function renderAgents(full){
-    if(full){
-      host.innerHTML=state.map(function(s,i){
-        return '<div class="glass agent" data-i="'+i+'">'+
-          '<div class="top"><span class="st"></span><b>'+s.m.n+'</b><span class="mdl">'+s.m.m+'</span></div>'+
-          '<p>'+s.m.d+'</p>'+
-          '<div class="prog"><i style="width:'+(s.p*100).toFixed(0)+'%"></i></div>'+
-          '<div class="out">'+s.last+'</div>'+
-          '<div class="mono" style="font-size:9.5px;color:var(--text-faint)">'+s.runs+' runs today</div></div>';
-      }).join("");
-    } else {
-      state.forEach(function(s,i){
-        var el=host.querySelector('[data-i="'+i+'"]'); if(!el)return;
-        el.querySelector(".prog i").style.width=(s.p*100).toFixed(0)+"%";
-        el.querySelector(".out").textContent=s.last;
-        el.querySelector(".mono").textContent=s.runs+" runs today";
-      });
+    /* ---- live intel panels (always refreshing) ---- */
+    function money(x){ return "$"+(+x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+    function pctHtml(x){ var c = x>=0?"pos":"neg"; return '<span class="'+c+'">'+(x>=0?"+":"")+(x*100).toFixed(1)+'%</span>'; }
+    function vrow(r){
+      return '<div class="vrow"><div class="tk">'+r.ticker+'<small>'+(r.name||"")+'</small></div>'+
+        '<div class="rt"><div class="e">'+pctHtml(r.upside)+'</div><small>'+money(r.price)+' → '+money(r.fair)+'</small></div></div>';
     }
-  }
-  renderAgents(true);
-  setInterval(function(){
-    state.forEach(function(s){
-      s.p+=0.6/s.int;
-      if(s.p>=1){s.p=0;s.runs++;var f=OUT[s.m.n];s.last=f?f():"—";}
-    });
-    renderAgents(false);
-  },600);
-
-  /* ================= REPORT (types itself in) ================= */
-  var REPORT=[
-    ['h4','Desk summary'],
-    ['p','Equity <b>$118,420.65</b> · open P&L <b class="up">+$2,914.20</b> · cash <b>$41,208.10</b>. Three positions open, one resting limit order, two armed alerts.'],
-    ['h4','Overnight'],
-    ['ln','Futures firmed into the open · ES <b>+0.4%</b> · NQ <b>+0.6%</b>'],
-    ['ln','VIX <b>13.9</b> — VolRegime still labels the tape <b>normal</b>'],
-    ['h4','Model forecasts'],
-    ['ln','NVDA — PriceNet <b class="up">+1.4%</b> next session · conf <b>88%</b>'],
-    ['ln','AMD  — PriceNet <b class="up">+0.9%</b> next session · conf <b>74%</b>'],
-    ['ln','TSLA — PriceNet <b class="down">−1.1%</b> next session · conf <b>69%</b>'],
-    ['h4','What changed in your book'],
-    ['p','TSLA drifted <b class="down">−1.8%</b> on the delivery-guidance 8-K. Position is <b>−$295</b> open, still <b>3.2%</b> above your stop. Risk engine has not flagged it.'],
-    ['h4','Open risk'],
-    ['ln','1-day VaR(95) <b>$1,847</b> · P(drawdown &gt; 5%) <b>7%</b>'],
-    ['ln','Largest exposure <b>NVDA 41%</b> of deployed capital — concentrated']
-  ];
-  var rep=$("#report"), ri2=0;
-  function typeLine(){
-    if(ri2>=REPORT.length)return;
-    var r=REPORT[ri2++], el=document.createElement(r[0]==='h4'?'h4':(r[0]==='p'?'p':'div'));
-    if(r[0]==='ln')el.className='ln';
-    el.innerHTML=r[1]; el.style.animation="fadein .45s both";
-    rep.appendChild(el);
-    setTimeout(typeLine, r[0]==='h4'?260:200);
-  }
-  if("IntersectionObserver" in window){
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){ if(e.isIntersecting){ typeLine(); io.disconnect(); } });
-    },{threshold:.25});
-    io.observe(rep);
-  } else typeLine();
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded",function(){
-  var F=window.FLUX||{};
-  var $=(F&&F.$)||function(s,r){return (r||document).querySelector(s)};
-  var $$=(F&&F.$$)||function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-
-  var form=$("#crForm"), input=$("#crInput"), picks=$("#crPicks"), brief=$("#crBrief");
-  if(!form||!brief) return;
-
-  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---- built-in, clearly-simulated dataset ---- */
-  var DATA={
-    NVDA:{name:"NVIDIA Corp.",sector:"Semiconductors",rating:"Constructive",conf:86,
-      summary:"Designs the accelerated-computing GPUs and networking that train and run modern AI, plus the CUDA software layer that keeps developers on its platform.",
-      thesis:["Data-center demand still runs ahead of supply as hyperscalers build out AI capacity.","CUDA and the software moat make the platform hard to leave once adopted.","Networking and full-rack systems widen the average deal well beyond a single chip."],
-      risks:["A single customer cohort — a handful of hyperscalers — drives an outsized share of revenue.","Any pause in AI capex would hit the most richly-valued part of the tape first.","Export rules and new silicon from rivals could chip at share over time."],
-      metrics:{mcap:"~$3.1T",pe:"51x",rev:"+94% YoY",gm:"74%",range:"$78 – $196",beta:"1.68"},
-      earn:"Late Nov (simulated)",cat:["GTC keynote — next-gen accelerator roadmap","Hyperscaler capex guidance on upcoming prints"],
-      support:"$168",resist:"$196",fair:"$175 – $205"},
-    AAPL:{name:"Apple Inc.",sector:"Consumer Electronics",rating:"Neutral",conf:71,
-      summary:"Sells iPhone, Mac and wearables hardware wrapped in a high-margin services layer — the App Store, iCloud, payments and subscriptions across a billion-plus active devices.",
-      thesis:["Services keeps compounding at a higher margin than hardware.","The installed base is enormous and unusually loyal.","On-device AI features could pull forward an upgrade cycle."],
-      risks:["iPhone is still the majority of revenue and the cycle is maturing.","Regulatory pressure on the App Store threatens services economics.","Greater-China demand and supply both carry real exposure."],
-      metrics:{mcap:"~$3.4T",pe:"33x",rev:"+6% YoY",gm:"46%",range:"$164 – $260",beta:"1.21"},
-      earn:"Early Feb (simulated)",cat:["Holiday-quarter iPhone mix","Services growth re-acceleration watch"],
-      support:"$225",resist:"$260",fair:"$230 – $255"},
-    MSFT:{name:"Microsoft Corp.",sector:"Software",rating:"Constructive",conf:82,
-      summary:"Runs the Azure cloud, the Office and Windows franchises, and a fast-growing AI copilots layer sold across its enterprise install base.",
-      thesis:["Azure keeps taking cloud share with AI workloads on top.","Copilot gives a clean path to monetize AI across Office seats.","Enterprise relationships make bundling new products unusually easy."],
-      risks:["AI infrastructure spend is heavy and pressures near-term margins.","Cloud growth decelerating would compress the premium multiple.","Antitrust and platform scrutiny is rising in several regions."],
-      metrics:{mcap:"~$3.2T",pe:"37x",rev:"+16% YoY",gm:"70%",range:"$380 – $500",beta:"0.92"},
-      earn:"Late Jan (simulated)",cat:["Azure growth rate on next print","Copilot seat-adoption disclosure"],
-      support:"$405",resist:"$500",fair:"$430 – $485"},
-    TSLA:{name:"Tesla Inc.",sector:"Autos & Clean Energy",rating:"Cautious",conf:64,
-      summary:"Builds electric vehicles and energy-storage systems, with an option value narrative around autonomy, robotaxi and humanoid robotics layered on top.",
-      thesis:["Cost leadership in EV manufacturing is real and durable.","Energy storage is a fast-growing, under-appreciated segment.","Autonomy, if it lands, re-rates the whole business."],
-      risks:["Auto gross margin has compressed under price cuts.","Autonomy timelines have slipped repeatedly.","Valuation prices in outcomes that are far from certain."],
-      metrics:{mcap:"~$820B",pe:"78x",rev:"+2% YoY",gm:"18%",range:"$138 – $358",beta:"2.10"},
-      earn:"Late Jan (simulated)",cat:["Delivery numbers vs. guidance","Robotaxi / FSD progress update"],
-      support:"$215",resist:"$300",fair:"$210 – $270"},
-    AMD:{name:"Advanced Micro Devices",sector:"Semiconductors",rating:"Constructive",conf:74,
-      summary:"Designs CPUs and GPUs for data center, PC and gaming, positioned as the clearest second source in AI accelerators.",
-      thesis:["Data-center GPU ramp gives a credible second-source story.","Server CPU share gains continue against a slower incumbent.","A broad chiplet roadmap keeps the product cadence fast."],
-      risks:["Trails the leader badly on AI software ecosystem.","PC and gaming demand is cyclical and can swing hard.","Foundry capacity is shared with larger, higher-priority buyers."],
-      metrics:{mcap:"~$260B",pe:"44x",rev:"+18% YoY",gm:"51%",range:"$94 – $228",beta:"1.72"},
-      earn:"Early Feb (simulated)",cat:["AI GPU revenue run-rate update","Server CPU share commentary"],
-      support:"$150",resist:"$228",fair:"$160 – $200"},
-    AMZN:{name:"Amazon.com Inc.",sector:"E-Commerce & Cloud",rating:"Constructive",conf:78,
-      summary:"Runs the largest online store, the AWS cloud platform, and a fast-scaling advertising business, with logistics and devices around them.",
-      thesis:["AWS is the profit engine and re-accelerating with AI demand.","Advertising is a high-margin business growing quickly.","Retail margins are structurally improving as fulfillment matures."],
-      risks:["Retail is exposed to consumer softness and freight costs.","AWS competition from rival hyperscalers is intense.","Heavy capex weighs on near-term free cash flow."],
-      metrics:{mcap:"~$2.2T",pe:"42x",rev:"+11% YoY",gm:"48%",range:"$151 – $242",beta:"1.15"},
-      earn:"Early Feb (simulated)",cat:["AWS growth re-acceleration","Holiday retail margin read"],
-      support:"$195",resist:"$242",fair:"$205 – $240"},
-    META:{name:"Meta Platforms Inc.",sector:"Interactive Media",rating:"Constructive",conf:80,
-      summary:"Operates the Facebook, Instagram and WhatsApp family of apps monetized through advertising, plus a large Reality Labs bet on AR and VR.",
-      thesis:["Ad engagement and pricing keep improving with AI ranking.","Enormous user base gives durable pricing power.","Cost discipline has restored margin and free cash flow."],
-      risks:["Reality Labs continues to burn heavily with unclear payoff.","Ad revenue is sensitive to macro and platform-policy shifts.","Regulatory and privacy headwinds persist globally."],
-      metrics:{mcap:"~$1.5T",pe:"27x",rev:"+22% YoY",gm:"81%",range:"$414 – $640",beta:"1.24"},
-      earn:"Late Jan (simulated)",cat:["Ad-pricing trend on next print","Reality Labs loss trajectory"],
-      support:"$540",resist:"$640",fair:"$560 – $625"},
-    GOOGL:{name:"Alphabet Inc.",sector:"Interactive Media",rating:"Constructive",conf:77,
-      summary:"Owns Google Search and YouTube advertising, the Google Cloud platform, and moonshot bets, with Gemini threading AI across all of it.",
-      thesis:["Search remains a cash machine with durable margins.","Cloud is growing fast and turning profitable.","AI leadership in research can translate into product edge."],
-      risks:["Search faces its first real disruption risk from AI answers.","Antitrust remedies could reshape parts of the business.","Cloud still trails the top two on scale."],
-      metrics:{mcap:"~$2.1T",pe:"24x",rev:"+14% YoY",gm:"58%",range:"$130 – $208",beta:"1.03"},
-      earn:"Early Feb (simulated)",cat:["Search-ad resilience vs. AI shift","Cloud operating-margin trend"],
-      support:"$170",resist:"$208",fair:"$180 – $205"},
-    SMCI:{name:"Super Micro Computer",sector:"IT Hardware",rating:"Cautious",conf:58,
-      summary:"Builds high-density AI servers and rack-scale systems, riding the data-center buildout but carrying a volatile, controversy-prone profile.",
-      thesis:["Direct beneficiary of AI server demand.","Liquid-cooling expertise fits where the market is heading.","Revenue has scaled rapidly off a small base."],
-      risks:["Governance and audit-quality overhang has hurt trust.","Gross margins are thin and can swing sharply.","Component supply and concentration risk are elevated."],
-      metrics:{mcap:"~$28B",pe:"22x",rev:"+61% YoY",gm:"12%",range:"$17 – $122",beta:"2.45"},
-      earn:"Early Feb (simulated)",cat:["Filing / audit status update","Gross-margin recovery watch"],
-      support:"$32",resist:"$70",fair:"$28 – $52"},
-    COIN:{name:"Coinbase Global",sector:"Financial Exchanges",rating:"Neutral",conf:62,
-      summary:"Runs a crypto exchange and custody platform earning transaction fees, plus a growing base of subscription and stablecoin-linked revenue.",
-      thesis:["Leading regulated venue with a trusted brand in the US.","Subscription revenue smooths the trading-fee cycle.","Any broadening of crypto adoption lifts volumes directly."],
-      risks:["Revenue swings hard with crypto price cycles.","Regulatory posture toward the sector is still unsettled.","Fee compression from competing venues is a real pressure."],
-      metrics:{mcap:"~$62B",pe:"33x",rev:"+45% YoY",gm:"—",range:"$142 – $349",beta:"3.10"},
-      earn:"Mid Feb (simulated)",cat:["Trading-volume trend with crypto tape","Regulatory clarity headlines"],
-      support:"$185",resist:"$300",fair:"$180 – $260"}
-  };
-
-  var RATING_COLOR={Constructive:"var(--emerald)",Neutral:"var(--amber)",Cautious:"var(--crimson)"};
-
-  function fallback(sym){
-    return {name:sym+" (uncovered)",sector:"Uncovered",rating:"Insufficient data",conf:null,
-      summary:"Flux does not have a research profile loaded for this name yet. Add it to your watchlist and the engines will begin building coverage — filings, transcripts, flow and forecasts — into a full brief.",
-      thesis:["Coverage not yet generated for this name.","No thesis on file — pending first research pass.","Add to a watchlist to queue this company for coverage."],
-      risks:["Risk profile not yet assessed.","No historical setup sample on file.","Fundamentals unread until coverage begins."],
-      metrics:{mcap:"—",pe:"—",rev:"—",gm:"—",range:"—",beta:"—"},
-      earn:"— (not scheduled)",cat:["No catalysts on file yet.","Coverage begins once the name is watched."],
-      support:"—",resist:"—",fair:"—",generic:true};
-  }
-
-  function esc(s){return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-
-  function fmtTime(){
-    var d=new Date(), hh=d.getHours(), ap=hh>=12?"PM":"AM", h12=hh%12; if(h12===0)h12=12;
-    var mm=String(d.getMinutes()); if(mm.length<2)mm="0"+mm;
-    return h12+":"+mm+" "+ap;
-  }
-
-  var phaseTimer=null, revealTimers=[];
-  function clearTimers(){
-    if(phaseTimer){clearInterval(phaseTimer);phaseTimer=null;}
-    revealTimers.forEach(function(t){clearTimeout(t);});
-    revealTimers=[];
-  }
-
-  function bullList(arr){
-    return '<div class="cr-fl">'+arr.map(function(x){
-      return '<div class="fi cr-line cr-reveal"><span>›</span><div>'+esc(x)+'</div></div>';
-    }).join("")+'</div>';
-  }
-
-  function build(rawSym){
-    var sym=(rawSym||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,5);
-    if(!sym) return;
-    var d=DATA[sym]||fallback(sym);
-    var col=RATING_COLOR[d.rating]||"var(--text-faint)";
-    var conf=d.conf==null?"":'<span class="cr-cf">'+d.conf+'% conf</span>';
-    var m=d.metrics;
-
-    var html=''+
-      '<div class="cr-bhead">'+
-        '<span class="cr-tk">'+esc(sym)+'</span>'+
-        '<span class="cr-nm">'+esc(d.name)+'</span>'+
-        '<span class="tag">'+esc(d.sector)+'</span>'+
-        '<span class="cr-badge" style="border-color:'+col+';color:'+col+'">'+esc(d.rating)+conf+'</span>'+
-      '</div>'+
-      '<div class="cr-body">'+
-        '<div class="cr-sec"><h4>Business</h4>'+
-          '<p class="cr-line cr-reveal">'+esc(d.summary)+'</p></div>'+
-        '<div class="cr-two">'+
-          '<div class="cr-sec"><h4>Thesis · bull case</h4>'+bullList(d.thesis)+'</div>'+
-          '<div class="cr-sec"><h4>Risks · bear case</h4>'+bullList(d.risks)+'</div>'+
-        '</div>'+
-        '<div class="cr-sec"><h4>Key metrics · simulated</h4>'+
-          '<div class="cr-twrap"><table class="cr-metrics"><tbody>'+
-            '<tr><th>Market cap</th><td>'+esc(m.mcap)+'</td><th>P/E</th><td>'+esc(m.pe)+'</td></tr>'+
-            '<tr><th>Rev growth YoY</th><td>'+esc(m.rev)+'</td><th>Gross margin</th><td>'+esc(m.gm)+'</td></tr>'+
-            '<tr><th>52-wk range</th><td>'+esc(m.range)+'</td><th>Beta</th><td>'+esc(m.beta)+'</td></tr>'+
-          '</tbody></table></div></div>'+
-        '<div class="cr-sec"><h4>Catalysts</h4>'+
-          '<p class="cr-line cr-reveal"><b>Next earnings:</b> '+esc(d.earn)+'</p>'+
-          '<p class="cr-line cr-reveal">'+esc(d.cat[0])+'</p>'+
-          (d.cat[1]?'<p class="cr-line cr-reveal">'+esc(d.cat[1])+'</p>':'')+
-        '</div>'+
-        '<div class="cr-sec"><h4>Price levels · illustrative</h4>'+
-          '<div class="cr-levels">'+
-            '<div class="cr-lv"><div class="cr-k">Support</div><div class="cr-v" style="color:var(--emerald)">'+esc(d.support)+'</div></div>'+
-            '<div class="cr-lv"><div class="cr-k">Resistance</div><div class="cr-v" style="color:var(--crimson)">'+esc(d.resist)+'</div></div>'+
-            '<div class="cr-lv"><div class="cr-k">AI fair value</div><div class="cr-v" style="color:var(--cyan)">'+esc(d.fair)+'</div></div>'+
-          '</div></div>'+
-      '</div>'+
-      '<div class="cr-bfoot">'+
-        '<span class="cr-dot"></span><span id="crStat">reading filings…</span>'+
-        '<span style="margin-left:auto">Illustrative research sample · figures simulated · not investment advice.</span>'+
-      '</div>';
-
-    clearTimers();
-    brief.innerHTML=html;
-
-    var lines=$$(".cr-reveal",brief);
-    var stat=$("#crStat",brief);
-
-    if(reduce){
-      lines.forEach(function(l){l.classList.add("cr-in");});
-      if(stat) stat.textContent="brief generated "+fmtTime()+" · simulated";
-      return;
+    function refresh(){
+      try{
+        var b = J.brief();
+        document.getElementById("brief").textContent = b.text;
+        var v = b.val;
+        document.getElementById("under").innerHTML = v.under.length ? v.under.map(vrow).join("") : '<div class="briefline">Nothing screening undervalued right now.</div>';
+        document.getElementById("over").innerHTML = v.over.length ? v.over.map(vrow).join("") : '<div class="briefline">Nothing screening overvalued right now.</div>';
+        orb.pulse(0.35); // heartbeat while it "thinks"
+      }catch(e){}
     }
-
-    var step=140;
-    lines.forEach(function(l,i){
-      revealTimers.push(setTimeout(function(){l.classList.add("cr-in");},120+i*step));
-    });
-    var settle=120+lines.length*step+400;
-
-    var phases=["reading filings…","parsing transcripts…","scoring the tape…","running models…"];
-    var pi=0;
-    phaseTimer=setInterval(function(){
-      if(!stat){return;}
-      stat.textContent=phases[pi%phases.length]; pi++;
-    },700);
-    revealTimers.push(setTimeout(function(){
-      if(phaseTimer){clearInterval(phaseTimer);phaseTimer=null;}
-      if(stat) stat.textContent="brief generated "+fmtTime()+" · simulated";
-    },settle));
+    function refreshFund(){
+      var el = document.getElementById("fund"), S = window.FluxSupa;
+      if(S && S.autopilot){
+        Promise.resolve(S.autopilot()).then(function(f){
+          if(f && (f.equity!=null || (f.positions&&f.positions.length))){
+            var eq = f.equity!=null?f.equity:(f.cash||0);
+            var pnl = f.pnl!=null?f.pnl:(f.day_change!=null?f.day_change:null);
+            el.innerHTML = "Equity <b>"+money(eq)+"</b>"+(pnl!=null?" · "+(pnl>=0?"+":"")+money(pnl)+" P&L":"")+
+              " · "+((f.positions&&f.positions.length)||0)+" positions. Trading on Kronos signals, live.";
+          } else { el.textContent = "The Autopilot runs a live $10k simulated fund on Kronos signals and posts its reasoning."; }
+        }).catch(function(){ el.textContent = "The Autopilot runs a live $10k simulated fund on Kronos signals."; });
+      } else { el.textContent = "The Autopilot runs a live $10k simulated fund on Kronos signals and posts hourly reports."; }
+    }
+    refresh(); refreshFund();
+    setInterval(refresh, 45000);      // always-on: recompute the models
+    setInterval(refreshFund, 60000);
   }
-
-  function setActive(sym){
-    $$(".cr-pick",picks).forEach(function(b){
-      b.classList.toggle("cr-on",b.getAttribute("data-sym")===sym);
-    });
-  }
-
-  /* quick-pick chips */
-  var QUICK=["NVDA","AAPL","MSFT","TSLA","AMD","AMZN","META","GOOGL"];
-  if(picks){
-    picks.innerHTML=QUICK.map(function(t){
-      return '<button type="button" class="tag cr-pick" data-sym="'+t+'">'+t+'</button>';
-    }).join("");
-    $$(".cr-pick",picks).forEach(function(b){
-      b.addEventListener("click",function(){
-        var s=b.getAttribute("data-sym");
-        if(input) input.value=s;
-        setActive(s); build(s);
-      });
-    });
-  }
-
-  form.addEventListener("submit",function(e){
-    e.preventDefault();
-    var v=input?input.value:"";
-    var sym=(v||"").toUpperCase().replace(/[^A-Z]/g,"").slice(0,5);
-    if(!sym) return;
-    setActive(sym); build(sym);
-  });
-
-  /* seed with a default company */
-  if(input) input.value="NVDA";
-  setActive("NVDA");
-  build("NVDA");
-});
+  boot();
+})();
 </script>
 </body>
 </html>
