@@ -178,7 +178,7 @@
             <input class="si-input" type="password" id="siPass" name="password"
               autocomplete="current-password" placeholder="••••••••">
           </div>
-          <div class="si-rowend"><a class="si-forgot" href="#">Forgot password?</a></div>
+          <div class="si-rowend"><a class="si-forgot" href="#" id="siForgot">Forgot password?</a></div>
           <button class="btn btn-primary btn-lg si-submit" type="submit">Sign in →</button>
           <p class="si-err" id="errSignin">Enter an email address to continue.</p>
 
@@ -325,6 +325,23 @@ document.addEventListener("DOMContentLoaded", function(){
           else { go(); }
         }).catch(function(){ showErr(errSignin, "Sign-in failed. Try again."); done(); });
       }, errSignin)) done();
+    });
+  }
+
+  /* ---- forgot password ---- */
+  var forgot = $("#siForgot");
+  if(forgot){
+    forgot.addEventListener("click", function(ev){
+      ev.preventDefault();
+      var email = ($("#siEmail").value || "").trim();
+      if(!looksEmail(email)){ showErr(errSignin, "Enter your email above first, then tap “Forgot password?”"); return; }
+      clearErr(errSignin);
+      withReady(function(){
+        Supa.resetPassword(email).then(function(res){
+          if(res && res.error){ showErr(errSignin, res.error.message || "Couldn't send the reset email."); }
+          else { showErr(errSignin, "✓ Sent — check " + email + " for a link to reset your password."); }
+        }).catch(function(){ showErr(errSignin, "Couldn't send the reset email. Try again."); });
+      }, errSignin);
     });
   }
 
