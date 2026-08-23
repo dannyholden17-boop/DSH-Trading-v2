@@ -7,10 +7,10 @@
 <meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings — read-only until you say otherwise.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=3">
-<script src="./assets/flux-supa.js?v=3" defer></script>
-<script src="./assets/flux-site.js?v=3" defer></script>
-<script src="./assets/flux-kronos.js?v=3" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=4">
+<script src="./assets/flux-supa.js?v=4" defer></script>
+<script src="./assets/flux-site.js?v=4" defer></script>
+<script src="./assets/flux-kronos.js?v=4" defer></script>
 <style>
   /* ---- page-only layout: portfolio.html ---- */
   .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -264,6 +264,7 @@
                 <th scope="col">Mkt value</th>
                 <th scope="col">Day %</th>
                 <th scope="col">Weight</th>
+                <th scope="col" aria-label="Action"></th>
               </tr>
             </thead>
             <tbody id="pfHoldBody">
@@ -715,6 +716,9 @@ document.addEventListener("DOMContentLoaded", function(){
         var w = HOLD[i].w, dp = r.prev ? (r.price - r.prev) / r.prev * 100 : 0;
         var cls = dp >= 0 ? "up" : "down";
         var dstr = (dp >= 0 ? "+" : "−") + Math.abs(dp).toFixed(1) + "%";
+        var act = pfIsReal
+          ? '<td><button type="button" class="btn btn-ghost btn-sm pf-close" data-close="' + r.t + '" title="Close ' + r.t + ' at market">Close</button></td>'
+          : '<td><a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + r.t + '">Trade</a></td>';
         return '<tr>' +
           '<td class="pf-tk"><b>' + r.t + '</b><span>' + r.name + '</span></td>' +
           '<td>' + r.qty + '</td>' +
@@ -722,8 +726,19 @@ document.addEventListener("DOMContentLoaded", function(){
           '<td>' + money0(r.mkt) + '</td>' +
           '<td class="' + cls + '">' + dstr + '</td>' +
           '<td>' + w.toFixed(1) + '%<span class="pf-wt-bar"><i style="width:' + w.toFixed(1) + '%"></i></span></td>' +
+          act +
         '</tr>';
       }).join("");
+      /* delegated close-position handler (real book only) */
+      if(pfIsReal && !tbody._closeWired){
+        tbody._closeWired = true;
+        tbody.addEventListener("click", function(ev){
+          var btn = ev.target.closest && ev.target.closest("[data-close]");
+          if(!btn) return;
+          var tk = btn.getAttribute("data-close");
+          if(window.FLUXBook){ var res = FLUXBook.close(tk); /* flux-book-updated event re-renders the page */ }
+        });
+      }
     }
 
     /* ---- hero quick stats + labels ---- */
@@ -774,6 +789,12 @@ document.addEventListener("DOMContentLoaded", function(){
         '<span class="pc">' + s.w.toFixed(1) + '%</span></div>';
     }).join("");
   }
+
+  /* re-render the whole book view (table, donut, legend, metrics) after a paper trade
+     — e.g. the per-row Close button. Reload is the simplest fully-correct refresh here. */
+  window.addEventListener("flux-book-updated", function(){
+    try{ setTimeout(function(){ location.reload(); }, 650); }catch(e){}
+  });
 
   function drawDonut(cv, prog){
     if(!cv || !cv.clientWidth) return;

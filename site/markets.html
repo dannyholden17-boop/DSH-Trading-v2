@@ -5,10 +5,10 @@
 <meta name="description" content="The whole tape in one view: indices, movers, sector rotation, live signals and the week's catalysts. A simulated market demo of the Flux desk.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=3">
-<script src="./assets/flux-supa.js?v=3" defer></script>
-<script src="./assets/flux-site.js?v=3" defer></script>
-<script src="./assets/flux-kronos.js?v=3" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=4">
+<script src="./assets/flux-supa.js?v=4" defer></script>
+<script src="./assets/flux-site.js?v=4" defer></script>
+<script src="./assets/flux-kronos.js?v=4" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}
@@ -72,6 +72,31 @@
   .panel{padding:20px}
   .phead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
   .phead h3{font-size:1.05rem}
+
+  /* ---- screener ---- */
+  .scr-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .scr-field{position:relative;display:flex;align-items:center}
+  .scr-input,.scr-select{font-family:inherit;font-size:.86rem;color:var(--text);
+    background:var(--well);border:1px solid var(--line);border-radius:9px;padding:9px 12px;outline:none;
+    transition:border-color .18s,box-shadow .18s}
+  .scr-input{min-width:190px}
+  .scr-input::placeholder{color:var(--text-faint)}
+  .scr-input:focus,.scr-select:focus{border-color:rgba(0,242,255,.5);box-shadow:0 0 0 3px rgba(0,242,255,.09)}
+  .scr-select{cursor:pointer}
+  .scr-count{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);margin-left:auto}
+  table.mk th.sorth{cursor:pointer;user-select:none}
+  table.mk th.sorth:hover{color:var(--text-dim)}
+  table.mk th.sorth[aria-sort]{color:var(--cyan)}
+  table.mk th.sorth .ar{font-size:9px;margin-left:3px}
+  .scr-act{display:inline-flex;gap:6px;align-items:center;justify-content:flex-end}
+  .scr-star{background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:2px 3px;
+    color:var(--text-faint);transition:color .15s,transform .12s}
+  .scr-star:hover{transform:scale(1.15)}
+  .scr-star.on{color:var(--amber)}
+  .scr-trade{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+    color:var(--cyan);border:1px solid rgba(0,242,255,.32);border-radius:6px;padding:4px 9px;text-decoration:none;
+    white-space:nowrap;transition:background .15s,border-color .15s}
+  .scr-trade:hover{background:rgba(0,242,255,.1);border-color:rgba(0,242,255,.55)}
   @media(max-width:520px){
     .idx .px{font-size:1.18rem}
     .panel{padding:16px}
@@ -170,6 +195,60 @@
       </div>
       <p class="mono" style="margin-top:14px;font-size:.72rem;color:var(--text-faint)">
         Select any row to open it in the Flux desk.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCREENER ============ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Screener</span>
+      <h2 class="h2" style="margin-top:16px">Filter the whole universe.</h2>
+      <p class="lede" style="margin-top:14px">Every name the desk tracks, with live price, change and fundamentals.
+        Filter by sector or search, sort any column, star what you want to watch — then trade it.</p>
+    </div>
+
+    <div class="glass panel reveal" style="margin-top:32px">
+      <div class="phead" style="margin-bottom:0">
+        <div>
+          <h3 class="h3">Stock screener</h3>
+          <p class="faint" style="font-size:.84rem;margin-top:4px">Click a column header to sort</p>
+        </div>
+        <span class="pill" style="padding:5px 11px;font-size:10px"><i></i> simulated · live tick</span>
+      </div>
+
+      <div class="scr-controls" style="margin-top:16px">
+        <div class="scr-field">
+          <select class="scr-select" id="scrSector" aria-label="Filter by sector">
+            <option value="all">All sectors</option>
+          </select>
+        </div>
+        <div class="scr-field">
+          <input class="scr-input" id="scrSearch" type="search" placeholder="Search ticker or name…" autocomplete="off" aria-label="Search ticker or name">
+        </div>
+        <span class="scr-count mono" id="scrCount"></span>
+      </div>
+
+      <div class="tscroll">
+        <table class="mk" id="scrTable">
+          <thead>
+            <tr>
+              <th scope="col" class="sorth" data-sort="sym">Ticker <span class="ar" aria-hidden="true"></span></th>
+              <th scope="col">Name</th>
+              <th scope="col" class="sorth" data-sort="price">Price <span class="ar" aria-hidden="true"></span></th>
+              <th scope="col" class="sorth" data-sort="chg">Chg % <span class="ar" aria-hidden="true"></span></th>
+              <th scope="col" class="sorth" data-sort="pe">P/E <span class="ar" aria-hidden="true"></span></th>
+              <th scope="col" class="sorth" data-sort="mc">Mkt Cap ($B) <span class="ar" aria-hidden="true"></span></th>
+              <th scope="col">Sector</th>
+              <th scope="col">Trade</th>
+            </tr>
+          </thead>
+          <tbody id="scrBody"></tbody>
+        </table>
+      </div>
+      <p class="disclaimer" style="margin-top:14px">Prices are a simulated (paper) feed, delayed sample data — not real
+        quotes. Fundamentals are illustrative. Nothing here is investment advice.</p>
     </div>
   </div>
 </section>
@@ -442,6 +521,124 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
   paintSectors();
+
+  /* ---------------- screener (REAL: full F.FUND universe) ---------------- */
+  (function(){
+    var FUND = F.FUND || {};
+    var TICKS = Object.keys(FUND);
+    var scrBody = $("#scrBody"), scrSel = $("#scrSector"),
+        scrSearch = $("#scrSearch"), scrCount = $("#scrCount");
+    if(!scrBody || !TICKS.length) return;
+
+    var state = { sec:"all", q:"", sort:"chg", dir:-1 };  /* default: % change, descending */
+
+    /* populate sector dropdown from distinct sec values */
+    var seen = {};
+    TICKS.forEach(function(t){ var s = FUND[t] && FUND[t].sec; if(s) seen[s] = 1; });
+    Object.keys(seen).sort().forEach(function(s){
+      var o = document.createElement("option");
+      o.value = s; o.textContent = s;
+      if(scrSel) scrSel.appendChild(o);
+    });
+
+    function pctOf(t){
+      var p = F.priceOf ? F.priceOf(t) : null, pc = F.prevClose ? F.prevClose(t) : null;
+      if(p == null || pc == null || !pc) return null;
+      return (p - pc) / pc * 100;
+    }
+    function fmtPrice(p){ return p == null ? "—" : p.toFixed(2); }
+    function fmtPe(pe){ return pe == null ? "—" : pe.toFixed(1); }
+    function fmtMc(mc){ return mc == null ? "—" : (mc >= 1000 ? "$"+(mc/1000).toFixed(2)+"T" : "$"+Math.round(mc)+"B"); }
+
+    function cmp(a, b){
+      var va, vb;
+      if(state.sort === "sym"){ return state.dir * (a < b ? -1 : a > b ? 1 : 0); }
+      if(state.sort === "price"){ va = F.priceOf ? F.priceOf(a) : null; vb = F.priceOf ? F.priceOf(b) : null; }
+      else if(state.sort === "chg"){ va = pctOf(a); vb = pctOf(b); }
+      else if(state.sort === "pe"){ va = FUND[a].pe; vb = FUND[b].pe; }
+      else if(state.sort === "mc"){ va = FUND[a].mc; vb = FUND[b].mc; }
+      if(va == null && vb == null) return 0;   /* nulls always sink to the bottom */
+      if(va == null) return 1;
+      if(vb == null) return -1;
+      return state.dir * (va - vb);
+    }
+
+    function render(){
+      var list = TICKS.filter(function(t){
+        var fu = FUND[t];
+        if(state.sec !== "all" && (!fu || fu.sec !== state.sec)) return false;
+        if(state.q){
+          var nm = ((F.NAMES && F.NAMES[t]) || "").toLowerCase();
+          if(t.toLowerCase().indexOf(state.q) < 0 && nm.indexOf(state.q) < 0) return false;
+        }
+        return true;
+      }).sort(cmp);
+
+      scrBody.innerHTML = list.map(function(t){
+        var fu = FUND[t], pct = pctOf(t);
+        var cls = pct == null ? "faint" : (pct >= 0 ? "up" : "down");
+        var on = F.Watch && F.Watch.has(t);
+        var nm = (F.NAMES && F.NAMES[t]) || "—";
+        return '<tr data-sym="'+t+'">'+
+          '<td class="tk-cell"><b>'+t+'</b></td>'+
+          '<td class="faint" style="text-align:left">'+nm+'</td>'+
+          '<td class="mono">'+fmtPrice(F.priceOf ? F.priceOf(t) : null)+'</td>'+
+          '<td class="mono '+cls+'">'+(pct == null ? "—" : sgn(pct)+"%")+'</td>'+
+          '<td class="mono faint">'+fmtPe(fu.pe)+'</td>'+
+          '<td class="mono faint">'+fmtMc(fu.mc)+'</td>'+
+          '<td class="faint" style="text-align:left">'+(fu.sec || "—")+'</td>'+
+          '<td><span class="scr-act">'+
+            '<button type="button" class="scr-star'+(on?" on":"")+'" data-star="'+t+'" '+
+              'aria-pressed="'+(on?"true":"false")+'" aria-label="'+(on?"Remove from":"Add to")+' watchlist">'+(on?"★":"☆")+'</button>'+
+            '<a class="scr-trade" href="./terminal.html?symbol='+t+'">Trade</a>'+
+          '</span></td></tr>';
+      }).join("");
+
+      if(scrCount) scrCount.textContent = list.length + " / " + TICKS.length + " names";
+    }
+
+    function paintHeaders(){
+      $$("#scrTable th.sorth").forEach(function(th){
+        var ar = th.querySelector(".ar");
+        if(th.getAttribute("data-sort") === state.sort){
+          th.setAttribute("aria-sort", state.dir < 0 ? "descending" : "ascending");
+          if(ar) ar.textContent = state.dir < 0 ? "▼" : "▲";
+        } else {
+          th.removeAttribute("aria-sort");
+          if(ar) ar.textContent = "";
+        }
+      });
+    }
+
+    $$("#scrTable th.sorth").forEach(function(th){
+      th.addEventListener("click", function(){
+        var key = th.getAttribute("data-sort");
+        if(state.sort === key){ state.dir = -state.dir; }
+        else { state.sort = key; state.dir = (key === "sym") ? 1 : -1; }
+        paintHeaders(); render();
+      });
+    });
+
+    if(scrSel) scrSel.addEventListener("change", function(){ state.sec = scrSel.value; render(); });
+    if(scrSearch) scrSearch.addEventListener("input", function(){ state.q = scrSearch.value.trim().toLowerCase(); render(); });
+
+    scrBody.addEventListener("click", function(e){
+      var star = e.target.closest ? e.target.closest("[data-star]") : null;
+      if(!star || !F.Watch) return;
+      var t = star.getAttribute("data-star");
+      F.Watch.toggle(t);
+      var on = F.Watch.has(t);
+      star.classList.toggle("on", on);
+      star.textContent = on ? "★" : "☆";
+      star.setAttribute("aria-pressed", on ? "true" : "false");
+      star.setAttribute("aria-label", (on ? "Remove from" : "Add to") + " watchlist");
+      if(F.toast){ try{ F.toast("<b>"+t+"</b> "+(on ? "added to" : "removed from")+" watchlist"); }catch(err){} }
+    });
+
+    paintHeaders();
+    render();
+    setInterval(function(){ if(!document.hidden) render(); }, 15000);  /* refresh live prices every ~15s */
+  })();
 
   /* ---------------- live signal feed ---------------- */
   var SIGS = F.SIGNALS || [];

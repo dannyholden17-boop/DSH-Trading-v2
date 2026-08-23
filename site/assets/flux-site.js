@@ -471,9 +471,96 @@
       var now=Date.now(),lastH=b.eqHist[b.eqHist.length-1];
       if(!lastH||now-lastH.ts>60000){ b.eqHist.push({ts:now,eq:eq}); if(b.eqHist.length>500)b.eqHist=b.eqHist.slice(-500); this.save(b); }
       return {equity:eq,start:start,ret:ret,pl:+(eq-start).toFixed(2),hist:b.eqHist};
-    }
+    },
+    // close a full position at market (offsetting sell) — used by portfolio/terminal "Close" buttons
+    close:function(t){t=(t||"").toUpperCase();var b=this.get(),p=b.positions[t];
+      if(!p||p.qty<1)return{ok:false,msg:"No open "+t+" position."};
+      return this.place({side:"sell",ticker:t,qty:p.qty,type:"market"});},
+    // flatten every open position at market
+    closeAll:function(){var b=this.get(),res=[],ts=Object.keys(b.positions);
+      for(var i=0;i<ts.length;i++){res.push(this.close(ts[i]));}
+      return{ok:true,closed:res.length,results:res};},
+    // add paper buying power (demo "deposit")
+    deposit:function(amt){amt=Math.max(0,+amt||0);var b=this.get();b.cash=+(b.cash+amt).toFixed(2);b.start=+((b.start||100000)+amt).toFixed(2);this.save(b);
+      try{window.dispatchEvent(new CustomEvent("flux-book-updated",{detail:{deposit:amt}}));}catch(e){}
+      if(F.toast){try{F.toast("💵 Added $"+amt.toLocaleString()+" paper buying power.",{icon:"💵"});}catch(e){}}
+      return b;}
   };
   window.FLUXBook=F.Book;
+
+  /* ---- CSV export (pure client-side, no backend) ---- */
+  F.exportCSV=function(filename,rows){
+    if(!rows||!rows.length){if(F.toast)F.toast("Nothing to export yet.");return;}
+    var cols=Object.keys(rows[0]);
+    var esc=function(v){v=(v==null?"":String(v));return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+    var csv=cols.join(",")+"\n"+rows.map(function(r){return cols.map(function(c){return esc(r[c]);}).join(",");}).join("\n");
+    try{
+      var blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob);
+      var a=document.createElement("a");a.href=url;a.download=filename||"flux-export.csv";
+      document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+      if(F.toast)F.toast("⬇️ Exported "+rows.length+" rows.",{icon:"⬇️"});
+    }catch(e){}
+  };
+
+  /* ---- Black-Scholes options engine (pure math — powers the simulated options chain) ---- */
+  // normal CDF via Abramowitz-Stegun; annualized IV assumptions per ticker (fallbacks by beta feel)
+  F.IV={NVDA:.52,AMD:.58,TSLA:.65,AAPL:.28,MSFT:.26,SMCI:.85,COIN:.80,PLTR:.62,AMZN:.34,META:.36,
+    GOOGL:.31,NFLX:.42,AVGO:.44,SPY:.15,QQQ:.20,MU:.55,ARM:.60,INTC:.48,MARA:.95,SOFI:.66,
+    DELL:.46,CRM:.36,ORCL:.38,UBER:.44};
+  F.BS=(function(){
+    function ncdf(x){var t=1/(1+.2316419*Math.abs(x));
+      var d=.3989423*Math.exp(-x*x/2);
+      var p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
+      return x>0?1-p:p;}
+    function npdf(x){return .3989422804014327*Math.exp(-x*x/2);}
+    function d1(S,K,T,r,v){return (Math.log(S/K)+(r+v*v/2)*T)/(v*Math.sqrt(T));}
+    return {
+      // price of a call/put
+      price:function(type,S,K,T,r,v){if(T<=0)return Math.max(0,type==="put"?K-S:S-K);
+        var a=d1(S,K,T,r,v),b=a-v*Math.sqrt(T);
+        return type==="put"
+          ? +(K*Math.exp(-r*T)*ncdf(-b)-S*ncdf(-a)).toFixed(2)
+          : +(S*ncdf(a)-K*Math.exp(-r*T)*ncdf(b)).toFixed(2);},
+      greeks:function(type,S,K,T,r,v){if(T<=0)T=1/365;
+        var a=d1(S,K,T,r,v),b=a-v*Math.sqrt(T),nd=npdf(a),st=Math.sqrt(T);
+        var delta=type==="put"?ncdf(a)-1:ncdf(a);
+        var gamma=nd/(S*v*st);
+        var vega=S*nd*st/100;                         // per 1 vol point
+        var theta=(-(S*nd*v)/(2*st) - (type==="put"?-1:1)*r*K*Math.exp(-r*T)*ncdf((type==="put"?-b:b)))/365;
+        return {delta:+delta.toFixed(3),gamma:+gamma.toFixed(4),theta:+theta.toFixed(3),vega:+vega.toFixed(3)};}
+    };
+  })();
+  // build a simulated chain: several expiries, strikes bracketing spot, BS-priced with greeks
+  F.optionChain=function(t,expDays){
+    t=(t||"").toUpperCase();var S=F.priceOf(t);if(S==null)return null;
+    var v=F.IV[t]||.45,r=.045;
+    var step=S<20?0.5:S<50?1:S<150?2.5:S<400?5:10;
+    var atm=Math.round(S/step)*step,rows=[];
+    for(var i=-6;i<=6;i++){
+      var K=+(atm+i*step).toFixed(2);if(K<=0)continue;
+      var T=(expDays||30)/365;
+      rows.push({strike:K,
+        call:F.BS.price("call",S,K,T,r,v),put:F.BS.price("put",S,K,T,r,v),
+        callGk:F.BS.greeks("call",S,K,T,r,v),putGk:F.BS.greeks("put",S,K,T,r,v),
+        atm:Math.abs(K-S)<step/2});
+    }
+    return {ticker:t,spot:S,iv:v,expDays:expDays||30,step:step,rows:rows};
+  };
+  // simulated options paper blotter (separate from equity book)
+  F.OptBook={
+    KEY:"flux_option_orders",
+    get:function(){var a;try{a=JSON.parse(localStorage.getItem(this.KEY))}catch(e){}return Array.isArray(a)?a:[];},
+    save:function(a){try{localStorage.setItem(this.KEY,JSON.stringify(a))}catch(e){}},
+    place:function(o){var a=this.get();
+      var ord={id:Date.now(),ts:Date.now(),ticker:(o.ticker||"").toUpperCase(),side:o.side||"buy",
+        right:o.right||"call",strike:+o.strike,exp:o.exp||"30d",qty:Math.max(1,+o.qty||1),
+        premium:+o.premium,cost:+((+o.premium)*100*Math.max(1,+o.qty||1)).toFixed(2),status:"filled"};
+      a.unshift(ord);if(a.length>60)a.length=60;this.save(a);
+      try{window.dispatchEvent(new CustomEvent("flux-book-updated",{detail:ord}));}catch(e){}
+      if(F.toast){try{F.toast((ord.side==="buy"?"🟢 Bought ":"🔴 Sold ")+ord.qty+" "+ord.ticker+" $"+ord.strike+" "+ord.right.toUpperCase()+" @ $"+ord.premium.toFixed(2),{icon:"⚙️"});}catch(e){}}
+      return{ok:true,order:ord};}
+  };
+  window.FLUXOpt=F.OptBook;
 
   /* ---- shared watchlist ---- */
   F.Watch={
