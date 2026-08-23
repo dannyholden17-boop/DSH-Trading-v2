@@ -114,10 +114,20 @@
     var dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
     cv.width=w*dpr;cv.height=h*dpr;var c=cv.getContext("2d");c.scale(dpr,dpr);c.clearRect(0,0,w,h);
     var r=F.seed(seedStr||"flux");function rr(){r=(r*9301+49297)%233280;return r/233280}
-    n=n||40;var price=180,cs=[];
-    for(var i=0;i<n;i++){var o=price,cl=Math.max(1,o+(rr()-(up===false?.55:.45))*3.2),
-      hi=Math.max(o,cl)+rr()*1.3,lo=Math.min(o,cl)-rr()*1.3;
+    n=n||40;
+    // Anchor to the real price + real day direction when seedStr is a ticker.
+    var tk=(seedStr||"").toUpperCase();
+    var isTk=F.PRICES&&F.PRICES[tk];
+    var realPx=isTk?F.priceOf(tk):180, realPrev=isTk?F.prevClose(tk):realPx;
+    var dayUp=realPx>=realPrev; if(up===undefined||up===null) up=dayUp;
+    var vol=isTk?Math.max(0.006,Math.abs(realPx-realPrev)/(realPrev||1)+0.007):0.018;
+    var step=realPx*vol;
+    var price=realPx*(1-(dayUp?1:-1)*vol*n*0.14),cs=[];   // start, then shift so last=real
+    for(var i=0;i<n;i++){var o=price,cl=Math.max(0.01,o+(rr()-(up===false?.56:.44))*step),
+      hi=Math.max(o,cl)+rr()*step*0.5,lo=Math.min(o,cl)-rr()*step*0.5;
       cs.push({o:o,h:hi,l:lo,c:cl});price=cl;}
+    var shift=realPx-cs[n-1].c;   // pin the last close to the real price
+    for(i=0;i<n;i++){cs[i].o+=shift;cs[i].h+=shift;cs[i].l+=shift;cs[i].c+=shift;}
     var mx=-1e9,mn=1e9;cs.forEach(function(k){if(k.h>mx)mx=k.h;if(k.l<mn)mn=k.l});
     var pad=(mx-mn)*.08;mx+=pad;mn-=pad;
     var cw=w/n,bw=Math.max(2,cw*.6);
