@@ -353,6 +353,8 @@ html,body{overflow-x:hidden;max-width:100%}
   .btn-row{width:100%}
   .btn-row .btn{flex:1 1 auto;justify-content:center}
   .btn{padding:14px 20px}
+  /* inputs at 16px so iOS Safari doesn't zoom the page on focus */
+  input,select,textarea{font-size:16px!important}
   /* never let a stray element force sideways scroll */
   .wrap,.nav-inner,section,main,footer{max-width:100%}
   /* comfortable base font + spacing */
