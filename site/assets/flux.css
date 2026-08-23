@@ -330,7 +330,39 @@ details p{padding:0 20px 20px;color:var(--text-dim);font-size:.93rem}
 }
 
 /* animated shader canvas — the signature "terminal void" */
-.fx-shader{position:fixed;inset:0;width:100vw;height:100vh;z-index:-3;pointer-events:none;display:block}
+.fx-shader{position:fixed;inset:0;width:100%;height:100%;z-index:-3;pointer-events:none;display:block}
+
+/* ============================================================
+   MOBILE HARDENING — kill horizontal overflow, make wide content
+   (data tables, ticket forms) scroll inside itself, and give CTAs
+   comfortable full-width tap targets on phones.
+   ============================================================ */
+html,body{overflow-x:hidden;max-width:100%}
+.marquee{max-width:100vw}
+/* grid/flex children must be allowed to shrink below their content, or a long
+   word / wide child forces the whole track past the viewport (min-width:auto) */
+.h-hero,.split,.split.wide-l,.grid,.jgrid{min-width:0}
+.h-hero>*,.split>*,.grid>*,.jgrid>*{min-width:0}
+@media (max-width:640px){
+  :root{--gutter:16px}
+  /* hard viewport-relative cap so no grid child can exceed the screen minus
+     the wrap's 16px gutters (fixes hero text clipping on phones) */
+  .h-hero>*,.jgrid>*,.split>*{max-width:calc(100vw - 32px)!important}
+  .lede,.hero-note,.disclaimer{max-width:100%!important}
+  /* full-width, easy-to-tap CTAs */
+  .btn-row{width:100%}
+  .btn-row .btn{flex:1 1 auto;justify-content:center}
+  .btn{padding:14px 20px}
+  /* never let a stray element force sideways scroll */
+  .wrap,.nav-inner,section,main,footer{max-width:100%}
+  /* comfortable base font + spacing */
+  .section{padding-block:clamp(40px,7vw,70px)}
+}
+/* bigger default tap targets for links/buttons on touch devices */
+@media (hover:none){
+  .btn-sm{padding:12px 18px}
+  .nav-links.open a{padding:16px var(--gutter)}
+}
 /* when the shader is present, the aurora just adds faint colour bloom on top */
 .fx-shader ~ .fx-aurora{opacity:.28;z-index:-2}
 
