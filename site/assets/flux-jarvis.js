@@ -536,6 +536,14 @@
     });
     // things Fluxi has learned about this user
     ctx.known_facts = safe(function () { return Mem.facts.slice(0, 6).map(function (f) { return f.text; }); });
+    // the live Flux Fund, so Fluxi can talk about it
+    ctx.flux_fund = safe(function () {
+      if (!F.Fund || !F.Fund.snapshot) return null; var s = F.Fund.snapshot();
+      return { aum: s.aum, return_since_launch_pct: s.retPct, day_pl: s.dayPL, open_positions: s.nOpen,
+        top_holdings: s.positions.slice(0, 5).map(function (p) { return p.t + " " + p.weight + "%"; }) };
+    });
+    // recent back-and-forth so Fluxi holds a real conversation
+    ctx.recent_conversation = HIST.slice(-6);
     // deep data for any ticker named in the question
     var t = findTicker(q);
     if (t) ctx.focus_ticker = safe(function () {
@@ -591,14 +599,32 @@
   };
 
   // Main entry — returns a Promise<{text, kind}>
+  // rolling conversation memory (fed to the LLM so Fluxi holds a real thread)
+  var HIST = [];
+  J.history = function () { return HIST.slice(); };
   J.ask = function (input) {
+    var q = (input || "").trim();
+    return _ask(q).then(function (res) {
+      try { if (q) { HIST.push({ you: q.slice(0, 300), fluxi: ((res && res.text) || "").slice(0, 400) }); if (HIST.length > 12) HIST = HIST.slice(-12); } } catch (e) {}
+      return res;
+    });
+  };
+
+  function _ask(input) {
     var q = (input || "").trim();
     var ql = q.toLowerCase();
     if (!q) return Promise.resolve({ text: CAP, kind: "help" });
 
-    // greetings / identity / help
-    if (/^(hi|hey|hello|yo|sup|jarvis|fluxi|flux)\b/.test(ql) && ql.length < 24)
-      return Promise.resolve({ text: "Fluxi online. Six engines scanning, and I remember what you teach me. What are we looking at?", kind: "greet" });
+    // very short greetings get an instant, varied hello (longer/there's-a-question -> LLM converses)
+    if (/^(hi|hey|hello|yo|sup|fluxi|heya|hiya|howdy|good (morning|afternoon|evening))\b[!. ]*$/.test(ql) && ql.length < 22) {
+      var hellos = [
+        "Hey — Fluxi here. What are we looking at?",
+        "Fluxi online. Markets, the fund, or just talking shop — what's up?",
+        "Hey there. Want a market brief, a name to dig into, or something else on your mind?",
+        "Fluxi, ready. Ask me anything — a stock, the fund, or whatever you're thinking."
+      ];
+      return Promise.resolve({ text: hellos[Math.floor((Date.now() / 1000) % hellos.length)], kind: "greet" });
+    }
     if (has(ql, ["your name", "who are you", "what are you", "what's your name", "whats your name"]))
       return Promise.resolve({ text: "I'm Fluxi — your AI trading desk. I read live signals, rank under/overvalued names, run the fund, and I learn from you and from how my own calls play out. Not a financial advisor — a research desk.", kind: "id" });
     if (has(ql, ["what can you", "help", "commands", "what do you do"]))
@@ -712,7 +738,7 @@
       return Promise.resolve({ text: valuationAnswer("over"), kind: "valuation" });
 
     // brief / market
-    if (has(ql, ["brief", "summary", "what's happening", "whats happening", "market", "today", "overview", "rundown"]))
+    if (has(ql, ["brief", "market brief", "what's happening", "whats happening", "market summary", "market overview", "market rundown", "how's the market", "hows the market"]))
       return Promise.resolve({ text: J.brief().text, kind: "brief" });
 
     // fund / autopilot

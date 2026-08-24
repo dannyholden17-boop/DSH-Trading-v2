@@ -7,13 +7,13 @@
 <meta name="description" content="The Flux Fund: a simulated AI that trades a paper account live and shows every fill. Watch it trade in real time, browse its positions and its whole order history. Simulated, virtual money, not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=5">
-<script src="./assets/flux-supa.js?v=5" defer></script>
-<script src="./assets/flux-site.js?v=5" defer></script>
-<script src="./assets/flux-universe.js?v=5" defer></script>
-<script src="./assets/flux-feed.js?v=5" defer></script>
-<script src="./assets/flux-fund.js?v=5" defer></script>
-<script src="./assets/flux-kronos.js?v=5" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=6">
+<script src="./assets/flux-supa.js?v=6" defer></script>
+<script src="./assets/flux-site.js?v=6" defer></script>
+<script src="./assets/flux-universe.js?v=6" defer></script>
+<script src="./assets/flux-feed.js?v=6" defer></script>
+<script src="./assets/flux-fund.js?v=6" defer></script>
+<script src="./assets/flux-kronos.js?v=6" defer></script>
 <style>
   .fd-shell{max-width:1280px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,32px)}
   /* hero */
@@ -91,6 +91,27 @@
   .fd-strip .ic{color:#f59e0b;font-size:16px;line-height:1.3}
   .fd-strip p{font-size:.82rem;line-height:1.6;color:var(--text-dim)}
   .fd-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+
+  /* allocation bar chart — "where the money is" */
+  .fd-alloc{padding:18px 18px 10px;margin-top:22px}
+  .fd-alloc .row{display:grid;grid-template-columns:96px 1fr 128px 108px;gap:14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line-2)}
+  .fd-alloc .row:last-child{border-bottom:none}
+  @media(max-width:640px){.fd-alloc .row{grid-template-columns:72px 1fr 92px}.fd-alloc .row .pl{display:none}}
+  .fd-alloc .tk b{font-family:var(--f-mono);font-weight:700;font-size:.9rem;letter-spacing:.03em}
+  .fd-alloc .tk span{display:block;color:var(--text-faint);font-size:10px;font-family:var(--f-sans)}
+  .fd-alloc .track{height:20px;background:rgba(255,255,255,.05);border-radius:5px;overflow:hidden}
+  .fd-alloc .fill{height:100%;border-radius:5px;transition:width .5s ease;min-width:2px}
+  .fd-alloc .val{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:.9rem}
+  .fd-alloc .val span{display:block;color:var(--text-faint);font-size:10px;font-weight:400}
+  .fd-alloc .pl{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.85rem}
+  .fd-alloc .pl span{display:block;color:var(--text-faint);font-size:10px}
+  /* P&L summary tiles */
+  .fd-pnl{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+  @media(max-width:640px){.fd-pnl{grid-template-columns:repeat(2,1fr)}}
+  .fd-pnltile{padding:15px 16px}
+  .fd-pnltile .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .fd-pnltile .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.35rem;font-weight:750;margin-top:6px;letter-spacing:-.02em}
+  .fd-pnltile .s{font-size:.72rem;color:var(--text-faint);margin-top:3px;font-family:var(--f-mono)}
 </style>
 </head>
 <body>
@@ -173,6 +194,24 @@
       <span class="mono" style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">simulated · paper $250k start</span>
     </div>
     <canvas id="bigCurve" aria-label="Simulated equity curve since launch"></canvas>
+  </section>
+
+  <!-- P&L SUMMARY -->
+  <section class="fd-pnl">
+    <div class="glass fd-pnltile"><div class="k">Unrealized P/L</div><div class="v mono" id="pUnreal">—</div><div class="s">open positions, marked live</div></div>
+    <div class="glass fd-pnltile"><div class="k">Realized P/L</div><div class="v mono" id="pReal">—</div><div class="s">booked on closed trades</div></div>
+    <div class="glass fd-pnltile"><div class="k">Day P/L</div><div class="v mono" id="pDay">—</div><div class="s">since prior session</div></div>
+    <div class="glass fd-pnltile"><div class="k">Total P/L · launch</div><div class="v mono" id="pTotal">—</div><div class="s">vs $250k paper start</div></div>
+  </section>
+
+  <!-- ALLOCATION BAR CHART -->
+  <section class="glass fd-alloc reveal">
+    <div class="fd-ph" style="border:none;padding:0 0 8px">
+      <span class="pill live">Allocation</span>
+      <h3 style="margin:0;font-size:.95rem">Where the money is — invested per name</h3>
+      <span class="k" id="allocSum">—</span>
+    </div>
+    <div id="allocBody"></div>
   </section>
 
   <!-- DESK: TAPE + HOLDINGS -->
@@ -319,10 +358,44 @@ document.addEventListener("DOMContentLoaded", function () {
     c.strokeStyle = col; c.lineWidth = 2.2; c.lineJoin = "round"; c.shadowColor = col; c.shadowBlur = 10; c.stroke(); c.shadowBlur = 0;
   }
 
+  function renderPnL(s) {
+    var unreal = s.positions.reduce(function (a, p) { return a + p.pl; }, 0);
+    var plTile = function (id, v, pctv) {
+      var e = document.getElementById(id); if (!e) return;
+      e.textContent = (v >= 0 ? "+" : "−") + "$" + Math.abs(Math.round(v)).toLocaleString() + (pctv != null ? "  " + pct(pctv) : "");
+      e.classList.remove("up", "down"); e.classList.add(v >= 0 ? "up" : "down");
+    };
+    plTile("pUnreal", unreal, s.invested ? unreal / s.invested * 100 : 0);
+    plTile("pReal", s.realized, null);
+    plTile("pDay", s.dayPL, s.dayPct);
+    plTile("pTotal", s.ret, s.retPct);
+  }
+
+  function renderAllocation(s) {
+    var host = $("#allocBody"); if (!host) return;
+    var maxMkt = Math.max.apply(null, s.positions.map(function (p) { return p.mkt; }).concat([1]));
+    var rows = s.positions.map(function (p) {
+      var w = Math.max(2, p.mkt / maxMkt * 100), up = p.pl >= 0;
+      var grad = up ? "linear-gradient(90deg,#0891b2,#10b981)" : "linear-gradient(90deg,#b45309,#ef4444)";
+      return '<div class="row"><div class="tk"><b>' + p.t + '</b><span>' + p.sec + '</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + w.toFixed(1) + '%;background:' + grad + '"></div></div>' +
+        '<div class="val">' + m0(p.mkt) + '<span>' + p.weight + '% of book</span></div>' +
+        '<div class="pl ' + (up ? "up" : "down") + '">' + (up ? "+" : "−") + "$" + Math.abs(Math.round(p.pl)).toLocaleString() +
+        '<span>' + pct(p.plpct) + '</span></div></div>';
+    }).join("");
+    var cw = Math.max(2, Math.min(100, s.cash / maxMkt * 100));
+    rows += '<div class="row"><div class="tk"><b>CASH</b><span>buying power</span></div>' +
+      '<div class="track"><div class="fill" style="width:' + cw.toFixed(1) + '%;background:rgba(148,163,184,.45)"></div></div>' +
+      '<div class="val">' + m0(s.cash) + '<span>' + (s.aum ? (s.cash / s.aum * 100).toFixed(1) : 0) + '% of acct</span></div><div class="pl"></div></div>';
+    host.innerHTML = rows;
+    var unreal = s.positions.reduce(function (a, p) { return a + p.pl; }, 0);
+    setT("allocSum", "Invested " + m0(s.invested) + " · Cash " + m0(s.cash) + " · Unrealized " + (unreal >= 0 ? "+" : "−") + "$" + Math.abs(Math.round(unreal)).toLocaleString());
+  }
+
   var CUR = null;
   function refresh(animate) {
     var s = F.Fund.snapshot(); CUR = s;
-    renderStats(s); renderHoldings(s); renderTape(s, animate);
+    renderStats(s); renderHoldings(s); renderTape(s, animate); renderPnL(s); renderAllocation(s);
     drawCurve($("#hCurve"), s.curve, 5); drawCurve($("#bigCurve"), s.curve, 8);
   }
 
@@ -332,7 +405,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // rotate the "thinking" line
   setInterval(function () { thinkI = (thinkI + 1) % THINK.length; var e = $("#thinkLine"); if (e) { e.style.opacity = 0; setTimeout(function () { e.textContent = THINK[thinkI]; e.style.transition = "opacity .5s"; e.style.opacity = 1; }, 250); } }, 6000);
   // re-mark instantly when live prices tick
-  window.addEventListener("flux-prices", function () { if (CUR) { var s = F.Fund.snapshot(); renderStats(s); renderHoldings(s); drawCurve($("#hCurve"), s.curve, 5); drawCurve($("#bigCurve"), s.curve, 8); } });
+  window.addEventListener("flux-prices", function () { if (CUR) { var s = F.Fund.snapshot(); renderStats(s); renderHoldings(s); renderPnL(s); renderAllocation(s); drawCurve($("#hCurve"), s.curve, 5); drawCurve($("#bigCurve"), s.curve, 8); } });
   var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (CUR) { drawCurve($("#hCurve"), CUR.curve, 5); drawCurve($("#bigCurve"), CUR.curve, 8); } }, 160); });
 
   // mirror the fund into the visitor's paper account
