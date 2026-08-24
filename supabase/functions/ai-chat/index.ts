@@ -49,8 +49,8 @@ serve(async (req) => {
     const model = Deno.env.get("FLUX_MODEL") || "claude-sonnet-5";
     const ctxStr = safeJson(context);
     const userMsg =
-      `LIVE DESK CONTEXT (simulated data):\n${ctxStr}\n\n` +
-      `USER QUESTION: ${question.slice(0, 800)}`;
+      `LIVE DESK CONTEXT (simulated data; may include recent_conversation for continuity):\n${ctxStr}\n\n` +
+      `USER MESSAGE: ${question.slice(0, 800)}`;
 
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
