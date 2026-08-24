@@ -7,13 +7,14 @@
 <meta name="description" content="Talk to Flux — an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=4">
-<script src="./assets/flux-supa.js?v=4" defer></script>
-<script src="./assets/flux-site.js?v=4" defer></script>
-<script src="./assets/flux-universe.js?v=4" defer></script>
-<script src="./assets/flux-feed.js?v=4" defer></script>
-<script src="./assets/flux-kronos.js?v=4" defer></script>
-<script src="./assets/flux-jarvis.js?v=4" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=5">
+<script src="./assets/flux-supa.js?v=5" defer></script>
+<script src="./assets/flux-site.js?v=5" defer></script>
+<script src="./assets/flux-universe.js?v=5" defer></script>
+<script src="./assets/flux-feed.js?v=5" defer></script>
+<script src="./assets/flux-fund.js?v=5" defer></script>
+<script src="./assets/flux-kronos.js?v=5" defer></script>
+<script src="./assets/flux-jarvis.js?v=5" defer></script>
 <style>
   .jbg{position:relative;overflow:clip}
   .jwrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter);padding-top:18px}
@@ -199,10 +200,10 @@
       </div>
 
       <div class="glass panel">
-        <h3><span class="glyph2">◷</span> Autopilot fund</h3>
-        <div class="subh">live $10k paper desk</div>
+        <h3><span class="glyph2">◷</span> Flux Fund</h3>
+        <div class="subh">live simulated paper desk</div>
         <div class="briefline" id="fund">Reading the fund…</div>
-        <a class="btn btn-ghost btn-sm" href="./autopilot.html" style="margin-top:12px">Watch it trade →</a>
+        <a class="btn btn-ghost btn-sm" href="./fund.html" style="margin-top:12px">Watch it trade →</a>
       </div>
 
       <div class="glass panel cyber-card">
@@ -416,19 +417,17 @@
     J.onLearn = renderMem;   // re-render whenever Fluxi learns something
     renderMem();
     function refreshFund(){
-      var el = document.getElementById("fund"), S = window.FluxSupa;
-      if(S && S.autopilot){
-        Promise.resolve(S.autopilot()).then(function(f){
-          if(f && (f.equity!=null || (f.positions&&f.positions.length))){
-            var eq = f.equity!=null?f.equity:(f.cash||0);
-            var pnl = f.pnl!=null?f.pnl:(f.day_change!=null?f.day_change:null);
-            el.innerHTML = "Equity <b>"+money(eq)+"</b>"+(pnl!=null?" · "+(pnl>=0?"+":"")+money(pnl)+" P&L":"")+
-              " · "+((f.positions&&f.positions.length)||0)+" positions. Trading on Kronos signals, live.";
-          } else { el.textContent = "The Autopilot runs a live $10k simulated fund on Kronos signals and posts its reasoning."; }
-        }).catch(function(){ el.textContent = "The Autopilot runs a live $10k simulated fund on Kronos signals."; });
-      } else { el.textContent = "The Autopilot runs a live $10k simulated fund on Kronos signals and posts hourly reports."; }
+      var el = document.getElementById("fund"); if(!el) return;
+      var FL = window.FLUX;
+      if(FL && FL.Fund && FL.Fund.snapshot){
+        var s = FL.Fund.snapshot();
+        el.innerHTML = "Equity <b>"+money(s.aum)+"</b> · "+(s.dayPL>=0?"+":"−")+money(Math.abs(s.dayPL))+
+          " today · "+(s.retPct>=0?"+":"")+s.retPct+"% since launch · "+s.nOpen+" positions. Live simulated desk.";
+      } else { el.textContent = "A simulated AI fund trading a paper account live on Kronos signals — watch it on the Fund page."; }
     }
     refresh(); refreshFund();
+    setInterval(refreshFund, 4000);
+    window.addEventListener("flux-prices", refreshFund);
     setInterval(refresh, 45000);      // always-on: recompute the models
     setInterval(refreshFund, 60000);
   }
