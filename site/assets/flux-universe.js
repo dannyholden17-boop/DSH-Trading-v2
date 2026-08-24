@@ -291,3 +291,48 @@
     if(F.FUND[t]==null)   F.FUND[t]={pe:e[4],mc:e[5],hi:e[6],lo:e[7],sec:e[1]};
   }
 })();
+
+/* supplement — frequently-asked names added after the initial 253 (live feed overwrites prices) */
+(function(){
+  var F = window.FLUX = window.FLUX || {};
+  var S = {
+    GEV:["GE Vernova","Power/Utilities",485.00,478.20,62.0,132,670.00,130.00],
+    VST:["Vistra","Power/Utilities",165.00,162.40,28.0,56,205.00,50.00],
+    CEG:["Constellation Energy","Power/Utilities",300.00,296.10,33.0,95,352.00,150.00],
+    OKLO:["Oklo","Power/Utilities",55.00,53.20,null,8,60.00,5.00],
+    SMR:["NuScale Power","Power/Utilities",30.00,29.10,null,8,36.00,8.00],
+    APP:["AppLovin","Software",430.00,424.50,60.0,145,525.00,60.00],
+    ANET:["Arista Networks","Networking",135.00,133.10,45.0,170,150.00,60.00],
+    PANW:["Palo Alto Networks","Software",200.00,198.20,50.0,130,210.00,140.00],
+    SNOW:["Snowflake","Software",230.00,226.40,null,76,245.00,105.00],
+    DDOG:["Datadog","Software",140.00,138.30,90.0,48,170.00,90.00],
+    NET:["Cloudflare","Software",190.00,187.40,null,65,205.00,65.00],
+    CRWD:["CrowdStrike","Software",480.00,475.10,95.0,118,500.00,200.00],
+    ABNB:["Airbnb","Internet",135.00,133.20,32.0,85,170.00,100.00],
+    SHOP:["Shopify","E-commerce",145.00,143.10,90.0,185,160.00,48.00],
+    MRVL:["Marvell Technology","Semiconductors",110.00,108.30,null,95,130.00,47.00],
+    RBLX:["Roblox","Media",120.00,118.20,null,78,140.00,30.00],
+    DKNG:["DraftKings","Media",40.00,39.30,null,20,55.00,28.00],
+    CVNA:["Carvana","E-commerce",340.00,335.20,110.0,72,400.00,100.00],
+    XYZ:["Block","Fintech",75.00,74.10,40.0,46,100.00,50.00],
+    TSM:["Taiwan Semiconductor","Semiconductors",190.00,187.30,28.0,985,212.00,130.00],
+    ASML:["ASML Holding","Semiconductors",900.00,890.10,40.0,360,1110.00,650.00],
+    NOW:["ServiceNow","Software",950.00,940.20,130.0,195,1060.00,650.00],
+    MELI:["MercadoLibre","E-commerce",2100.00,2080.00,55.0,105,2220.00,1400.00],
+    ADBE:["Adobe","Software",480.00,475.30,35.0,210,640.00,430.00],
+    QCOM:["Qualcomm","Semiconductors",165.00,163.20,18.0,183,230.00,120.00],
+    TXN:["Texas Instruments","Semiconductors",195.00,193.10,35.0,178,220.00,150.00],
+    AMAT:["Applied Materials","Semiconductors",175.00,173.20,22.0,145,255.00,120.00],
+    LRCX:["Lam Research","Semiconductors",90.00,89.10,25.0,115,110.00,60.00],
+    WDAY:["Workday","Software",240.00,237.20,40.0,63,285.00,200.00],
+    PYPL:["PayPal","Fintech",72.00,71.10,17.0,72,95.00,55.00]
+  };
+  F.UNIVERSE = F.UNIVERSE || {};
+  F.PRICES = F.PRICES || {}; F.PREV = F.PREV || {}; F.NAMES = F.NAMES || {}; F.FUND = F.FUND || {};
+  for(var t in S){ var e=S[t]; if(!F.UNIVERSE[t]) F.UNIVERSE[t]=e;
+    if(F.PRICES[t]==null) F.PRICES[t]=e[2];
+    if(F.PREV[t]==null)   F.PREV[t]=e[3];
+    if(F.NAMES[t]==null)  F.NAMES[t]=e[0];
+    if(F.FUND[t]==null)   F.FUND[t]={pe:e[4],mc:e[5],hi:e[6],lo:e[7],sec:e[1]};
+  }
+})();

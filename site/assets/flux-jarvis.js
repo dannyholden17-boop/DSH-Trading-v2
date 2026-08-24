@@ -363,15 +363,31 @@
      ------------------------------------------------------------ */
   var TICKERS = function () { return F.PRICES ? Object.keys(F.PRICES) : []; };
 
+  // common English words that are ALSO real tickers — only treat them as a ticker
+  // when the user typed them in CAPS (e.g. "ON" the symbol vs "on" the word).
+  var WORD_TICKERS = {A:1,I:1,ON:1,IT:1,IS:1,IN:1,AT:1,AS:1,BE:1,BY:1,DO:1,GO:1,HE:1,IF:1,ME:1,MY:1,NO:1,OF:1,OK:1,
+    OR:1,SO:1,TO:1,UP:1,US:1,WE:1,AN:1,AM:1,ALL:1,AND:1,ANY:1,ARE:1,BUY:1,CAN:1,DAY:1,FOR:1,GET:1,HAS:1,HOW:1,ITS:1,
+    LOW:1,NEW:1,NOW:1,ONE:1,OUT:1,OWN:1,PER:1,PUT:1,RUN:1,SEE:1,SHE:1,THE:1,TWO:1,WHO:1,WHY:1,YOU:1,YES:1,
+    BEST:1,BOTH:1,CASH:1,GOOD:1,HIGH:1,LONG:1,LOVE:1,NEXT:1,OPEN:1,PLAY:1,RISK:1,SELL:1,SOME:1,TECH:1,WELL:1,WHAT:1,DOWN:1};
+
+  // returns the best explicit symbol in the query (known or not) — used to detect
+  // when the user named a ticker Fluxi doesn't have grounded data for.
+  function namedSymbol(q) {
+    var caps = q.match(/\b[A-Z]{2,5}\b/g) || [];
+    for (var i = 0; i < caps.length; i++) if (!WORD_TICKERS[caps[i]]) return caps[i];
+    return caps[0] || null;
+  }
+
   function findTicker(q) {
-    var up = " " + q.toUpperCase() + " ";
-    var list = TICKERS();
-    // direct symbol match
-    for (var i = 0; i < list.length; i++) {
-      var re = new RegExp("[^A-Z]" + list[i] + "[^A-Z]");
-      if (re.test(up)) return list[i];
-    }
-    // company name match
+    var list = TICKERS(), known = {};
+    for (var i = 0; i < list.length; i++) known[list[i]] = 1;
+    // 1) explicit UPPERCASE tokens in the original text win ("GEV", "NVDA", "ON")
+    var caps = q.match(/\b[A-Z]{1,5}\b/g) || [];
+    for (i = 0; i < caps.length; i++) if (known[caps[i]]) return caps[i];
+    // 2) case-insensitive match, but skip common words (unless they were caps, handled above)
+    var toks = (q.toUpperCase().match(/[A-Z]{2,5}/g) || []);
+    for (i = 0; i < toks.length; i++) { var w = toks[i]; if (known[w] && !WORD_TICKERS[w]) return w; }
+    // 3) company-name match
     if (F.NAMES) {
       var ql = q.toLowerCase();
       for (var k in F.NAMES) {
@@ -444,6 +460,16 @@
   }
 
   function fundAnswer() {
+    // prefer the real client-side Flux Fund engine (always available, live-marked)
+    if (F.Fund && F.Fund.snapshot) {
+      var s = F.Fund.snapshot();
+      var top = s.positions.slice(0, 3).map(function (p) { return p.t; }).join(", ");
+      return Promise.resolve(
+        "The Flux Fund is at " + money(s.aum) + " — " + (s.retPct >= 0 ? "+" : "") + s.retPct + "% since launch, " +
+        (s.dayPL >= 0 ? "+" : "−") + money(Math.abs(s.dayPL)) + " today — across " + s.nOpen + " positions" +
+        (top ? " (top: " + top + ")" : "") + ". It's placed " + s.nTrades.toLocaleString() +
+        " paper fills; watch it live on the Fund page. Simulated, virtual money — not advice.");
+    }
     // best-effort live fund; resolves async
     return new Promise(function (resolve) {
       var S = window.FluxSupa;
