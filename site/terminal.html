@@ -219,6 +219,10 @@
   .tm-otag{font-family:var(--f-mono);font-size:9px;color:var(--tm-faint);text-transform:uppercase}
 
   .tm-disc{color:var(--tm-faint);font-size:.72rem;line-height:1.6;margin-top:10px}
+  .tm-star{margin-left:6px;flex:none;background:none;border:none;cursor:pointer;font-size:1.25rem;line-height:1;
+    color:var(--text-faint);transition:color .15s,transform .12s;align-self:center;padding:2px 4px}
+  .tm-star:hover{transform:scale(1.15);color:var(--amber)}
+  .tm-star.on{color:var(--amber)}
 </style>
 </head>
 <body>
@@ -314,6 +318,7 @@
                 list="tmSyms" spellcheck="false" aria-label="Active symbol" value="NVDA">
               <div class="tm-symco" id="tmSymCo">NVIDIA</div>
             </div>
+            <button class="tm-star" id="tmStar" type="button" title="Star — add to your watchlist" aria-pressed="false">☆</button>
           </div>
           <div class="tm-hprice">
             <span class="big" id="tmPrice">—</span>
@@ -852,6 +857,20 @@ document.addEventListener("DOMContentLoaded", function(){
       el.style.color=FLUX.TV.color(tv.score);
     });
   }
+  function isStarred(t){
+    try{ var w=(window.FLUXWatch&&FLUXWatch.get&&FLUXWatch.get())||JSON.parse(localStorage.getItem("flux_watch")||"[]"); return w.indexOf((t||"").toUpperCase())>=0; }catch(e){ return false; }
+  }
+  function updateStar(){
+    var b=document.getElementById("tmStar"); if(!b) return;
+    var on=isStarred(ACTIVE);
+    b.textContent=on?"★":"☆"; b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on));
+    b.title=on?("Starred — "+ACTIVE+" is on your watchlist"):("Star "+ACTIVE+" — add to your watchlist");
+  }
+  function toggleStar(){
+    if(!window.FLUXWatch) return;
+    if(isStarred(ACTIVE)){ FLUXWatch.remove(ACTIVE); } else { FLUXWatch.add(ACTIVE); if(F.toast) F.toast("★ Starred "+ACTIVE+" — it'll show in your daily brief.",{icon:"★"}); }
+    updateStar();
+  }
   function renderSymbol(){
     rebuildCandles();
     paintHeader(false);
@@ -864,6 +883,7 @@ document.addEventListener("DOMContentLoaded", function(){
     paintAccount();
     drawAcctSpark();
     tvUpdate();
+    updateStar();
   }
   function renderAll(){
     renderSymbol();
@@ -922,6 +942,9 @@ document.addEventListener("DOMContentLoaded", function(){
     };
     symInput.addEventListener("change", applySym);
     symInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); applySym(); symInput.blur(); } });
+    var starBtn = document.getElementById("tmStar");
+    if(starBtn){ starBtn.addEventListener("click", toggleStar); }
+    window.addEventListener("flux-watch", updateStar);
     symInput.addEventListener("focus", function(){ symInput.select(); });
   }
 
