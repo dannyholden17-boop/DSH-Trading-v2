@@ -631,6 +631,9 @@
       return Promise.resolve({ text: "I'm Fluxi — your AI trading desk. I continuously scan 250+ US stocks, ranking momentum, undervalued and overvalued names, breakouts and rebounds — anything that moves a stock — write daily trade ideas with full briefs, run the paper fund, and learn from you and from how my own calls play out. Not a financial advisor — a research desk.", kind: "id" });
     if (has(ql, ["what can you", "help", "commands", "what do you do"]))
       return Promise.resolve({ text: CAP, kind: "help" });
+    // "what is Kronos?" — explain the forecasting engine (not when a ticker is named, so "kronos read on NVDA" still routes to the signal).
+    if (/\bkronos\b/i.test(ql) && has(ql, ["what", "how", "explain", "tell me", "who", "about", "mean", "?"]) && !findTicker(q))
+      return Promise.resolve({ text: "Kronos is my forecasting engine — a deep-learning model (a transformer trained on candlestick/OHLCV data) that predicts a name's next few candles, then turns that into a predicted return and a signal: over +2% reads BUY, under −2% SELL, otherwise HOLD. It's an open model on GitHub (dannyholden17-boop/Kronos); a Python bridge runs the real model and feeds live forecasts to the desk, and when that bridge is idle an in-browser Monte-Carlo version stands in so signals always work. My rankings, the daily ideas and the Flux Fund all trade off Kronos. Forecasts are simulated/paper — not a guarantee. Want a Kronos read on a name?", kind: "id" });
 
     // ---- LEARNING: teach me / forget / what have you learned / research ----
     var teach = q.match(/^\s*(?:remember|note|keep in mind|don'?t forget|fyi|my rule is|my rules are|i hold|i own|i'm holding|im holding)\b[:,]?\s*(.*)$/i);
