@@ -617,7 +617,52 @@
     });});
   };
 
+  /* ------------------------------------------------------------
+     TICKER TAPE — a thin, always-on marquee of live prices at the
+     very top of every page. Muted, monospace, green/red for
+     direction only; pauses on hover. Prices are simulated / live.
+     ------------------------------------------------------------ */
+  F.initTicker=function(){
+    if(document.getElementById("fluxTicker"))return;         // once per page
+    if(!F.PRICES||!Object.keys(F.PRICES).length)return;      // needs the universe
+    var PREF=["AAPL","NVDA","MSFT","AMZN","GOOGL","META","TSLA","AMD","AVGO","NFLX",
+              "JPM","V","MA","COST","ORCL","CRM","PLTR","COIN","HOOD","SMCI","MRVL",
+              "UBER","DIS","XOM","JNJ","WMT","MRK","BA"];
+    var list=PREF.filter(function(t){return F.PRICES[t];});
+    Object.keys(F.PRICES).forEach(function(t){ if(list.length<26 && list.indexOf(t)<0) list.push(t); });
+    list=list.slice(0,26);
+    if(!list.length)return;
+
+    function itemHTML(t){
+      return '<span class="tk-item" data-t="'+t+'"><b class="tk-sym">'+t+'</b>'+
+             '<span class="tk-px"></span><span class="tk-chg"></span></span>';
+    }
+    var seq=list.map(itemHTML).join("");
+    var bar=document.createElement("div");
+    bar.id="fluxTicker"; bar.className="ticker"; bar.setAttribute("aria-hidden","true");
+    // two copies of the sequence -> seamless -50% loop
+    bar.innerHTML='<div class="tk-track">'+seq+seq+'</div>';
+    document.body.insertBefore(bar, document.body.firstChild);
+
+    function paint(){
+      var items=bar.querySelectorAll(".tk-item");
+      for(var i=0;i<items.length;i++){
+        var el=items[i], t=el.getAttribute("data-t");
+        var p=F.priceOf?F.priceOf(t):null, pv=F.prevClose?F.prevClose(t):null;
+        if(p==null)continue;
+        var chg=pv?(p-pv)/pv*100:0;
+        var px=el.querySelector(".tk-px"), cg=el.querySelector(".tk-chg");
+        px.textContent="$"+p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+        cg.textContent=(chg>=0?"+":"")+chg.toFixed(2)+"%";
+        cg.className="tk-chg "+(chg>=0?"tk-up":"tk-dn");
+      }
+    }
+    paint();
+    setInterval(paint, 15000);
+    window.addEventListener("flux-prices", paint);
+  };
+
   document.addEventListener("DOMContentLoaded",function(){
-    F.initNav();F.initReveal();F.initCounters();F.initFX();F.initAuth();
+    F.initNav();F.initReveal();F.initCounters();F.initFX();F.initAuth();F.initTicker();
   });
 })();
