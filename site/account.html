@@ -7,13 +7,13 @@
 <meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=10">
-<script src="./assets/flux-supa.js?v=10" defer></script>
-<script src="./assets/flux-site.js?v=10" defer></script>
-<script src="./assets/flux-universe.js?v=10" defer></script>
-<script src="./assets/flux-feed.js?v=10" defer></script>
-<script src="./assets/flux-fund.js?v=10" defer></script>
-<script src="./assets/flux-kronos.js?v=10" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=11">
+<script src="./assets/flux-supa.js?v=11" defer></script>
+<script src="./assets/flux-site.js?v=11" defer></script>
+<script src="./assets/flux-universe.js?v=11" defer></script>
+<script src="./assets/flux-feed.js?v=11" defer></script>
+<script src="./assets/flux-fund.js?v=11" defer></script>
+<script src="./assets/flux-kronos.js?v=11" defer></script>
 <style>
   /* page-only LAYOUT: account.html (acc- prefixed). Shared tokens/classes reused, never redefined. */
   .acc-stack{display:flex;flex-direction:column;gap:18px;margin-top:26px}
@@ -76,6 +76,24 @@
   .acc-danger .sp{flex:1;min-width:0}
   .acc-del-note{font-family:var(--f-mono);font-size:11.5px;color:var(--text-dim);margin-top:12px;display:none}
   .acc-del-note.show{display:block}
+  /* your-stocks: watchlist + alerts */
+  .star-add,.alert-add{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .star-add input,.alert-add input,.alert-add select{background:#040914;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
+  .star-add input,.alert-add input,.alert-add select{transition:border-color .15s}
+  .star-add input:focus,.alert-add input:focus,.alert-add select:focus{border-color:rgba(0,242,255,.5)}
+  .star-add input{flex:1;min-width:150px;text-transform:uppercase}
+  #alTicker{width:92px;text-transform:uppercase}
+  #alPrice{width:112px}
+  .alert-add select{cursor:pointer}
+  .star-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .star-chip{display:inline-flex;align-items:center;gap:8px;background:var(--well);border:1px solid var(--line);border-radius:100px;padding:6px 8px 6px 13px;font-family:var(--f-mono);font-size:.82rem}
+  .star-chip b{color:var(--cyan)}
+  .star-chip em{font-style:normal;color:var(--text-faint)}
+  .star-chip button,.alert-row button{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:.9rem;line-height:1;padding:2px 4px}
+  .star-chip button:hover,.alert-row button:hover{color:var(--crimson)}
+  .acc-sub{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:20px;border-top:1px solid var(--line-2);padding-top:16px}
+  .alert-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .alert-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--well);border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-family:var(--f-mono);font-size:.84rem}
 </style>
 </head>
 <body>
@@ -195,16 +213,37 @@
 
       <!-- PREFERENCES -->
       <div class="glass acc-card">
-        <div class="acc-ctop"><h2>Preferences</h2><span class="acc-cap">saved on this device</span></div>
+        <div class="acc-ctop"><h2>Notifications</h2><span class="acc-cap" id="prefCap">saved to your account</span></div>
         <label class="acc-toggle">
           <input type="checkbox" id="prefBrief">
-          <span class="t"><b>Email me the daily brief</b><span>A morning summary of your watchlist and the AI signals. Email delivery coming soon.</span></span>
+          <span class="t"><b>Email me the daily brief</b><span>A morning summary of your starred stocks and the AI signals, sent each market day to <span id="prefEmail" class="mono">your email</span>.</span></span>
         </label>
         <label class="acc-toggle">
           <input type="checkbox" id="prefAlerts">
-          <span class="t"><b>Price-alert notifications</b><span>Get notified when a symbol crosses a level you set. Email delivery coming soon.</span></span>
+          <span class="t"><b>Price-alert notifications</b><span>Get an email when one of your stocks crosses a level you set (below).</span></span>
         </label>
-        <p class="acc-note">These settings are stored in your browser only.</p>
+        <p class="acc-note" id="prefNote">Saved to your account and used to send you email.</p>
+      </div>
+
+      <!-- YOUR STOCKS: watchlist + price alerts -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Your stocks</h2><span class="acc-cap">starred &amp; alerts</span></div>
+        <p class="acc-note" style="margin-top:0">Star the stocks you care about — they power your daily brief. Set a price and we'll email you when it's hit.</p>
+
+        <div class="star-add">
+          <input id="starInput" type="text" maxlength="6" autocomplete="off" placeholder="Add a ticker — e.g. NVDA" aria-label="Add a ticker to your watchlist">
+          <button class="btn btn-primary btn-sm" id="starAddBtn" type="button">★ Star</button>
+        </div>
+        <div id="starList" class="star-list"><span class="acc-note">Loading…</span></div>
+
+        <div class="acc-sub">Active price alerts</div>
+        <div class="alert-add">
+          <input id="alTicker" type="text" maxlength="6" autocomplete="off" placeholder="Ticker" aria-label="Alert ticker">
+          <select id="alOp" aria-label="Above or below"><option value="above">rises above</option><option value="below">drops below</option></select>
+          <input id="alPrice" type="text" inputmode="decimal" autocomplete="off" placeholder="$ price" aria-label="Alert price">
+          <button class="btn btn-ghost btn-sm" id="alAddBtn" type="button">🔔 Add alert</button>
+        </div>
+        <div id="alertList" class="alert-list"><span class="acc-note">Loading…</span></div>
       </div>
 
       <!-- DANGER / SESSION -->
@@ -427,16 +466,92 @@ document.addEventListener("DOMContentLoaded", function(){
   window.addEventListener("flux-book-updated", renderPTA);
   window.addEventListener("flux-prices", renderPTA);
 
-  /* ---------------- preferences (localStorage flux_pref_*) ---------------- */
-  function wirePref(id, key){
-    var el = $("#" + id); if(!el) return;
-    try{ el.checked = localStorage.getItem(key) === "1"; }catch(e){}
-    el.addEventListener("change", function(){
-      try{ localStorage.setItem(key, el.checked ? "1" : "0"); }catch(e){}
+  /* ---------------- notifications: server-backed prefs ---------------- */
+  var SUPA = window.FluxSupa;
+  var prefBrief = $("#prefBrief"), prefAlerts = $("#prefAlerts");
+  var prefEmail = $("#prefEmail"), prefCap = $("#prefCap");
+  function lget(k){ try{ return localStorage.getItem(k)==="1"; }catch(e){ return false; } }
+  function lset(k,v){ try{ localStorage.setItem(k, v?"1":"0"); }catch(e){} }
+  if(prefBrief) prefBrief.checked = lget("flux_pref_daily_brief");
+  if(prefAlerts) prefAlerts.checked = lget("flux_pref_price_alerts");
+
+  function loadPrefs(){
+    var u = window.__fluxUser || (SUPA && SUPA.user && SUPA.user());
+    if(u && prefEmail) prefEmail.textContent = u.email || "your email";
+    if(!(SUPA && SUPA.getPrefs)) return;
+    SUPA.getPrefs().then(function(p){
+      if(!p) return;
+      if(prefBrief){ prefBrief.checked = !!p.daily_brief; lset("flux_pref_daily_brief", p.daily_brief); }
+      if(prefAlerts){ prefAlerts.checked = !!p.price_alerts; lset("flux_pref_price_alerts", p.price_alerts); }
     });
   }
-  wirePref("prefBrief", "flux_pref_daily_brief");
-  wirePref("prefAlerts", "flux_pref_price_alerts");
+  function savePref(which, on){
+    lset(which==="daily_brief"?"flux_pref_daily_brief":"flux_pref_price_alerts", on);
+    if(SUPA && SUPA.savePrefs){
+      var o = {}; o[which]=on;
+      SUPA.savePrefs(o).then(function(r){ if(prefCap) prefCap.textContent = r.ok ? "saved ✓" : "sign in to sync"; });
+    } else if(prefCap){ prefCap.textContent = "sign in to sync"; }
+  }
+  if(prefBrief) prefBrief.addEventListener("change", function(){ savePref("daily_brief", prefBrief.checked); });
+  if(prefAlerts) prefAlerts.addEventListener("change", function(){ savePref("price_alerts", prefAlerts.checked); });
+  loadPrefs();
+
+  /* ---------------- your stocks: watchlist (stars) + price alerts ---------------- */
+  var starList = $("#starList"), starInput = $("#starInput"), starAddBtn = $("#starAddBtn");
+  var alertList = $("#alertList"), alTicker = $("#alTicker"), alOp = $("#alOp"), alPrice = $("#alPrice"), alAddBtn = $("#alAddBtn");
+  function watchTickers(){ try{ return (window.FLUXWatch && FLUXWatch.get && FLUXWatch.get()) || JSON.parse(localStorage.getItem("flux_watch")||"[]"); }catch(e){ return []; } }
+
+  function renderStars(){
+    if(!starList) return;
+    var ts = watchTickers();
+    if(!ts.length){ starList.innerHTML = '<span class="acc-note">No starred stocks yet. Add one above — they power your daily brief.</span>'; return; }
+    starList.innerHTML = ts.map(function(t){
+      var p = window.FLUX && FLUX.priceOf ? FLUX.priceOf(t) : null;
+      return '<span class="star-chip"><b>'+t+'</b>'+(p!=null?('<em>'+money(p)+'</em>'):'')+'<button data-t="'+t+'" title="Remove" aria-label="Remove '+t+'">✕</button></span>';
+    }).join("");
+    starList.querySelectorAll("button[data-t]").forEach(function(b){
+      b.onclick = function(){ if(window.FLUXWatch && FLUXWatch.remove) FLUXWatch.remove(b.getAttribute("data-t")); renderStars(); };
+    });
+  }
+  function addStar(){
+    var t=(starInput.value||"").trim().toUpperCase(); if(!t) return;
+    if(window.FLUXWatch && FLUXWatch.add) FLUXWatch.add(t);
+    starInput.value=""; renderStars();
+  }
+  if(starAddBtn) starAddBtn.onclick = addStar;
+  if(starInput) starInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); addStar(); } });
+  window.addEventListener("flux-watch", renderStars);
+  window.addEventListener("flux-prices", renderStars);
+  renderStars();
+
+  function renderAlerts(){
+    if(!alertList) return;
+    if(!(SUPA && SUPA.priceAlerts)){ alertList.innerHTML = '<span class="acc-note">Sign in to set price alerts.</span>'; return; }
+    SUPA.priceAlerts().then(function(rows){
+      var active = (rows||[]).filter(function(r){ return r.active; });
+      if(!active.length){ alertList.innerHTML = '<span class="acc-note">No active alerts. Add one above.</span>'; return; }
+      alertList.innerHTML = active.map(function(r){
+        return '<div class="alert-row"><span><b>'+r.ticker+'</b> '+(r.op==="above"?"rises above":"drops below")+' '+money(r.price)+'</span>'+
+          '<button data-id="'+r.id+'" title="Delete" aria-label="Delete alert">✕</button></div>';
+      }).join("");
+      alertList.querySelectorAll("button[data-id]").forEach(function(b){
+        b.onclick = function(){ SUPA.removeAlert(+b.getAttribute("data-id")).then(renderAlerts); };
+      });
+    });
+  }
+  function addAlert(){
+    if(!(SUPA && SUPA.addAlert)) return;
+    var t=(alTicker.value||"").trim().toUpperCase(), op=alOp.value, price=parseFloat((alPrice.value||"").replace(/[^0-9.]/g,""));
+    if(!t || !(price>0)) return;
+    SUPA.addAlert(t, op, price).then(function(r){
+      if(r.ok){ alTicker.value=""; alPrice.value=""; if(prefAlerts) prefAlerts.checked=true; renderAlerts(); }
+    });
+  }
+  if(alAddBtn) alAddBtn.onclick = addAlert;
+  if(alPrice) alPrice.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); addAlert(); } });
+  renderAlerts();
+
+  window.addEventListener("flux-auth", function(){ loadPrefs(); renderStars(); renderAlerts(); });
 
   /* ---------------- delete account (info only) ---------------- */
   var delBtn = $("#accDel"), delNote = $("#accDelNote");

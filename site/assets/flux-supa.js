@@ -322,5 +322,40 @@
   };
   S.isOnboarded = function(){ try{ return localStorage.getItem("flux_onboarded")==="1"; }catch(e){ return false; } };
 
+  // ---- notification preferences (server-backed, so the scheduled jobs can act) ----
+  S.getPrefs = function(){
+    if(!S.client || !S._user) return Promise.resolve(null);
+    return S.client.from("user_prefs").select("daily_brief,price_alerts,email").eq("user_id", S._user.id).maybeSingle()
+      .then(function(r){ return (r && r.data) || null; }).catch(function(){ return null; });
+  };
+  S.savePrefs = function(p){
+    if(!S.client || !S._user) return Promise.resolve({ ok:false });
+    var row = { user_id:S._user.id, email:(S._user.email||null), updated_at:new Date().toISOString() };
+    if(p && p.daily_brief != null) row.daily_brief = !!p.daily_brief;
+    if(p && p.price_alerts != null) row.price_alerts = !!p.price_alerts;
+    return S.client.from("user_prefs").upsert(row).then(function(r){ return { ok: !(r && r.error) }; }).catch(function(){ return { ok:false }; });
+  };
+
+  // ---- price alerts (server-backed; the email-alerts cron reads these) ----
+  S.priceAlerts = function(){
+    if(!S.client || !S._user) return Promise.resolve([]);
+    return S.client.from("price_alerts").select("id,ticker,op,price,active,created_at,triggered_at")
+      .eq("user_id", S._user.id).order("created_at",{ascending:false})
+      .then(function(r){ return (r && r.data) || []; }).catch(function(){ return []; });
+  };
+  S.addAlert = function(ticker, op, price){
+    if(!S.client || !S._user) return Promise.resolve({ ok:false, msg:"Sign in to set alerts." });
+    ticker = (ticker||"").toUpperCase(); op = (op==="below")?"below":"above"; price = +price;
+    if(!ticker || !(price>0)) return Promise.resolve({ ok:false, msg:"Enter a ticker and a price." });
+    return S.client.from("price_alerts").insert({ user_id:S._user.id, ticker:ticker, op:op, price:price, active:true })
+      .then(function(r){ S.savePrefs({ price_alerts:true }); return { ok: !(r && r.error) }; })
+      .catch(function(){ return { ok:false }; });
+  };
+  S.removeAlert = function(id){
+    if(!S.client || !S._user) return Promise.resolve({ ok:false });
+    return S.client.from("price_alerts").delete().eq("user_id",S._user.id).eq("id",id)
+      .then(function(r){ return { ok: !(r && r.error) }; }).catch(function(){ return { ok:false }; });
+  };
+
   window.FluxSupa = S;
 })();
