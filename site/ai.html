@@ -14,6 +14,7 @@
 <script src="./assets/flux-feed.js?v=9" defer></script>
 <script src="./assets/flux-fund.js?v=9" defer></script>
 <script src="./assets/flux-kronos.js?v=9" defer></script>
+<script src="./assets/flux-tv.js?v=9" defer></script>
 <script src="./assets/flux-jarvis.js?v=9" defer></script>
 <style>
   /* ===== full-screen, no page-scroll app shell ===== */
@@ -215,6 +216,13 @@
       <a class="btn btn-ghost btn-sm" href="./fund.html" style="margin-top:10px">Watch it trade →</a>
     </div>
 
+    <div class="glass panel">
+      <h3><span class="glyph2">◎</span> TradingView rating</h3>
+      <div class="subh">live second opinion</div>
+      <div id="tvBox" class="briefline">Ask Fluxi about a stock and I'll pull TradingView's live technical rating here.</div>
+      <div class="flux-note">via TradingView-API · data: TradingView</div>
+    </div>
+
     <div class="glass panel cyber-card">
       <h3><span class="glyph2">❖</span> Fluxi's memory</h3>
       <div class="subh" id="memStat">learning…</div>
@@ -279,6 +287,7 @@
         tp.remove();
         var b = bubble(res.text, "a");
         setStatus("FLUXI ONLINE","scanning 250+ names"); orb.pulse(0.6);
+        if(res.ticker){ tvRender(res.ticker); enrichTV(b, res.ticker); }
         if(res.kind === "trade" && res.action){
           var old = b.querySelector(".fbrow"); if(old) old.remove();
           var tc = document.createElement("div"); tc.className = "fbrow";
@@ -437,6 +446,39 @@
           " today · "+(s.retPct>=0?"+":"")+s.retPct+"% since launch · "+s.nOpen+" positions. Live simulated desk.";
       } else { el.textContent = "A simulated AI fund trading a paper account live on Kronos signals — watch it on the Fund page."; }
     }
+    /* ---- TradingView rating: live second opinion next to Kronos ---- */
+    function tvRender(sym){
+      var el = document.getElementById("tvBox"); if(!el || !F.TV) return;
+      sym = (sym||"").toUpperCase();
+      el.innerHTML = 'Reading TradingView on <b>'+sym+'</b>…';
+      F.TV.rating(sym).then(function(tv){
+        if(!tv){ el.innerHTML = 'No TradingView read for <b>'+sym+'</b> right now.'; return; }
+        var col = F.TV.color(tv.score);
+        var chg = tv.change!=null ? ((tv.change>=0?'+':'')+tv.change.toFixed(2)+'%') : '';
+        var chgc = tv.change>=0 ? 'pos' : 'neg';
+        el.innerHTML =
+          '<div class="vrow" style="border:none;padding:2px 0"><div class="tk">'+tv.symbol+'</div>'+
+          '<div class="rt"><div class="e" style="color:'+col+'">'+tv.label+'</div>'+
+          '<small>'+(tv.price!=null?('$'+tv.price):'')+(chg?(' · <span class="'+chgc+'">'+chg+'</span>'):'')+'</small></div></div>'+
+          '<div class="flux-note" style="margin-top:6px">TV score '+(tv.score!=null?tv.score.toFixed(2):'—')+
+          ' · MA '+(tv.ma!=null?tv.ma.toFixed(2):'—')+' · Osc '+(tv.osc!=null?tv.osc.toFixed(2):'—')+'</div>';
+      });
+    }
+    function enrichTV(bubbleEl, sym){
+      if(!F.TV || !bubbleEl) return;
+      F.TV.rating(sym).then(function(tv){
+        if(!tv || !bubbleEl.isConnected) return;
+        var col = F.TV.color(tv.score);
+        var line = document.createElement("div");
+        line.style.cssText = "margin-top:8px;font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint)";
+        line.innerHTML = '◎ TradingView: <b style="color:'+col+'">'+tv.label+'</b>'+
+          (tv.score!=null?(' ('+tv.score.toFixed(2)+')'):'')+(tv.price!=null?(' · $'+tv.price):'');
+        var fb = bubbleEl.querySelector('.fbrow');
+        if(fb) bubbleEl.insertBefore(line, fb); else bubbleEl.appendChild(line);
+      });
+    }
+    setTimeout(function(){ tvRender("NVDA"); }, 900);   // show a live example on load
+
     refresh(); refreshFund();
     setInterval(rotate, 3200);          // ticker-board: shuffle the under/overvalued names
     setInterval(refreshFund, 4000);

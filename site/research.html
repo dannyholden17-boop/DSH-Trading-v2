@@ -14,6 +14,7 @@
 <script src="./assets/flux-feed.js?v=9" defer></script>
 <script src="./assets/flux-fund.js?v=9" defer></script>
 <script src="./assets/flux-kronos.js?v=9" defer></script>
+<script src="./assets/flux-tv.js?v=9" defer></script>
 <script src="./assets/flux-jarvis.js?v=9" defer></script>
 <style>
   /* interactive research tool */
@@ -177,6 +178,26 @@ document.addEventListener("DOMContentLoaded", function(){
       inp.value = t;
       var brief = J.research(t);
       out.textContent = brief || ("I don't cover " + t + " yet — try NVDA, TSLA, COIN, AMD, MSFT or another large-cap.");
+      tvLine(t);
+    }
+    var tvEl = null;
+    function tvLine(t){
+      if(!F.TV) return;
+      if(!tvEl){
+        tvEl = document.createElement("div");
+        tvEl.style.cssText = "margin-top:12px;padding-top:12px;border-top:1px solid var(--line-2);font-family:var(--f-mono);font-size:.8rem;color:var(--text-faint)";
+        out.parentNode.insertBefore(tvEl, out.nextSibling);
+      }
+      tvEl.innerHTML = "Reading TradingView on " + t + "…";
+      F.TV.rating(t).then(function(tv){
+        if(!tv){ tvEl.innerHTML = "TradingView: no live read for " + t + " right now."; return; }
+        var col = F.TV.color(tv.score);
+        tvEl.innerHTML = '◎ TradingView technical rating: <b style="color:'+col+'">'+tv.label+'</b>'+
+          (tv.score!=null?(' ('+tv.score.toFixed(2)+')'):'')+
+          (tv.price!=null?(' · $'+tv.price):'')+
+          (tv.change!=null?(' · '+(tv.change>=0?'+':'')+tv.change.toFixed(2)+'%'):'')+
+          ' &nbsp;<span style="opacity:.65">via TradingView-API</span>';
+      });
     }
     go.addEventListener("click", function(){ run(); });
     inp.addEventListener("keydown", function(e){ if(e.key==="Enter") run(); });
