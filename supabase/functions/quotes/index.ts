@@ -125,6 +125,112 @@ async function batched<T>(items: T[], size: number, fn: (chunk: T[]) => Promise<
   return out;
 }
 
+/* ============================================================
+   LICENSED FEED ADAPTER (optional)
+   Set these Supabase secrets to route the WHOLE site through a
+   licensed market-data provider instead of Yahoo/Stooq:
+     FLUX_QUOTES_PROVIDER = polygon | finnhub | alpaca | twelvedata
+     FLUX_QUOTES_KEY      = <api key>            (all providers)
+     FLUX_QUOTES_SECRET   = <api secret>         (alpaca only)
+   If unset or the call fails, we fall back to Yahoo, then Stooq —
+   so the site keeps working with zero config.
+   ============================================================ */
+const PROVIDER = (Deno.env.get("FLUX_QUOTES_PROVIDER") || "").toLowerCase();
+const LKEY = Deno.env.get("FLUX_QUOTES_KEY") || "";
+const LSECRET = Deno.env.get("FLUX_QUOTES_SECRET") || "";
+
+async function fromPolygon(symbols: string[]): Promise<Record<string, any> | null> {
+  const url = "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=" +
+    encodeURIComponent(symbols.join(",")) + "&apiKey=" + encodeURIComponent(LKEY);
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const j = await r.json().catch(() => null);
+  const list = j?.tickers;
+  if (!Array.isArray(list)) return null;
+  const out: Record<string, any> = {};
+  for (const t of list) {
+    const sym = (t.ticker || "").toUpperCase();
+    const last = num(t?.day?.c) ?? num(t?.min?.c) ?? num(t?.prevDay?.c);
+    if (!sym || last == null) continue;
+    out[sym] = clean({
+      last, prev_close: num(t?.prevDay?.c) ?? last, name: sym,
+      chg: num(t?.todaysChange), chgpct: num(t?.todaysChangePerc),
+    });
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function fromFinnhub(symbols: string[]): Promise<Record<string, any> | null> {
+  const out: Record<string, any> = {};
+  const CC = 8; // concurrency (finnhub quotes are per-symbol)
+  for (let i = 0; i < symbols.length; i += CC) {
+    const chunk = symbols.slice(i, i + CC);
+    await Promise.all(chunk.map(async (sym) => {
+      try {
+        const r = await fetch("https://finnhub.io/api/v1/quote?symbol=" +
+          encodeURIComponent(sym) + "&token=" + encodeURIComponent(LKEY));
+        if (!r.ok) return;
+        const q = await r.json().catch(() => null);
+        const last = num(q?.c);
+        if (last == null || last === 0) return;
+        out[sym] = clean({ last, prev_close: num(q?.pc) ?? last, name: sym, chg: num(q?.d), chgpct: num(q?.dp) });
+      } catch (_e) { /* skip */ }
+    }));
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function fromAlpaca(symbols: string[]): Promise<Record<string, any> | null> {
+  const r = await fetch("https://data.alpaca.markets/v2/stocks/snapshots?symbols=" +
+    encodeURIComponent(symbols.join(",")), {
+    headers: { "APCA-API-KEY-ID": LKEY, "APCA-API-SECRET-KEY": LSECRET },
+  });
+  if (!r.ok) return null;
+  const j = await r.json().catch(() => null);
+  if (!j || typeof j !== "object") return null;
+  const out: Record<string, any> = {};
+  for (const sym of Object.keys(j)) {
+    const s = j[sym];
+    const last = num(s?.latestTrade?.p) ?? num(s?.dailyBar?.c);
+    if (last == null) continue;
+    out[sym.toUpperCase()] = clean({ last, prev_close: num(s?.prevDailyBar?.c) ?? last, name: sym.toUpperCase() });
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function fromTwelveData(symbols: string[]): Promise<Record<string, any> | null> {
+  const r = await fetch("https://api.twelvedata.com/quote?symbol=" +
+    encodeURIComponent(symbols.join(",")) + "&apikey=" + encodeURIComponent(LKEY));
+  if (!r.ok) return null;
+  const j = await r.json().catch(() => null);
+  if (!j || typeof j !== "object") return null;
+  const rows = j.symbol ? { [j.symbol]: j } : j; // single vs batch shape
+  const out: Record<string, any> = {};
+  for (const sym of Object.keys(rows)) {
+    const q = rows[sym];
+    const last = num(q?.close);
+    if (!q || q.status === "error" || last == null) continue;
+    out[sym.toUpperCase()] = clean({
+      last, prev_close: num(q?.previous_close) ?? last,
+      name: q?.name || sym.toUpperCase(), chgpct: num(q?.percent_change),
+    });
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function fromLicensed(symbols: string[]): Promise<Record<string, any> | null> {
+  if (!PROVIDER) return null;
+  const hasKey = PROVIDER === "alpaca" ? (LKEY && LSECRET) : !!LKEY;
+  if (!hasKey) return null;
+  try {
+    if (PROVIDER === "polygon") return await fromPolygon(symbols);
+    if (PROVIDER === "finnhub") return await fromFinnhub(symbols);
+    if (PROVIDER === "alpaca") return await fromAlpaca(symbols);
+    if (PROVIDER === "twelvedata" || PROVIDER === "twelve") return await fromTwelveData(symbols);
+  } catch (_e) { return null; }
+  return null;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   try {
@@ -144,15 +250,30 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Yahoo allows large batches; keep chunks ~50 to be safe.
-    let quotes = await batched(symbols, 50, fromYahoo);
-    let source = "yahoo";
+    // 1) Licensed provider first when configured (env). One flag flips the site.
+    let quotes: Record<string, any> = {};
+    let source = "";
+    if (PROVIDER) {
+      const lic = await fromLicensed(symbols).catch(() => null);
+      if (lic && Object.keys(lic).length >= Math.min(symbols.length, 3)) {
+        quotes = lic; source = PROVIDER;
+      }
+    }
+    // 2) Yahoo (keyless) — the default free feed / fallback.
+    if (!Object.keys(quotes).length) {
+      quotes = await batched(symbols, 50, fromYahoo);
+      source = "yahoo";
+    }
+    // 3) Stooq — last-resort keyless fallback.
     if (Object.keys(quotes).length < Math.min(symbols.length, 3)) {
       const sq = await batched(symbols, 25, fromStooq);
       if (Object.keys(sq).length > Object.keys(quotes).length) { quotes = sq; source = "stooq"; }
     }
 
-    return new Response(JSON.stringify({ ok: true, source, ts: Date.now(), count: Object.keys(quotes).length, quotes }), {
+    return new Response(JSON.stringify({
+      ok: true, source, licensed: !!PROVIDER && source === PROVIDER,
+      provider: PROVIDER || null, ts: Date.now(), count: Object.keys(quotes).length, quotes,
+    }), {
       headers: { ...CORS, "Content-Type": "application/json" },
     });
   } catch (e) {
