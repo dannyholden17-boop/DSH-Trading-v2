@@ -60,12 +60,14 @@
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
       if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); S.wrapWatch(); S.hydrateWatch(); cleanLandingIfNeeded(); }
+      try{ window.dispatchEvent(new Event("flux-auth")); }catch(e){}
     });
     S.client.auth.getSession().then(function(r){
       var sess = r && r.data && r.data.session;
       S._user = sess ? mapUser(sess.user) : null; window.__fluxUser = S._user;
       if(window.FLUX && window.FLUX.initAuth){ try{ window.FLUX.initAuth(); }catch(e){} }
       if(S._user){ S.wrapBook(); S.hydrate(); S.subscription(); S.wrapWatch(); S.hydrateWatch(); }
+      try{ window.dispatchEvent(new Event("flux-auth")); }catch(e){}
       readyResolve(true);
     }).catch(function(){ readyResolve(true); });
   }
@@ -196,6 +198,13 @@
       .catch(function(){ return null; });
   };
   S.hasActivePlan = function(){ return !!(S.sub && (S.sub.status === "active" || S.sub.status === "trialing")); };
+  // Admin allowlist — UI convenience. The real comp is a server-side subscription
+  // row (see supabase/admin_comp.sql): admin emails are auto-granted a permanent
+  // "desk" plan on signup, so hasActivePlan() is already true for them.
+  S.ADMIN_EMAILS = ["dannyholden17@gmail.com"];
+  S.isAdmin = function(){ var e = S._user && (S._user.email || "").toLowerCase(); return !!e && S.ADMIN_EMAILS.indexOf(e) >= 0; };
+  // Single gate for paid / pro features: an active (or comped) plan, or an admin.
+  S.entitled = function(){ return S.isAdmin() || S.hasActivePlan(); };
   // Start Stripe Checkout for a plan ("trader" | "desk"); redirects to Stripe.
   S.checkout = function(plan){
     if(!S.client) return Promise.reject(new Error("not ready"));
