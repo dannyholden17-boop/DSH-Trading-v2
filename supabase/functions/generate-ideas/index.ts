@@ -12,13 +12,24 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-// Higher-beta / momentum / rebound candidates across AI, semis, power, crypto, growth —
-// deliberately NOT just mega-cap blue chips.
+// Broad scan universe (~110 names) across every sector, growth AND value, so ideas
+// can come from momentum, undervalued, overvalued and rebound buckets — not a handful.
 const CANDIDATES = [
-  "GEV","VST","CEG","OKLO","SMR","NVDA","AMD","SMCI","ARM","MU","MRVL","AVGO","QCOM","ON","TSM",
-  "MARA","COIN","HOOD","SOFI","AFRM","UPST","XYZ",
-  "PLTR","SNOW","NET","CRWD","DDOG","APP","ANET","PANW","NOW","MDB","ZS",
-  "TSLA","RIVN","CVNA","ABNB","SHOP","RBLX","DKNG","UBER","MELI",
+  // AI / semis
+  "NVDA","AMD","AVGO","MU","ARM","SMCI","MRVL","QCOM","TXN","ADI","LRCX","AMAT","KLAC","ASML","TSM","ON","NXPI","MCHP","INTC",
+  // software / internet
+  "PLTR","SNOW","NET","CRWD","DDOG","APP","ANET","PANW","NOW","MDB","ZS","CRM","ORCL","ADBE","INTU","SNPS","CDNS","WDAY","TEAM","HUBS","SHOP","MELI",
+  "META","GOOGL","AMZN","MSFT","AAPL","NFLX","UBER","ABNB","DASH","RBLX","SPOT","PINS","SNAP","ROKU","DKNG",
+  // power / energy / clean
+  "GEV","VST","CEG","OKLO","SMR","NEE","XOM","CVX","COP","SLB","FSLR","ENPH","PLUG",
+  // fintech / crypto
+  "COIN","MARA","RIOT","MSTR","HOOD","SOFI","AFRM","UPST","XYZ","PYPL","V","MA","AXP","NU",
+  // banks
+  "JPM","BAC","WFC","GS","MS","C","SCHW",
+  // healthcare / pharma
+  "LLY","UNH","JNJ","PFE","MRK","ABBV","TMO","ABT","AMGN","GILD",
+  // consumer / retail / autos / industrials
+  "TSLA","RIVN","F","GM","CVNA","NKE","SBUX","MCD","WMT","COST","HD","LOW","TGT","DIS","BA","CAT","GE","DE","UPS","LMT",
 ];
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -61,13 +72,19 @@ Deno.serve(async (req) => {
       return { t, name: q.name || t, last, prev, hi, lo, pe: q.pe ?? null, mc: q.mc ?? null, chgpct, rangePos, downFromHigh };
     }).filter((r) => isFinite(r.last) && r.last > 0);
 
-    // 3) select ~3 momentum (up + near highs) + ~3 rebound (deeply below highs)
-    const momentum = rows.slice().sort((a, b) =>
-      (b.chgpct + b.rangePos * 4) - (a.chgpct + a.rangePos * 4)).slice(0, 3);
-    const momSet = new Set(momentum.map((r) => r.t));
-    const rebound = rows.filter((r) => !momSet.has(r.t) && r.downFromHigh >= 20)
-      .sort((a, b) => b.downFromHigh - a.downFromHigh).slice(0, 3);
-    const picks = [...momentum, ...rebound].slice(0, 6);
+    // 3) select ideas across FIVE buckets — momentum, undervalued, overvalued, rebound, breakout
+    const used = new Set<string>();
+    const take = (arr: any[], n: number) => { const out: any[] = []; for (const r of arr) { if (out.length >= n) break; if (!used.has(r.t)) { out.push(r); used.add(r.t); } } return out; };
+    const tag = (arr: any[], bucket: string) => { arr.forEach((r) => (r.bucket = bucket)); return arr; };
+
+    const momentum = tag(take([...rows].sort((a, b) => (b.chgpct + b.rangePos * 4) - (a.chgpct + a.rangePos * 4)), 3), "momentum");
+    const undervalued = tag(take([...rows].filter((r) => r.pe != null && r.pe > 0 && r.pe < 28 && r.downFromHigh > 12)
+      .sort((a, b) => (b.downFromHigh - b.pe) - (a.downFromHigh - a.pe)), 3), "undervalued");
+    const overvalued = tag(take([...rows].filter((r) => r.pe != null && r.pe > 55 && r.rangePos > 0.65)
+      .sort((a, b) => (b.pe + b.rangePos * 40) - (a.pe + a.rangePos * 40)), 2), "overvalued");
+    const rebound = tag(take([...rows].filter((r) => r.downFromHigh >= 35).sort((a, b) => b.downFromHigh - a.downFromHigh), 2), "rebound");
+    const breakout = tag(take([...rows].filter((r) => r.rangePos > 0.85 && r.chgpct > 0).sort((a, b) => b.rangePos - a.rangePos), 2), "breakout");
+    const picks = [...momentum, ...undervalued, ...overvalued, ...rebound, ...breakout];
     if (!picks.length) return json({ ok: false, error: "no candidates (quotes empty?)", quotesCount: Object.keys(quotes).length }, 502);
 
     // 4) one Opus call writes a brief for every pick, grounded in the live numbers
@@ -76,21 +93,27 @@ Deno.serve(async (req) => {
     let briefs: Record<string, any> = {};
     let dbg: any = { key: !!key, model };
     if (key) {
-      const facts = picks.map((r, i) => `${i + 1}. ${r.t} (${r.name}) — $${r.last.toFixed(2)}, ${r.chgpct >= 0 ? "+" : ""}${r.chgpct.toFixed(1)}% today, ${r.downFromHigh.toFixed(0)}% below 52wk high $${r.hi.toFixed(2)} (low $${r.lo.toFixed(2)})${r.pe ? `, P/E ${r.pe}` : ""}, bucket=${momSet.has(r.t) ? "MOMENTUM" : "REBOUND"}`).join("\n");
+      const facts = picks.map((r, i) => `${i + 1}. ${r.t} (${r.name}) — $${r.last.toFixed(2)}, ${r.chgpct >= 0 ? "+" : ""}${r.chgpct.toFixed(1)}% today, at ${(r.rangePos * 100).toFixed(0)}% of its 52wk range (${r.downFromHigh.toFixed(0)}% below the $${r.hi.toFixed(2)} high)${r.pe ? `, P/E ${r.pe}` : ", P/E n/a"}, BUCKET=${(r.bucket || "").toUpperCase()}`).join("\n");
       const prompt =
-`You are Fluxi, the Flux trading desk. Write a punchy daily "trade idea" brief for each of these ${picks.length} names, using ONLY the live figures given (do not invent numbers). These are SIMULATED / educational ideas on a paper desk — never financial advice, never promise returns or exact timing.
+`You are Fluxi, the Flux trading desk. Today you scanned ${rows.length} US stocks and shortlisted these ${picks.length} into buckets. Write a sharp daily trade-idea brief for EACH, using ONLY the live figures given (do not invent numbers). These are SIMULATED / educational ideas on a paper desk — never financial advice, never promise returns or exact timing.
 
-For each name return: a 1-line headline, a 2-3 sentence thesis (why it could move — momentum setup or a beaten-down name with rebound potential), a short catalyst, a short risk, a conviction 0-100 (be honest, most 45-70), a horizon ("days"/"weeks"/"months"), and a plausible directional target price near the current price (a level, not a promise).
+Frame each brief by its BUCKET:
+- MOMENTUM / BREAKOUT: trend + relative strength; why it can keep running. Bullish target ABOVE the current price.
+- UNDERVALUED: a value/mean-reversion case — cheap on P/E and/or beaten down but with a reason to re-rate. Bullish target above price.
+- REBOUND: deeply beaten-down higher-risk recovery; honest that timing is unknown. Bullish target above price.
+- OVERVALUED: a CAUTION / avoid / short-watch case — stretched valuation and extended price; why the risk is to the downside. Target BELOW the current price.
+
+For each name return: a 1-line headline, a 2-3 sentence thesis, a short catalyst, a short risk, a conviction 0-100 (be honest, most 40-70), a horizon ("days"/"weeks"/"months"), and a plausible directional target price (a level, not a promise; above price for bullish buckets, below for OVERVALUED).
 
 LIVE DATA:
 ${facts}
 
 Respond with STRICT JSON only, no prose, shape:
-{"ideas":[{"ticker":"GEV","kind":"momentum|rebound","headline":"...","thesis":"...","catalyst":"...","risk":"...","conviction":60,"horizon":"weeks","target":123.45}]}`;
+{"ideas":[{"ticker":"GEV","kind":"momentum|undervalued|overvalued|rebound|breakout","direction":"long|avoid","headline":"...","thesis":"...","catalyst":"...","risk":"...","conviction":60,"horizon":"weeks","target":123.45}]}`;
       const resp = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
-        body: JSON.stringify({ model, max_tokens: 2200, messages: [{ role: "user", content: prompt }] }),
+        body: JSON.stringify({ model, max_tokens: 4096, messages: [{ role: "user", content: prompt }] }),
       });
       dbg.status = resp.status;
       if (resp.ok) {
@@ -113,22 +136,28 @@ Respond with STRICT JSON only, no prose, shape:
     }
 
     // 5) assemble rows (fallback brief if the LLM didn't cover a name)
+    const bucketDefaults: Record<string, any> = {
+      momentum:   { up: true,  mult: 1.12, conv: 62, hz: "weeks",  head: (r: any) => `${r.t} riding momentum`, th: (r: any) => `${r.name} is up ${r.chgpct.toFixed(1)}% and near the top of its 52-week range — trend and relative strength are with it.` },
+      breakout:   { up: true,  mult: 1.14, conv: 60, hz: "weeks",  head: (r: any) => `${r.t} breaking to new highs`, th: (r: any) => `${r.name} is pressing the top of its range at $${r.last.toFixed(2)} — a breakout that can extend if it holds.` },
+      undervalued:{ up: true,  mult: 1.2,  conv: 56, hz: "months", head: (r: any) => `${r.t} looks cheap here`, th: (r: any) => `${r.name} trades at ${r.pe ? "a P/E of " + r.pe : "a low multiple"} and ${r.downFromHigh.toFixed(0)}% below its high — a value/mean-reversion case if sentiment turns.` },
+      rebound:    { up: true,  mult: 1.25, conv: 50, hz: "months", head: (r: any) => `${r.t} — beaten down, rebound setup`, th: (r: any) => `${r.name} is ${r.downFromHigh.toFixed(0)}% below its 52-week high of $${r.hi.toFixed(2)}. It can stay down a while, but the setup favors recovery over time.` },
+      overvalued: { up: false, mult: 0.85, conv: 52, hz: "weeks",  head: (r: any) => `${r.t} looks stretched — caution`, th: (r: any) => `${r.name} carries a rich ${r.pe ? "P/E of " + r.pe : "valuation"} while trading near the top of its range — the risk here skews to the downside.` },
+    };
     const ideas = picks.map((r, i) => {
       const b = briefs[r.t] || {};
-      const isMom = momSet.has(r.t);
+      const bk = (b.kind || r.bucket || "momentum");
+      const d = bucketDefaults[bk] || bucketDefaults.momentum;
+      const dir = b.direction || (bk === "overvalued" ? "avoid" : "long");
       return {
         day, idx: i + 1, ticker: r.t, name: r.name, sector: null,
-        kind: b.kind || (isMom ? "momentum" : "rebound"),
-        direction: "long",
+        kind: bk, direction: dir,
         price: +r.last.toFixed(2),
-        target: b.target != null ? +(+b.target).toFixed(2) : +(r.last * (isMom ? 1.12 : 1.25)).toFixed(2),
-        conviction: Math.max(1, Math.min(100, Math.round(b.conviction || (isMom ? 62 : 55)))),
-        horizon: b.horizon || (isMom ? "weeks" : "months"),
-        headline: b.headline || (isMom ? `${r.t} riding momentum` : `${r.t} — beaten down, rebound setup`),
-        thesis: b.thesis || (isMom
-          ? `${r.name} is up ${r.chgpct.toFixed(1)}% and trading near the top of its 52-week range — trend and relative strength are with it.`
-          : `${r.name} is ${r.downFromHigh.toFixed(0)}% below its 52-week high of $${r.hi.toFixed(2)}. Names like this can stay down for a while, but the setup favors a recovery over time.`),
-        catalyst: b.catalyst || "Sector rotation and follow-through buying.",
+        target: b.target != null ? +(+b.target).toFixed(2) : +(r.last * d.mult).toFixed(2),
+        conviction: Math.max(1, Math.min(100, Math.round(b.conviction || d.conv))),
+        horizon: b.horizon || d.hz,
+        headline: b.headline || d.head(r),
+        thesis: b.thesis || d.th(r),
+        catalyst: b.catalyst || "Sector rotation and follow-through flows.",
         risk: b.risk || "High volatility; the move may take longer than expected or fail.",
       };
     });
