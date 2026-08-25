@@ -2,43 +2,46 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fluxi — your AI trading desk</title>
 <meta name="description" content="Talk to Flux — an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=8">
-<script src="./assets/flux-supa.js?v=8" defer></script>
-<script src="./assets/flux-site.js?v=8" defer></script>
-<script src="./assets/flux-universe.js?v=8" defer></script>
-<script src="./assets/flux-feed.js?v=8" defer></script>
-<script src="./assets/flux-fund.js?v=8" defer></script>
-<script src="./assets/flux-kronos.js?v=8" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=9">
+<script src="./assets/flux-supa.js?v=9" defer></script>
+<script src="./assets/flux-site.js?v=9" defer></script>
+<script src="./assets/flux-universe.js?v=9" defer></script>
+<script src="./assets/flux-feed.js?v=9" defer></script>
+<script src="./assets/flux-fund.js?v=9" defer></script>
+<script src="./assets/flux-kronos.js?v=9" defer></script>
 <script src="./assets/flux-jarvis.js?v=9" defer></script>
 <style>
-  .jbg{position:relative;overflow:clip}
-  .jwrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter);padding-top:18px}
-  .jgrid{display:grid;grid-template-columns:1.35fr .85fr;gap:26px;align-items:start}
-  @media(max-width:980px){.jgrid{grid-template-columns:1fr;gap:20px}}
+  /* ===== full-screen, no page-scroll app shell ===== */
+  html,body{height:100%}
+  body.jbg{overflow:hidden;height:100dvh;display:flex;flex-direction:column}
+  .deck{flex:1;min-height:0;display:flex;gap:20px;width:100%;max-width:1280px;
+    margin-inline:auto;padding:0 var(--gutter);position:relative}
 
-  /* ---- orb stage ---- */
-  .jstage{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
-    padding:20px 0 6px}
-  .orb-wrap{position:relative;width:min(360px,72vw);aspect-ratio:1;margin-inline:auto}
-  .orb-wrap canvas{width:100%;height:100%;display:block}
-  .orb-status{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    pointer-events:none}
-  .orb-status .st{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--cyan);text-shadow:0 0 12px rgba(var(--glow-c),.7)}
-  .orb-status .wave2{font-family:var(--f-mono);font-size:.66rem;color:var(--text-faint);margin-top:6px;letter-spacing:.1em}
-  .jstage h1{font-size:clamp(1.5rem,1.1rem + 1.6vw,2.1rem);margin-top:14px;letter-spacing:-.02em}
-  .jstage .sub{color:var(--text-dim);font-size:.95rem;margin-top:8px;max-width:44ch}
+  /* ---- chat column (the focus) ---- */
+  .chatcol{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;padding-top:12px}
+  .chathead{display:flex;align-items:center;gap:12px;padding:2px 2px 12px;border-bottom:1px solid var(--line-2);margin-bottom:6px}
+  .miniorb{width:46px;height:46px;flex:none;position:relative}
+  .miniorb canvas{width:100%;height:100%;display:block}
+  .chtitle{min-width:0;flex:1}
+  .chtitle .nm{font-size:1.06rem;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+  .chtitle .livetag{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--emerald);display:inline-flex;align-items:center;gap:5px}
+  .chtitle .stln{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;color:var(--text-faint);
+    text-transform:uppercase;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chtitle .stln #orbSt{color:var(--cyan)}
+  .decktoggle{flex:none;font-family:var(--f-mono);font-size:.72rem;padding:8px 13px;border-radius:100px;cursor:pointer;
+    border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
+  .decktoggle:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan)}
 
-  /* ---- chat ---- */
-  .chatbox{margin-top:10px;padding:16px}
-  .clog{display:flex;flex-direction:column;gap:12px;max-height:340px;overflow-y:auto;padding:4px 4px 8px;scroll-behavior:smooth}
+  .clog{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
+    padding:8px 6px 6px;scroll-behavior:smooth}
   .clog::-webkit-scrollbar{width:6px}.clog::-webkit-scrollbar-thumb{background:rgba(var(--glow-c),.3);border-radius:3px}
-  .msg{max-width:88%;padding:11px 14px;border-radius:14px;font-size:.94rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+  .msg{max-width:82%;padding:11px 15px;border-radius:15px;font-size:.95rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
   .msg.u{align-self:flex-end;background:rgba(var(--glow),.12);border:1px solid rgba(var(--glow-c),.32);color:#eafcff}
   .msg.a{align-self:flex-start;background:var(--glass-2);border:1px solid var(--line);color:var(--text)}
   .msg.a b,.msg.a strong{color:var(--cyan)}
@@ -47,75 +50,75 @@
   .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
   @keyframes tdot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
 
-  .cinput{display:flex;gap:9px;margin-top:14px;align-items:center}
-  .cinput input{flex:1;background:#040914;border:1px solid var(--line);border-radius:12px;color:var(--text);
-    padding:13px 15px;font-size:.95rem;font-family:var(--f-sans);outline:none;transition:border-color .2s,box-shadow .2s}
+  /* ---- composer pinned to the bottom of the chat column ---- */
+  .composer{flex:none;padding:8px 0 10px}
+  .chips{display:flex;gap:8px;margin-bottom:11px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{height:0}
+  .chip{flex:none;font-family:var(--f-mono);font-size:.73rem;padding:7px 12px;border-radius:100px;cursor:pointer;
+    border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s;white-space:nowrap}
+  .chip:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan);box-shadow:0 0 16px -6px rgba(var(--glow),.6)}
+  .cinput{display:flex;gap:9px;align-items:center}
+  .cinput input{flex:1;min-width:0;background:#040914;border:1px solid var(--line);border-radius:13px;color:var(--text);
+    padding:14px 16px;font-size:.96rem;font-family:var(--f-sans);outline:none;transition:border-color .2s,box-shadow .2s}
   .cinput input:focus{border-color:rgba(var(--glow-c),.6);box-shadow:0 0 0 3px rgba(var(--glow),.12)}
-  .iconbtn{width:46px;height:46px;flex:none;border-radius:12px;border:1px solid rgba(var(--glow-c),.4);
-    background:rgba(var(--glow),.08);color:var(--cyan);cursor:pointer;display:grid;place-items:center;font-size:1.2rem;
-    transition:.18s}
+  .iconbtn{width:48px;height:48px;flex:none;border-radius:13px;border:1px solid rgba(var(--glow-c),.4);
+    background:rgba(var(--glow),.08);color:var(--cyan);cursor:pointer;display:grid;place-items:center;font-size:1.2rem;transition:.18s}
   .iconbtn:hover{border-color:var(--cyan);box-shadow:0 0 20px -4px rgba(var(--glow),.7)}
   .iconbtn.send{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#022530;border:none}
   .iconbtn.mic.on{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ff9d9d;animation:micPulse 1.2s infinite}
   @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
   .iconbtn[disabled]{opacity:.4;cursor:not-allowed}
-
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-  .chip{font-family:var(--f-mono);font-size:.74rem;padding:7px 12px;border-radius:100px;cursor:pointer;
-    border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
-  .chip:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan);box-shadow:0 0 16px -6px rgba(var(--glow),.6)}
-  .voicerow{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;font-size:.82rem;color:var(--text-dim)}
+  .voicerow{display:flex;align-items:center;gap:12px;margin-top:9px;flex-wrap:wrap;font-size:.8rem;color:var(--text-dim)}
   .tgl{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
   .tgl input{appearance:none;width:38px;height:22px;border-radius:100px;background:#1a2338;position:relative;cursor:pointer;transition:.2s;border:1px solid var(--line)}
   .tgl input:checked{background:rgba(var(--glow),.4);border-color:rgba(var(--glow-c),.6)}
   .tgl input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cfe9f2;transition:.2s}
   .tgl input:checked::after{transform:translateX(16px);background:#eafcff}
+  .microdisc{font-family:var(--f-mono);font-size:.6rem;color:var(--text-faint);margin-left:auto;letter-spacing:.04em}
 
-  /* ---- live intel panels ---- */
-  .panel{padding:16px 16px 14px;margin-bottom:16px}
-  .panel h3{font-size:.95rem;display:flex;align-items:center;gap:8px}
-  .panel .glyph2{color:var(--cyan);font-size:1.05rem}
-  .panel .subh{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:2px}
-  .vrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2)}
+  /* ===== corner widget dock ===== */
+  .dock{display:none;flex-direction:column;gap:11px;width:290px;flex:none;
+    padding:14px 2px 12px;overflow-y:auto;min-height:0}
+  .dock::-webkit-scrollbar{width:6px}.dock::-webkit-scrollbar-thumb{background:rgba(var(--glow-c),.25);border-radius:3px}
+  body.deck-open .dock{display:flex}
+  .dockcap{display:flex;align-items:center;justify-content:space-between;font-family:var(--f-mono);
+    font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);padding:0 2px 2px}
+  .dockcap button{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:.9rem;line-height:1}
+  .dockcap button:hover{color:var(--cyan)}
+  .dock .panel{padding:12px 13px;margin:0}
+  .panel h3{font-size:.88rem;display:flex;align-items:center;gap:8px}
+  .panel .glyph2{color:var(--cyan);font-size:1rem}
+  .panel .subh{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:2px}
+  .vrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-2)}
   .vrow:last-child{border-bottom:none}
-  .vrow .tk{font-family:var(--f-mono);font-weight:700;font-size:.86rem}
-  .vrow .tk small{display:block;color:var(--text-faint);font-weight:400;font-size:.68rem;letter-spacing:0}
-  .vrow .rt{text-align:right;font-family:var(--f-mono);font-size:.82rem}
-  .vrow .rt .e{font-weight:700}.vrow .rt small{display:block;color:var(--text-faint);font-size:.66rem}
-  .briefline{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-top:8px}
+  .vrow .tk{font-family:var(--f-mono);font-weight:700;font-size:.8rem}
+  .vrow .tk small{display:block;color:var(--text-faint);font-weight:400;font-size:.64rem;letter-spacing:0}
+  .vrow .rt{text-align:right;font-family:var(--f-mono);font-size:.76rem}
+  .vrow .rt .e{font-weight:700}.vrow .rt small{display:block;color:var(--text-faint);font-size:.62rem}
+  .briefline{color:var(--text-dim);font-size:.83rem;line-height:1.5;margin-top:6px}
   .pos{color:var(--emerald)}.neg{color:var(--crimson)}
-  .flux-note{font-family:var(--f-mono);font-size:.64rem;color:var(--text-faint);margin-top:10px;letter-spacing:.04em}
+  .flux-note{font-family:var(--f-mono);font-size:.58rem;color:var(--text-faint);margin-top:8px;letter-spacing:.04em}
   .live-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);display:inline-block;animation:blink 1.6s infinite}
   .fbrow{display:flex;gap:6px;margin-top:8px}
   .fb{background:transparent;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:.8rem;padding:2px 8px;transition:.15s;filter:grayscale(.3)}
   .fb:hover{border-color:rgba(var(--glow-c),.5);filter:none;box-shadow:0 0 12px -5px rgba(var(--glow),.6)}
   .fbok{font-family:var(--f-mono);font-size:.7rem;color:var(--emerald)}
-  .memitem{font-size:.82rem;color:var(--text-dim);padding:7px 0;border-bottom:1px solid var(--line-2);line-height:1.45}
+  .memitem{font-size:.78rem;color:var(--text-dim);padding:6px 0;border-bottom:1px solid var(--line-2);line-height:1.4}
   .memitem:last-child{border-bottom:none}
-  .memitem .k{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-right:6px}
+  .memitem .k{font-family:var(--f-mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-right:6px}
   .memitem.self .k{color:var(--emerald)}.memitem.research .k{color:#c4abff}
 
-  /* ---- mobile: make Fluxi feel like a real app ---- */
-  @media(max-width:980px){
-    .jwrap{padding-top:6px}
-    .jstage{padding:6px 0 2px}
-    .orb-wrap{width:min(190px,50vw)}
-    .orb-status .st{font-size:.64rem}
-    .jstage h1{font-size:1.55rem;margin-top:8px}
-    .jstage .sub{font-size:.86rem;margin-top:5px;max-width:34ch}
-    .chatbox{margin-top:12px;padding:12px}
-    .clog{max-height:48vh}
-    .msg{max-width:92%;font-size:.95rem}
-    .cinput{gap:7px}
-    .cinput input{font-size:16px;padding:14px}
-    .iconbtn{width:50px;height:50px;font-size:1.3rem}
-    .chip{padding:9px 13px;font-size:.78rem}
-    .panel{padding:14px}
+  /* ---- dock becomes a slide-in drawer on narrow screens ---- */
+  @media(max-width:1000px){
+    .dock{position:absolute;top:0;right:0;height:100%;width:min(330px,90vw);z-index:40;
+      padding:16px 14px;background:rgba(2,6,23,.95);backdrop-filter:blur(16px);
+      border-left:1px solid var(--line);box-shadow:-24px 0 60px -24px #000}
   }
   @media(max-width:560px){
-    .jstage h1{font-size:1.35rem}
-    .jstage .sub{display:none}          /* keep chat above the fold on small phones */
-    .orb-wrap{width:min(160px,44vw)}
+    .deck{padding:0 12px}
+    .chtitle .nm{font-size:1rem}
+    .cinput input{font-size:16px}
+    .iconbtn{width:50px;height:50px}
   }
 </style>
 </head>
@@ -143,95 +146,75 @@
   </div>
 </header>
 
-<main class="jwrap section-sm">
-  <div class="center" style="margin-bottom:18px">
-    <span class="pill"><i></i> FLUX AI · ALWAYS ON</span>
-  </div>
-
-  <div class="jgrid">
-    <!-- LEFT: orb + chat -->
-    <section>
-      <div class="jstage">
-        <div class="orb-wrap">
-          <canvas id="orb" aria-hidden="true"></canvas>
-          <div class="orb-status">
-            <div class="st" id="orbSt">BOOTING…</div>
-            <div class="wave2" id="orbSub">six engines · scanning</div>
-          </div>
-        </div>
-        <h1 class="grad-text">Meet Fluxi.</h1>
-        <p class="sub">Your always-on AI desk — grounded in live signals and valuation models, and it learns from you and from its own calls. Type or talk.</p>
+<main class="deck">
+  <!-- CHAT (full-screen focus) -->
+  <section class="chatcol">
+    <div class="chathead">
+      <div class="miniorb">
+        <canvas id="orb" aria-hidden="true"></canvas>
       </div>
-
-      <div class="glass cyber-card chatbox">
-        <div class="clog" id="clog"></div>
-        <div class="cinput">
-          <input id="cin" type="text" autocomplete="off" placeholder="Ask about a stock, a valuation, the fund…" aria-label="Ask Flux">
-          <button class="iconbtn mic" id="mic" title="Talk to Flux" aria-label="Voice">🎙</button>
-          <button class="iconbtn send" id="send" title="Send" aria-label="Send">➤</button>
-        </div>
-        <div class="chips" id="chips"></div>
-        <div class="voicerow">
-          <label class="tgl"><input type="checkbox" id="spk"> <span>Speak replies</span></label>
-          <span id="voiceHint" class="mono" style="font-size:.72rem;color:var(--text-faint)"></span>
-        </div>
+      <div class="chtitle">
+        <div class="nm">Fluxi <span class="livetag"><i class="live-dot"></i> online</span></div>
+        <div class="stln"><span id="orbSt">BOOTING…</span> · <span id="orbSub">scanning</span></div>
       </div>
-    </section>
-
-    <!-- RIGHT: live intel -->
-    <aside>
-      <div class="glass panel pulse-glow">
-        <h3><span class="glyph2">◇</span> Live Brief</h3>
-        <div class="subh"><span class="live-dot"></span> auto-updating</div>
-        <div class="briefline" id="brief">Composing the desk brief…</div>
-        <div class="flux-note">Model estimate · simulated · not advice</div>
-      </div>
-
-      <div class="glass panel">
-        <h3><span class="glyph2">▲</span> Most undervalued</h3>
-        <div class="subh">model sees upside</div>
-        <div id="under" style="margin-top:6px"></div>
-      </div>
-
-      <div class="glass panel">
-        <h3><span class="glyph2">▼</span> Most overvalued</h3>
-        <div class="subh">model sees downside</div>
-        <div id="over" style="margin-top:6px"></div>
-      </div>
-
-      <div class="glass panel">
-        <h3><span class="glyph2">◷</span> Flux Fund</h3>
-        <div class="subh">live simulated paper desk</div>
-        <div class="briefline" id="fund">Reading the fund…</div>
-        <a class="btn btn-ghost btn-sm" href="./fund.html" style="margin-top:12px">Watch it trade →</a>
-      </div>
-
-      <div class="glass panel cyber-card">
-        <h3><span class="glyph2">❖</span> Fluxi's memory</h3>
-        <div class="subh" id="memStat">learning…</div>
-        <div id="mem" style="margin-top:8px"></div>
-        <div class="flux-note">Teach me: type “remember …” · rate my answers 👍/👎 · pattern memory, not a profit promise</div>
-      </div>
-    </aside>
-  </div>
-
-  <p class="disclaimer center" style="margin-top:34px">Flux AI is research and automation software, not investment advice, and is not a broker-dealer. Everything shown is a model estimate on simulated data. Trading involves risk of loss. The AI never trades a real brokerage account without your explicit rules.</p>
-</main>
-
-<footer class="footer"><div class="wrap">
-  <div class="footer-grid">
-    <div>
-      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
-      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+      <button class="decktoggle" id="deckToggle" title="Show / hide the live desk widgets">◫ Desk</button>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
-  </div>
-  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
-  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
-</div></footer>
+
+    <div class="clog" id="clog"></div>
+
+    <div class="composer">
+      <div class="chips" id="chips"></div>
+      <div class="cinput">
+        <input id="cin" type="text" autocomplete="off" placeholder="Ask about a stock, a valuation, the fund…" aria-label="Ask Flux">
+        <button class="iconbtn mic" id="mic" title="Talk to Flux" aria-label="Voice">🎙</button>
+        <button class="iconbtn send" id="send" title="Send" aria-label="Send">➤</button>
+      </div>
+      <div class="voicerow">
+        <label class="tgl"><input type="checkbox" id="spk"> <span>Speak replies</span></label>
+        <span id="voiceHint" class="mono" style="font-size:.72rem;color:var(--text-faint)"></span>
+        <span class="microdisc">Model estimates · simulated · not advice</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORNER WIDGET DOCK -->
+  <aside class="dock" id="dock">
+    <div class="dockcap"><span>Live desk</span><button id="deckClose" title="Hide">✕</button></div>
+
+    <div class="glass panel pulse-glow">
+      <h3><span class="glyph2">◇</span> Live Brief</h3>
+      <div class="subh"><span class="live-dot"></span> auto-updating</div>
+      <div class="briefline" id="brief">Composing the desk brief…</div>
+      <div class="flux-note">Model estimate · simulated · not advice</div>
+    </div>
+
+    <div class="glass panel">
+      <h3><span class="glyph2">▲</span> Most undervalued</h3>
+      <div class="subh">model sees upside</div>
+      <div id="under" style="margin-top:6px"></div>
+    </div>
+
+    <div class="glass panel">
+      <h3><span class="glyph2">▼</span> Most overvalued</h3>
+      <div class="subh">model sees downside</div>
+      <div id="over" style="margin-top:6px"></div>
+    </div>
+
+    <div class="glass panel">
+      <h3><span class="glyph2">◷</span> Flux Fund</h3>
+      <div class="subh">live simulated paper desk</div>
+      <div class="briefline" id="fund">Reading the fund…</div>
+      <a class="btn btn-ghost btn-sm" href="./fund.html" style="margin-top:10px">Watch it trade →</a>
+    </div>
+
+    <div class="glass panel cyber-card">
+      <h3><span class="glyph2">❖</span> Fluxi's memory</h3>
+      <div class="subh" id="memStat">learning…</div>
+      <div id="mem" style="margin-top:8px"></div>
+      <div class="flux-note">Teach me: type “remember …” · rate answers 👍/👎</div>
+    </div>
+  </aside>
+</main>
 
 <script>
 (function(){
@@ -242,11 +225,18 @@
     if(F.initNav) F.initNav();
     if(F.initFX) F.initFX();
 
+    /* ---- corner dock: open by default on desktop, drawer on mobile ---- */
+    var body = document.body;
+    if(window.innerWidth >= 1000) body.classList.add("deck-open");
+    function toggleDeck(){ body.classList.toggle("deck-open"); }
+    document.getElementById("deckToggle").onclick = toggleDeck;
+    document.getElementById("deckClose").onclick = function(){ body.classList.remove("deck-open"); };
+
     /* ---- orb ---- */
     var orb = J.Orb(document.getElementById("orb"));
     var stEl = document.getElementById("orbSt"), subEl = document.getElementById("orbSub");
     function setStatus(s, sub){ stEl.textContent = s; if(sub!=null) subEl.textContent = sub; }
-    setTimeout(function(){ setStatus("FLUXI ONLINE","six engines · scanning"); }, 500);
+    setTimeout(function(){ setStatus("FLUXI ONLINE","scanning 250+ names"); }, 500);
 
     /* ---- chat ---- */
     var log = document.getElementById("clog"), input = document.getElementById("cin");
@@ -254,7 +244,6 @@
     function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
     function bubble(text, who){
       var d = document.createElement("div"); d.className = "msg " + who;
-      // light markdown: **bold**
       d.innerHTML = esc(text).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
       log.appendChild(d);
       if(who === "a" && window.JARVIS && JARVIS.feedback){
@@ -281,8 +270,7 @@
       J.ask(text).then(function(res){
         tp.remove();
         var b = bubble(res.text, "a");
-        setStatus("FLUXI ONLINE","six engines · scanning"); orb.pulse(0.6);
-        // trade hand-off: swap feedback row for Confirm / Cancel
+        setStatus("FLUXI ONLINE","scanning 250+ names"); orb.pulse(0.6);
         if(res.kind === "trade" && res.action){
           var old = b.querySelector(".fbrow"); if(old) old.remove();
           var tc = document.createElement("div"); tc.className = "fbrow";
@@ -302,12 +290,10 @@
         if(speak.checked && J.ttsSupported){
           setStatus("SPEAKING…","voice out"); orb.pulse(1);
           J.speak(res.text);
-          // keep the orb alive while it talks
           var iv = setInterval(function(){ orb.pulse(0.8); }, 400);
           var dur = Math.min(9000, 1800 + res.text.length*45);
           setTimeout(function(){
-            clearInterval(iv); setStatus("FLUXI ONLINE","six engines · scanning");
-            // hands-free: after Fluxi finishes speaking, listen for your next line
+            clearInterval(iv); setStatus("FLUXI ONLINE","scanning 250+ names");
             if(handsFree && res.kind !== "trade"){ startListening(); }
           }, dur);
         }
@@ -317,7 +303,7 @@
     input.addEventListener("keydown", function(e){ if(e.key==="Enter") send(); });
 
     /* ---- suggestion chips ---- */
-    var chips = ["Give me a market brief","Is NVDA undervalued?","Most overvalued stocks","How's the fund doing?","What's my biggest risk?","What's AMD at?"];
+    var chips = ["Give me a market brief","Is NVDA undervalued?","Most overvalued stocks","How's the fund doing?","What is Kronos?","What's AMD at?"];
     var cc = document.getElementById("chips");
     chips.forEach(function(c){
       var el = document.createElement("span"); el.className="chip"; el.textContent=c;
@@ -327,7 +313,6 @@
     /* ---- voice (tap-to-talk + hands-free conversation) ---- */
     var mic = document.getElementById("mic"), hint = document.getElementById("voiceHint");
     var handsFree = false;
-    // add a hands-free toggle next to "Speak replies"
     (function(){
       var row = document.querySelector(".voicerow");
       if(row && J.voiceSupported){
@@ -349,7 +334,7 @@
         if(fin && txt){ mic.classList.remove("on"); send(txt); }
       }, function(state){
         if(state==="start"){ mic.classList.add("on"); setStatus(handsFree?"CONVERSING…":"LISTENING…","voice in"); orb.pulse(0.9); }
-        else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUXI ONLINE","six engines · scanning"); }
+        else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUXI ONLINE","scanning 250+ names"); }
         else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked — allow microphone access."; setStatus("FLUXI ONLINE"); }
       });
     }
@@ -363,7 +348,7 @@
 
     /* ---- greeting ---- */
     setTimeout(function(){
-      bubble("Fluxi online. I'm scanning "+ (F.PRICES?Object.keys(F.PRICES).length:"the")+" names across six engines — and I learn as we go. Ask me for a brief or a valuation, tell me to \"remember\" something, or say \"research NVDA.\" Type it or tap the mic.", "a");
+      bubble("Fluxi online. I continuously scan "+ (F.PRICES?Object.keys(F.PRICES).length:"250+")+" names — momentum, undervalued & overvalued, breakouts, rebounds — and I learn as we go. Ask me for a brief or a valuation, say \"what is Kronos?\", tell me to \"remember\" something, or \"research NVDA.\" Type it or tap the mic.", "a");
     }, 700);
 
     /* ---- live intel panels (always refreshing) ---- */
@@ -379,11 +364,9 @@
     }
     function refresh(){
       try{
-        var b = J.brief();                       // local compute (instant, always available)
+        var b = J.brief();
         renderVal(b.val);
-        var localText = b.text;
-        document.getElementById("brief").textContent = localText;
-        // prefer the 24/7 server brief when the pg_cron job has written one
+        document.getElementById("brief").textContent = b.text;
         var S = window.FluxSupa;
         if(S && S.latestBrief){
           S.latestBrief().then(function(sb){
@@ -396,8 +379,8 @@
             }
           });
         }
-        if(J.review) J.review();                 // self-learning: grade past calls
-        orb.pulse(0.35);                          // heartbeat while it "thinks"
+        if(J.review) J.review();
+        orb.pulse(0.35);
       }catch(e){}
     }
     /* ---- Fluxi memory panel ---- */
@@ -414,7 +397,7 @@
           '<div class="briefline">Nothing yet. Try “remember I hold NVDA” or “research AMD”.</div>';
       }catch(e){}
     }
-    J.onLearn = renderMem;   // re-render whenever Fluxi learns something
+    J.onLearn = renderMem;
     renderMem();
     function refreshFund(){
       var el = document.getElementById("fund"); if(!el) return;
@@ -428,7 +411,7 @@
     refresh(); refreshFund();
     setInterval(refreshFund, 4000);
     window.addEventListener("flux-prices", refreshFund);
-    setInterval(refresh, 45000);      // always-on: recompute the models
+    setInterval(refresh, 45000);
     setInterval(refreshFund, 60000);
   }
   boot();
