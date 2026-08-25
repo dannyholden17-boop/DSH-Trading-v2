@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Every trade — Flux Fund</title>
+<meta name="description" content="Every trade the Flux Fund has made — a simple, sortable ledger of price, size and proceeds. Simulated, virtual money, not investment advice. Sign in to view.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css?v=10">
+<script src="./assets/flux-supa.js?v=10" defer></script>
+<script src="./assets/flux-site.js?v=10" defer></script>
+<script src="./assets/flux-universe.js?v=10" defer></script>
+<script src="./assets/flux-feed.js?v=10" defer></script>
+<script src="./assets/flux-fund.js?v=10" defer></script>
+<script src="./assets/flux-kronos.js?v=10" defer></script>
+<style>
+  .tw{max-width:1080px;margin-inline:auto;padding:26px var(--gutter) 60px}
+  .tw h1{font-size:clamp(1.5rem,1.1rem + 1.6vw,2rem);letter-spacing:-.02em}
+  .tw .sub{color:var(--text-dim);margin-top:6px;font-size:.95rem}
+  .trow-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 14px}
+  .trow-top .stat{font-family:var(--f-mono);font-size:.82rem;color:var(--text-dim)}
+  .trow-top .stat b{color:var(--text)}
+  .trow-top .spacer{margin-left:auto}
+  .xlwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--glass)}
+  table.xl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.84rem;min-width:640px}
+  table.xl thead th{position:sticky;top:0;background:#040b1a;color:var(--text-faint);text-align:right;
+    font-weight:600;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.xl thead th:first-child,table.xl tbody td:first-child{text-align:left}
+  table.xl thead th:nth-child(2),table.xl tbody td:nth-child(2),
+  table.xl thead th:nth-child(3),table.xl tbody td:nth-child(3){text-align:left}
+  table.xl tbody td{text-align:right;padding:9px 14px;border-bottom:1px solid var(--line-2);white-space:nowrap;color:var(--text)}
+  table.xl tbody tr:hover{background:rgba(var(--glow),.05)}
+  .side{font-weight:700;letter-spacing:.02em}
+  .side.buy{color:var(--emerald)}.side.sell{color:var(--crimson)}
+  .pos{color:var(--emerald)}.neg{color:var(--crimson)}.mut{color:var(--text-faint)}
+  .lock{max-width:440px;margin:8vh auto;text-align:center;padding:34px 26px}
+  .lock .em{font-size:34px}
+  .lock h2{margin-top:12px;font-size:1.3rem}
+  .lock p{color:var(--text-dim);margin-top:8px;font-size:.94rem}
+  .lock .btn{margin-top:18px}
+  .disc{font-family:var(--f-mono);font-size:.66rem;color:var(--text-faint);margin-top:16px;letter-spacing:.03em}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./terminal.html">Trade</a>
+      <a href="./ai.html">Flux AI</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./fund.html" aria-current="page">Fund</a>
+      <a href="./portfolio.html">Portfolio</a>
+      <a href="./research.html">Research</a>
+      <a href="./ideas.html">Trade Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./fund.html">← Back to Fund</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Sign in</a>
+    </div>
+  </div>
+</header>
+
+<main class="tw">
+  <!-- signed-out gate -->
+  <div id="lock" class="glass lock" hidden>
+    <div class="em">🔒</div>
+    <h2>Sign in to see every trade</h2>
+    <p>The full Flux Fund ledger — every fill, price and proceeds — is for signed-in members. It's free to create an account.</p>
+    <a class="btn btn-primary" href="./signin.html?next=trades.html">Sign in / create account</a>
+  </div>
+
+  <!-- signed-in ledger -->
+  <div id="ledger" hidden>
+    <h1>Every trade the fund has made</h1>
+    <p class="sub">A live ledger of the Flux Fund's simulated paper account. Newest first. Updates as it trades.</p>
+
+    <div class="trow-top">
+      <span class="stat">Fills: <b id="tCount">—</b></span>
+      <span class="stat">Realized P/L: <b id="tPL">—</b></span>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost btn-sm" id="csvBtn" type="button">⬇ Download CSV</button>
+    </div>
+
+    <div class="xlwrap">
+      <table class="xl">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Side</th>
+            <th>Ticker</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Realized P/L</th>
+          </tr>
+        </thead>
+        <tbody id="tBody"></tbody>
+      </table>
+    </div>
+    <p class="disc">Simulated · virtual money · not investment advice · the fund never trades a real account.</p>
+  </div>
+</main>
+
+<script>
+(function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Fund){ return setTimeout(boot, 120); }
+    if(F.initNav) F.initNav();
+    if(F.initFX) F.initFX();
+
+    var lock = document.getElementById("lock"), ledger = document.getElementById("ledger");
+    var tBody = document.getElementById("tBody"), tCount = document.getElementById("tCount"), tPL = document.getElementById("tPL");
+
+    function signedIn(){
+      if(window.__fluxUser) return true;
+      var S = window.FluxSupa;
+      return !!(S && S.user && S.user());
+    }
+    function money(x){ return "$"+(+x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+    function when(ts){ try{ return new Date(ts).toLocaleString(undefined,{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"}); }catch(e){ return "—"; } }
+
+    function trades(){ return (F.Fund.recentTrades && F.Fund.recentTrades()) || []; }
+
+    function render(){
+      if(!signedIn()){ lock.hidden = false; ledger.hidden = true; return; }
+      lock.hidden = true; ledger.hidden = false;
+      var rows = trades();
+      var realized = 0;
+      var html = rows.map(function(x){
+        var total = x.qty * x.price;
+        var isSell = x.side === "sell";
+        if(isSell && x.pl != null) realized += x.pl;
+        var plCell = (isSell && x.pl != null)
+          ? '<span class="'+(x.pl>=0?"pos":"neg")+'">'+(x.pl>=0?"+":"")+money(x.pl)+'</span>'
+          : '<span class="mut">—</span>';
+        return '<tr>'+
+          '<td>'+when(x.ts)+'</td>'+
+          '<td><span class="side '+(isSell?"sell":"buy")+'">'+(isSell?"SELL":"BUY")+'</span></td>'+
+          '<td>'+x.t+'</td>'+
+          '<td>'+x.qty.toLocaleString()+'</td>'+
+          '<td>'+money(x.price)+'</td>'+
+          '<td>'+money(total)+'</td>'+
+          '<td>'+plCell+'</td></tr>';
+      }).join("");
+      tBody.innerHTML = html || '<tr><td colspan="7" class="mut" style="text-align:center;padding:22px">No trades yet — check back in a moment.</td></tr>';
+      tCount.textContent = rows.length.toLocaleString();
+      tPL.innerHTML = '<span class="'+(realized>=0?"pos":"neg")+'">'+(realized>=0?"+":"")+money(realized)+'</span>';
+    }
+
+    function downloadCSV(){
+      var rows = trades();
+      var head = ["Time","Side","Ticker","Shares","Price","Total","RealizedPL","Reason"];
+      var lines = [head.join(",")];
+      rows.forEach(function(x){
+        var total = (x.qty * x.price).toFixed(2);
+        var pl = (x.side==="sell" && x.pl!=null) ? x.pl.toFixed(2) : "";
+        var reason = '"'+String(x.reason||"").replace(/"/g,'""')+'"';
+        lines.push([new Date(x.ts).toISOString(), x.side, x.t, x.qty, x.price, total, pl, reason].join(","));
+      });
+      var blob = new Blob([lines.join("\n")], { type:"text/csv" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "flux-fund-trades.csv"; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 500);
+    }
+    document.getElementById("csvBtn").onclick = downloadCSV;
+
+    render();
+    // auth may resolve after load; re-render when it does, and keep it fresh as the fund trades.
+    if(window.FluxSupa && FluxSupa.ready){ FluxSupa.ready.then(render); }
+    window.addEventListener("flux-auth", render);
+    window.addEventListener("flux-prices", function(){ if(signedIn()) render(); });
+    setInterval(render, 30000);
+  }
+  boot();
+})();
+</script>
+</body>
+</html>
