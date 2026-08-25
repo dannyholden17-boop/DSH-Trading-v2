@@ -89,6 +89,14 @@
   .panel h3{font-size:.88rem;display:flex;align-items:center;gap:8px}
   .panel .glyph2{color:var(--cyan);font-size:1rem}
   .panel .subh{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:2px}
+  #under,#over{min-height:132px}
+  .rot-in .vrow{animation:rotIn .45s ease both}
+  .rot-in .vrow:nth-child(2){animation-delay:.05s}
+  .rot-in .vrow:nth-child(3){animation-delay:.1s}
+  .rot-in .vrow:nth-child(4){animation-delay:.15s}
+  .rot-in .vrow:nth-child(5){animation-delay:.2s}
+  @keyframes rotIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  @media(prefers-reduced-motion:reduce){.rot-in .vrow{animation:none}}
   .vrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-2)}
   .vrow:last-child{border-bottom:none}
   .vrow .tk{font-family:var(--f-mono);font-weight:700;font-size:.8rem}
@@ -189,14 +197,14 @@
     </div>
 
     <div class="glass panel">
-      <h3><span class="glyph2">▲</span> Most undervalued</h3>
-      <div class="subh">model sees upside</div>
+      <h3><span class="glyph2">▲</span> Undervalued</h3>
+      <div class="subh">model sees upside · rotating</div>
       <div id="under" style="margin-top:6px"></div>
     </div>
 
     <div class="glass panel">
-      <h3><span class="glyph2">▼</span> Most overvalued</h3>
-      <div class="subh">model sees downside</div>
+      <h3><span class="glyph2">▼</span> Overvalued</h3>
+      <div class="subh">model sees downside · rotating</div>
       <div id="over" style="margin-top:6px"></div>
     </div>
 
@@ -358,26 +366,47 @@
       return '<div class="vrow"><div class="tk">'+r.ticker+'<small>'+(r.name||"")+'</small></div>'+
         '<div class="rt"><div class="e">'+pctHtml(r.upside)+'</div><small>'+money(r.price)+' → '+money(r.fair)+'</small></div></div>';
     }
-    function renderVal(v){
-      document.getElementById("under").innerHTML = v.under.length ? v.under.map(vrow).join("") : '<div class="briefline">Nothing screening undervalued right now.</div>';
-      document.getElementById("over").innerHTML = v.over.length ? v.over.map(vrow).join("") : '<div class="briefline">Nothing screening overvalued right now.</div>';
+    /* ---- rotating valuation board: cycle a window through a ~20-deep pool ---- */
+    var WIN = 5;                       // rows shown at once
+    var underPool = [], overPool = [], rotU = 0, rotO = 0;
+    function buildPools(v){
+      var all = (v && v.all) || [];
+      var u = all.filter(function(r){ return r.edge > 0.008; });                       // model sees upside
+      var o = all.filter(function(r){ return r.edge < -0.008; }).sort(function(a,b){ return a.edge - b.edge; }); // biggest downside first
+      underPool = u.slice(0, 20);
+      overPool  = o.slice(0, 20);
+      if(!underPool.length) underPool = (v && v.under) || [];
+      if(!overPool.length)  overPool  = (v && v.over)  || [];
+      if(rotU >= underPool.length) rotU = 0;
+      if(rotO >= overPool.length)  rotO = 0;
+    }
+    function windowOf(pool, start){
+      var out = [], n = Math.min(WIN, pool.length);
+      for(var i=0;i<n;i++){ out.push(pool[(start + i) % pool.length]); }
+      return out;
+    }
+    function paint(id, pool, start){
+      var el = document.getElementById(id); if(!el) return;
+      var win = windowOf(pool, start);
+      el.innerHTML = win.length ? win.map(vrow).join("") : '<div class="briefline">Screening the tape…</div>';
+      el.classList.remove("rot-in"); void el.offsetWidth; el.classList.add("rot-in");   // restart fade
+    }
+    function paintBoth(){ paint("under", underPool, rotU); paint("over", overPool, rotO); }
+    function rotate(){
+      // advance a full page so a fresh set of names shows each tick
+      if(underPool.length > WIN) rotU = (rotU + WIN) % underPool.length;
+      if(overPool.length  > WIN) rotO = (rotO + WIN) % overPool.length;
+      paintBoth();
     }
     function refresh(){
       try{
         var b = J.brief();
-        renderVal(b.val);
+        buildPools(b.val);
+        paintBoth();
         document.getElementById("brief").textContent = b.text;
         var S = window.FluxSupa;
         if(S && S.latestBrief){
-          S.latestBrief().then(function(sb){
-            if(sb && sb.text){
-              document.getElementById("brief").textContent = sb.text;
-              if(sb.under && sb.over){
-                var mapv = function(a){ return (a||[]).map(function(r){ return {ticker:r.ticker,name:(F.NAMES&&F.NAMES[r.ticker])||r.ticker,price:+r.price,fair:+r.fair,upside:+r.edge}; }); };
-                renderVal({ under: mapv(sb.under), over: mapv(sb.over) });
-              }
-            }
-          });
+          S.latestBrief().then(function(sb){ if(sb && sb.text) document.getElementById("brief").textContent = sb.text; });
         }
         if(J.review) J.review();
         orb.pulse(0.35);
@@ -409,9 +438,10 @@
       } else { el.textContent = "A simulated AI fund trading a paper account live on Kronos signals — watch it on the Fund page."; }
     }
     refresh(); refreshFund();
+    setInterval(rotate, 3200);          // ticker-board: shuffle the under/overvalued names
     setInterval(refreshFund, 4000);
     window.addEventListener("flux-prices", refreshFund);
-    setInterval(refresh, 45000);
+    setInterval(refresh, 45000);        // recompute the full valuation pool
     setInterval(refreshFund, 60000);
   }
   boot();
