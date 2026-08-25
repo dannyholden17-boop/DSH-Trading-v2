@@ -514,13 +514,15 @@
     return "Top movers (simulated): ▲ " + up.join(", ") + "  ▼ " + dn.join(", ") + ".";
   }
 
-  var CAP = "I'm Fluxi — your AI desk, and I learn as we go. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\n• \"What's my biggest risk?\"\nTeach me anything: \"remember I hold NVDA\" or \"my rule is max 8% per name.\" Ask me to \"research TSLA\" and I'll save what I find. Say \"what have you learned?\" anytime.\nEverything I show is simulated / a model estimate — never investment advice.";
+  var CAP = "I'm Fluxi — I scan 250+ US stocks across momentum, valuation (undervalued & overvalued), breakouts, rebounds and catalysts, and I learn as we go. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Any momentum names right now?\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\nTeach me anything: \"remember I hold NVDA\" or \"my rule is max 8% per name.\" Ask me to \"research TSLA\" and I'll save what I find.\nEverything I show is simulated / a model estimate — never investment advice.";
 
   // Rich live context so every LLM answer is grounded in real data.
   function buildContext(q) {
     var ctx = {};
     ctx.brief = safe(function () { return J.brief().text; });
-    ctx.valuation = safe(function () { var v = J.valuation(); return { under: v.under.map(short), over: v.over.map(short) }; });
+    ctx.universe_size = safe(function () { return Object.keys(F.PRICES || {}).length; });
+    ctx.coverage = "momentum, undervalued, overvalued, breakouts, rebounds, catalysts across 250+ US stocks";
+    ctx.valuation = safe(function () { var v = J.valuation(); return { most_undervalued: v.under.slice(0, 8).map(short), most_overvalued: v.over.slice(0, 8).map(short) }; });
     // top movers today
     ctx.movers = safe(function () {
       var list = (F.PRICES ? Object.keys(F.PRICES) : []).map(function (t) {
@@ -626,7 +628,7 @@
       return Promise.resolve({ text: hellos[Math.floor((Date.now() / 1000) % hellos.length)], kind: "greet" });
     }
     if (has(ql, ["your name", "who are you", "what are you", "what's your name", "whats your name"]))
-      return Promise.resolve({ text: "I'm Fluxi — your AI trading desk. I read live signals, rank under/overvalued names, run the fund, and I learn from you and from how my own calls play out. Not a financial advisor — a research desk.", kind: "id" });
+      return Promise.resolve({ text: "I'm Fluxi — your AI trading desk. I continuously scan 250+ US stocks, ranking momentum, undervalued and overvalued names, breakouts and rebounds — anything that moves a stock — write daily trade ideas with full briefs, run the paper fund, and learn from you and from how my own calls play out. Not a financial advisor — a research desk.", kind: "id" });
     if (has(ql, ["what can you", "help", "commands", "what do you do"]))
       return Promise.resolve({ text: CAP, kind: "help" });
 

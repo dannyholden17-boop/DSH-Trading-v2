@@ -7,13 +7,13 @@
 <meta name="description" content="Today's AI trade ideas from Flux — momentum leaders and beaten-down rebound names, each with a full brief. First idea free; sign in to see them all. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=7">
-<script src="./assets/flux-supa.js?v=7" defer></script>
-<script src="./assets/flux-site.js?v=7" defer></script>
-<script src="./assets/flux-universe.js?v=7" defer></script>
-<script src="./assets/flux-feed.js?v=7" defer></script>
-<script src="./assets/flux-fund.js?v=7" defer></script>
-<script src="./assets/flux-kronos.js?v=7" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=8">
+<script src="./assets/flux-supa.js?v=8" defer></script>
+<script src="./assets/flux-site.js?v=8" defer></script>
+<script src="./assets/flux-universe.js?v=8" defer></script>
+<script src="./assets/flux-feed.js?v=8" defer></script>
+<script src="./assets/flux-fund.js?v=8" defer></script>
+<script src="./assets/flux-kronos.js?v=8" defer></script>
 <style>
   /* single-screen, no page scroll */
   html,body{height:100%}
@@ -154,16 +154,19 @@ document.addEventListener("DOMContentLoaded", function(){
 
   var list = $("#ideaList"), IDEAS = {};
 
+  var KIND_LBL = {momentum:"Momentum",breakout:"Breakout",undervalued:"Undervalued",rebound:"Rebound",overvalued:"Overvalued · caution"};
   function row(s){
     IDEAS[s.ticker] = s;
-    var mom = (s.kind||"")==="momentum", col = mom?EM:CY;
+    var kind = (s.kind||"momentum");
+    var bear = kind==="overvalued" || s.direction==="avoid";
+    var col = bear ? (F.CR||"#ef4444") : ((kind==="momentum"||kind==="breakout") ? EM : CY);
     var mv = liveMv(s.ticker), up = mv!=="" && mv.indexOf("-")<0;
     var el = document.createElement("div");
     el.className = "glass irow reveal"; el.setAttribute("data-brief", s.ticker);
     el.innerHTML =
-      '<div class="ir-lead"><div class="ir-av">'+esc(s.ticker.slice(0,3))+'</div>'+
+      '<div class="ir-lead"><div class="ir-av" style="border-color:'+col+'55">'+esc(s.ticker.slice(0,3))+'</div>'+
         '<div><div class="ir-tk">'+esc(s.ticker)+(mv?' <span class="mv '+(up?"up":"down")+'">'+mv+'</span>':'')+'</div>'+
-        '<div class="ir-kind">'+(mom?"momentum":"rebound")+' · '+esc(s.horizon||"")+'</div></div></div>'+
+        '<div class="ir-kind" style="color:'+col+'">'+(KIND_LBL[kind]||kind)+' · '+esc(s.horizon||"")+'</div></div></div>'+
       '<div class="ir-mid"><div class="ir-head">'+esc(s.headline||s.thesis||"")+'</div>'+
         '<div class="ir-meta"><span>'+fmt(s.price)+' → <b>'+fmt(s.target)+'</b></span>'+
         '<span class="ir-conf"><span class="bar"><i style="width:'+(s.conviction||0)+'%;background:'+col+'"></i></span>'+(s.conviction||0)+'%</span></div></div>'+
