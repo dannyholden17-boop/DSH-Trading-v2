@@ -7,13 +7,13 @@
 <meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a backtest attached — every one gated by the Risk engine. Never a naked 'buy this'.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=6">
-<script src="./assets/flux-supa.js?v=6" defer></script>
-<script src="./assets/flux-site.js?v=6" defer></script>
-<script src="./assets/flux-universe.js?v=6" defer></script>
-<script src="./assets/flux-feed.js?v=6" defer></script>
-<script src="./assets/flux-fund.js?v=6" defer></script>
-<script src="./assets/flux-kronos.js?v=6" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=7">
+<script src="./assets/flux-supa.js?v=7" defer></script>
+<script src="./assets/flux-site.js?v=7" defer></script>
+<script src="./assets/flux-universe.js?v=7" defer></script>
+<script src="./assets/flux-feed.js?v=7" defer></script>
+<script src="./assets/flux-fund.js?v=7" defer></script>
+<script src="./assets/flux-kronos.js?v=7" defer></script>
 <style>
   /* ---- page-only layout: trade-ideas.html ---- */
   .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -65,6 +65,21 @@
     text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
   .idea-foot .gate b{color:var(--emerald);font-weight:700}
   @media(max-width:560px){.idea-foot .gate{margin-left:0;width:100%}}
+
+  /* brief rows (catalyst / risk) */
+  .brief-rows{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
+  .brief-rows > div{font-size:.86rem;line-height:1.5;color:var(--text-dim);padding-left:76px;position:relative}
+  .brief-rows span{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--text-faint);width:66px}
+  @media(max-width:560px){.brief-rows > div{padding-left:0}.brief-rows span{position:static;display:block;margin-bottom:2px}}
+
+  /* locked (sign-in gated) idea card */
+  .idea-locked{display:flex;align-items:center;justify-content:center;min-height:150px;
+    border-style:dashed !important;background:linear-gradient(180deg,rgba(0,242,255,.04),transparent)}
+  .lock-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;text-align:left;padding:16px}
+  .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(0,242,255,.4))}
+  .lock-tx b{display:block;font-size:1.05rem}
+  .lock-tx span{display:block;color:var(--text-faint);font-size:.86rem;margin-top:3px;max-width:38ch}
 
   /* ---- anatomy ---- */
   .anno{padding:18px}
@@ -157,10 +172,11 @@
   <div class="wrap">
     <div class="reveal" style="max-width:64ch">
       <span class="eyebrow">Today's ideas</span>
-      <h2 class="h2" style="margin-top:16px">This is what an idea looks like.</h2>
-      <p class="lede" style="margin-top:16px">Five from a recent session, expanded in full. Nothing here is
-        a recommendation — it's the shape of the output: what Flux saw, where the setup breaks, and how
-        confident the ensemble is that the pattern is real.</p>
+      <h2 class="h2" style="margin-top:16px">Fresh trade ideas, every day.</h2>
+      <p class="lede" style="margin-top:16px">Each morning Fluxi scans the market — momentum leaders and beaten-down
+        names with rebound potential — and writes a full brief for each: the thesis, the catalyst, the risk, and how
+        much conviction it has. <b>The first is free; sign in to see them all.</b></p>
+      <p class="mono" id="feedCap" style="font-size:.8rem;color:var(--text-faint);margin-top:10px"></p>
     </div>
     <div class="ideas" id="ideaList"></div>
     <p class="disclaimer reveal" style="margin-top:26px">Sample ideas and levels shown are illustrative and
@@ -412,56 +428,131 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ---- expanded idea cards ---- */
+  /* ---- expanded idea cards: DAILY server ideas (Fluxi · Opus), sign-in gated ---- */
   var list = $("#ideaList");
-  var picks = K ? buildIdeas() : [];
   var canvases = [];
   function fmt(n){ return (+n).toFixed(2); }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function liveMv(t){
+    var p = F.priceOf && F.priceOf(t), pr = F.prevClose && F.prevClose(t);
+    if(!p || !pr) return "";
+    var x = (p-pr)/pr; return (x>=0?"+":"") + (x*100).toFixed(1) + "%";
+  }
 
-  picks.forEach(function(s, idx){
-    var long = s.long, col = long ? EM : CR, cid = "spark" + idx;
+  function serverCard(s){
+    var mom = (s.kind||"") === "momentum", col = mom ? EM : CY, cid = "spark_" + s.ticker;
+    var mv = liveMv(s.ticker), up = mv !== "" && mv.indexOf("-") < 0, kindLbl = mom ? "momentum" : "rebound";
     var el = document.createElement("article");
     el.className = "glass idea reveal";
     el.innerHTML =
       '<div class="idea-top">' +
-        '<div class="av">' + s.t.slice(0,3) + '</div>' +
+        '<div class="av">' + esc(s.ticker.slice(0,3)) + '</div>' +
         '<div class="id">' +
-          '<div class="tk">' + s.t + ' <span class="' + (long ? "up" : "down") + '" style="font-size:.85rem">' + s.mv + '</span></div>' +
-          '<div class="sub">' + s.name + ' · ' + (long ? "long setup" : "short setup") + '</div>' +
+          '<div class="tk">' + esc(s.ticker) + (mv ? ' <span class="' + (up?"up":"down") + '" style="font-size:.85rem">' + mv + ' today</span>' : '') + '</div>' +
+          '<div class="sub">' + esc(s.name||s.ticker) + ' · ' + kindLbl + ' idea</div>' +
         '</div>' +
-        '<span class="eng-tag">Kronos engine</span>' +
-        '<div class="cf"><div class="n" style="color:' + col + '">' + s.conf + '%</div><div class="l">conviction</div></div>' +
+        '<span class="eng-tag">Fluxi · Opus</span>' +
+        '<div class="cf"><div class="n" style="color:' + col + '">' + (s.conviction||0) + '%</div><div class="l">conviction</div></div>' +
       '</div>' +
-      '<div class="cbar"><i style="width:' + s.conf + '%;background:' + col + '"></i></div>' +
+      '<div class="cbar"><i style="width:' + (s.conviction||0) + '%;background:' + col + '"></i></div>' +
       '<div class="idea-body">' +
         '<div>' +
-          '<p class="thesis">' + s.thesis + '</p>' +
+          '<p class="thesis"><b>' + esc(s.headline||"") + '</b><br>' + esc(s.thesis||"") + '</p>' +
+          '<div class="brief-rows">' +
+            (s.catalyst ? '<div><span>Catalyst</span>' + esc(s.catalyst) + '</div>' : '') +
+            (s.risk ? '<div><span>Risk</span>' + esc(s.risk) + '</div>' : '') +
+          '</div>' +
           '<div class="kvs">' +
-            '<div class="kv"><div class="k">Entry</div><div class="v">' + fmt(s.entry) + '</div></div>' +
-            '<div class="kv"><div class="k">Stop</div><div class="v down">' + fmt(s.stop) + '</div></div>' +
+            '<div class="kv"><div class="k">Price</div><div class="v">' + fmt(s.price) + '</div></div>' +
             '<div class="kv"><div class="k">Target</div><div class="v up">' + fmt(s.target) + '</div></div>' +
-            '<div class="kv"><div class="k">R : R</div><div class="v">' + s.rr + '</div></div>' +
+            '<div class="kv"><div class="k">Horizon</div><div class="v">' + esc(s.horizon||"—") + '</div></div>' +
+            '<div class="kv"><div class="k">Type</div><div class="v">' + kindLbl + '</div></div>' +
           '</div>' +
         '</div>' +
         '<div class="idea-chart">' +
-          '<canvas id="' + cid + '" aria-label="Recent price trace for ' + s.t + '"></canvas>' +
+          '<canvas id="' + cid + '" aria-label="Recent trace for ' + esc(s.ticker) + '"></canvas>' +
           '<div class="cl">recent trace</div>' +
         '</div>' +
       '</div>' +
       '<div class="idea-foot">' +
-        '<button type="button" class="btn btn-primary btn-sm" data-paper="' + s.t + '" data-side="' + (long ? "buy" : "sell") + '">Paper trade ' + s.t + '</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + s.t + '">' + (F.Watch && F.Watch.has(s.t) ? "★ Watching" : "☆ Watch") + '</button>' +
-        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + s.t + '">Open in terminal</a>' +
+        '<button type="button" class="btn btn-primary btn-sm" data-paper="' + esc(s.ticker) + '" data-side="buy">Paper trade ' + esc(s.ticker) + '</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + esc(s.ticker) + '">' + (F.Watch && F.Watch.has(s.ticker) ? "★ Watching" : "☆ Watch") + '</button>' +
+        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + esc(s.ticker) + '">Open in terminal</a>' +
         '<a class="btn btn-ghost btn-sm" href="./ai.html">Ask Fluxi</a>' +
-        '<span class="gate"><b>✓</b> Model estimate · size to your own risk</span>' +
+        '<span class="gate"><b>✓</b> Model estimate · not advice</span>' +
       '</div>' +
-      '<p class="disclaimer" style="margin-top:12px">Paper trade — simulated fills on your $100k practice account. Not investment advice.</p>';
-    list.appendChild(el);
-    canvases.push({id: cid, seed: s.t, up: long, col: col});
-  });
+      '<p class="disclaimer" style="margin-top:12px">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
+    canvases.push({id: cid, seed: s.ticker, up: mom, col: col});
+    return el;
+  }
 
-  if(!picks.length && list){
-    list.innerHTML = '<div class="glass idea"><p class="thesis">Loading live setups…</p></div>';
+  function lockedCard(n){
+    var el = document.createElement("article");
+    el.className = "glass idea idea-locked reveal";
+    el.innerHTML =
+      '<div class="lock-in">' +
+        '<div class="lock-em">🔒</div>' +
+        '<div class="lock-tx"><b>' + n + ' more idea' + (n===1?"":"s") + ' today</b>' +
+          '<span>Full theses, catalysts, targets and conviction — free with an account.</span></div>' +
+        '<a class="btn btn-primary" href="./signin.html?next=trade-ideas.html">Sign in to unlock</a>' +
+      '</div>';
+    return el;
+  }
+
+  function renderServer(d){
+    if(!list) return;
+    list.innerHTML = ""; canvases = [];
+    (d.ideas||[]).forEach(function(s){ list.appendChild(serverCard(s)); });
+    var locked = Math.max(0, (d.total || d.ideas.length) - d.ideas.length);
+    if(!d.signedIn && locked > 0) list.appendChild(lockedCard(locked));
+    var cap = $("#feedCap");
+    if(cap && d.day) cap.textContent = "Today's ideas · " + (d.total || d.ideas.length) + " names · updated " + d.day;
+    drawAll();
+  }
+
+  /* Kronos fallback (used only if the daily server ideas aren't available). */
+  function renderKronos(){
+    if(!list) return;
+    var picks = K ? buildIdeas() : [];
+    list.innerHTML = ""; canvases = [];
+    picks.forEach(function(s, idx){
+      var long = s.long, col = long ? EM : CR, cid = "spark" + idx;
+      var el = document.createElement("article");
+      el.className = "glass idea reveal";
+      el.innerHTML =
+        '<div class="idea-top"><div class="av">' + s.t.slice(0,3) + '</div>' +
+          '<div class="id"><div class="tk">' + s.t + ' <span class="' + (long?"up":"down") + '" style="font-size:.85rem">' + s.mv + '</span></div>' +
+          '<div class="sub">' + s.name + ' · ' + (long?"long setup":"short setup") + '</div></div>' +
+          '<span class="eng-tag">Kronos engine</span>' +
+          '<div class="cf"><div class="n" style="color:' + col + '">' + s.conf + '%</div><div class="l">conviction</div></div></div>' +
+        '<div class="cbar"><i style="width:' + s.conf + '%;background:' + col + '"></i></div>' +
+        '<div class="idea-body"><div><p class="thesis">' + s.thesis + '</p>' +
+          '<div class="kvs"><div class="kv"><div class="k">Entry</div><div class="v">' + fmt(s.entry) + '</div></div>' +
+          '<div class="kv"><div class="k">Stop</div><div class="v down">' + fmt(s.stop) + '</div></div>' +
+          '<div class="kv"><div class="k">Target</div><div class="v up">' + fmt(s.target) + '</div></div>' +
+          '<div class="kv"><div class="k">R : R</div><div class="v">' + s.rr + '</div></div></div></div>' +
+          '<div class="idea-chart"><canvas id="' + cid + '"></canvas><div class="cl">recent trace</div></div></div>' +
+        '<div class="idea-foot"><button type="button" class="btn btn-primary btn-sm" data-paper="' + s.t + '" data-side="' + (long?"buy":"sell") + '">Paper trade ' + s.t + '</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + s.t + '">' + (F.Watch && F.Watch.has(s.t) ? "★ Watching" : "☆ Watch") + '</button>' +
+          '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + s.t + '">Open in terminal</a>' +
+          '<span class="gate"><b>✓</b> Model estimate · size to your own risk</span></div>' +
+        '<p class="disclaimer" style="margin-top:12px">Paper trade — simulated fills on your $100k practice account. Not investment advice.</p>';
+      list.appendChild(el);
+      canvases.push({id: cid, seed: s.t, up: long, col: col});
+    });
+    drawAll();
+  }
+
+  if(list) list.innerHTML = '<div class="glass idea"><p class="thesis">Loading today’s ideas…</p></div>';
+  if(window.FluxSupa && FluxSupa.tradeIdeas){
+    Promise.resolve(FluxSupa.tradeIdeas()).then(function(d){
+      if(d && d.ideas && d.ideas.length) renderServer(d);
+      else renderKronos();
+    }).catch(renderKronos);
+    // re-render when auth state changes (sign in unlocks the rest)
+    window.addEventListener("flux-auth", function(){ Promise.resolve(FluxSupa.tradeIdeas()).then(function(d){ if(d&&d.ideas&&d.ideas.length) renderServer(d); }); });
+  } else {
+    renderKronos();
   }
 
   /* ---- wire the action row: real paper orders + shared watchlist ---- */

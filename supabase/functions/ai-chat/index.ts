@@ -46,11 +46,20 @@ serve(async (req) => {
     const { question, context } = await req.json().catch(() => ({ question: "", context: {} }));
     if (!question || typeof question !== "string") return json({ text: null });
 
-    const model = Deno.env.get("FLUX_MODEL") || "claude-sonnet-5";
+    // ---- tiered model routing ----
+    // Light model (cheap/fast) for greetings, small talk and quick questions.
+    // Heavy model (most capable) for briefs, deep dives, comparisons and "overall thoughts".
+    const forced = Deno.env.get("FLUX_MODEL"); // optional: force one model for everything
+    const LIGHT = Deno.env.get("FLUX_MODEL_LIGHT") || "claude-haiku-4-5-20251001";
+    const HEAVY = Deno.env.get("FLUX_MODEL_HEAVY") || "claude-opus-5";
+    const heavy = isHeavy(question);
+    const model = forced || (heavy ? HEAVY : LIGHT);
+    const maxTokens = heavy ? 1600 : 400;
+
     const ctxStr = safeJson(context);
     const userMsg =
       `LIVE DESK CONTEXT (simulated data; may include recent_conversation for continuity):\n${ctxStr}\n\n` +
-      `USER MESSAGE: ${question.slice(0, 800)}`;
+      `USER MESSAGE: ${question.slice(0, 1200)}`;
 
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -61,7 +70,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model,
-        max_tokens: 600,
+        max_tokens: maxTokens,
         system: SYSTEM,
         messages: [{ role: "user", content: userMsg }],
       }),
@@ -76,7 +85,7 @@ serve(async (req) => {
     const text = Array.isArray(data?.content)
       ? data.content.filter((b: any) => b.type === "text").map((b: any) => b.text).join("\n").trim()
       : "";
-    return json({ text: text || null });
+    return json({ text: text || null, model, tier: heavy ? "heavy" : "light" });
   } catch (e) {
     console.error("ai-chat exception", String(e));
     return json({ text: null });
@@ -91,4 +100,10 @@ function json(body: unknown, status = 200) {
 }
 function safeJson(o: unknown) {
   try { return JSON.stringify(o).slice(0, 4000); } catch { return "{}"; }
+}
+// Classify a message as "heavy" (deep/long → top model) vs "light" (small talk → cheap model).
+function isHeavy(q: string): boolean {
+  const s = (q || "").toLowerCase();
+  if (q.length > 200) return true;
+  return /\b(brief|deep dive|deep-dive|in.?depth|detailed|in detail|analy(ze|sis|se)|thesis|overall|your thoughts|thoughts on|what do you think about|walk me through|explain|breakdown|break it down|full (run|rundown|report|breakdown)|rundown|report|outlook|compare|comparison|vs\.?|comprehensive|thorough|everything about|write (me )?a|essay|memo|strateg(y|ies)|pros and cons|deep|elaborate|summary of|summarize|research)\b/.test(s);
 }
