@@ -239,6 +239,33 @@
       }).catch(function(){ return null; });
   };
 
+  // ---- daily AI trade ideas (RLS-gated: anon sees only idx=1, the free teaser) ----
+  // Returns { day, ideas:[...], total, signedIn }. `ideas` is what THIS viewer may see;
+  // `total` (via a SECURITY DEFINER rpc) is the full count so we can show how many are locked.
+  S.tradeIdeas = function(){
+    if(!S.client) return Promise.resolve(null);
+    return Promise.resolve(S.client.rpc("ideas_today")).then(function(meta){
+      var m = meta && meta.data && meta.data[0];
+      var day = m && m.day;
+      var total = (m && +m.total) || 0;
+      if(!day){
+        // fall back to the newest day the viewer can see
+        return S.client.from("trade_ideas").select("day").order("day",{ascending:false}).limit(1)
+          .then(function(r){ var d = r&&r.data&&r.data[0]&&r.data[0].day; return d ? load(d, 0) : { day:null, ideas:[], total:0, signedIn:!!S._user }; });
+      }
+      return load(day, total);
+    }).catch(function(){ return null; });
+    function load(day, total){
+      return S.client.from("trade_ideas")
+        .select("idx,ticker,name,sector,kind,direction,price,target,conviction,horizon,headline,thesis,catalyst,risk")
+        .eq("day", day).order("idx",{ascending:true})
+        .then(function(res){
+          var ideas = (res&&res.data)||[];
+          return { day:day, ideas:ideas, total: total || ideas.length, signedIn: !!S._user };
+        });
+    }
+  };
+
   // ---- Fluxi memory (per-user learning store; jsonb blob) ----
   S.loadMemory = function(){
     if(!S.client || !S._user) return Promise.resolve(null);
