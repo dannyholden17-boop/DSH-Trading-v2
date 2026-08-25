@@ -81,6 +81,26 @@
   .lock-tx b{display:block;font-size:1.05rem}
   .lock-tx span{display:block;color:var(--text-faint);font-size:.86rem;margin-top:3px;max-width:38ch}
 
+  /* brief modal */
+  .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;
+    padding:20px;background:rgba(2,6,23,.72);backdrop-filter:blur(6px)}
+  .brief-modal.show{display:flex}
+  .brief-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:18px}
+  .bm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-2);
+    position:sticky;top:0;background:var(--glass);backdrop-filter:blur(12px);z-index:1}
+  .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:9px;
+    width:32px;height:32px;cursor:pointer;font-size:14px}
+  .bm-x:hover{color:var(--text);border-color:var(--cyan)}
+  .bm-body{padding:18px}
+  .bm-headline{font-size:1.05rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:16px}
+  .bm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+  @media(max-width:520px){.bm-row{grid-template-columns:1fr;gap:3px}}
+  .bm-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
+  .bm-v{font-size:.92rem;line-height:1.55;color:var(--text-dim)}
+  .bm-disc{margin-top:16px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
+  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line-2);
+    position:sticky;bottom:0;background:var(--glass);backdrop-filter:blur(12px)}
+
   /* ---- anatomy ---- */
   .anno{padding:18px}
   .anno > *{position:relative;z-index:1}
@@ -135,7 +155,7 @@
         the levels it lives and dies on, a confidence score you can interrogate, and a backtest that
         shows how the setup behaved the last thousand times it appeared.</p>
       <div class="btn-row">
-        <a class="btn btn-primary btn-lg" href="./terminal.html">See today's ideas</a>
+        <a class="btn btn-primary btn-lg" href="#feed">See today's ideas</a>
         <a class="btn btn-ghost btn-lg" href="./research.html">How the research works</a>
       </div>
       <div class="hero-note">
@@ -366,6 +386,21 @@
   </div>
 </section>
 
+<!-- brief modal -->
+<div class="brief-modal" id="briefModal" role="dialog" aria-modal="true" aria-labelledby="briefTitle">
+  <div class="brief-sheet glass">
+    <div class="bm-head">
+      <span class="pill live">Fluxi brief</span>
+      <h3 id="briefTitle" style="margin:0;font-size:1.05rem"></h3>
+      <button type="button" class="bm-x" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="bm-body" id="briefBody"></div>
+    <div class="bm-foot">
+      <button type="button" class="btn btn-primary btn-sm" id="briefDl">⬇ Download brief (.txt)</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-close>Close</button>
+    </div>
+  </div>
+</div>
 </main>
 
 <footer class="footer"><div class="wrap">
@@ -439,7 +474,9 @@ document.addEventListener("DOMContentLoaded", function(){
     var x = (p-pr)/pr; return (x>=0?"+":"") + (x*100).toFixed(1) + "%";
   }
 
+  var IDEAS = {};
   function serverCard(s){
+    IDEAS[s.ticker] = s;
     var mom = (s.kind||"") === "momentum", col = mom ? EM : CY, cid = "spark_" + s.ticker;
     var mv = liveMv(s.ticker), up = mv !== "" && mv.indexOf("-") < 0, kindLbl = mom ? "momentum" : "rebound";
     var el = document.createElement("article");
@@ -475,10 +512,11 @@ document.addEventListener("DOMContentLoaded", function(){
         '</div>' +
       '</div>' +
       '<div class="idea-foot">' +
-        '<button type="button" class="btn btn-primary btn-sm" data-paper="' + esc(s.ticker) + '" data-side="buy">Paper trade ' + esc(s.ticker) + '</button>' +
+        '<button type="button" class="btn btn-primary btn-sm" data-brief="' + esc(s.ticker) + '">📄 Read full brief</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-dlbrief="' + esc(s.ticker) + '">⬇ Download</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-paper="' + esc(s.ticker) + '" data-side="buy">Paper trade</button>' +
         '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + esc(s.ticker) + '">' + (F.Watch && F.Watch.has(s.ticker) ? "★ Watching" : "☆ Watch") + '</button>' +
-        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + esc(s.ticker) + '">Open in terminal</a>' +
-        '<a class="btn btn-ghost btn-sm" href="./ai.html">Ask Fluxi</a>' +
+        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + esc(s.ticker) + '">Terminal</a>' +
         '<span class="gate"><b>✓</b> Model estimate · not advice</span>' +
       '</div>' +
       '<p class="disclaimer" style="margin-top:12px">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
@@ -589,8 +627,67 @@ document.addEventListener("DOMContentLoaded", function(){
       if(pb){ placePaper(pb.getAttribute("data-paper"), pb.getAttribute("data-side"), pb); return; }
       var wb = ev.target.closest ? ev.target.closest("[data-watch]") : null;
       if(wb){ toggleWatch(wb.getAttribute("data-watch"), wb); return; }
+      var vb = ev.target.closest ? ev.target.closest("[data-brief]") : null;
+      if(vb){ openBrief(IDEAS[vb.getAttribute("data-brief")]); return; }
+      var db = ev.target.closest ? ev.target.closest("[data-dlbrief]") : null;
+      if(db){ downloadBrief(IDEAS[db.getAttribute("data-dlbrief")]); return; }
     });
   }
+
+  /* ---- brief: build, view (modal), download ---- */
+  function briefLines(s){
+    if(!s) return [];
+    var mv = liveMv(s.ticker);
+    return [
+      ["Idea", s.ticker + " — " + (s.name||s.ticker)],
+      ["Setup", ((s.kind||"")==="momentum"?"Momentum":"Rebound") + " · " + (s.horizon||"") + " horizon"],
+      ["Conviction", (s.conviction||0) + "%"],
+      ["Price now", "$" + (+s.price).toFixed(2) + (mv?(" ("+mv+" today)"):"")],
+      ["Directional target", "$" + (+s.target).toFixed(2)],
+      ["Thesis", s.thesis||""],
+      ["Catalyst", s.catalyst||""],
+      ["Risk", s.risk||""]
+    ];
+  }
+  function briefPlain(s){
+    var out = "FLUX — TRADE IDEA BRIEF\n" + (s.headline||"") + "\n" + "=".repeat(44) + "\n\n";
+    briefLines(s).forEach(function(r){ out += r[0].toUpperCase() + ":\n" + r[1] + "\n\n"; });
+    out += "-".repeat(44) + "\nSimulated / educational idea on a paper account. Not investment advice; " +
+      "no promise of return or timing. Generated by Fluxi (Flux AI desk). Prices may be delayed or simulated.\n" +
+      "dsh-trading.com\n";
+    return out;
+  }
+  function downloadBrief(s){
+    if(!s) return;
+    try{
+      var blob = new Blob([briefPlain(s)], {type:"text/plain;charset=utf-8"});
+      var url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url; a.download = "flux-brief-" + s.ticker + ".txt";
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+      if(F.toast) F.toast("⬇️ Downloaded the " + s.ticker + " brief.");
+    }catch(e){}
+  }
+  function openBrief(s){
+    if(!s) return;
+    var m = $("#briefModal"), body = $("#briefBody"), ttl = $("#briefTitle");
+    if(!m) return;
+    ttl.textContent = s.ticker + " — " + (s.name||s.ticker);
+    body.innerHTML = '<p class="bm-headline">' + esc(s.headline||"") + '</p>' +
+      briefLines(s).map(function(r){
+        return '<div class="bm-row"><div class="bm-k">' + esc(r[0]) + '</div><div class="bm-v">' + esc(r[1]) + '</div></div>';
+      }).join("") +
+      '<p class="bm-disc">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
+    var dl = $("#briefDl"); if(dl) dl.onclick = function(){ downloadBrief(s); };
+    m.classList.add("show");
+  }
+  (function(){
+    var m = $("#briefModal");
+    if(m){
+      m.addEventListener("click", function(ev){ if(ev.target === m || (ev.target.closest && ev.target.closest("[data-close]"))) m.classList.remove("show"); });
+      document.addEventListener("keydown", function(ev){ if(ev.key === "Escape") m.classList.remove("show"); });
+    }
+  })();
 
   /* ---- sparklines ---- */
   function drawAll(){
