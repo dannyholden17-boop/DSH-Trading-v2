@@ -12,6 +12,7 @@
 <script src="./assets/flux-feed.js?v=9" defer></script>
 <script src="./assets/flux-fund.js?v=9" defer></script>
 <script src="./assets/flux-kronos.js?v=9" defer></script>
+<script src="./assets/flux-tv.js?v=9" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}
@@ -189,6 +190,7 @@
               <th scope="col">Symbol</th>
               <th scope="col">Last</th>
               <th scope="col">Chg %</th>
+              <th scope="col" title="TradingView technical rating">TV</th>
               <th scope="col">Volume</th>
               <th scope="col">Rel vol</th>
               <th scope="col">1D</th>
@@ -463,10 +465,25 @@ document.addEventListener("DOMContentLoaded", function(){
         '<td class="tk-cell"><b>'+u.s+'</b><span>'+u.n+'</span></td>'+
         '<td class="mono"><span class="val'+(reduce?"":fl)+'">'+u.p.toFixed(2)+'</span></td>'+
         '<td class="mono '+cls+'">'+sgn(u.chg)+'%</td>'+
+        '<td class="mono tvcell" data-sym="'+u.s+'" style="color:var(--text-faint)">·</td>'+
         '<td class="mono faint">'+vol(u.v)+'</td>'+
         '<td class="mono" style="color:'+(u.rvol>=2?"var(--cyan)":"var(--text-dim)")+'">'+u.rvol.toFixed(2)+'×</td>'+
         '<td>'+spark(u)+'</td></tr>';
     }).join("");
+    tvPaint();
+  }
+  function tvPaint(){
+    if(!window.FLUX || !FLUX.TV || !body) return;
+    var syms = rows().map(function(u){ return u.s; });
+    FLUX.TV.scan(syms).then(function(res){
+      var by = {}; (res||[]).forEach(function(r){ by[r.symbol] = r; });
+      body.querySelectorAll(".tvcell").forEach(function(td){
+        var r = by[td.getAttribute("data-sym")];
+        if(!r){ td.textContent = "—"; td.style.color = "var(--text-faint)"; return; }
+        td.textContent = r.label;
+        td.style.color = FLUX.TV.color(r.score);
+      });
+    });
   }
   renderMovers(false);
 

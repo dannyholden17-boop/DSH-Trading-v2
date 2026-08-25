@@ -14,6 +14,7 @@
 <script src="./assets/flux-feed.js?v=9" defer></script>
 <script src="./assets/flux-fund.js?v=9" defer></script>
 <script src="./assets/flux-kronos.js?v=9" defer></script>
+<script src="./assets/flux-tv.js?v=9" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -317,6 +318,7 @@
           <div class="tm-hprice">
             <span class="big" id="tmPrice">—</span>
             <span class="chg" id="tmPriceChg">—</span>
+            <span id="tmTV" title="TradingView technical rating" style="font-family:var(--f-mono);font-size:.72rem;margin-left:12px;white-space:nowrap;color:var(--text-faint)"></span>
           </div>
           <div class="tm-chtools" aria-hidden="true">
             <span class="tm-chtool" title="Candles">▤</span>
@@ -840,6 +842,16 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   /* ---------- orchestration ---------- */
+  function tvUpdate(){
+    var el=document.getElementById("tmTV"); if(!el||!window.FLUX||!FLUX.TV) return;
+    var t=ACTIVE; el.textContent="TV …"; el.style.color="var(--text-faint)";
+    FLUX.TV.rating(t).then(function(tv){
+      if(ACTIVE!==t) return;                       // symbol changed while loading
+      if(!tv){ el.textContent=""; return; }
+      el.textContent="TV: "+tv.label+(tv.score!=null?(" ("+tv.score.toFixed(2)+")"):"");
+      el.style.color=FLUX.TV.color(tv.score);
+    });
+  }
   function renderSymbol(){
     rebuildCandles();
     paintHeader(false);
@@ -851,6 +863,7 @@ document.addEventListener("DOMContentLoaded", function(){
     paintWatch();
     paintAccount();
     drawAcctSpark();
+    tvUpdate();
   }
   function renderAll(){
     renderSymbol();
