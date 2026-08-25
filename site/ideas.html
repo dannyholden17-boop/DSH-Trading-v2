@@ -15,80 +15,76 @@
 <script src="./assets/flux-fund.js?v=7" defer></script>
 <script src="./assets/flux-kronos.js?v=7" defer></script>
 <style>
-  .id-shell{max-width:1080px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,30px)}
-  .id-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
-  .id-head h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.6rem);letter-spacing:-.02em;line-height:1.05}
-  .id-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;
+  /* single-screen, no page scroll */
+  html,body{height:100%}
+  body{overflow:hidden;display:flex;flex-direction:column}
+  .id-shell{flex:1;min-height:0;display:flex;flex-direction:column;
+    max-width:1080px;width:100%;margin-inline:auto;padding:14px var(--gutter) 10px}
+  .id-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .id-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--emerald);border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.08);
-    padding:5px 12px;border-radius:100px;font-weight:700}
-  .id-live .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:idp 1.6s infinite}
-  @keyframes idp{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
-  .id-sub{color:var(--text-dim);max-width:66ch;margin-top:6px}
-  .id-cap{font-family:var(--f-mono);font-size:.8rem;color:var(--text-faint);margin-top:2px}
+    padding:4px 11px;border-radius:100px;font-weight:700}
+  .id-live .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);animation:idp 1.6s infinite}
+  @keyframes idp{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  .id-head h1{font-size:clamp(1.2rem,1rem + 1.2vw,1.7rem);letter-spacing:-.02em;line-height:1;margin:0}
+  .id-cap{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);margin-left:auto}
 
-  /* idea cards */
-  .ideas{display:flex;flex-direction:column;gap:16px;margin-top:22px}
-  .idea{padding:20px}
-  .idea > *{position:relative;z-index:1}
-  .idea-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .idea-top .av{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;
-    font-family:var(--f-mono);font-weight:700;font-size:12px;border:1px solid var(--line);
-    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.18),rgba(139,92,246,.12))}
-  .idea-top .id{min-width:0}
-  .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
-  .idea-top .sub{font-size:.8rem;color:var(--text-faint);margin-top:2px}
-  .eng-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:4px 9px;border-radius:6px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
-  .idea-top .cf{margin-left:auto;text-align:right;flex:none}
-  .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;line-height:1}
-  .idea-top .cf .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
-  .cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:14px 0 16px}
-  .cbar i{display:block;height:100%;border-radius:3px}
-  .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
-  @media(max-width:760px){.idea-body{grid-template-columns:1fr;gap:16px}}
-  .thesis{font-size:.95rem;color:var(--text-dim);line-height:1.6}
-  .brief-rows{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
-  .brief-rows > div{font-size:.86rem;line-height:1.5;color:var(--text-dim);padding-left:76px;position:relative}
-  .brief-rows span{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--text-faint);width:66px}
-  @media(max-width:560px){.brief-rows > div{padding-left:0}.brief-rows span{position:static;display:block;margin-bottom:2px}}
-  .kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
-  @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}}
-  .kv{border:1px solid var(--line-2);border-radius:11px;background:var(--well);padding:9px 10px;min-width:0}
-  .kv .k{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
-  .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.92rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
-  .idea-chart{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:10px}
-  .idea-chart canvas{width:100%;height:118px;display:block}
-  .idea-chart .cl{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:8px}
-  .idea-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:15px;border-top:1px solid var(--line-2)}
-  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
-    color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
-  .idea-foot .gate b{color:var(--emerald);font-weight:700}
-  @media(max-width:560px){.idea-foot .gate{margin-left:0;width:100%}}
-  .idea-locked{display:flex;align-items:center;justify-content:center;min-height:150px;border-style:dashed !important;
-    background:linear-gradient(180deg,rgba(0,242,255,.04),transparent)}
-  .lock-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;text-align:left;padding:16px}
-  .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(0,242,255,.4))}
-  .lock-tx b{display:block;font-size:1.05rem}
-  .lock-tx span{display:block;color:var(--text-faint);font-size:.86rem;margin-top:3px;max-width:38ch}
+  /* fit area — content scales to fit, never scrolls */
+  .id-fit{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:10px}
+  .id-stack{width:100%;display:flex;flex-direction:column;gap:9px;transform-origin:top center}
+
+  /* compact stacked idea row */
+  .irow{display:grid;grid-template-columns:170px 1fr auto;gap:16px;align-items:center;padding:12px 16px;cursor:pointer;
+    transition:border-color .15s,transform .15s}
+  .irow:hover{border-color:rgba(0,242,255,.4);transform:translateY(-1px)}
+  .ir-lead{display:flex;align-items:center;gap:11px;min-width:0}
+  .ir-av{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
+    font-weight:700;font-size:11px;border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.18),rgba(139,92,246,.12))}
+  .ir-tk{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em;display:flex;align-items:baseline;gap:7px}
+  .ir-tk .mv{font-size:.78rem;font-weight:600}
+  .ir-kind{font-size:.72rem;color:var(--text-faint);margin-top:2px;text-transform:capitalize}
+  .ir-mid{min-width:0}
+  .ir-head{font-size:.92rem;font-weight:600;color:var(--text);line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ir-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:5px;font-family:var(--f-mono);font-size:.76rem;color:var(--text-dim)}
+  .ir-meta b{color:var(--emerald)}
+  .ir-conf{display:inline-flex;align-items:center;gap:6px;color:var(--text-faint)}
+  .ir-conf .bar{width:46px;height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+  .ir-conf .bar i{display:block;height:100%;border-radius:3px}
+  .ir-act{display:flex;align-items:center;gap:7px;flex:none}
+  .ir-act .btn{padding:6px 11px;font-size:.78rem}
+  .ir-brief{font-family:var(--f-mono);font-size:.74rem;color:var(--cyan);font-weight:700;white-space:nowrap}
+  @media(max-width:720px){
+    .irow{grid-template-columns:1fr auto;gap:10px}
+    .ir-mid{grid-column:1 / -1;order:3}
+    .ir-lead{order:1}.ir-act{order:2}
+  }
+  .irow.locked{cursor:default;border-style:dashed;justify-content:center;grid-template-columns:1fr}
+  .irow.locked .lk{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+  .irow.locked .lk .em{font-size:22px}
+  .irow.locked .lk b{font-size:.98rem}
+  .irow.locked .lk span{color:var(--text-faint);font-size:.82rem}
+
+  .id-foot{font-size:.68rem;color:var(--text-faint);text-align:center;padding:6px 0 2px;line-height:1.4}
+  .id-foot a{color:var(--text-dim)}
 
   /* brief modal */
   .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px;
     background:rgba(2,6,23,.72);backdrop-filter:blur(6px)}
   .brief-modal.show{display:flex}
-  .brief-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:18px}
-  .bm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-2);
+  .brief-sheet{width:min(600px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:18px}
+  .bm-head{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line-2);
     position:sticky;top:0;background:var(--glass);backdrop-filter:blur(12px);z-index:1}
   .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:9px;width:32px;height:32px;cursor:pointer;font-size:14px}
   .bm-x:hover{color:var(--text);border-color:var(--cyan)}
   .bm-body{padding:18px}
-  .bm-headline{font-size:1.05rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:16px}
-  .bm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+  .bm-headline{font-size:1.02rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:14px}
+  .bm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-2)}
   @media(max-width:520px){.bm-row{grid-template-columns:1fr;gap:3px}}
   .bm-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
   .bm-v{font-size:.92rem;line-height:1.55;color:var(--text-dim)}
-  .bm-disc{margin-top:16px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
-  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line-2);position:sticky;bottom:0;background:var(--glass);backdrop-filter:blur(12px)}
+  .bm-disc{margin-top:14px;font-size:.75rem;color:var(--text-faint);line-height:1.5}
+  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--line-2);position:sticky;bottom:0;background:var(--glass);backdrop-filter:blur(12px)}
 </style>
 </head>
 <body>
@@ -115,29 +111,18 @@
   </div>
 </header>
 
-<main id="top">
 <div class="id-shell">
   <div class="id-head">
-    <div>
-      <span class="id-live"><span class="dot"></span>Today's AI ideas</span>
-      <h1 style="margin-top:12px">Fresh trade ideas, every day.</h1>
-    </div>
-    <a class="btn btn-ghost btn-sm" href="./trade-ideas.html" style="margin-left:auto">How the research works →</a>
+    <span class="id-live"><span class="dot"></span>Today's AI ideas</span>
+    <h1>Fresh ideas, every day.</h1>
+    <span class="id-cap" id="feedCap"></span>
   </div>
-  <p class="id-sub">Each morning Fluxi scans the market — momentum leaders and beaten-down names with rebound
-    potential — and writes a full brief for each: thesis, catalyst, risk, and conviction. <b>The first is free; sign in to see them all.</b></p>
-  <p class="id-cap" id="feedCap"></p>
 
-  <div class="ideas" id="ideaList"></div>
-
-  <p class="disclaimer" style="margin-top:24px">Ideas are simulated / educational, generated by the Flux AI desk on live or delayed
-    market data. They are not recommendations, not personalised, and not a solicitation to buy or sell any security. Conviction
-    describes model agreement — not the probability of profit. Flux is not a broker-dealer and this is not investment advice.</p>
-
-  <div class="btn-row" style="margin-top:22px">
-    <a class="btn btn-primary" href="./terminal.html">Open the paper desk →</a>
-    <a class="btn btn-ghost" href="./ai.html">Ask Fluxi about a name</a>
+  <div class="id-fit">
+    <div class="id-stack" id="ideaList"></div>
   </div>
+
+  <p class="id-foot">Simulated / educational · not investment advice · <a href="./trade-ideas.html">how it works</a> · <a href="./ai.html">ask Fluxi</a></p>
 </div>
 
 <!-- brief modal -->
@@ -145,112 +130,90 @@
   <div class="brief-sheet glass">
     <div class="bm-head">
       <span class="pill live">Fluxi brief</span>
-      <h3 id="briefTitle" style="margin:0;font-size:1.05rem"></h3>
+      <h3 id="briefTitle" style="margin:0;font-size:1.02rem"></h3>
       <button type="button" class="bm-x" data-close aria-label="Close">✕</button>
     </div>
     <div class="bm-body" id="briefBody"></div>
     <div class="bm-foot">
       <button type="button" class="btn btn-primary btn-sm" id="briefDl">⬇ Download brief (.txt)</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="briefPaper">Paper trade</button>
       <button type="button" class="btn btn-ghost btn-sm" data-close>Close</button>
     </div>
   </div>
 </div>
-</main>
-
-<footer class="footer"><div class="wrap">
-  <div class="footer-grid">
-    <div>
-      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
-      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
-    </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./fund.html">Flux Fund</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Trade Ideas</a><a href="./trade-ideas.html">How it works</a><a href="./news.html">AI News</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
-  </div>
-  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trade ideas are simulated / educational and hypothetical. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
-  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
-</div></footer>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   "use strict";
   var F = window.FLUX || {};
   var $ = function(s,r){ return (r||document).querySelector(s); };
-  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
-  function fmt(n){ return (+n).toFixed(2); }
+  var EM = F.EM || "#10b981", CY = F.CY || "#00f2ff";
+  function fmt(n){ return "$" + (+n).toLocaleString(undefined,{maximumFractionDigits:(+n<10?2:0)}); }
   function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function liveMv(t){ var p=F.priceOf&&F.priceOf(t), pr=F.prevClose&&F.prevClose(t); if(!p||!pr) return ""; var x=(p-pr)/pr; return (x>=0?"+":"")+(x*100).toFixed(1)+"%"; }
 
-  var list = $("#ideaList"), canvases = [], IDEAS = {};
+  var list = $("#ideaList"), IDEAS = {};
 
-  function serverCard(s){
+  function row(s){
     IDEAS[s.ticker] = s;
-    var mom = (s.kind||"")==="momentum", col = mom?EM:CY, cid = "spark_"+s.ticker;
-    var mv = liveMv(s.ticker), up = mv!=="" && mv.indexOf("-")<0, kindLbl = mom?"momentum":"rebound";
-    var el = document.createElement("article"); el.className = "glass idea reveal";
+    var mom = (s.kind||"")==="momentum", col = mom?EM:CY;
+    var mv = liveMv(s.ticker), up = mv!=="" && mv.indexOf("-")<0;
+    var el = document.createElement("div");
+    el.className = "glass irow reveal"; el.setAttribute("data-brief", s.ticker);
     el.innerHTML =
-      '<div class="idea-top"><div class="av">'+esc(s.ticker.slice(0,3))+'</div>'+
-        '<div class="id"><div class="tk">'+esc(s.ticker)+(mv?' <span class="'+(up?"up":"down")+'" style="font-size:.85rem">'+mv+' today</span>':'')+'</div>'+
-        '<div class="sub">'+esc(s.name||s.ticker)+' · '+kindLbl+' idea</div></div>'+
-        '<span class="eng-tag">Fluxi · Opus</span>'+
-        '<div class="cf"><div class="n" style="color:'+col+'">'+(s.conviction||0)+'%</div><div class="l">conviction</div></div></div>'+
-      '<div class="cbar"><i style="width:'+(s.conviction||0)+'%;background:'+col+'"></i></div>'+
-      '<div class="idea-body"><div>'+
-        '<p class="thesis"><b>'+esc(s.headline||"")+'</b><br>'+esc(s.thesis||"")+'</p>'+
-        '<div class="brief-rows">'+(s.catalyst?'<div><span>Catalyst</span>'+esc(s.catalyst)+'</div>':'')+(s.risk?'<div><span>Risk</span>'+esc(s.risk)+'</div>':'')+'</div>'+
-        '<div class="kvs">'+
-          '<div class="kv"><div class="k">Price</div><div class="v">'+fmt(s.price)+'</div></div>'+
-          '<div class="kv"><div class="k">Target</div><div class="v up">'+fmt(s.target)+'</div></div>'+
-          '<div class="kv"><div class="k">Horizon</div><div class="v">'+esc(s.horizon||"—")+'</div></div>'+
-          '<div class="kv"><div class="k">Type</div><div class="v">'+kindLbl+'</div></div>'+
-        '</div></div>'+
-        '<div class="idea-chart"><canvas id="'+cid+'" aria-label="Recent trace for '+esc(s.ticker)+'"></canvas><div class="cl">recent trace</div></div>'+
-      '</div>'+
-      '<div class="idea-foot">'+
-        '<button type="button" class="btn btn-primary btn-sm" data-brief="'+esc(s.ticker)+'">📄 Read full brief</button>'+
-        '<button type="button" class="btn btn-ghost btn-sm" data-dlbrief="'+esc(s.ticker)+'">⬇ Download</button>'+
-        '<button type="button" class="btn btn-ghost btn-sm" data-paper="'+esc(s.ticker)+'" data-side="buy">Paper trade</button>'+
-        '<button type="button" class="btn btn-ghost btn-sm" data-watch="'+esc(s.ticker)+'">'+(F.Watch&&F.Watch.has(s.ticker)?"★ Watching":"☆ Watch")+'</button>'+
-        '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol='+esc(s.ticker)+'">Terminal</a>'+
-        '<span class="gate"><b>✓</b> Model estimate · not advice</span>'+
-      '</div>'+
-      '<p class="disclaimer" style="margin-top:12px">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
-    canvases.push({id:cid, seed:s.ticker, up:mom, col:col});
+      '<div class="ir-lead"><div class="ir-av">'+esc(s.ticker.slice(0,3))+'</div>'+
+        '<div><div class="ir-tk">'+esc(s.ticker)+(mv?' <span class="mv '+(up?"up":"down")+'">'+mv+'</span>':'')+'</div>'+
+        '<div class="ir-kind">'+(mom?"momentum":"rebound")+' · '+esc(s.horizon||"")+'</div></div></div>'+
+      '<div class="ir-mid"><div class="ir-head">'+esc(s.headline||s.thesis||"")+'</div>'+
+        '<div class="ir-meta"><span>'+fmt(s.price)+' → <b>'+fmt(s.target)+'</b></span>'+
+        '<span class="ir-conf"><span class="bar"><i style="width:'+(s.conviction||0)+'%;background:'+col+'"></i></span>'+(s.conviction||0)+'%</span></div></div>'+
+      '<div class="ir-act">'+
+        '<button type="button" class="btn btn-ghost btn-sm" data-paper="'+esc(s.ticker)+'" data-side="buy">Paper</button>'+
+        '<button type="button" class="btn btn-ghost btn-sm" data-watch="'+esc(s.ticker)+'">'+(F.Watch&&F.Watch.has(s.ticker)?"★":"☆")+'</button>'+
+        '<span class="ir-brief">Brief ›</span>'+
+      '</div>';
     return el;
   }
-  function lockedCard(n){
-    var el = document.createElement("article"); el.className = "glass idea idea-locked reveal";
-    el.innerHTML = '<div class="lock-in"><div class="lock-em">🔒</div>'+
-      '<div class="lock-tx"><b>'+n+' more idea'+(n===1?"":"s")+' today</b><span>Full theses, catalysts, targets and conviction — free with an account.</span></div>'+
-      '<a class="btn btn-primary" href="./signin.html?next=ideas.html">Sign in to unlock</a></div>';
+  function lockedRow(n){
+    var el = document.createElement("div"); el.className = "glass irow locked reveal";
+    el.innerHTML = '<div class="lk"><span class="em">🔒</span><b>'+n+' more idea'+(n===1?"":"s")+' today</b>'+
+      '<span>Full briefs, targets & conviction — free with an account.</span>'+
+      '<a class="btn btn-primary btn-sm" href="./signin.html?next=ideas.html">Sign in to unlock</a></div>';
     return el;
   }
-  function renderServer(d){
-    if(!list) return; list.innerHTML = ""; canvases = [];
-    (d.ideas||[]).forEach(function(s){ list.appendChild(serverCard(s)); });
+  function render(d){
+    if(!list) return; list.innerHTML = "";
+    (d.ideas||[]).forEach(function(s){ list.appendChild(row(s)); });
     var locked = Math.max(0, (d.total||d.ideas.length) - d.ideas.length);
-    if(!d.signedIn && locked>0) list.appendChild(lockedCard(locked));
-    var cap = $("#feedCap"); if(cap && d.day) cap.textContent = "Updated "+d.day+" · "+(d.total||d.ideas.length)+" ideas today";
-    drawAll();
+    if(!d.signedIn && locked>0) list.appendChild(lockedRow(locked));
+    var cap = $("#feedCap"); if(cap && d.day) cap.textContent = "Updated "+d.day+" · "+(d.total||d.ideas.length)+" ideas";
+    fit();
+  }
+  function renderKronos(){
+    var K = F.Kronos, picks = K ? K.rank(F.PRICES?Object.keys(F.PRICES):[]).slice(0,6) : [];
+    if(!picks.length){ list.innerHTML='<div class="glass irow" style="justify-content:center;grid-template-columns:1fr"><span style="text-align:center;color:var(--text-faint)">Today’s ideas are being prepared — check back shortly, or <a href="./signin.html" style="color:var(--cyan)">sign in</a>.</span></div>'; fit(); return; }
+    render({ day:null, total:picks.length, signedIn:true, ideas: picks.map(function(r){ var t=r.ticker,f=K.forecast(t),px=F.priceOf(t),long=r.predReturn>=0;
+      return {ticker:t,name:(F.NAMES&&F.NAMES[t])||t,kind:long?"momentum":"rebound",price:px,target:f?f.predClose:px*(1+r.predReturn),conviction:Math.round(r.confidence),horizon:"weeks",
+        headline:(long?"Kronos sees upside in ":"Kronos flags risk in ")+t,thesis:"Model estimate from the ensemble.",catalyst:"Model signal.",risk:"Model estimate; markets can move against it."}; }) });
   }
 
-  /* Kronos fallback so the page is never empty (used only if the daily server ideas aren't available) */
-  function renderKronos(){
-    if(!list) return; var K = F.Kronos, picks = K ? K.rank(F.PRICES?Object.keys(F.PRICES):[]).slice(0,5) : [];
-    if(!picks.length){ list.innerHTML = '<div class="glass idea"><p class="thesis">Today’s ideas are being prepared — check back shortly, or <a href="./signin.html" style="color:var(--cyan)">sign in</a>.</p></div>'; return; }
-    list.innerHTML = ""; canvases = [];
-    picks.forEach(function(r){
-      var t=r.ticker, f=K.forecast(t), px=F.priceOf(t), long=r.predReturn>=0, col=long?EM:CR, cid="spark_"+t;
-      var s={ticker:t,name:(F.NAMES&&F.NAMES[t])||t,kind:long?"momentum":"rebound",price:px,target:f?f.predClose:px*(1+r.predReturn),
-        conviction:Math.round(r.confidence),horizon:"weeks",
-        headline:(long?"Kronos sees upside in ":"Kronos flags downside risk in ")+t,
-        thesis:(long?"Model forecasts upside toward $"+(f?f.predClose:px).toFixed(2)+".":"Model forecasts a pullback."),
-        catalyst:"Model signal across the ensemble.",risk:"Model estimate; markets can move against it."};
-      list.appendChild(serverCard(s));
-    });
-    drawAll();
+  /* auto fit-to-screen: scale the stack so it never scrolls */
+  function fit(){
+    var wrap = $(".id-fit"), stack = $("#ideaList");
+    if(!wrap || !stack) return;
+    stack.style.transform = "scale(1)";
+    var availH = wrap.clientHeight, availW = wrap.clientWidth;
+    var needH = stack.scrollHeight, needW = stack.scrollWidth;
+    if(!needH || !availH) return;
+    var scale = Math.min(1, availH/needH, availW/needW);
+    scale = Math.max(0.45, scale);
+    stack.style.transform = "scale("+scale+")";
   }
+  var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt=setTimeout(fit, 120); });
+  window.addEventListener("flux-prices", function(){ /* refresh live % without re-fitting layout */
+    var q = document.querySelectorAll(".irow[data-brief]");
+    q.forEach(function(el){ var t=el.getAttribute("data-brief"), s=IDEAS[t]; if(!s) return; var mv=liveMv(t), sp=el.querySelector(".ir-tk .mv"); if(sp&&mv){ sp.textContent=mv; sp.className="mv "+(mv.indexOf("-")<0?"up":"down"); } });
+  });
 
   /* brief: build / view / download */
   function briefLines(s){ if(!s) return []; var mv=liveMv(s.ticker);
@@ -259,40 +222,40 @@ document.addEventListener("DOMContentLoaded", function(){
       ["Directional target","$"+(+s.target).toFixed(2)],["Thesis",s.thesis||""],["Catalyst",s.catalyst||""],["Risk",s.risk||""]]; }
   function briefPlain(s){ var out="FLUX — TRADE IDEA BRIEF\n"+(s.headline||"")+"\n"+"=".repeat(44)+"\n\n";
     briefLines(s).forEach(function(r){ out+=r[0].toUpperCase()+":\n"+r[1]+"\n\n"; });
-    return out+"-".repeat(44)+"\nSimulated / educational idea on a paper account. Not investment advice; no promise of return or timing. Generated by Fluxi (Flux AI desk). Prices may be delayed or simulated.\ndsh-trading.com\n"; }
+    return out+"-".repeat(44)+"\nSimulated / educational idea on a paper account. Not investment advice; no promise of return or timing. Generated by Fluxi (Flux AI desk).\ndsh-trading.com\n"; }
   function downloadBrief(s){ if(!s) return; try{ var blob=new Blob([briefPlain(s)],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
     a.href=url; a.download="flux-brief-"+s.ticker+".txt"; document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },100); if(F.toast) F.toast("⬇️ Downloaded the "+s.ticker+" brief."); }catch(e){} }
-  function openBrief(s){ if(!s) return; var m=$("#briefModal"), body=$("#briefBody"), ttl=$("#briefTitle"); if(!m) return;
+  var CURRENT = null;
+  function openBrief(s){ if(!s) return; CURRENT = s; var m=$("#briefModal"), body=$("#briefBody"), ttl=$("#briefTitle"); if(!m) return;
     ttl.textContent=s.ticker+" — "+(s.name||s.ticker);
     body.innerHTML='<p class="bm-headline">'+esc(s.headline||"")+'</p>'+briefLines(s).map(function(r){ return '<div class="bm-row"><div class="bm-k">'+esc(r[0])+'</div><div class="bm-v">'+esc(r[1])+'</div></div>'; }).join("")+
       '<p class="bm-disc">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
-    var dl=$("#briefDl"); if(dl) dl.onclick=function(){ downloadBrief(s); }; m.classList.add("show"); }
-  (function(){ var m=$("#briefModal"); if(m){ m.addEventListener("click", function(ev){ if(ev.target===m || (ev.target.closest&&ev.target.closest("[data-close]"))) m.classList.remove("show"); });
-    document.addEventListener("keydown", function(ev){ if(ev.key==="Escape") m.classList.remove("show"); }); } })();
+    m.classList.add("show"); }
+  $("#briefDl").addEventListener("click", function(){ downloadBrief(CURRENT); });
+  $("#briefPaper").addEventListener("click", function(){ if(CURRENT) placePaper(CURRENT.ticker, "buy", this); });
+  (function(){ var m=$("#briefModal"); m.addEventListener("click", function(ev){ if(ev.target===m || (ev.target.closest&&ev.target.closest("[data-close]"))) m.classList.remove("show"); });
+    document.addEventListener("keydown", function(ev){ if(ev.key==="Escape") m.classList.remove("show"); }); })();
 
   /* actions */
   function placePaper(ticker, side, btn){ var Book=window.FLUXBook; if(!Book||!Book.place){ if(F.toast)F.toast("Paper book unavailable"); return; }
     var px=F.priceOf?F.priceOf(ticker):0, qty=Math.max(1,Math.round(1500/(px||1)));
     var res=Book.place({side:side,ticker:ticker,qty:qty,type:"market"});
-    if(res&&res.ok){ btn.textContent="✓ Added to paper book"; btn.classList.remove("btn-primary"); btn.classList.add("btn-ghost"); btn.disabled=true; } }
-  function toggleWatch(ticker, btn){ if(!F.Watch||!F.Watch.toggle) return; F.Watch.toggle(ticker); btn.textContent=F.Watch.has(ticker)?"★ Watching":"☆ Watch"; }
+    if(res&&res.ok && btn){ btn.textContent="✓ Added"; btn.disabled=true; } }
+  function toggleWatch(ticker, btn){ if(!F.Watch||!F.Watch.toggle) return; F.Watch.toggle(ticker); if(btn) btn.textContent=F.Watch.has(ticker)?"★":"☆"; }
   if(list){ list.addEventListener("click", function(ev){
     var g=function(a){ return ev.target.closest?ev.target.closest("["+a+"]"):null; };
-    var pb=g("data-paper"); if(pb){ placePaper(pb.getAttribute("data-paper"),pb.getAttribute("data-side"),pb); return; }
-    var wb=g("data-watch"); if(wb){ toggleWatch(wb.getAttribute("data-watch"),wb); return; }
-    var vb=g("data-brief"); if(vb){ openBrief(IDEAS[vb.getAttribute("data-brief")]); return; }
-    var db=g("data-dlbrief"); if(db){ downloadBrief(IDEAS[db.getAttribute("data-dlbrief")]); return; }
+    var pb=g("data-paper"); if(pb){ ev.stopPropagation(); placePaper(pb.getAttribute("data-paper"),pb.getAttribute("data-side"),pb); return; }
+    var wb=g("data-watch"); if(wb){ ev.stopPropagation(); toggleWatch(wb.getAttribute("data-watch"),wb); return; }
+    var br=g("data-brief"); if(br){ openBrief(IDEAS[br.getAttribute("data-brief")]); return; }
   }); }
 
-  function drawAll(){ if(!F.drawArea) return; canvases.forEach(function(c){ var cv=document.getElementById(c.id); if(cv) F.drawArea(cv,c.seed,40,c.up,c.up?CY:CR); }); }
-  window.addEventListener("resize", function(){ drawAll(); });
-
-  if(list) list.innerHTML = '<div class="glass idea"><p class="thesis">Loading today’s ideas…</p></div>';
+  list.innerHTML = '<div class="glass irow" style="justify-content:center;grid-template-columns:1fr"><span style="text-align:center;color:var(--text-faint)">Loading today’s ideas…</span></div>';
   if(window.FluxSupa && FluxSupa.tradeIdeas){
-    Promise.resolve(FluxSupa.tradeIdeas()).then(function(d){ if(d&&d.ideas&&d.ideas.length) renderServer(d); else renderKronos(); }).catch(renderKronos);
-    window.addEventListener("flux-auth", function(){ Promise.resolve(FluxSupa.tradeIdeas()).then(function(d){ if(d&&d.ideas&&d.ideas.length) renderServer(d); }); });
+    Promise.resolve(FluxSupa.tradeIdeas()).then(function(d){ if(d&&d.ideas&&d.ideas.length) render(d); else renderKronos(); }).catch(renderKronos);
+    window.addEventListener("flux-auth", function(){ Promise.resolve(FluxSupa.tradeIdeas()).then(function(d){ if(d&&d.ideas&&d.ideas.length) render(d); }); });
   } else { renderKronos(); }
+  setTimeout(fit, 400); setTimeout(fit, 1200);
 });
 </script>
 </body>
