@@ -223,6 +223,45 @@
     color:var(--text-faint);transition:color .15s,transform .12s;align-self:center;padding:2px 4px}
   .tm-star:hover{transform:scale(1.15);color:var(--amber)}
   .tm-star.on{color:var(--amber)}
+
+  /* ---- markets index bar (Yahoo-Gold style) ---- */
+  .tm-mktbar{display:flex;align-items:stretch;margin-bottom:9px;overflow-x:auto;
+    background:var(--tm-card);border:1px solid var(--tm-line);border-radius:12px;font-family:var(--f-mono)}
+  .tm-mktbar::-webkit-scrollbar{height:0}
+  .tm-mkt-lbl{flex:none;display:flex;align-items:center;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--tm-faint);padding:0 15px;border-right:1px solid var(--tm-line-2)}
+  .tm-mkt{flex:none;display:flex;align-items:baseline;gap:8px;padding:10px 16px;border-right:1px solid var(--tm-line-2);white-space:nowrap}
+  .tm-mkt .n{font-size:11px;color:var(--tm-dim);font-weight:600}
+  .tm-mkt .p{font-size:12.5px;font-weight:700;color:var(--tm-txt);font-variant-numeric:tabular-nums}
+  .tm-mkt .c{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+  .tm-mkt .c.up{color:var(--emerald)}.tm-mkt .c.down{color:var(--crimson)}
+
+  /* ---- ticker tabs ---- */
+  .tm-tickers{display:flex;align-items:center;gap:9px;background:var(--tm-card);border:1px solid var(--tm-line);
+    border-radius:12px;padding:7px 10px;overflow-x:auto}
+  .tm-tickers::-webkit-scrollbar{height:0}
+  .tm-tk-lbl{flex:none;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--tm-faint)}
+  .tm-tk-list{display:flex;gap:6px;min-width:0}
+  .tm-tk{flex:none;display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:8px;cursor:pointer;
+    border:1px solid var(--tm-line);background:var(--tm-card-2);color:var(--tm-dim);font-family:var(--f-mono);
+    font-size:12px;font-weight:700;white-space:nowrap;transition:color .15s,border-color .15s,background .15s}
+  .tm-tk:hover{color:var(--tm-txt)}
+  .tm-tk.on{color:var(--tm-txt);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.08)}
+  .tm-tk .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .tm-tk .c{font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums}
+  .tm-tk .c.up{color:var(--emerald)}.tm-tk .c.down{color:var(--crimson)}
+  .tm-tk-add{flex:none;width:28px;height:28px;border-radius:8px;border:1px solid var(--tm-line);background:var(--tm-card-2);
+    color:var(--tm-dim);cursor:pointer;font-family:var(--f-mono);font-size:15px;line-height:1;display:grid;place-items:center}
+  .tm-tk-add:hover{color:var(--cyan);border-color:rgba(0,242,255,.4)}
+
+  /* ---- key metrics ---- */
+  .tm-km{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+  @media(max-width:520px){.tm-km{grid-template-columns:1fr}}
+  .tm-km-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    padding:9px 0;border-bottom:1px dashed var(--tm-line-2);font-family:var(--f-mono)}
+  .tm-km-row .k{font-size:11px;color:var(--tm-dim)}
+  .tm-km-row .v{font-size:12.5px;font-weight:700;color:var(--tm-txt);font-variant-numeric:tabular-nums;text-align:right}
+  .tm-km-row .v.up{color:var(--emerald)}.tm-km-row .v.down{color:var(--crimson)}
 </style>
 </head>
 <body>
@@ -274,6 +313,9 @@
     </div>
   </div>
 
+  <!-- ============ MARKETS INDEX BAR ============ -->
+  <div class="tm-mktbar" id="tmMktBar" aria-label="Market indices"><span class="tm-mkt-lbl">Loading markets…</span></div>
+
   <!-- ============ APP GRID ============ -->
   <div class="tm-app">
 
@@ -309,6 +351,11 @@
 
     <!-- CENTER: chart -->
     <div class="tm-center">
+      <div class="tm-tickers" aria-label="Ticker tabs">
+        <span class="tm-tk-lbl">Tickers</span>
+        <div class="tm-tk-list" id="tmTkList"></div>
+        <button class="tm-tk-add" id="tmTkAdd" type="button" title="Add a ticker" aria-label="Add a ticker">+</button>
+      </div>
       <section class="tm-card tm-chartcard" aria-label="Chart">
         <div class="tm-chd">
           <div class="tm-symbox">
@@ -359,6 +406,15 @@
           <button class="tm-tf" type="button" data-tf="All" aria-pressed="false">All</button>
           <span class="tm-interval" id="tmInterval">Interval: 5m</span>
         </div>
+      </section>
+
+      <section class="tm-card" aria-label="Key metrics">
+        <div class="tm-hd">
+          <h3 id="tmKmTitle">Key metrics · NVDA</h3>
+          <span class="tm-cap">fundamentals · live</span>
+        </div>
+        <div class="tm-km" id="tmKm"></div>
+        <div class="tm-cap" style="margin-top:10px">Model estimates on simulated / delayed data · not investment advice.</div>
       </section>
     </div>
 
@@ -884,6 +940,8 @@ document.addEventListener("DOMContentLoaded", function(){
     drawAcctSpark();
     tvUpdate();
     updateStar();
+    renderTickers();
+    renderKeyMetrics();
   }
   function renderAll(){
     renderSymbol();
@@ -1055,15 +1113,96 @@ document.addEventListener("DOMContentLoaded", function(){
     paintHeader(true);
     renderChart(null); paintOHLC(null);
     paintWatch(); paintAccount(); drawAcctSpark(); paintTicket(); paintPositions();
+    renderTickers(); renderKeyMetrics();
   });
+
+  /* ---------- markets index bar (real ETF/proxy quotes) ---------- */
+  var mktBar = $("#tmMktBar");
+  var IDX = [
+    {k:"SPY",n:"S&P 500"},{k:"DIA",n:"DOW 30"},{k:"QQQ",n:"NASDAQ"},
+    {k:"GLD",n:"GOLD"},{k:"IWM",n:"RUSSELL"},{k:"BTC-USD",n:"BITCOIN"}
+  ];
+  var idxData = {};
+  function fetchIdx(){
+    try{
+      fetch("https://pyzcwddyagodmtjuvwdn.supabase.co/functions/v1/quotes?symbols=" + IDX.map(function(x){return x.k;}).join(","),
+        { headers:{ apikey:"sb_publishable_CIYiWNtbGgXDQgEj2kyvrw_AMxXwr8l" } })
+        .then(function(r){ return r.json(); })
+        .then(function(j){ if(j && j.quotes){ idxData = j.quotes; renderMktBar(); } })
+        .catch(function(){});
+    }catch(e){}
+  }
+  function renderMktBar(){
+    if(!mktBar) return;
+    var html = '<span class="tm-mkt-lbl">Markets</span>', shown = 0;
+    IDX.forEach(function(x){
+      var d = idxData[x.k]; if(!d || d.last==null) return;
+      var px = +d.last, pc = (d.prev_close!=null)?+d.prev_close:px, chg = pc?((px-pc)/pc*100):0;
+      var pxs = px>=1000 ? px.toLocaleString(undefined,{maximumFractionDigits:2}) : num(px);
+      html += '<div class="tm-mkt"><span class="n">'+x.n+'</span><span class="p">$'+pxs+'</span>'+
+        '<span class="c '+(chg>=0?"up":"down")+'">'+(chg>=0?"+":"")+chg.toFixed(2)+'%</span></div>';
+      shown++;
+    });
+    mktBar.innerHTML = shown ? html : '<span class="tm-mkt-lbl">Markets loading…</span>';
+  }
+
+  /* ---------- ticker tabs ---------- */
+  var tkList = $("#tmTkList"), tkAdd = $("#tmTkAdd");
+  function tickerSyms(){
+    var w = (Watch && Watch.get && Watch.get()) || [];
+    if(!w.length) w = ["META","AAPL","GOOGL","NVDA","TSLA"].filter(function(t){ return PRICES[t]; });
+    if(w.indexOf(ACTIVE) < 0) w = [ACTIVE].concat(w);
+    return w.slice(0,12);
+  }
+  function renderTickers(){
+    if(!tkList) return;
+    tkList.innerHTML = tickerSyms().map(function(t){
+      var d = dayChg(t);
+      return '<button class="tm-tk'+(t===ACTIVE?" on":"")+'" data-t="'+t+'" type="button">'+
+        '<span class="dot" style="background:'+(d.up?EM:CR)+'"></span>'+t+
+        '<span class="c '+(d.up?"up":"down")+'">'+(d.pct>=0?"+":"")+d.pct.toFixed(2)+'%</span></button>';
+    }).join("");
+    $$(".tm-tk", tkList).forEach(function(b){ b.onclick = function(){ setActive(b.getAttribute("data-t")); }; });
+  }
+  if(tkAdd) tkAdd.onclick = function(){ if(wlAdd){ wlAdd.focus(); wlAdd.scrollIntoView({block:"nearest"}); } };
+
+  /* ---------- key metrics ---------- */
+  var kmEl = $("#tmKm"), kmTitle = $("#tmKmTitle");
+  function fmtMc(mc){ if(mc==null) return "—"; return mc>=1000 ? ("$"+(mc/1000).toFixed(2)+"T") : ("$"+(+mc).toFixed(1)+"B"); }
+  function kronosSig(t){ try{ var s=F.Kronos&&F.Kronos.signal(t); return s?(s.action+" ("+(s.predReturn>=0?"+":"")+(s.predReturn*100).toFixed(1)+"%)"):"—"; }catch(e){ return "—"; } }
+  function renderKeyMetrics(){
+    if(!kmEl) return;
+    var t = ACTIVE, fu = (F.FUND && F.FUND[t]) || {}, d = dayChg(t);
+    if(kmTitle) kmTitle.textContent = "Key metrics · " + t;
+    var hi = fu.hi, lo = fu.lo, px = d.px;
+    var pos = (hi&&lo&&hi>lo) ? Math.round((px-lo)/(hi-lo)*100) : null;
+    var rows = [
+      ["Last price", money(px), ""],
+      ["Day change", (d.chg>=0?"+":"−")+money(Math.abs(d.chg))+" ("+(d.pct>=0?"+":"")+d.pct.toFixed(2)+"%)", d.up?"up":"down"],
+      ["Previous close", money(d.pc), ""],
+      ["Market cap", fmtMc(fu.mc), ""],
+      ["P/E (TTM)", fu.pe!=null?(+fu.pe).toFixed(2):"—", ""],
+      ["52-wk high", hi!=null?money(hi):"—", ""],
+      ["52-wk low", lo!=null?money(lo):"—", ""],
+      ["52-wk range", pos!=null?(pos+"% of range"):"—", ""],
+      ["Sector", fu.sec || "—", ""],
+      ["Kronos signal", kronosSig(t), ""]
+    ];
+    kmEl.innerHTML = rows.map(function(r){
+      return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v '+(r[2]||"")+'">'+r[1]+'</span></div>';
+    }).join("");
+  }
 
   /* ---------- boot ---------- */
   buildWatch();
   renderAll();
+  fetchIdx(); renderTickers(); renderKeyMetrics();
+  window.addEventListener("flux-watch", renderTickers);
 
   if(!reduce){
     setInterval(function(){ if(!document.hidden) liveTick(); }, 3000);
   }
+  setInterval(function(){ if(!document.hidden) fetchIdx(); }, 30000);
   if(F.initReveal) F.initReveal();
 });
 </script>
