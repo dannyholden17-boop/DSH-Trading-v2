@@ -46,6 +46,56 @@ HARD RULES (never break):
 - Don't invent specific tickers/prices that aren't in the context. If you genuinely don't know a fact, say so briefly — but still be conversational about it.
 - Keep answers tight by default (1-4 sentences) unless the user wants depth.`;
 
+/* ---- free-tier rate limiting (house-key calls only) ----
+   Pro subscribers (incl. comped admins) are unlimited. Everyone else gets
+   FLUX_FREE_DAILY calls/day (per user id when signed in, else per IP).
+   BYOK users never hit this function — their browser calls Anthropic directly. */
+const SUPA_URL = Deno.env.get("SUPABASE_URL") || "";
+const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
+const FREE_DAILY = parseInt(Deno.env.get("FLUX_FREE_DAILY") || "25", 10);
+const PRO_CACHE = new Map<string, { pro: boolean; at: number }>();
+
+async function userIdFrom(req: Request): Promise<string | null> {
+  const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+  if (!token || token === ANON_KEY || token.startsWith("sb_publishable_")) return null;
+  try {
+    const r = await fetch(SUPA_URL + "/auth/v1/user", {
+      headers: { apikey: ANON_KEY || SERVICE_KEY, authorization: "Bearer " + token },
+    });
+    if (!r.ok) return null;
+    const j = await r.json().catch(() => null);
+    return (j && j.id) || null;
+  } catch { return null; }
+}
+async function isPro(uid: string): Promise<boolean> {
+  const hit = PRO_CACHE.get(uid);
+  if (hit && Date.now() - hit.at < 10 * 60 * 1000) return hit.pro;
+  let pro = false;
+  try {
+    const r = await fetch(SUPA_URL + "/rest/v1/subscriptions?user_id=eq." + uid + "&select=status", {
+      headers: { apikey: SERVICE_KEY, authorization: "Bearer " + SERVICE_KEY },
+    });
+    const j = await r.json().catch(() => []);
+    pro = Array.isArray(j) && j.some((s: any) => s.status === "active" || s.status === "trialing");
+  } catch { /* fail open below */ }
+  PRO_CACHE.set(uid, { pro, at: Date.now() });
+  return pro;
+}
+async function tick(rk: string): Promise<number> {
+  try {
+    const r = await fetch(SUPA_URL + "/rest/v1/rpc/flux_ai_tick", {
+      method: "POST",
+      headers: { apikey: SERVICE_KEY, authorization: "Bearer " + SERVICE_KEY, "content-type": "application/json" },
+      body: JSON.stringify({ rk }),
+    });
+    const n = await r.json().catch(() => 0);
+    return typeof n === "number" ? n : 0;
+  } catch { return 0; } // fail open — never block on infra errors
+}
+const LIMIT_MSG =
+  "You've hit today's free Fluxi limit. Two ways to go unlimited: add your own Anthropic API key in Account → Flux AI (your credits, your key never leaves your browser), or upgrade to Flux Pro on the Pricing page. Your paper trading, watchlist and signals keep working either way.";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   try {
@@ -54,6 +104,18 @@ serve(async (req) => {
 
     const { question, context } = await req.json().catch(() => ({ question: "", context: {} }));
     if (!question || typeof question !== "string") return json({ text: null });
+
+    // rate-limit free usage of the house key
+    if (SERVICE_KEY) {
+      const uid = await userIdFrom(req);
+      const pro = uid ? await isPro(uid) : false;
+      if (!pro) {
+        const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
+                   req.headers.get("cf-connecting-ip") || "anon";
+        const count = await tick(uid ? "u:" + uid : "ip:" + ip);
+        if (count > FREE_DAILY) return json({ text: LIMIT_MSG, limited: true });
+      }
+    }
 
     // ---- tiered model routing ----
     // Light model (cheap/fast) for greetings, small talk and quick questions.

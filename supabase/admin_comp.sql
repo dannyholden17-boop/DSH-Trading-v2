@@ -69,3 +69,15 @@ create trigger flux_admin_comp
 select public.flux_comp_if_admin(u.id, u.email)
 from auth.users u
 join public.admin_emails a on lower(a.email) = lower(u.email);
+
+-- ============================================================
+-- Admin management RPCs (migration: admin_management_rpcs)
+-- Site-callable, JWT-verified: every function checks the caller's
+-- email against admin_emails. Owner (dannyholden17@gmail.com) is
+-- immutable. flux_admin_add comps the new admin immediately if
+-- they already have an account (otherwise the signup trigger does).
+--   flux_is_admin()        -> boolean
+--   flux_admin_list()      -> (email, note, created_at)
+--   flux_admin_add(mail)   -> void
+--   flux_admin_remove(mail)-> void  (also cancels their comped plan)
+-- ============================================================

@@ -7,13 +7,13 @@
 <meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=14">
-<script src="./assets/flux-supa.js?v=14" defer></script>
-<script src="./assets/flux-site.js?v=14" defer></script>
-<script src="./assets/flux-universe.js?v=14" defer></script>
-<script src="./assets/flux-feed.js?v=14" defer></script>
-<script src="./assets/flux-fund.js?v=14" defer></script>
-<script src="./assets/flux-kronos.js?v=14" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=15">
+<script src="./assets/flux-supa.js?v=15" defer></script>
+<script src="./assets/flux-site.js?v=15" defer></script>
+<script src="./assets/flux-universe.js?v=15" defer></script>
+<script src="./assets/flux-feed.js?v=15" defer></script>
+<script src="./assets/flux-fund.js?v=15" defer></script>
+<script src="./assets/flux-kronos.js?v=15" defer></script>
 <style>
   /* page-only LAYOUT: account.html (acc- prefixed). Shared tokens/classes reused, never redefined. */
   .acc-stack{display:flex;flex-direction:column;gap:18px;margin-top:26px}
@@ -92,6 +92,9 @@
   .star-chip button,.alert-row button{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:.9rem;line-height:1;padding:2px 4px}
   .star-chip button:hover,.alert-row button:hover{color:var(--crimson)}
   .acc-sub{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:20px;border-top:1px solid var(--line-2);padding-top:16px}
+  .byok-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .byok-row input{flex:1;min-width:200px;background:#040914;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.88rem;outline:none}
+  .byok-row input:focus{border-color:rgba(0,242,255,.5)}
   .alert-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
   .alert-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--well);border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-family:var(--f-mono);font-size:.84rem}
 </style>
@@ -244,6 +247,31 @@
           <button class="btn btn-ghost btn-sm" id="alAddBtn" type="button">🔔 Add alert</button>
         </div>
         <div id="alertList" class="alert-list"><span class="acc-note">Loading…</span></div>
+      </div>
+
+      <!-- FLUX AI · BYOK -->
+      <div class="glass acc-card">
+        <div class="acc-ctop"><h2>Flux AI — your key</h2><span class="acc-cap" id="byokStat">not set</span></div>
+        <p class="acc-note" style="margin-top:0">Plug in your own <b>Anthropic API key</b> for <b>unlimited</b> Fluxi — deep briefs, heavy-model answers, no daily cap. It runs on <b>your credits</b>, and the key is stored <b>only in this browser</b> — it never touches Flux's servers.</p>
+        <div class="byok-row">
+          <input id="byokKey" type="password" autocomplete="off" placeholder="sk-ant-…" aria-label="Anthropic API key">
+          <button class="btn btn-primary btn-sm" id="byokSave" type="button">Save</button>
+          <button class="btn btn-ghost btn-sm" id="byokClear" type="button">Remove</button>
+        </div>
+        <p class="acc-note" id="byokNote">Get a key at console.anthropic.com → API Keys. Calls made with it bill your Anthropic account.</p>
+      </div>
+
+      <!-- ADMIN (visible to admins only) -->
+      <div class="glass acc-card" id="adminCard" hidden>
+        <div class="acc-ctop"><h2>Admin</h2><span class="acc-cap">admins only</span></div>
+        <p class="acc-note" style="margin-top:0">Admins get a permanent comped <b>Desk</b> plan (every Pro feature, never billed) and can manage who else is an admin. The owner account can't be removed.</p>
+        <div class="acc-sub" style="border-top:none;padding-top:0;margin-top:8px">Current admins</div>
+        <div id="adminList" class="alert-list" style="margin-top:8px"><span class="acc-note">Loading…</span></div>
+        <div class="byok-row" style="margin-top:14px">
+          <input id="adminEmail" type="email" autocomplete="off" placeholder="new-admin@email.com" aria-label="New admin email">
+          <button class="btn btn-primary btn-sm" id="adminAdd" type="button">+ Add admin</button>
+        </div>
+        <p class="acc-note">New admins are comped automatically — on their next sign-in (or immediately if they already have an account).</p>
       </div>
 
       <!-- DANGER / SESSION -->
@@ -551,7 +579,69 @@ document.addEventListener("DOMContentLoaded", function(){
   if(alPrice) alPrice.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); addAlert(); } });
   renderAlerts();
 
-  window.addEventListener("flux-auth", function(){ loadPrefs(); renderStars(); renderAlerts(); });
+  /* ---------------- Flux AI: bring-your-own Anthropic key ---------------- */
+  var byokKey = $("#byokKey"), byokStat = $("#byokStat"), byokNote = $("#byokNote");
+  function byokRender(){
+    var B = SUPA && SUPA.byok;
+    if(!B || !byokStat) return;
+    if(B.active()){
+      byokStat.textContent = "active ✓ unlimited";
+      if(byokKey) byokKey.placeholder = "•••••••••••• (key saved in this browser)";
+      if(byokNote) byokNote.textContent = "Fluxi is running on your Anthropic credits — unlimited, heavy model eligible. Calls today: " + B.callsToday() + ". Your key never leaves this browser.";
+    } else {
+      byokStat.textContent = "not set";
+      if(byokKey) byokKey.placeholder = "sk-ant-…";
+      if(byokNote) byokNote.textContent = "Get a key at console.anthropic.com → API Keys. Calls made with it bill your Anthropic account.";
+    }
+  }
+  var byokSaveBtn = $("#byokSave"), byokClearBtn = $("#byokClear");
+  if(byokSaveBtn) byokSaveBtn.onclick = function(){
+    var v = (byokKey && byokKey.value || "").trim();
+    if(!/^sk-ant-/.test(v)){ if(byokNote) byokNote.textContent = "That doesn't look like an Anthropic key — it should start with sk-ant-."; return; }
+    SUPA.byok.set(v); if(byokKey) byokKey.value = ""; byokRender();
+  };
+  if(byokClearBtn) byokClearBtn.onclick = function(){ SUPA.byok.set(""); byokRender(); };
+  byokRender();
+
+  /* ---------------- Admin panel (server-verified; admins only) ---------------- */
+  var adminCard = $("#adminCard"), adminList = $("#adminList"), adminEmail = $("#adminEmail"), adminAddBtn = $("#adminAdd");
+  function esc2(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function adminRender(){
+    if(!(SUPA && SUPA.client && SUPA.user && SUPA.user())){ if(adminCard) adminCard.hidden = true; return; }
+    SUPA.client.rpc("flux_is_admin").then(function(r){
+      var ok = !!(r && r.data === true);
+      if(adminCard) adminCard.hidden = !ok;
+      if(!ok) return;
+      SUPA.client.rpc("flux_admin_list").then(function(res){
+        var rows = (res && res.data) || [];
+        if(!adminList) return;
+        adminList.innerHTML = rows.length ? rows.map(function(a){
+          var owner = (a.email||"").toLowerCase() === "dannyholden17@gmail.com";
+          return '<div class="alert-row"><span><b>'+esc2(a.email)+'</b>'+(owner?' <span class="acc-cap">owner</span>':'')+
+            (a.note?' <span style="color:var(--text-faint);font-size:.72rem">· '+esc2(a.note)+'</span>':'')+'</span>'+
+            (owner?'':'<button data-mail="'+esc2(a.email)+'" title="Remove admin">✕</button>')+'</div>';
+        }).join("") : '<span class="acc-note">No admins found.</span>';
+        adminList.querySelectorAll("button[data-mail]").forEach(function(b){
+          b.onclick = function(){
+            if(!confirm("Remove "+b.getAttribute("data-mail")+" as an admin? Their comped plan ends too.")) return;
+            SUPA.client.rpc("flux_admin_remove", { mail: b.getAttribute("data-mail") }).then(adminRender);
+          };
+        });
+      });
+    }).catch(function(){ if(adminCard) adminCard.hidden = true; });
+  }
+  if(adminAddBtn) adminAddBtn.onclick = function(){
+    var m = (adminEmail && adminEmail.value || "").trim();
+    if(!m) return;
+    SUPA.client.rpc("flux_admin_add", { mail: m }).then(function(r){
+      if(r && r.error){ alert("Couldn't add admin: " + (r.error.message||"error")); return; }
+      if(adminEmail) adminEmail.value = "";
+      adminRender();
+    });
+  };
+  adminRender();
+
+  window.addEventListener("flux-auth", function(){ loadPrefs(); renderStars(); renderAlerts(); adminRender(); });
 
   /* ---------------- delete account (info only) ---------------- */
   var delBtn = $("#accDel"), delNote = $("#accDelNote");
