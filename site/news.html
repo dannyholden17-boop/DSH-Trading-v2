@@ -7,14 +7,14 @@
 <meta name="description" content="A live finance news feed: real headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg, MarketWatch and Yahoo Finance, merged and shuffled, filterable by category and your watchlist. News is informational only — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=13">
-<script src="./assets/flux-supa.js?v=13" defer></script>
-<script src="./assets/flux-site.js?v=13" defer></script>
-<script src="./assets/flux-universe.js?v=13" defer></script>
-<script src="./assets/flux-feed.js?v=13" defer></script>
-<script src="./assets/flux-fund.js?v=13" defer></script>
-<script src="./assets/flux-kronos.js?v=13" defer></script>
-<script src="./assets/flux-news.js?v=13" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=14">
+<script src="./assets/flux-supa.js?v=14" defer></script>
+<script src="./assets/flux-site.js?v=14" defer></script>
+<script src="./assets/flux-universe.js?v=14" defer></script>
+<script src="./assets/flux-feed.js?v=14" defer></script>
+<script src="./assets/flux-fund.js?v=14" defer></script>
+<script src="./assets/flux-kronos.js?v=14" defer></script>
+<script src="./assets/flux-news.js?v=14" defer></script>
 <style>
   /* ---- page-only layout: news.html ---- */
   .nw-hero{max-width:66ch}
@@ -163,6 +163,7 @@
         <button class="nw-chip" type="button" data-cat="earnings" aria-pressed="false">Earnings</button>
         <button class="nw-chip" type="button" data-cat="tech" aria-pressed="false">Tech</button>
         <button class="nw-chip" type="button" data-cat="macro" aria-pressed="false">Macro</button>
+        <button class="nw-chip" type="button" data-cat="gov" aria-pressed="false">Government</button>
         <button class="nw-chip" type="button" data-cat="crypto" aria-pressed="false">Crypto</button>
         <button class="nw-chip" type="button" data-cat="watchlist" aria-pressed="false">Your watchlist</button>
       </div>
@@ -426,6 +427,7 @@ document.addEventListener("DOMContentLoaded", function(){
     return '<article class="glass nw-card">' +
       '<div class="nw-chead">' +
         '<span class="tag" style="color:' + col + '">' + escN(it.source) + '</span>' +
+        (it.gov ? '<span class="fnw-gov">GOV</span>' : '') +
         (ago ? '<span class="nw-time">' + ago + ' ago</span>' : '') +
       '</div>' +
       '<a class="nw-hl" href="' + escN(it.url) + '" target="_blank" rel="noopener" style="text-decoration:none;display:block">' + escN(it.title) + '</a>' +
@@ -434,6 +436,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   function filtered(){
     if(activeCat === "all") return ALL;
+    if(activeCat === "gov") return ALL.filter(function(it){ return it.gov; });
     if(activeCat === "watchlist"){
       var w = (F.Watch && F.Watch.get) ? F.Watch.get().map(function(x){ return x.toLowerCase(); }) : [];
       return ALL.filter(function(it){ var t=(it.title+" "+(it.summary||"")).toLowerCase(); return w.some(function(tk){ return t.indexOf(tk)>=0; }); });
