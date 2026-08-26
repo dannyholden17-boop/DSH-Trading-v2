@@ -4,16 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI News — Flux</title>
-<meta name="description" content="An AI-summarized market news feed: the wire, filings and the tape read, scored for sentiment and linked to your holdings. A simulated, illustrative demo — not real headlines and not advice.">
+<meta name="description" content="A live finance news feed: real headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg, MarketWatch and Yahoo Finance, merged and shuffled, filterable by category and your watchlist. News is informational only — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=11">
-<script src="./assets/flux-supa.js?v=11" defer></script>
-<script src="./assets/flux-site.js?v=11" defer></script>
-<script src="./assets/flux-universe.js?v=11" defer></script>
-<script src="./assets/flux-feed.js?v=11" defer></script>
-<script src="./assets/flux-fund.js?v=11" defer></script>
-<script src="./assets/flux-kronos.js?v=11" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=12">
+<script src="./assets/flux-supa.js?v=12" defer></script>
+<script src="./assets/flux-site.js?v=12" defer></script>
+<script src="./assets/flux-universe.js?v=12" defer></script>
+<script src="./assets/flux-feed.js?v=12" defer></script>
+<script src="./assets/flux-fund.js?v=12" defer></script>
+<script src="./assets/flux-kronos.js?v=12" defer></script>
+<script src="./assets/flux-news.js?v=12" defer></script>
 <style>
   /* ---- page-only layout: news.html ---- */
   .nw-hero{max-width:66ch}
@@ -138,18 +139,17 @@
 <section class="section phero">
   <div class="wrap nw-hero reveal">
     <span class="eyebrow">AI News</span>
-    <h2 class="h2">The wire, <span class="grad-text">read and ranked by AI.</span></h2>
-    <p class="lede">Every headline, filing and print that touches your universe — summarized in a line,
-      scored for sentiment, and linked to the tickers you actually hold. One feed, continuously re-ranked
-      by what matters to your book.</p>
+    <h2 class="h2">The wire, <span class="grad-text">live and shuffled.</span></h2>
+    <p class="lede">Real finance headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg,
+      MarketWatch, Yahoo Finance and more — merged into one feed, refreshed through the day, and
+      filterable by what matters to your book.</p>
     <div class="nw-badges">
-      <span class="pill live">Live feed · simulated</span>
-      <span class="tag">FinBERT sentiment</span>
-      <span class="tag">Linked to your book</span>
+      <span class="pill live">Live headlines</span>
+      <span class="tag">WSJ · CNBC · Reuters</span>
+      <span class="tag">Bloomberg · MarketWatch</span>
     </div>
-    <p class="nw-note">This page is an <b>illustrative, simulated</b> news feed built for demonstration.
-      The headlines and AI summaries are <b>fictional samples</b> generated in your browser — Flux never
-      invents real news, and nothing here comes from a real publisher or is investment advice.</p>
+    <p class="nw-note">Headlines link out to their original publishers. Aggregated from public RSS feeds —
+      Flux doesn't rehost article text, and nothing here is investment advice.</p>
   </div>
 </section>
 
@@ -178,9 +178,8 @@
     <!-- LEFT: article stream -->
     <div class="reveal">
       <div class="nw-feed" id="nwFeed" aria-live="polite" aria-label="AI-summarized news feed"></div>
-      <p class="disclaimer" style="margin-top:20px">Simulated feed · illustrative · not real headlines · not advice.
-        Headlines, summaries, sentiment scores, tickers and moves are generated in-browser for demonstration and
-        do not describe real events, real companies' disclosures or real market data.</p>
+      <p class="disclaimer" style="margin-top:20px">Live headlines aggregated from public RSS feeds (WSJ, CNBC, Reuters, Bloomberg, MarketWatch, Yahoo Finance & more).
+        Each item links to its original publisher. News is informational only — not investment advice.</p>
     </div>
 
     <!-- RIGHT: sidebar -->
@@ -273,9 +272,8 @@
         <a class="btn btn-primary btn-lg" href="./dashboard.html">See your AI Daily Brief</a>
         <a class="btn btn-ghost btn-lg" href="./terminal.html">Open the desk</a>
       </div>
-      <p class="disclaimer" style="margin:24px auto 0">The news feed shown on this page is a simulated,
-        illustrative demo with fictional sample headlines — not real news, not from real publishers, and not
-        investment advice.</p>
+      <p class="disclaimer" style="margin:24px auto 0">The feed aggregates real headlines from public RSS feeds and links to
+        their original publishers. It's informational only and not investment advice.</p>
     </div>
   </div>
 </section>
@@ -293,7 +291,7 @@
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
-  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The news feed shown here is a simulated, illustrative demo with fictional sample headlines — not real news and not from real publishers. Market data shown may be delayed or simulated. Trading involves risk of loss, including loss of principal.</p>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The news feed aggregates real headlines from public RSS feeds (WSJ, CNBC, Reuters, Bloomberg, MarketWatch, Yahoo Finance and others) and links out to the original publishers; article text is not rehosted. Market data shown may be delayed or simulated. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
 </div></footer>
 
@@ -413,83 +411,58 @@ document.addEventListener("DOMContentLoaded", function(){
   ];
 
   /* ---------- render ---------- */
+  /* ---------- REAL news feed (flux-news / WSJ, CNBC, Reuters, Bloomberg, MarketWatch, …) ---------- */
   var feed = $("#nwFeed");
-  function cardHTML(it, isNew){
-    var scls = it.s==="bull" ? "bull" : (it.s==="bear" ? "bear" : "neut");
-    var slbl = it.s==="bull" ? "Bullish" : (it.s==="bear" ? "Bearish" : "Neutral");
-    return '<article class="glass nw-card' + (isNew ? " nw-new" : "") + '" data-cat="' + it.c +
-        '" data-tk="' + it.tk.join(" ") + '">' +
+  function escN(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  var CAT_KW = {
+    markets:  ["market","stock","s&p","nasdaq","dow","rally","selloff","sell-off","yield","rate","index","futures"],
+    earnings: ["earnings","revenue","profit","guidance","results","quarter","eps","forecast","beats","misses"],
+    tech:     ["tech","ai ","a.i.","chip","semiconductor","software","apple","nvidia","microsoft","google","alphabet","meta","amazon","tesla"],
+    macro:    ["fed","inflation","economy","jobs","gdp","tariff","powell","treasury","cpi","pce","recession"],
+    crypto:   ["crypto","bitcoin","ethereum","btc","ether","coin","token","blockchain"]
+  };
+  var ALL = [], activeCat = "all";
+  function realCard(it){
+    var col = (F.News && F.News.color) ? F.News.color(it.source) : "var(--cyan)";
+    var ago = (F.News && F.News.ago) ? F.News.ago(it.published) : "";
+    return '<article class="glass nw-card">' +
       '<div class="nw-chead">' +
-        '<span class="tag">' + (CAT[it.c] || "Wire") + '</span>' +
-        '<span class="nw-sent ' + scls + '">' + slbl + '</span>' +
-        '<span class="nw-time">' + it.t + '</span>' +
+        '<span class="tag" style="color:' + col + '">' + escN(it.source) + '</span>' +
+        (ago ? '<span class="nw-time">' + ago + ' ago</span>' : '') +
       '</div>' +
-      '<div class="nw-hl">' + it.h + '</div>' +
-      '<p class="nw-sum"><span class="nw-ai">AI</span>' + it.sum + '</p>' +
-      '<div class="nw-meta">' +
-        '<span class="nw-tks">' + it.tk.map(tkChip).join("") + '</span>' +
-        '<span class="nw-src">' + it.src + '</span>' +
-        impactHTML(it.im) +
-      '</div>' +
+      '<a class="nw-hl" href="' + escN(it.url) + '" target="_blank" rel="noopener" style="text-decoration:none;display:block">' + escN(it.title) + '</a>' +
+      (it.summary ? '<p class="nw-sum">' + escN(it.summary) + '</p>' : '') +
     '</article>';
   }
-  if(feed){
-    feed.innerHTML = FEED.map(function(it){ return cardHTML(it, false); }).join("");
-  }
-
-  /* ---------- filtering ---------- */
-  var activeCat = "all";
-  function watchList(){
-    return (F.Watch && F.Watch.get) ? F.Watch.get() : ["NVDA","AMD","TSLA","AAPL"];
-  }
-  function matches(card, watch){
-    if(activeCat === "all") return true;
+  function filtered(){
+    if(activeCat === "all") return ALL;
     if(activeCat === "watchlist"){
-      var tks = (card.getAttribute("data-tk") || "").split(" ");
-      for(var i=0;i<tks.length;i++){ if(watch.indexOf(tks[i]) >= 0) return true; }
-      return false;
+      var w = (F.Watch && F.Watch.get) ? F.Watch.get().map(function(x){ return x.toLowerCase(); }) : [];
+      return ALL.filter(function(it){ var t=(it.title+" "+(it.summary||"")).toLowerCase(); return w.some(function(tk){ return t.indexOf(tk)>=0; }); });
     }
-    return card.getAttribute("data-cat") === activeCat;
+    var kws = CAT_KW[activeCat] || [];
+    return ALL.filter(function(it){ var t=(it.title+" "+(it.summary||"")).toLowerCase(); return kws.some(function(k){ return t.indexOf(k)>=0; }); });
   }
-  function applyFilter(){
+  function renderFeed(){
     if(!feed) return;
-    var watch = watchList(), shown = 0;
-    $$(".nw-card", feed).forEach(function(card){
-      var ok = matches(card, watch);
-      card.style.display = ok ? "" : "none";
-      if(ok) shown++;
-    });
-    var empty = $("#nwEmpty");
-    if(shown === 0 && !empty){
-      empty = document.createElement("p");
-      empty.id = "nwEmpty"; empty.className = "nw-empty";
-      empty.textContent = "No items in this category right now — new ones land continuously.";
-      feed.appendChild(empty);
-    } else if(shown > 0 && empty){
-      empty.parentNode.removeChild(empty);
-    }
+    var items = filtered();
+    feed.innerHTML = items.length
+      ? items.slice(0,28).map(realCard).join("")
+      : '<p class="nw-empty">No headlines in this category right now — the wire refreshes through the day.</p>';
+  }
+  function loadNews(){
+    if(!(F.News && F.News.latest)){ return setTimeout(loadNews, 150); }
+    F.News.latest(50).then(function(items){ ALL = items || []; renderFeed(); });
   }
   $$("#nwChips .nw-chip").forEach(function(b){
     b.addEventListener("click", function(){
       activeCat = b.getAttribute("data-cat");
       $$("#nwChips .nw-chip").forEach(function(o){ o.setAttribute("aria-pressed", String(o === b)); });
-      applyFilter();
+      renderFeed();
     });
   });
-
-  /* ---------- live prepend loop ---------- */
-  var wIdx = 0;
-  function prepend(){
-    if(!feed || document.hidden) return;
-    var it = WIRE[wIdx % WIRE.length]; wIdx++;
-    var holder = document.createElement("div");
-    holder.innerHTML = cardHTML({c:it.c,s:it.s,t:"just now",src:it.src,im:it.im,tk:it.tk,h:it.h,sum:it.sum}, true);
-    var node = holder.firstChild;
-    feed.insertBefore(node, feed.firstChild);
-    while(feed.querySelectorAll(".nw-card").length > 16) feed.removeChild(feed.querySelectorAll(".nw-card")[feed.querySelectorAll(".nw-card").length - 1]);
-    applyFilter();
-  }
-  if(!reduce) setInterval(prepend, 5000);
+  loadNews();
+  setInterval(loadNews, 180000);
 
   /* ---------- AI Market Pulse (typewriter reveal) ---------- */
   var pulse = $("#nwPulse"), caret = $("#nwCaret"), pts = $("#nwPulseTs");
@@ -595,7 +568,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function tick(){
     if(!clock) return;
     var d = new Date(), p = function(v){ return String(v).length < 2 ? "0"+v : String(v); };
-    clock.textContent = "simulated feed · " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+    clock.textContent = "live feed · " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
   }
   tick();
   setInterval(tick, 1000);

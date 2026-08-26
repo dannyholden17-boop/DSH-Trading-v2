@@ -7,14 +7,15 @@
 <meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=11">
-<script src="./assets/flux-supa.js?v=11" defer></script>
-<script src="./assets/flux-site.js?v=11" defer></script>
-<script src="./assets/flux-universe.js?v=11" defer></script>
-<script src="./assets/flux-feed.js?v=11" defer></script>
-<script src="./assets/flux-fund.js?v=11" defer></script>
-<script src="./assets/flux-kronos.js?v=11" defer></script>
-<script src="./assets/flux-tv.js?v=11" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=12">
+<script src="./assets/flux-supa.js?v=12" defer></script>
+<script src="./assets/flux-site.js?v=12" defer></script>
+<script src="./assets/flux-universe.js?v=12" defer></script>
+<script src="./assets/flux-feed.js?v=12" defer></script>
+<script src="./assets/flux-fund.js?v=12" defer></script>
+<script src="./assets/flux-kronos.js?v=12" defer></script>
+<script src="./assets/flux-tv.js?v=12" defer></script>
+<script src="./assets/flux-news.js?v=12" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -345,6 +346,11 @@
         <div class="tm-wl" id="tmWatch" role="listbox" aria-label="Watchlist symbols"></div>
         <input class="tm-add" id="tmWlAdd" type="text" inputmode="search" autocomplete="off" list="tmSyms"
           placeholder="Add symbol (e.g. AAPL)…" aria-label="Add a symbol to the watchlist">
+      </section>
+
+      <section class="tm-card" aria-label="Market news">
+        <div class="tm-hd"><h3>News</h3><span class="tm-cap">live wire</span></div>
+        <div id="tmNews" class="fnw"><div class="fnw-empty">Loading headlines…</div></div>
       </section>
 
     </div>
@@ -1198,6 +1204,7 @@ document.addEventListener("DOMContentLoaded", function(){
   renderAll();
   fetchIdx(); renderTickers(); renderKeyMetrics();
   window.addEventListener("flux-watch", renderTickers);
+  if(F.News && F.News.mount) F.News.mount($("#tmNews"), { limit:6, rotate:true, interval:9000 });
 
   if(!reduce){
     setInterval(function(){ if(!document.hidden) liveTick(); }, 3000);
