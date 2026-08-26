@@ -217,19 +217,72 @@
       });
   };
 
+  // ---- BYOK: bring your own Anthropic key ----
+  // Stored ONLY in this browser's localStorage — it is never sent to Flux's
+  // servers. When set, Fluxi calls Anthropic directly from the browser on the
+  // user's own credits (unlimited, always eligible for the heavy model).
+  S.byok = {
+    get: function(){ try{ return localStorage.getItem("flux_byok") || ""; }catch(e){ return ""; } },
+    set: function(k){ try{ k=(k||"").trim(); if(k) localStorage.setItem("flux_byok", k); else localStorage.removeItem("flux_byok"); }catch(e){} },
+    active: function(){ return /^sk-ant-/.test(this.get()); },
+    callsToday: function(){ try{ return +(localStorage.getItem("flux_byok_calls_"+_day())||0); }catch(e){ return 0; } },
+    _bump: function(){ try{ var k="flux_byok_calls_"+_day(); localStorage.setItem(k, String(1 + (+(localStorage.getItem(k)||0)))); }catch(e){} }
+  };
+  function _day(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  var BYOK_SYSTEM = "You are Fluxi — the AI desk assistant on the Flux paper-trading site. Warm, sharp, concise trading-desk co-pilot. You continuously scan 250+ US stocks (momentum, undervalued & overvalued, breakouts, rebounds); Kronos — a transformer trained on OHLCV candles (open model: dannyholden17-boop/Kronos) — powers your signals (>+2% BUY, <-2% SELL, else HOLD). Hold normal conversation too. HARD RULES: not a financial advisor, no investment advice; all prices/forecasts are simulated paper-trading; never promise returns; don't invent tickers/prices not in the context; keep answers tight (1-4 sentences) unless depth is asked for.";
+  function byokHeavy(q){ q=(q||"").toLowerCase(); if(q.length>200) return true;
+    return /\b(brief|deep dive|in.?depth|detailed|analy(ze|sis|se)|thesis|overall|thoughts on|walk me through|explain|breakdown|rundown|report|outlook|compare|comparison|vs\.?|comprehensive|thorough|write (me )?a|memo|strateg|pros and cons|elaborate|summar|research)\b/.test(q); }
+  function byokChat(question, context){
+    var key = S.byok.get();
+    var heavy = byokHeavy(question);
+    var ctx = ""; try{ ctx = JSON.stringify(context||{}).slice(0,4000); }catch(e){ ctx = "{}"; }
+    return fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: heavy ? "claude-opus-5" : "claude-haiku-4-5-20251001",
+        max_tokens: heavy ? 2000 : 500,
+        system: BYOK_SYSTEM,
+        messages: [{ role: "user", content: "LIVE DESK CONTEXT (simulated):\n" + ctx + "\n\nUSER MESSAGE: " + String(question).slice(0,1200) }]
+      })
+    }).then(function(r){
+      if(!r.ok) throw new Error("byok " + r.status);
+      return r.json();
+    }).then(function(d){
+      var text = (d && d.content || []).filter(function(b){ return b.type==="text"; }).map(function(b){ return b.text; }).join("\n").trim();
+      if(!text) return null;
+      S.byok._bump();
+      return { text: text, byok: true };
+    });
+  }
+
   // ---- AI chat (optional LLM upgrade) ----
-  // Routes a free-form question to the `ai-chat` Edge Function, which calls a
-  // real LLM (Claude) with live market context injected. Returns {text} or null
-  // if the function isn't deployed / no API key — the grounded engine then answers.
+  // BYOK key present → direct browser call to Anthropic on the user's credits.
+  // Otherwise → the `ai-chat` Edge Function on the house key (rate-limited for
+  // free users; unlimited for Pro). Returns {text} or null (grounded fallback).
   S.aiChat = function(question, context){
+    if(S.byok.active()){
+      return byokChat(question, context).catch(function(){
+        // bad/expired key or network issue — fall back to the house path
+        return serverChat(question, context);
+      });
+    }
+    return serverChat(question, context);
+  };
+  function serverChat(question, context){
     if(!S.client) return Promise.resolve(null);
     return S.client.functions.invoke("ai-chat", { body: { question: question, context: context||{} } })
       .then(function(res){
         var d = res && res.data;
-        if(d && d.text) return { text: d.text };
+        if(d && d.text) return { text: d.text, limited: !!d.limited };
         return null;
       }).catch(function(){ return null; });
-  };
+  }
 
   // ---- brokerage / feature waitlist ----
   S.joinWaitlist = function(email, broker, source){
