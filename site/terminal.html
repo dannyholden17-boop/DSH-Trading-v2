@@ -7,15 +7,15 @@
 <meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=16">
-<script src="./assets/flux-supa.js?v=16" defer></script>
-<script src="./assets/flux-site.js?v=16" defer></script>
-<script src="./assets/flux-universe.js?v=16" defer></script>
-<script src="./assets/flux-feed.js?v=16" defer></script>
-<script src="./assets/flux-fund.js?v=16" defer></script>
-<script src="./assets/flux-kronos.js?v=16" defer></script>
-<script src="./assets/flux-tv.js?v=16" defer></script>
-<script src="./assets/flux-news.js?v=16" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=17">
+<script src="./assets/flux-supa.js?v=17" defer></script>
+<script src="./assets/flux-site.js?v=17" defer></script>
+<script src="./assets/flux-universe.js?v=17" defer></script>
+<script src="./assets/flux-feed.js?v=17" defer></script>
+<script src="./assets/flux-fund.js?v=17" defer></script>
+<script src="./assets/flux-kronos.js?v=17" defer></script>
+<script src="./assets/flux-tv.js?v=17" defer></script>
+<script src="./assets/flux-news.js?v=17" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -223,6 +223,40 @@
   .tm-otag{font-family:var(--f-mono);font-size:9px;color:var(--tm-faint);text-transform:uppercase}
 
   .tm-disc{color:var(--tm-faint);font-size:.72rem;line-height:1.6;margin-top:10px}
+  /* ---- market pulse (Fincept-style fear & greed / breadth / movers) ---- */
+  .tm-fg-top{display:flex;align-items:baseline;gap:10px}
+  .tm-fg-num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.7rem;font-weight:750;letter-spacing:-.02em}
+  .tm-fg-lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--tm-dim);font-weight:700}
+  .tm-fg-track{position:relative;height:7px;border-radius:4px;margin-top:10px;
+    background:linear-gradient(90deg,#ef4444,#f5b544 45%,#22c55e 60%,#10b981)}
+  .tm-fg-track i{position:absolute;top:-3px;width:3px;height:13px;border-radius:2px;background:#fff;
+    box-shadow:0 0 8px rgba(255,255,255,.8);left:50%;transition:left .6s ease}
+  .tm-fg-scale{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:8.5px;
+    letter-spacing:.1em;color:var(--tm-faint);margin-top:6px}
+  .tm-breadth{margin-top:14px;padding-top:12px;border-top:1px solid var(--tm-line-2)}
+  .tm-br-row{display:grid;grid-template-columns:64px 1fr 44px;gap:9px;align-items:center;
+    font-family:var(--f-mono);font-size:10px;color:var(--tm-dim);padding:3px 0}
+  .tm-br-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;display:flex}
+  .tm-br-bar i{display:block;height:100%}
+  .tm-mvlist{display:flex;flex-direction:column}
+  .tm-mv{display:flex;align-items:baseline;gap:8px;padding:5px 2px;border-top:1px solid var(--tm-line-2);
+    cursor:pointer;font-family:var(--f-mono);border-radius:6px}
+  .tm-mv:first-child{border-top:0}
+  .tm-mv:hover{background:rgba(0,242,255,.05)}
+  .tm-mv b{font-size:.82rem;font-weight:700}
+  .tm-mv .nm{flex:1;min-width:0;color:var(--tm-faint);font-size:.66rem;font-family:var(--f-sans);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tm-mv .pc{font-size:.78rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+  /* ---- bottom status bar (cockpit) ---- */
+  .tm-statusbar{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:9px;padding:8px 14px;
+    background:var(--tm-card);border:1px solid var(--tm-line);border-radius:10px;
+    font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tm-faint)}
+  .tm-statusbar b{color:var(--tm-dim);font-weight:700}
+  .tm-statusbar .ok{color:var(--emerald);font-weight:700}
+  .tm-statusbar b.live{color:var(--emerald)}
+  .tm-statusbar b.wait{color:var(--amber)}
+
   /* paper / brokerage segmented toggle */
   .tm-acctseg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;
     background:var(--tm-card-2);border:1px solid var(--tm-line);border-radius:10px;padding:4px}
@@ -378,6 +412,20 @@
           placeholder="Add symbol (e.g. AAPL)…" aria-label="Add a symbol to the watchlist">
       </section>
 
+      <section class="tm-card" aria-label="Market pulse">
+        <div class="tm-hd"><h3>Market Pulse</h3><span class="tm-cap">fear &amp; greed · breadth</span></div>
+        <div class="tm-fg">
+          <div class="tm-fg-top"><span class="tm-fg-num" id="tmFgNum">—</span><span class="tm-fg-lbl" id="tmFgLbl">reading the tape…</span></div>
+          <div class="tm-fg-track"><i id="tmFgMark"></i></div>
+          <div class="tm-fg-scale"><span>FEAR</span><span>NEUTRAL</span><span>GREED</span></div>
+        </div>
+        <div class="tm-breadth" id="tmBreadth"></div>
+        <div class="tm-cap" style="margin:12px 0 4px">Top gainers</div>
+        <div id="tmGainers" class="tm-mvlist"></div>
+        <div class="tm-cap" style="margin:12px 0 4px">Top losers</div>
+        <div id="tmLosers" class="tm-mvlist"></div>
+      </section>
+
       <section class="tm-card" aria-label="Market news">
         <div class="tm-hd"><h3 id="tmNewsTtl">News</h3><span class="tm-cap" id="tmNewsCap">live wire</span></div>
         <div id="tmNews" class="fnw"><div class="fnw-empty">Loading headlines…</div></div>
@@ -519,6 +567,15 @@
       </section>
 
     </div>
+  </div>
+
+  <div class="tm-statusbar" aria-hidden="true">
+    <span class="ok">● READY</span>
+    <span>SESSION <b id="tmStSess">00:00</b></span>
+    <span>LAYOUT: <b>ACTIVE</b></span>
+    <span id="tmStFeed">FEEDS: <b class="wait">CONNECTING…</b></span>
+    <span>LAST TICK <b id="tmStTick">—</b></span>
+    <span style="margin-left:auto">FLUX TERMINAL · PAPER</span>
   </div>
 
   <p class="tm-disc">Real quotes, simulated fills, virtual money — not investment advice. Prices shown are live server quotes;
@@ -1326,9 +1383,76 @@ document.addEventListener("DOMContentLoaded", function(){
     }).join("");
   }
 
+  /* ---------- market pulse: fear & greed + breadth + movers (from the live universe) ---------- */
+  function pulseData(){
+    var out = [], adv = 0, dec = 0, sum = 0;
+    for(var i=0;i<TICKERS.length;i++){
+      var t = TICKERS[i], p = priceOf(t), pc = prevClose(t);
+      if(!p || !pc) continue;
+      var chg = (p - pc) / pc * 100;
+      out.push({ t:t, chg:chg });
+      if(chg > 0.05) adv++; else if(chg < -0.05) dec++;
+      sum += chg;
+    }
+    return { rows: out, adv: adv, dec: dec, avg: out.length ? sum / out.length : 0 };
+  }
+  function renderPulse(){
+    var fgNum = $("#tmFgNum"); if(!fgNum) return;
+    var d = pulseData();
+    if(!d.rows.length) return;
+    var breadth = (d.adv + d.dec) ? d.adv / (d.adv + d.dec) : 0.5;
+    // 70% breadth + 30% average move, squashed to 0-100 (a Fear&Greed-style read of OUR universe)
+    var score = Math.round(Math.max(0, Math.min(100, breadth * 70 + (Math.max(-2, Math.min(2, d.avg)) + 2) / 4 * 30)));
+    var lbl = score < 25 ? "EXTREME FEAR" : score < 45 ? "FEAR" : score < 56 ? "NEUTRAL" : score < 78 ? "GREED" : "EXTREME GREED";
+    fgNum.textContent = score;
+    fgNum.style.color = score < 45 ? CR : (score < 56 ? "var(--amber)" : EM);
+    var lblEl = $("#tmFgLbl"); if(lblEl) lblEl.textContent = lbl + " · " + TICKERS.length + " names";
+    var mark = $("#tmFgMark"); if(mark) mark.style.left = score + "%";
+    var br = $("#tmBreadth");
+    if(br){
+      var tot = Math.max(1, d.adv + d.dec);
+      br.innerHTML = '<div class="tm-br-row"><span>Breadth</span>'+
+        '<div class="tm-br-bar"><i style="width:'+(d.adv/tot*100)+'%;background:'+EM+'"></i><i style="width:'+(d.dec/tot*100)+'%;background:'+CR+'"></i></div>'+
+        '<span>'+d.adv+'/'+d.dec+'</span></div>'+
+        '<div class="tm-br-row"><span>Avg move</span><div></div><span style="color:'+(d.avg>=0?EM:CR)+'">'+(d.avg>=0?"+":"")+d.avg.toFixed(2)+'%</span></div>';
+    }
+    var sorted = d.rows.slice().sort(function(a,b){ return b.chg - a.chg; });
+    function mv(list, el){
+      if(!el) return;
+      el.innerHTML = list.map(function(r){
+        return '<div class="tm-mv" data-t="'+r.t+'"><b>'+r.t+'</b><span class="nm">'+coName(r.t)+'</span>'+
+          '<span class="pc" style="color:'+(r.chg>=0?EM:CR)+'">'+(r.chg>=0?"+":"")+r.chg.toFixed(2)+'%</span></div>';
+      }).join("");
+      $$(".tm-mv", el).forEach(function(x){ x.onclick = function(){ setActive(x.getAttribute("data-t")); }; });
+    }
+    mv(sorted.slice(0,3), $("#tmGainers"));
+    mv(sorted.slice(-3).reverse(), $("#tmLosers"));
+  }
+
+  /* ---------- cockpit status bar ---------- */
+  var bootAt = Date.now(), lastTickAt = 0;
+  window.addEventListener("flux-prices", function(){ lastTickAt = Date.now(); });
+  function statusTick(){
+    var s = Math.floor((Date.now() - bootAt) / 1000);
+    var mm = String(Math.floor(s/60)); if(mm.length<2) mm = "0"+mm;
+    var ss = String(s%60); if(ss.length<2) ss = "0"+ss;
+    var el = $("#tmStSess"); if(el) el.textContent = mm+":"+ss;
+    var feed = $("#tmStFeed");
+    if(feed){
+      var live = lastTickAt && (Date.now() - lastTickAt) < 60000;
+      feed.innerHTML = 'FEEDS: <b class="'+(live?"live":"wait")+'">'+(live?"CONNECTED":"WAITING")+'</b>';
+    }
+    var tick = $("#tmStTick");
+    if(tick) tick.textContent = lastTickAt ? Math.round((Date.now()-lastTickAt)/1000)+"s ago" : "—";
+  }
+  setInterval(statusTick, 1000); statusTick();
+  setInterval(renderPulse, 15000);
+  window.addEventListener("flux-prices", renderPulse);
+
   /* ---------- boot ---------- */
   buildWatch();
   renderAll();
+  renderPulse();
   fetchIdx(); renderTickers(); renderKeyMetrics();
   window.addEventListener("flux-watch", renderTickers);
   window.addEventListener("flux-sub", function(){ renderKeyMetrics(); tvUpdate(); });
