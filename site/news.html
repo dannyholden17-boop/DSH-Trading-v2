@@ -7,14 +7,14 @@
 <meta name="description" content="A live finance news feed: real headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg, MarketWatch and Yahoo Finance, merged and shuffled, filterable by category and your watchlist. News is informational only — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=12">
-<script src="./assets/flux-supa.js?v=12" defer></script>
-<script src="./assets/flux-site.js?v=12" defer></script>
-<script src="./assets/flux-universe.js?v=12" defer></script>
-<script src="./assets/flux-feed.js?v=12" defer></script>
-<script src="./assets/flux-fund.js?v=12" defer></script>
-<script src="./assets/flux-kronos.js?v=12" defer></script>
-<script src="./assets/flux-news.js?v=12" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=13">
+<script src="./assets/flux-supa.js?v=13" defer></script>
+<script src="./assets/flux-site.js?v=13" defer></script>
+<script src="./assets/flux-universe.js?v=13" defer></script>
+<script src="./assets/flux-feed.js?v=13" defer></script>
+<script src="./assets/flux-fund.js?v=13" defer></script>
+<script src="./assets/flux-kronos.js?v=13" defer></script>
+<script src="./assets/flux-news.js?v=13" defer></script>
 <style>
   /* ---- page-only layout: news.html ---- */
   .nw-hero{max-width:66ch}
@@ -189,9 +189,7 @@
           <span class="pill pill-violet"><i></i> AI Market Pulse</span>
           <span class="k" id="nwPulseTs">—</span>
         </div>
-        <p class="nw-pl">Tape reads <b>risk-on</b>: breadth is widening and semis are carrying, with the wire net-positive across the last hour.</p>
-        <p class="nw-pl">The loudest print is <b>NVDA</b> options flow; <b>AMD</b> earnings and a <b>TSLA</b> 8-K are the two catalysts worth watching into the close.</p>
-        <p class="nw-pl">Sentiment skews <b>bullish</b> in tech and <b>bearish</b> in energy. This is a simulated synthesis, not advice<span class="nw-caret" id="nwCaret"></span></p>
+        <p class="nw-pl" id="nwPulseText">Fluxi is reading the wire…<span class="nw-caret" id="nwCaret"></span></p>
       </div>
 
       <div class="glass nw-panel">
@@ -465,23 +463,30 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(loadNews, 180000);
 
   /* ---------- AI Market Pulse (typewriter reveal) ---------- */
-  var pulse = $("#nwPulse"), caret = $("#nwCaret"), pts = $("#nwPulseTs");
-  if(pts){
+  var pulse = $("#nwPulse"), caret = $("#nwCaret"), pts = $("#nwPulseTs"), pulseTxt = $("#nwPulseText");
+  function pulseStamp(){
+    if(!pts) return;
     var d = new Date(), hh = d.getHours(), ap = hh>=12 ? "PM" : "AM", h12 = hh%12; if(h12===0) h12=12;
     var mm = String(d.getMinutes()); if(mm.length<2) mm = "0"+mm;
-    pts.textContent = "synth " + h12 + ":" + mm + " " + ap;
+    pts.textContent = "read " + h12 + ":" + mm + " " + ap;
   }
+  pulseStamp();
   if(pulse){
     pulse.classList.add("typing");
-    var plines = $$(".nw-pl", pulse);
-    if(reduce){
-      plines.forEach(function(l){ l.classList.add("in"); });
-      if(caret) caret.classList.add("done");
-    } else {
-      plines.forEach(function(l, i){ setTimeout(function(){ l.classList.add("in"); }, 300 + i*520); });
-      setTimeout(function(){ if(caret) caret.classList.add("done"); }, 300 + plines.length*520 + 700);
-    }
+    var pl = $(".nw-pl", pulse);
+    if(pl) setTimeout(function(){ pl.classList.add("in"); }, 200);
+    if(caret) setTimeout(function(){ caret.classList.add("done"); }, 900);
   }
+  function loadPulse(){
+    if(!(F.News && F.News.brief) || !pulseTxt) return;
+    F.News.brief().then(function(t){
+      pulseTxt.innerHTML = (t ? esc(t) : "Fluxi's read is warming up — headlines are live below.") +
+        '<span class="nw-caret done" id="nwCaret"></span>';
+      pulseStamp();
+    });
+  }
+  function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  loadPulse(); setInterval(loadPulse, 600000);
 
   /* ---------- top movers (shared signals) ---------- */
   var movers = $("#nwMovers");
