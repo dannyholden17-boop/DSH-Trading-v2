@@ -23,7 +23,7 @@ alter table public.admin_emails enable row level security;
 -- No policies: only the service role and SECURITY DEFINER functions can read it.
 
 insert into public.admin_emails(email, note)
-values ('dannyholden17@gmail.com', 'owner')
+values ('<OWNER_EMAIL — set in the live DB; redacted from this public repo>', 'owner')
 on conflict (email) do nothing;
 
 create or replace function public.flux_comp_if_admin(uid uuid, mail text)
@@ -73,7 +73,7 @@ join public.admin_emails a on lower(a.email) = lower(u.email);
 -- ============================================================
 -- Admin management RPCs (migration: admin_management_rpcs)
 -- Site-callable, JWT-verified: every function checks the caller's
--- email against admin_emails. Owner (dannyholden17@gmail.com) is
+-- email against admin_emails. Owner (email held in the live DB only; redacted here) is
 -- immutable. flux_admin_add comps the new admin immediately if
 -- they already have an account (otherwise the signup trigger does).
 --   flux_is_admin()        -> boolean
