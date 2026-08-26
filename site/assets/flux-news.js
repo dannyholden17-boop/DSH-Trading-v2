@@ -18,7 +18,9 @@
   var briefCache = null, briefAt = 0, briefInflight = null, BTTL = 600000;
 
   var SRC = { WSJ:"#e0483b", CNBC:"#0a7bc2", Reuters:"#ff8000", Bloomberg:"#a78bfa",
-              "Yahoo Finance":"#7b5cff", MarketWatch:"#12b886", "Investing.com":"#3b9dff" };
+              "Yahoo Finance":"#7b5cff", MarketWatch:"#12b886", "Investing.com":"#3b9dff",
+              "Federal Reserve":"#f5b544", SEC:"#f5b544", Treasury:"#f5b544",
+              BLS:"#f5b544", "White House":"#f5b544", "Gov / Policy":"#f5b544" };
 
   function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
   function ago(ts){
@@ -33,7 +35,7 @@
   function itemHTML(it){
     return '<a class="fnw-item" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+
       '<span class="fnw-src" style="color:'+color(it.source)+'">'+esc(it.source)+'</span>'+
-      '<span class="fnw-ttl">'+esc(it.title)+'</span>'+
+      '<span class="fnw-ttl">'+esc(it.title)+(it.gov?'<span class="fnw-gov">GOV</span>':'')+'</span>'+
       '<span class="fnw-ago">'+ago(it.published)+'</span></a>';
   }
   // does a headline mention this ticker / company?

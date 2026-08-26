@@ -7,15 +7,15 @@
 <meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=13">
-<script src="./assets/flux-supa.js?v=13" defer></script>
-<script src="./assets/flux-site.js?v=13" defer></script>
-<script src="./assets/flux-universe.js?v=13" defer></script>
-<script src="./assets/flux-feed.js?v=13" defer></script>
-<script src="./assets/flux-fund.js?v=13" defer></script>
-<script src="./assets/flux-kronos.js?v=13" defer></script>
-<script src="./assets/flux-tv.js?v=13" defer></script>
-<script src="./assets/flux-news.js?v=13" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=14">
+<script src="./assets/flux-supa.js?v=14" defer></script>
+<script src="./assets/flux-site.js?v=14" defer></script>
+<script src="./assets/flux-universe.js?v=14" defer></script>
+<script src="./assets/flux-feed.js?v=14" defer></script>
+<script src="./assets/flux-fund.js?v=14" defer></script>
+<script src="./assets/flux-kronos.js?v=14" defer></script>
+<script src="./assets/flux-tv.js?v=14" defer></script>
+<script src="./assets/flux-news.js?v=14" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -220,6 +220,20 @@
   .tm-otag{font-family:var(--f-mono);font-size:9px;color:var(--tm-faint);text-transform:uppercase}
 
   .tm-disc{color:var(--tm-faint);font-size:.72rem;line-height:1.6;margin-top:10px}
+  /* paper / brokerage segmented toggle */
+  .tm-acctseg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;
+    background:var(--tm-card-2);border:1px solid var(--tm-line);border-radius:10px;padding:4px}
+  .tm-acctseg button{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:7px 0;border-radius:7px;border:1px solid transparent;background:none;color:var(--tm-faint);cursor:pointer;transition:.15s}
+  .tm-acctseg button:hover{color:var(--tm-txt)}
+  .tm-acctseg button[aria-pressed="true"]{color:var(--cyan);border-color:rgba(0,242,255,.4);background:rgba(0,242,255,.08)}
+
+  /* bigger news in the terminal */
+  .tm-card .fnw-item{padding:12px 2px;gap:11px}
+  .tm-card .fnw-ttl{font-size:.98rem;line-height:1.42;-webkit-line-clamp:3}
+  .tm-card .fnw-src{font-size:10.5px}
+  .tm-card .fnw-ago{font-size:10.5px}
+
   .tm-star{margin-left:6px;flex:none;background:none;border:none;cursor:pointer;font-size:1.25rem;line-height:1;
     color:var(--text-faint);transition:color .15s,transform .12s;align-self:center;padding:2px 4px}
   .tm-star:hover{transform:scale(1.15);color:var(--amber)}
@@ -325,17 +339,30 @@
 
       <section class="tm-card" aria-label="Account">
         <div class="tm-hd">
-          <h3>Individual</h3>
+          <h3>Account</h3>
           <button class="tm-reset" id="tmReset" type="button">Reset</button>
         </div>
-        <div class="tm-acct-top">
-          <div>
-            <div class="tm-eq" id="tmEq">—</div>
-            <div class="tm-day" id="tmDay"><span class="lbl">Today</span></div>
-          </div>
+        <div class="tm-acctseg" id="tmAcctSeg" role="group" aria-label="Account type">
+          <button type="button" data-acct="paper" aria-pressed="true">Paper</button>
+          <button type="button" data-acct="broker" aria-pressed="false">Brokerage</button>
         </div>
-        <canvas class="tm-acctspark" id="tmAcctSpark" aria-label="Intraday equity trace"></canvas>
-        <div class="tm-cap" style="margin-top:8px">Paper · simulated · virtual money</div>
+        <div id="tmPaperPane">
+          <div class="tm-acct-top">
+            <div>
+              <div class="tm-eq" id="tmEq">—</div>
+              <div class="tm-day" id="tmDay"><span class="lbl">Today</span></div>
+            </div>
+          </div>
+          <canvas class="tm-acctspark" id="tmAcctSpark" aria-hidden="true"></canvas>
+          <div class="tm-cap" style="margin-top:8px">Paper · simulated · virtual money</div>
+        </div>
+        <div id="tmBrokerPane" hidden>
+          <p style="font-size:.84rem;color:var(--tm-dim);line-height:1.55;margin:4px 0 12px">
+            Trade this terminal with your <b style="color:var(--tm-txt)">own brokerage account</b>.
+            Connect it once and switch here anytime — Flux never trades it without your rules.</p>
+          <a class="btn btn-primary btn-sm" href="./portfolio.html" style="width:100%;text-align:center">Connect brokerage →</a>
+          <div class="tm-cap" style="margin-top:10px">Brokerage connect is rolling out — join from the Portfolio page.</div>
+        </div>
       </section>
 
       <section class="tm-card" aria-label="Watchlist">
@@ -824,11 +851,21 @@ document.addEventListener("DOMContentLoaded", function(){
   function addToWatch(raw){
     var t=(raw||"").trim().toUpperCase();
     if(!t) return;
-    if(!PRICES[t]){ flashAdd("Unknown symbol"); return; }
-    if(Watch && Watch.add) Watch.add(t);
-    if(wlAdd) wlAdd.value="";
-    buildWatch();
-    setActive(t);
+    if(PRICES[t]){
+      if(Watch && Watch.add) Watch.add(t);
+      if(wlAdd) wlAdd.value="";
+      buildWatch();
+      setActive(t);
+      return;
+    }
+    flashAdd("Looking up "+t+"…");
+    resolveSym(t, function(ok){
+      if(!ok){ flashAdd("Unknown symbol"); return; }
+      if(Watch && Watch.add) Watch.add(t);
+      if(wlAdd) wlAdd.value="";
+      buildWatch();
+      setActive(t);
+    });
   }
 
   /* ---------- ticket ---------- */
@@ -1000,10 +1037,40 @@ document.addEventListener("DOMContentLoaded", function(){
     else if(wlAdd){ wlAdd.focus(); }
   });
 
+  // Resolve ANY US symbol live: if it's not in the built-in universe, ask the
+  // quotes function; on success, fold it into FLUX so the whole terminal works.
+  function resolveSym(t, cb){
+    t=(t||"").trim().toUpperCase();
+    if(!t || !/^[A-Z][A-Z0-9.\-]{0,9}$/.test(t)) return cb(false);
+    if(PRICES[t]) return cb(true);
+    fetch("https://pyzcwddyagodmtjuvwdn.supabase.co/functions/v1/quotes?symbols="+encodeURIComponent(t),
+      { headers:{ apikey:"sb_publishable_CIYiWNtbGgXDQgEj2kyvrw_AMxXwr8l" } })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        var q = j && j.quotes && j.quotes[t];
+        if(!q || q.last==null) return cb(false);
+        F.PRICES = F.PRICES || {}; F.PREV = F.PREV || {}; F.NAMES = F.NAMES || {}; F.FUND = F.FUND || {}; F.LIVE = F.LIVE || {};
+        F.PRICES[t] = +q.last;
+        F.PREV[t] = (q.prev_close!=null)? +q.prev_close : +q.last;
+        F.NAMES[t] = q.name || t;
+        F.LIVE[t] = { last:+q.last, prev_close:(q.prev_close!=null?+q.prev_close:+q.last), name:q.name||t };
+        var fu = F.FUND[t] || {}; if(q.pe!=null) fu.pe=+q.pe; if(q.mc!=null) fu.mc=+q.mc; if(q.hi!=null) fu.hi=+q.hi; if(q.lo!=null) fu.lo=+q.lo; F.FUND[t]=fu;
+        if(TICKERS.indexOf(t)<0){ TICKERS.push(t);
+          var dl=document.getElementById("tmSyms"); if(dl){ var o=document.createElement("option"); o.value=t; dl.appendChild(o); } }
+        cb(true);
+      })
+      .catch(function(){ cb(false); });
+  }
   if(symInput){
     var applySym=function(){
       var v=(symInput.value||"").trim().toUpperCase();
-      if(PRICES[v]){ setActive(v); } else { symInput.value=ACTIVE; }
+      if(PRICES[v]){ setActive(v); return; }
+      symInput.style.opacity=".55";
+      resolveSym(v, function(ok){
+        symInput.style.opacity="";
+        if(ok){ setActive(v); if(F.toast) F.toast("Found "+v+" — added to your terminal.",{icon:"🔎"}); }
+        else { symInput.value=ACTIVE; if(F.toast) F.toast("Couldn't find \""+v+"\" — check the symbol.",{icon:"⚠️"}); }
+      });
     };
     symInput.addEventListener("change", applySym);
     symInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); applySym(); symInput.blur(); } });
@@ -1123,6 +1190,26 @@ document.addEventListener("DOMContentLoaded", function(){
     renderTickers(); renderKeyMetrics();
   });
 
+  /* ---------- paper / brokerage account toggle ---------- */
+  (function(){
+    var seg=$("#tmAcctSeg"), paper=$("#tmPaperPane"), broker=$("#tmBrokerPane");
+    if(!seg||!paper||!broker) return;
+    var mode="paper"; try{ mode=localStorage.getItem("flux_acct_mode")||"paper"; }catch(e){}
+    function apply(m){
+      mode = (m==="broker")?"broker":"paper";
+      $$("#tmAcctSeg button").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-acct")===mode)); });
+      paper.hidden = mode!=="paper";
+      broker.hidden = mode!=="broker";
+      try{ localStorage.setItem("flux_acct_mode", mode); }catch(e){}
+      if(mode==="paper") { paintAccount(); drawAcctSpark(); }
+    }
+    seg.addEventListener("click", function(e){
+      var b=e.target.closest?e.target.closest("[data-acct]"):null; if(!b) return;
+      apply(b.getAttribute("data-acct"));
+    });
+    apply(mode);
+  })();
+
   /* ---------- markets index bar (real ETF/proxy quotes) ---------- */
   var mktBar = $("#tmMktBar");
   var IDX = [
@@ -1209,7 +1296,7 @@ document.addEventListener("DOMContentLoaded", function(){
   if(F.News && F.News.mountSymbol){
     var ttl = $("#tmNewsTtl"), cap = $("#tmNewsCap");
     newsCtl = F.News.mountSymbol($("#tmNews"), function(){ return { t:ACTIVE, name:(NAMES[ACTIVE]||coName(ACTIVE)) }; }, {
-      limit:6,
+      limit:9,
       onScope: function(sym){
         if(ttl) ttl.textContent = sym ? (sym + " news") : "News";
         if(cap) cap.textContent = sym ? "for this symbol" : "live wire";
