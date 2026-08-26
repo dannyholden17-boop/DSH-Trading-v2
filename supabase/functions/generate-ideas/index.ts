@@ -87,33 +87,61 @@ Deno.serve(async (req) => {
     const picks = [...momentum, ...undervalued, ...overvalued, ...rebound, ...breakout];
     if (!picks.length) return json({ ok: false, error: "no candidates (quotes empty?)", quotesCount: Object.keys(quotes).length }, 502);
 
-    // 4) one Opus call writes a brief for every pick, grounded in the live numbers
+    // 3b) real news context per pick (decision-dashboard method): pull the merged
+    // wire once and match headlines by ticker / company name.
+    let newsByTicker: Record<string, string[]> = {};
+    try {
+      const nres = await fetch(`${SUPABASE_URL}/functions/v1/news?limit=50`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+      const njson = await nres.json().catch(() => null);
+      const items: any[] = (njson && njson.items) || [];
+      for (const r of picks) {
+        const nm = (r.name || "").toLowerCase().replace(/[.,]/g, "").split(/\s+/)[0];
+        const tkRe = new RegExp("[^a-z]" + r.t.toLowerCase() + "[^a-z]");
+        const hits = items.filter((it) => {
+          const hay = " " + (it.title + " " + (it.summary || "")).toLowerCase() + " ";
+          return tkRe.test(hay) || (nm && nm.length >= 3 && hay.includes(nm));
+        }).slice(0, 3).map((it) => `"${it.title}" (${it.source})`);
+        if (hits.length) newsByTicker[r.t] = hits;
+      }
+    } catch { /* news is best-effort */ }
+
+    // 4) one Opus call writes a decision-dashboard brief for every pick,
+    // grounded in the live numbers AND today's real headlines
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     const model = Deno.env.get("FLUX_IDEAS_MODEL") || "claude-opus-5";
     let briefs: Record<string, any> = {};
-    let dbg: any = { key: !!key, model };
+    let dbg: any = { key: !!key, model, newsMatched: Object.keys(newsByTicker).length };
     if (key) {
-      const facts = picks.map((r, i) => `${i + 1}. ${r.t} (${r.name}) — $${r.last.toFixed(2)}, ${r.chgpct >= 0 ? "+" : ""}${r.chgpct.toFixed(1)}% today, at ${(r.rangePos * 100).toFixed(0)}% of its 52wk range (${r.downFromHigh.toFixed(0)}% below the $${r.hi.toFixed(2)} high)${r.pe ? `, P/E ${r.pe}` : ", P/E n/a"}, BUCKET=${(r.bucket || "").toUpperCase()}`).join("\n");
+      const facts = picks.map((r, i) => {
+        const nw = newsByTicker[r.t] ? ` NEWS: ${newsByTicker[r.t].join(" | ")}` : "";
+        return `${i + 1}. ${r.t} (${r.name}) — $${r.last.toFixed(2)}, ${r.chgpct >= 0 ? "+" : ""}${r.chgpct.toFixed(1)}% today, at ${(r.rangePos * 100).toFixed(0)}% of its 52wk range (${r.downFromHigh.toFixed(0)}% below the $${r.hi.toFixed(2)} high)${r.pe ? `, P/E ${r.pe}` : ", P/E n/a"}, BUCKET=${(r.bucket || "").toUpperCase()}.${nw}`;
+      }).join("\n");
       const prompt =
-`You are Fluxi, the Flux trading desk. Today you scanned ${rows.length} US stocks and shortlisted these ${picks.length} into buckets. Write a sharp daily trade-idea brief for EACH, using ONLY the live figures given (do not invent numbers). These are SIMULATED / educational ideas on a paper desk — never financial advice, never promise returns or exact timing.
+`You are Fluxi, the Flux trading desk. Today you scanned ${rows.length} US stocks and shortlisted these ${picks.length} into buckets. Write a sharp daily DECISION DASHBOARD for EACH, using ONLY the live figures given (do not invent numbers). Where NEWS headlines are given, weave the most relevant one into the thesis or catalyst — cite it naturally, never invent news. These are SIMULATED / educational ideas on a paper desk — never financial advice, never promise returns or exact timing.
 
-Frame each brief by its BUCKET:
+Frame each by its BUCKET:
 - MOMENTUM / BREAKOUT: trend + relative strength; why it can keep running. Bullish target ABOVE the current price.
 - UNDERVALUED: a value/mean-reversion case — cheap on P/E and/or beaten down but with a reason to re-rate. Bullish target above price.
 - REBOUND: deeply beaten-down higher-risk recovery; honest that timing is unknown. Bullish target above price.
 - OVERVALUED: a CAUTION / avoid / short-watch case — stretched valuation and extended price; why the risk is to the downside. Target BELOW the current price.
 
-For each name return: a 1-line headline, a 2-3 sentence thesis, a short catalyst, a short risk, a conviction 0-100 (be honest, most 40-70), a horizon ("days"/"weeks"/"months"), and a plausible directional target price (a level, not a promise; above price for bullish buckets, below for OVERVALUED).
+For each name return:
+- headline (1 line), thesis (2-3 sentences), catalyst (short; use real NEWS when given), risk (short)
+- conviction 0-100 (honest, most 40-70) and horizon ("days"/"weeks"/"months")
+- target: plausible directional level (above price for bullish buckets, below for OVERVALUED)
+- entry: a sensible entry zone price (near/below current for bullish; for OVERVALUED the level that would confirm the caution)
+- stop: the stop-loss / invalidation level (below entry for bullish; above price for OVERVALUED)
+- watch: ONE concrete thing to watch that would change the call (a level breaking, an event, follow-through)
 
 LIVE DATA:
 ${facts}
 
 Respond with STRICT JSON only, no prose, shape:
-{"ideas":[{"ticker":"GEV","kind":"momentum|undervalued|overvalued|rebound|breakout","direction":"long|avoid","headline":"...","thesis":"...","catalyst":"...","risk":"...","conviction":60,"horizon":"weeks","target":123.45}]}`;
+{"ideas":[{"ticker":"GEV","kind":"momentum|undervalued|overvalued|rebound|breakout","direction":"long|avoid","headline":"...","thesis":"...","catalyst":"...","risk":"...","conviction":60,"horizon":"weeks","target":123.45,"entry":118.0,"stop":109.5,"watch":"..."}]}`;
       const resp = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
-        body: JSON.stringify({ model, max_tokens: 4096, messages: [{ role: "user", content: prompt }] }),
+        body: JSON.stringify({ model, max_tokens: 8000, messages: [{ role: "user", content: prompt }] }),
       });
       dbg.status = resp.status;
       if (resp.ok) {
@@ -148,11 +176,18 @@ Respond with STRICT JSON only, no prose, shape:
       const bk = (b.kind || r.bucket || "momentum");
       const d = bucketDefaults[bk] || bucketDefaults.momentum;
       const dir = b.direction || (bk === "overvalued" ? "avoid" : "long");
+      const bull = dir !== "avoid";
+      const defEntry = bull ? r.last * 0.99 : r.last * 1.02;
+      const defStop = bull ? Math.max(r.lo, r.last * 0.92) : r.last * 1.07;
       return {
         day, idx: i + 1, ticker: r.t, name: r.name, sector: null,
         kind: bk, direction: dir,
         price: +r.last.toFixed(2),
         target: b.target != null ? +(+b.target).toFixed(2) : +(r.last * d.mult).toFixed(2),
+        entry: b.entry != null ? +(+b.entry).toFixed(2) : +defEntry.toFixed(2),
+        stop: b.stop != null ? +(+b.stop).toFixed(2) : +defStop.toFixed(2),
+        watch: b.watch || (bull ? "Whether it holds above the entry zone on a pullback." : "Whether price loses momentum at these extended levels."),
+        news: newsByTicker[r.t] ? newsByTicker[r.t].join(" | ").slice(0, 500) : null,
         conviction: Math.max(1, Math.min(100, Math.round(b.conviction || d.conv))),
         horizon: b.horizon || d.hz,
         headline: b.headline || d.head(r),

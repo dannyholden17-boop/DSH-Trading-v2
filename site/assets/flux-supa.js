@@ -328,7 +328,7 @@
     }).catch(function(){ return null; });
     function load(day, total){
       return S.client.from("trade_ideas")
-        .select("idx,ticker,name,sector,kind,direction,price,target,conviction,horizon,headline,thesis,catalyst,risk")
+        .select("idx,ticker,name,sector,kind,direction,price,target,entry,stop,watch,news,conviction,horizon,headline,thesis,catalyst,risk")
         .eq("day", day).order("idx",{ascending:true})
         .then(function(res){
           var ideas = (res&&res.data)||[];
