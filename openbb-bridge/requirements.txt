@@ -1,0 +1,4 @@
+# OpenBB → Flux bridge
+openbb>=4.4,<5
+fastapi>=0.110
+uvicorn[standard]>=0.29

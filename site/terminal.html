@@ -7,15 +7,19 @@
 <meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=17">
-<script src="./assets/flux-supa.js?v=17" defer></script>
-<script src="./assets/flux-site.js?v=17" defer></script>
-<script src="./assets/flux-universe.js?v=17" defer></script>
-<script src="./assets/flux-feed.js?v=17" defer></script>
-<script src="./assets/flux-fund.js?v=17" defer></script>
-<script src="./assets/flux-kronos.js?v=17" defer></script>
-<script src="./assets/flux-tv.js?v=17" defer></script>
-<script src="./assets/flux-news.js?v=17" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=18">
+<!-- TradingView Lightweight Charts (Apache-2.0, vendored locally — see assets/vendor/) -->
+<script src="./assets/vendor/lightweight-charts.js?v=18" defer></script>
+<script src="./assets/flux-supa.js?v=18" defer></script>
+<script src="./assets/flux-site.js?v=18" defer></script>
+<script src="./assets/flux-universe.js?v=18" defer></script>
+<script src="./assets/flux-feed.js?v=18" defer></script>
+<script src="./assets/flux-fund.js?v=18" defer></script>
+<script src="./assets/flux-kronos.js?v=18" defer></script>
+<script src="./assets/flux-tv.js?v=18" defer></script>
+<script src="./assets/flux-news.js?v=18" defer></script>
+<script src="./assets/flux-broker.js?v=18" defer></script>
+<script src="./assets/flux-research.js?v=18" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -28,7 +32,14 @@
     background:var(--tm-bg);min-height:100vh;padding:9px;max-width:1760px;margin-inline:auto}
   /* default the workstation to a zoomed-out view on desktop so the whole desk
      (markets bar, chart, ticket, orders, positions, key metrics) fits at once */
-  @media(min-width:1100px){ .tm-wrap{zoom:.84} }
+  @media(min-width:1100px){
+    .tm-wrap{zoom:.84}
+    /* The chart cancels the desk's zoom-out with an exact inverse so its own
+       zoom context is 1: pointer coordinates line up with the plot (the crosshair
+       would otherwise drift by ~16%) and candles render at true device scale.
+       Width/height are pre-divided so it still occupies the same visual box. */
+    .tm-wrap .tm-chart{zoom:1.190476;width:100%;height:386px}
+  }
 
   /* immersive fullscreen */
   body.tm-full .nav,body.tm-full .footer{display:none}
@@ -112,6 +123,9 @@
   .tm-wl-px{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;flex:none}
   .tm-wl-px .l{font-weight:700;font-size:.78rem}
   .tm-wl-px .c{font-size:.68rem;font-weight:700;margin-top:2px}
+  .tm-k{font-family:var(--f-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--tm-faint);display:block;margin-bottom:4px}
+  .tm-lnkbtn{background:none;border:0;padding:0;cursor:pointer;color:var(--tm-faint);font:inherit;text-decoration:underline;text-underline-offset:2px}
+  .tm-lnkbtn:hover{color:var(--crimson)}
   .tm-add{width:100%;background:var(--tm-card-2);border:1px solid var(--tm-line);border-radius:9px;color:var(--tm-txt);
     font-family:var(--f-sans);font-size:.8rem;padding:8px 11px;margin-top:9px}
   .tm-add::placeholder{color:var(--tm-faint)}
@@ -137,6 +151,7 @@
   .tm-chtool{width:28px;height:28px;flex:none;border-radius:8px;border:1px solid var(--tm-line);background:var(--tm-card-2);
     color:var(--tm-faint);font-family:var(--f-mono);font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer}
   .tm-chtool:hover{color:var(--cyan);border-color:rgba(0,242,255,.4)}
+  .tm-chtool[aria-pressed="true"]{color:var(--cyan);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.1)}
   @keyframes tmFlashUp{from{background:color-mix(in srgb,var(--emerald) 26%,transparent)}to{background:transparent}}
   @keyframes tmFlashDn{from{background:color-mix(in srgb,var(--crimson) 26%,transparent)}to{background:transparent}}
   .tm-fu{animation:tmFlashUp .7s ease-out}
@@ -155,9 +170,16 @@
   @media(max-width:640px){.tm-ohlc{margin-left:0;width:100%}}
 
   .tm-chart{width:100%;height:460px;display:block;border:1px solid var(--tm-line-2);border-radius:10px;
-    background:var(--tm-card-2);cursor:crosshair;touch-action:pan-y}
+    background:var(--tm-card-2);cursor:crosshair;touch-action:pan-y;overflow:hidden;position:relative}
+  .tm-chart[hidden]{display:none}
   @media(max-width:900px){.tm-chart{height:380px}}
   @media(max-width:520px){.tm-chart{height:300px}}
+  /* Lightweight-Charts legend, floated over the top-left of the plot */
+  .tm-chleg{position:absolute;top:9px;left:11px;z-index:3;pointer-events:none;
+    font-family:var(--f-mono);font-size:10.5px;letter-spacing:.02em;color:var(--tm-faint);
+    display:flex;gap:10px;flex-wrap:wrap;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+  .tm-chleg b{font-weight:600}
+  .tm-chleg .ma20{color:#f6c453}.tm-chleg .ma50{color:#8b5cf6}.tm-chleg .cmp{color:#6ab8ff}
 
   .tm-tfrow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:10px}
   .tm-tf{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.02em;padding:6px 11px;border-radius:8px;cursor:pointer;
@@ -394,11 +416,39 @@
           <div class="tm-cap" style="margin-top:8px">Paper · simulated · virtual money</div>
         </div>
         <div id="tmBrokerPane" hidden>
-          <p style="font-size:.84rem;color:var(--tm-dim);line-height:1.55;margin:4px 0 12px">
-            Trade this terminal with your <b style="color:var(--tm-txt)">own brokerage account</b>.
-            Connect it once and switch here anytime — Flux never trades it without your rules.</p>
-          <a class="btn btn-primary btn-sm" href="./portfolio.html" style="width:100%;text-align:center">Connect brokerage →</a>
-          <div class="tm-cap" style="margin-top:10px">Brokerage connect is rolling out — join from the Portfolio page.</div>
+          <!-- not connected -->
+          <div id="tmBkOff">
+            <p style="font-size:.84rem;color:var(--tm-dim);line-height:1.55;margin:4px 0 10px">
+              Trade this terminal with your <b style="color:var(--tm-txt)">own brokerage account</b>.
+              Paste your Alpaca API keys — they stay in this browser and are never saved to Flux.</p>
+            <form id="tmBkForm" novalidate>
+              <label class="tm-k" for="tmBkKey">API key id</label>
+              <input class="tm-add" id="tmBkKey" type="text" autocomplete="off" spellcheck="false" placeholder="PK…">
+              <label class="tm-k" for="tmBkSec" style="margin-top:8px;display:block">Secret key</label>
+              <input class="tm-add" id="tmBkSec" type="password" autocomplete="off" spellcheck="false" placeholder="••••••••">
+              <div class="tm-acctseg" id="tmBkEnv" role="group" aria-label="Account environment" style="margin-top:9px">
+                <button type="button" data-env="paper" aria-pressed="true">Alpaca paper</button>
+                <button type="button" data-env="live" aria-pressed="false">Live money</button>
+              </div>
+              <button class="btn btn-primary btn-sm" id="tmBkConnect" type="submit" style="width:100%;text-align:center;margin-top:10px">Connect brokerage</button>
+            </form>
+            <div class="tm-cap" id="tmBkMsg" style="margin-top:9px">Keys live in this browser only · <a href="https://alpaca.markets/" target="_blank" rel="noopener" style="color:var(--cyan)">get Alpaca keys</a></div>
+          </div>
+          <!-- connected -->
+          <div id="tmBkOn" hidden>
+            <div class="tm-acct-top">
+              <div>
+                <div class="tm-eq" id="tmBkEq">—</div>
+                <div class="tm-day" id="tmBkDay"><span class="lbl">Today</span></div>
+              </div>
+            </div>
+            <div class="tm-km" id="tmBkFacts" style="margin-top:8px;grid-template-columns:1fr"></div>
+            <div class="tm-cap" style="margin-top:9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span id="tmBkWho">—</span>
+              <button class="tm-mini" id="tmBkRefresh" type="button" title="Refresh from the broker" aria-label="Refresh">⟳</button>
+              <button class="tm-lnkbtn" id="tmBkOut" type="button">Disconnect</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -456,11 +506,11 @@
             <span class="chg" id="tmPriceChg">—</span>
             <span id="tmTV" title="TradingView technical rating" style="font-family:var(--f-mono);font-size:.72rem;margin-left:12px;white-space:nowrap;color:var(--text-faint)"></span>
           </div>
-          <div class="tm-chtools" aria-hidden="true">
-            <span class="tm-chtool" title="Candles">▤</span>
-            <span class="tm-chtool" title="Indicators">∿</span>
-            <span class="tm-chtool" title="Draw">✎</span>
-            <span class="tm-chtool" title="Compare">⇄</span>
+          <div class="tm-chtools" role="group" aria-label="Chart tools">
+            <button class="tm-chtool" id="tmChStyle" type="button" title="Chart style — candles / line / area" aria-label="Chart style">▤</button>
+            <button class="tm-chtool" id="tmChMA" type="button" title="Moving averages — 20 & 50" aria-label="Moving averages" aria-pressed="false">∿</button>
+            <button class="tm-chtool" id="tmChCmp" type="button" title="Compare against SPY" aria-label="Compare against SPY" aria-pressed="false">⇄</button>
+            <button class="tm-chtool" id="tmChFit" type="button" title="Fit / reset zoom" aria-label="Fit chart">⤢</button>
           </div>
         </div>
 
@@ -477,7 +527,12 @@
           </div>
         </div>
 
-        <canvas class="tm-chart" id="tmChart" aria-label="Candlestick and volume chart for the active symbol"></canvas>
+        <!-- real chart (TradingView Lightweight Charts); the canvas below is the
+             fallback renderer, shown only if the library fails to load -->
+        <div class="tm-chart" id="tmChartLW" aria-label="Candlestick and volume chart for the active symbol">
+          <div class="tm-chleg" id="tmChLeg"></div>
+        </div>
+        <canvas class="tm-chart" id="tmChart" hidden aria-label="Candlestick and volume chart for the active symbol"></canvas>
 
         <div class="tm-tfrow" id="tmTfs" role="group" aria-label="Timeframe">
           <button class="tm-tf" type="button" data-tf="1D" aria-pressed="true">1D</button>
@@ -495,7 +550,7 @@
       <section class="tm-card" aria-label="Key metrics">
         <div class="tm-hd">
           <h3 id="tmKmTitle">Key metrics · NVDA</h3>
-          <span class="tm-cap">fundamentals · live</span>
+          <span class="tm-cap" id="tmKmCap">fundamentals · live</span>
         </div>
         <div class="tm-km" id="tmKm"></div>
         <div class="tm-cap" style="margin-top:10px">Model estimates on simulated / delayed data · not investment advice.</div>
@@ -652,7 +707,7 @@ document.addEventListener("DOMContentLoaded", function(){
   try{ ACCT_MODE = localStorage.getItem("flux_acct_mode") || "paper"; }catch(e){}
   if(ACCT_MODE !== "broker") ACCT_MODE = "paper";
   function brokerMode(){ return ACCT_MODE === "broker"; }
-  var BROKER_EMPTY = 'No brokerage connected yet — <a href="./portfolio.html" style="color:var(--cyan)">connect yours</a> and your real account data will appear here.';
+  var BROKER_EMPTY = 'No brokerage connected yet — add your keys in the Account card and your real account data appears here.';
 
   /* ---------- element refs ---------- */
   var eqEl=$("#tmEq"), dayEl=$("#tmDay"), acctSpark=$("#tmAcctSpark"), resetBtn=$("#tmReset");
@@ -828,6 +883,203 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   }
 
+  /* ---------- real chart engine: TradingView Lightweight Charts ----------
+     Vendored at assets/vendor/lightweight-charts.js (Apache-2.0). Gives real
+     candles with zoom, pan, a proper crosshair and a volume pane. If the library
+     is missing for any reason, LW.on stays false and the hand-drawn canvas
+     renderer above takes over, so the chart never disappears. */
+  var LW = (function(){
+    var A = { on:false };
+    var host=$("#tmChartLW"), leg=$("#tmChLeg"), L=window.LightweightCharts;
+    var chart=null, cs=null, vs=null, ma20=null, ma50=null, cmpS=null, pcLine=null;
+    var STYLES=["candles","line","area"], style="candles", showMA=false, cmpOn=false;
+    var CMP = PRICES.SPY ? "SPY" : (PRICES.QQQ ? "QQQ" : (PRICES.DIA ? "DIA" : null));
+    var hoverBar=null;
+
+    /* library missing → hand the chart back to the canvas renderer */
+    if(!L || !host || !L.createChart){
+      A.mount = function(){ if(chartCv) chartCv.hidden=false; if(host) host.hidden=true; };
+      A.setAll = A.tick = A.fit = A.toggleMA = A.toggleCmp = function(){};
+      A.style = function(){ return "candles"; };
+      A.benchmark = function(){ return null; };
+      return A;
+    }
+
+    function ts(ms){ return Math.floor(ms/1000); }
+    function candleData(){ return CANDLES.map(function(k){ return {time:ts(k.t),open:k.o,high:k.h,low:k.l,close:k.c}; }); }
+    function volData(){ return CANDLES.map(function(k){ return {time:ts(k.t),value:k.v,
+      color:(k.c>=k.o)?"rgba(16,185,129,.38)":"rgba(239,68,68,.34)"}; }); }
+    function closeData(){ return CANDLES.map(function(k){ return {time:ts(k.t),value:k.c}; }); }
+    function sma(p){
+      var out=[], sum=0;
+      for(var i=0;i<CANDLES.length;i++){
+        sum+=CANDLES[i].c;
+        if(i>=p) sum-=CANDLES[i-p].c;
+        if(i>=p-1) out.push({time:ts(CANDLES[i].t), value:sum/p});
+      }
+      return out;
+    }
+    /* compare series: the benchmark rebased to this symbol's first close, so the
+       two lines start together and the gap is relative performance */
+    function cmpData(){
+      if(!CMP || !CANDLES.length) return [];
+      var b=genCandles(CMP, tfCfg()); if(!b.length) return [];
+      var base=CANDLES[0].c/b[0].c, out=[];
+      for(var i=0;i<CANDLES.length && i<b.length;i++) out.push({time:ts(CANDLES[i].t), value:b[i].c*base});
+      return out;
+    }
+
+    function build(){
+      chart = L.createChart(host, {
+        autoSize:true,
+        layout:{ background:{ type:"solid", color:"#0b1120" }, textColor:"#95a3c4",
+                 fontFamily:"ui-monospace, SFMono-Regular, Menlo, monospace", fontSize:10,
+                 attributionLogo:false },
+        grid:{ vertLines:{ color:"rgba(255,255,255,.035)" }, horzLines:{ color:"rgba(255,255,255,.045)" } },
+        rightPriceScale:{ borderColor:"rgba(255,255,255,.07)", scaleMargins:{ top:.08, bottom:.26 } },
+        timeScale:{ borderColor:"rgba(255,255,255,.07)", timeVisible:true, secondsVisible:false,
+                    rightOffset:4, barSpacing:8, minBarSpacing:1.5 },
+        crosshair:{
+          mode: (L.CrosshairMode ? L.CrosshairMode.Normal : 0),
+          vertLine:{ color:"rgba(220,230,255,.32)", width:1, style:2, labelBackgroundColor:"#1d2740" },
+          horzLine:{ color:"rgba(220,230,255,.32)", width:1, style:2, labelBackgroundColor:"#1d2740" }
+        },
+        localization:{ priceFormatter:function(p){ return num(p); } },
+        handleScroll:{ mouseWheel:true, pressedMouseMove:true, horzTouchDrag:true, vertTouchDrag:false },
+        handleScale:{ mouseWheel:true, pinch:true, axisPressedMouseMove:{ time:true, price:true } }
+      });
+
+      vs = chart.addHistogramSeries({ priceScaleId:"", priceFormat:{ type:"volume" }, lastValueVisible:false, priceLineVisible:false });
+      vs.priceScale().applyOptions({ scaleMargins:{ top:.8, bottom:0 } });
+      makePriceSeries();
+
+      chart.subscribeCrosshairMove(function(p){
+        if(!p || !p.time || !cs){ hoverBar=null; paintOHLC(null); paintLegend(null); return; }
+        var d = p.seriesData ? p.seriesData.get(cs) : null;
+        var v = (p.seriesData && vs) ? p.seriesData.get(vs) : null;
+        if(!d){ return; }
+        var bar = (d.open!=null)
+          ? { o:d.open, h:d.high, l:d.low, c:d.close, v:(v?v.value:0), t:p.time*1000 }
+          : { o:d.value, h:d.value, l:d.value, c:d.value, v:(v?v.value:0), t:p.time*1000 };
+        hoverBar = bar; paintOHLC(bar); paintLegend(bar);
+      });
+      if(leg && leg.parentNode !== host) host.appendChild(leg);
+      A.on = true;
+    }
+
+    /* the price series is rebuilt when the user switches candles / line / area */
+    function makePriceSeries(){
+      if(cs){ try{ chart.removeSeries(cs); }catch(e){} cs=null; pcLine=null; }
+      if(style==="line"){
+        cs = chart.addLineSeries({ color:CY, lineWidth:2, priceLineVisible:true, lastValueVisible:true });
+      } else if(style==="area"){
+        cs = chart.addAreaSeries({ lineColor:CY, lineWidth:2, topColor:"rgba(0,242,255,.22)", bottomColor:"rgba(0,242,255,0)" });
+      } else {
+        cs = chart.addCandlestickSeries({
+          upColor:EM, downColor:CR, borderUpColor:EM, borderDownColor:CR, wickUpColor:EM, wickDownColor:CR
+        });
+      }
+      cs.applyOptions({ priceFormat:{ type:"price", precision:2, minMove:0.01 } });
+    }
+
+    function setPriceData(){
+      if(!cs) return;
+      cs.setData(style==="candles" ? candleData() : closeData());
+      if(pcLine){ try{ cs.removePriceLine(pcLine); }catch(e){} pcLine=null; }
+      var pc = prevClose(ACTIVE);
+      if(pc){
+        pcLine = cs.createPriceLine({ price:pc, color:"rgba(150,163,196,.55)", lineWidth:1,
+          lineStyle:(L.LineStyle?L.LineStyle.Dashed:2), axisLabelVisible:true, title:"prev" });
+      }
+    }
+
+    function setOverlays(){
+      if(ma20){ try{ chart.removeSeries(ma20); }catch(e){} ma20=null; }
+      if(ma50){ try{ chart.removeSeries(ma50); }catch(e){} ma50=null; }
+      if(cmpS){ try{ chart.removeSeries(cmpS); }catch(e){} cmpS=null; }
+      if(showMA && CANDLES.length>20){
+        ma20 = chart.addLineSeries({ color:"#f6c453", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false });
+        ma20.setData(sma(20));
+        if(CANDLES.length>50){
+          ma50 = chart.addLineSeries({ color:"#8b5cf6", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false });
+          ma50.setData(sma(50));
+        }
+      }
+      if(cmpOn && CMP){
+        cmpS = chart.addLineSeries({ color:"#6ab8ff", lineWidth:1, lineStyle:(L.LineStyle?L.LineStyle.Dotted:1),
+          priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false });
+        cmpS.setData(cmpData());
+      }
+    }
+
+    function pct(a,b){ return b ? ((a-b)/b*100) : 0; }
+    function paintLegend(bar){
+      if(!leg) return;
+      var k = bar || (CANDLES.length ? CANDLES[CANDLES.length-1] : null);
+      if(!k){ leg.innerHTML=""; return; }
+      var bits = ['<span><b>'+ACTIVE+'</b> · '+TF+' · '+tfCfg().iv+'</span>'];
+      if(showMA && CANDLES.length>20){
+        var m=sma(20), m2=sma(50);
+        bits.push('<span class="ma20">MA20 '+num(m[m.length-1].value)+'</span>');
+        if(CANDLES.length>50 && m2.length) bits.push('<span class="ma50">MA50 '+num(m2[m2.length-1].value)+'</span>');
+      }
+      if(cmpOn && CMP && CANDLES.length){
+        var cd=cmpData();
+        if(cd.length){
+          var meP=pct(CANDLES[CANDLES.length-1].c, CANDLES[0].c), bmP=pct(cd[cd.length-1].value, cd[0].value);
+          bits.push('<span class="cmp">vs '+CMP+' '+((meP-bmP)>=0?"+":"−")+Math.abs(meP-bmP).toFixed(2)+'%</span>');
+        }
+      }
+      leg.innerHTML = bits.join("");
+    }
+
+    /* ---- public API ---- */
+    A.mount = function(){
+      if(chart) return;
+      try{ build(); }catch(e){ A.on=false; }
+      // fall back to the hand-drawn canvas if the library did not come up
+      host.hidden = !A.on;
+      if(chartCv) chartCv.hidden = A.on;
+    };
+    A.setAll = function(){       /* symbol / timeframe changed — full reload */
+      if(!A.on) return;
+      chart.applyOptions({ timeScale:{ timeVisible:(TF==="1D"||TF==="1W") } });
+      setPriceData();
+      if(vs) vs.setData(volData());
+      setOverlays();
+      chart.timeScale().fitContent();
+      paintLegend(null);
+    };
+    A.tick = function(){         /* live price moved — update the last bar only */
+      if(!A.on || !CANDLES.length || !cs) return;
+      var k = CANDLES[CANDLES.length-1];
+      cs.update(style==="candles" ? {time:ts(k.t),open:k.o,high:k.h,low:k.l,close:k.c} : {time:ts(k.t),value:k.c});
+      if(vs) vs.update({time:ts(k.t), value:k.v, color:(k.c>=k.o)?"rgba(16,185,129,.38)":"rgba(239,68,68,.34)"});
+      if(showMA && ma20){
+        var m=sma(20); if(m.length) ma20.update(m[m.length-1]);
+        if(ma50){ var m2=sma(50); if(m2.length) ma50.update(m2[m2.length-1]); }
+      }
+      if(!hoverBar) paintLegend(null);
+    };
+    A.fit = function(){ if(A.on) chart.timeScale().fitContent(); };
+    A.style = function(){
+      if(!A.on) return style;
+      style = STYLES[(STYLES.indexOf(style)+1) % STYLES.length];
+      makePriceSeries(); A.setAll();
+      return style;
+    };
+    A.toggleMA = function(){ showMA=!showMA; if(A.on){ setOverlays(); paintLegend(null); } return showMA; };
+    A.toggleCmp = function(){ cmpOn=!cmpOn; if(A.on){ setOverlays(); paintLegend(null); } return cmpOn; };
+    A.benchmark = function(){ return CMP; };
+    return A;
+  })();
+
+  /* One front door for every chart update, so the page never cares which
+     renderer is live. */
+  function chartFull(){ if(LW.on) LW.setAll(); else renderChart(null); }
+  function chartTick(){ if(LW.on) LW.tick(); else renderChart(null); }
+  LW.mount();   // before anything reads LW.on (chart tools, first paint)
+
   /* ---------- OHLCV readout ---------- */
   function paintOHLC(k){
     if(!k) k = CANDLES.length ? CANDLES[CANDLES.length-1] : null;
@@ -945,14 +1197,24 @@ document.addEventListener("DOMContentLoaded", function(){
     if(ticketTtl) ticketTtl.textContent="Order · "+ACTIVE;
     if(brokerMode()){
       // brokerage view: never show paper numbers as if they were the broker's
+      var a = bkAcct();
       if(estK) estK.textContent=(side==="buy")?"Estimated cost":"Estimated proceeds";
-      if(estV) estV.textContent="—";
-      if(buyPow) buyPow.textContent="—";
-      if(heldEl) heldEl.textContent="—";
+      if(estV) estV.textContent = a ? money(qtyVal()*ticketPrice()) : "—";
+      if(buyPow) buyPow.textContent = a ? money(a.buying_power) : "—";
+      if(heldEl) heldEl.textContent = a ? (bkHeld(ACTIVE)+" sh") : "—";
       if(placeBtn){
-        placeBtn.textContent="Connect brokerage to trade";
-        placeBtn.className="tm-place";
-        placeBtn.disabled=true;
+        if(!bkOn()){
+          placeBtn.textContent="Connect brokerage to trade";
+          placeBtn.className="tm-place"; placeBtn.disabled=true;
+        } else if(!a){
+          placeBtn.textContent = bkErr ? "Brokerage unavailable" : "Loading account…";
+          placeBtn.className="tm-place"; placeBtn.disabled=true;
+        } else {
+          var lv = BK.live();
+          placeBtn.textContent=(side==="buy"?"Buy ":"Sell ")+ACTIVE+(lv?" · REAL MONEY":" · broker paper");
+          placeBtn.className="tm-place "+(side==="buy"?"tm-side-buy":"tm-side-sell");
+          placeBtn.disabled=false;
+        }
       }
       return;
     }
@@ -991,7 +1253,21 @@ document.addEventListener("DOMContentLoaded", function(){
   function paintOrders(){
     if(!ordersBody) return;
     if(brokerMode()){
-      ordersBody.innerHTML='<tr><td colspan="6" class="tm-empty">'+BROKER_EMPTY+'</td></tr>';
+      var m = bkMsg();
+      if(m){ ordersBody.innerHTML='<tr><td colspan="6" class="tm-empty">'+m+'</td></tr>'; return; }
+      var bo = bkOrders();
+      if(!bo.length){ ordersBody.innerHTML='<tr><td colspan="6" class="tm-empty">No orders at your broker.</td></tr>'; return; }
+      ordersBody.innerHTML=bo.map(function(o){
+        var sc=(o.side==="buy")?"tm-side-b":"tm-side-s";
+        return '<tr data-tk="'+o.ticker+'">'+
+          '<td><b>'+o.ticker+'</b></td>'+
+          '<td class="'+sc+'">'+String(o.side).toUpperCase()+'</td>'+
+          '<td>'+o.qty+'</td>'+
+          '<td>'+(o.price?("$"+Number(o.price).toFixed(2)):"—")+'</td>'+
+          '<td class="tm-otag">'+o.type+'</td>'+
+          '<td><span class="tm-st">'+String(o.status||"").replace(/_/g," ").replace(/^./,function(c){return c.toUpperCase();})+'</span></td>'+
+        '</tr>';
+      }).join("");
       return;
     }
     var orders=(Book.get().orders)||[];
@@ -1015,7 +1291,19 @@ document.addEventListener("DOMContentLoaded", function(){
   function paintPositions(){
     if(!posBody) return;
     if(brokerMode()){
-      posBody.innerHTML='<tr><td colspan="4" class="tm-empty">'+BROKER_EMPTY+'</td></tr>';
+      var pm = bkMsg();
+      if(pm){ posBody.innerHTML='<tr><td colspan="4" class="tm-empty">'+pm+'</td></tr>'; return; }
+      var bp = bkPos();
+      if(!bp.length){ posBody.innerHTML='<tr><td colspan="4" class="tm-empty">No open positions at your broker.</td></tr>'; return; }
+      posBody.innerHTML=bp.map(function(p){
+        var c2=p.pl>=0?"up":"down";
+        return '<tr data-tk="'+p.ticker+'">'+
+          '<td><b>'+p.ticker+'</b></td>'+
+          '<td>'+p.qty+'</td>'+
+          '<td>'+money(p.mkt)+'</td>'+
+          '<td class="'+c2+'">'+(p.pl>=0?"+$":"−$")+Math.abs(p.pl).toFixed(2)+' ('+(p.plPct>=0?"+":"−")+Math.abs(p.plPct).toFixed(2)+'%)</td>'+
+        '</tr>';
+      }).join("");
       return;
     }
     var list=Book.positionsList();
@@ -1032,6 +1320,81 @@ document.addEventListener("DOMContentLoaded", function(){
         '<td class="'+cls+'">'+(p.pl>=0?"+$":"−$")+Math.abs(p.pl).toFixed(2)+' ('+(p.plpct>=0?"+":"−")+Math.abs(p.plpct).toFixed(2)+'%)</td>'+
       '</tr>';
     }).join("");
+  }
+
+
+  /* ---------- brokerage: the user's own account ----------
+     In Brokerage mode every number on this page comes from the broker's own
+     API (equity, buying power, market value, unrealised P/L) — paper values
+     are never shown here, and until an account is connected the panels stay
+     honestly empty. */
+  var BK = window.FLUXBroker || null;
+  var bkData = null, bkErr = null, bkLoading = false;
+  function bkOn(){ return !!(BK && BK.connected()); }
+  function bkAcct(){ return (bkOn() && bkData && bkData.account) || null; }
+  function bkPos(){ return (bkOn() && bkData && bkData.positions) || []; }
+  function bkOrders(){ return (bkOn() && bkData && bkData.orders) || []; }
+  function bkHeld(t){
+    var l = bkPos(); for(var i=0;i<l.length;i++) if(l[i].ticker===t) return l[i].qty;
+    return 0;
+  }
+  function bkMsg(){
+    if(!bkOn()) return BROKER_EMPTY;
+    if(bkErr) return 'Brokerage error — ' + bkErr;
+    if(!bkData) return 'Loading your brokerage account…';
+    return null;
+  }
+  function bkPanes(){
+    var off=$("#tmBkOff"), on=$("#tmBkOn");
+    if(off) off.hidden = bkOn();
+    if(on) on.hidden = !bkOn();
+  }
+  function paintBroker(){
+    bkPanes();
+    if(!bkOn()) return;
+    var a = bkAcct(), eq=$("#tmBkEq"), day=$("#tmBkDay"), facts=$("#tmBkFacts"), who=$("#tmBkWho");
+    var meta = BK.get() || {};
+    if(who){
+      who.innerHTML = (meta.provider||"alpaca").replace(/^./,function(c){return c.toUpperCase();}) +
+        ' · <b style="color:'+(meta.paper?"var(--tm-dim)":"var(--crimson)")+'">'+(meta.paper?"PAPER":"LIVE MONEY")+'</b>' +
+        (meta.keyTail ? ' · ••••'+meta.keyTail : '');
+    }
+    if(!a){
+      if(eq) eq.textContent = bkErr ? "—" : "…";
+      if(day) day.innerHTML = '<span class="lbl">'+(bkErr ? ("Error: "+bkErr) : "Loading from your broker…")+'</span>';
+      if(facts) facts.innerHTML = "";
+      return;
+    }
+    if(eq) eq.textContent = money(a.equity);
+    if(day){
+      var up = a.day_pl >= 0;
+      day.innerHTML = '<span>'+(up?"▲":"▼")+" "+(up?"+$":"−$")+Math.abs(a.day_pl).toFixed(2)+
+        " ("+(up?"+":"−")+Math.abs(a.day_pl_pct).toFixed(2)+'%)</span><span class="lbl">Today · broker</span>';
+      day.className = "tm-day "+(up?"up":"down");
+    }
+    if(facts){
+      var rows = [
+        ["Cash", money(a.cash)],
+        ["Buying power", money(a.buying_power)],
+        ["Positions", String(bkPos().length)],
+        ["Account", a.account_number || "—"],
+        ["Status", (a.trading_blocked ? "Trading blocked" : (a.status || "—"))]
+      ];
+      facts.innerHTML = rows.map(function(r){
+        return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v">'+r[1]+'</span></div>';
+      }).join("");
+    }
+  }
+  function bkRepaint(){ paintBroker(); paintTicket(); paintOrders(); paintPositions(); }
+  function bkLoad(force){
+    if(!bkOn()){ bkData=null; bkErr=null; bkRepaint(); return; }
+    if(bkLoading) return;
+    bkLoading = true;
+    BK.snapshot(force !== false).then(function(d){
+      bkLoading=false; bkData=d; bkErr=null; bkRepaint();
+    }).catch(function(e){
+      bkLoading=false; bkErr=String(e && e.message || e); bkRepaint();
+    });
   }
 
   /* ---------- orchestration ---------- */
@@ -1067,7 +1430,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function renderSymbol(){
     rebuildCandles();
     paintHeader(false);
-    renderChart(null);
+    chartFull();
     paintOHLC(null);
     if(intervalEl) intervalEl.textContent="Interval: "+tfCfg().iv;
     syncLimitField();
@@ -1089,7 +1452,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function liveTick(){
     refreshLastCandle();
     paintHeader(true);
-    renderChart(null);
+    chartTick();
     paintOHLC(null);
     paintWatch();
     paintAccount();
@@ -1183,7 +1546,34 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* chart crosshair */
+  /* chart tools — style, moving averages, benchmark compare, fit */
+  (function(){
+    var st=$("#tmChStyle"), ma=$("#tmChMA"), cp=$("#tmChCmp"), ft=$("#tmChFit");
+    if(!LW.on){ [st,ma,cp,ft].forEach(function(b){ if(b){ b.disabled=true; b.style.opacity=".45"; } }); return; }
+    var GLYPH={candles:"▤",line:"╱",area:"◺"}, WORD={candles:"Candles",line:"Line",area:"Area"};
+    if(st) st.addEventListener("click", function(){
+      var s=LW.style(); st.textContent=GLYPH[s]||"▤"; st.title="Chart style — "+WORD[s]+" (click to change)";
+      if(F.toast) F.toast(WORD[s]+" chart",{icon:GLYPH[s]});
+    });
+    if(ma) ma.addEventListener("click", function(){
+      var on=LW.toggleMA(); ma.setAttribute("aria-pressed",String(on));
+      ma.title = on ? "Moving averages on — 20 & 50" : "Moving averages — 20 & 50";
+    });
+    if(cp){
+      var bm=LW.benchmark();
+      if(!bm){ cp.disabled=true; cp.style.opacity=".45"; }
+      else{
+        cp.title="Compare against "+bm;
+        cp.addEventListener("click", function(){
+          var on=LW.toggleCmp(); cp.setAttribute("aria-pressed",String(on));
+          cp.title = (on?"Comparing against ":"Compare against ")+bm;
+        });
+      }
+    }
+    if(ft) ft.addEventListener("click", function(){ LW.fit(); });
+  })();
+
+  /* chart crosshair (fallback canvas renderer only) */
   if(chartCv){
     chartCv.addEventListener("mousemove", function(e){
       if(!geo || !CANDLES.length) return;
@@ -1231,7 +1621,7 @@ document.addEventListener("DOMContentLoaded", function(){
     form.addEventListener("input", function(e){ if(e.target===qtyEl||e.target===limitEl) paintTicket(); });
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      if(brokerMode()){ showBanner(false,"No brokerage connected — connect yours on the Portfolio page, or switch to Paper."); return; }
+      if(brokerMode()){ submitBrokerOrder(); return; }
       var order={side:side,ticker:ACTIVE,qty:qtyVal(),type:otype,limit:(otype==="limit"?limitEl.value:undefined),silent:true};
       var res=Book.place(order);
       showBanner(res.ok,res.msg);
@@ -1252,6 +1642,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* reset */
   if(resetBtn) resetBtn.addEventListener("click", function(){
+    if(brokerMode()){ showBanner(false,"Reset only applies to the paper account — your brokerage is never touched."); return; }
     if(window.confirm("Reset your paper account to a fresh $100,000? This clears all simulated positions and orders.")){
       Book.reset();
       showBanner(true,"Paper account reset to $100,000.");
@@ -1263,12 +1654,12 @@ document.addEventListener("DOMContentLoaded", function(){
   if(fullBtn) fullBtn.addEventListener("click", function(){
     var on=document.body.classList.toggle("tm-full");
     fullBtn.setAttribute("aria-pressed", String(on));
-    setTimeout(function(){ renderChart(null); }, 60);
+    setTimeout(function(){ if(LW.on) LW.fit(); else renderChart(null); }, 60);
   });
 
   /* resize (debounced) */
   var rt;
-  window.addEventListener("resize", function(){ clearTimeout(rt); rt=setTimeout(function(){ renderChart(null); drawAcctSpark(); }, 140); });
+  window.addEventListener("resize", function(){ clearTimeout(rt); rt=setTimeout(function(){ if(!LW.on) renderChart(null); drawAcctSpark(); }, 140); });
 
   /* server-synced book (from flux-supa hydrate) */
   window.addEventListener("flux-book-updated", function(){ paintHeader(false); afterTrade(); });
@@ -1280,10 +1671,76 @@ document.addEventListener("DOMContentLoaded", function(){
     refreshLastCandle();
     if(priceEvtCount%5===0) pushCandle();
     paintHeader(true);
-    renderChart(null); paintOHLC(null);
+    chartTick();   // appends the freshly pushed bar too — never resets the user's zoom
+    paintOHLC(null);
     paintWatch(); paintAccount(); drawAcctSpark(); paintTicket(); paintPositions();
     renderTickers(); renderKeyMetrics();
   });
+
+  /* ---------- brokerage: connect form + real orders ---------- */
+  function submitBrokerOrder(){
+    if(!bkOn()){ showBanner(false,"No brokerage connected — paste your keys in the Account card, or switch to Paper."); return; }
+    var qv=qtyVal();
+    if(!(qv>0)){ showBanner(false,"Enter a share quantity first."); return; }
+    var lv=BK.live(), lim=(otype==="limit" && limitEl) ? parseFloat(limitEl.value) : null;
+    var what=(side==="buy"?"Buy ":"Sell ")+qv+" "+ACTIVE+(otype==="limit"?(" at a $"+(lim||0).toFixed(2)+" limit"):" at market");
+    var warn = lv
+      ? (what+"\n\nThis is a REAL order at your brokerage, with real money. Send it?")
+      : (what+"\n\nThis sends a real order to your broker's paper account. Send it?");
+    if(!window.confirm(warn)) return;
+    if(placeBtn){ placeBtn.disabled=true; placeBtn.textContent="Sending to broker…"; }
+    BK.place({ ticker:ACTIVE, qty:qv, side:side, type:otype, limit_price:lim, tif:"day" })
+      .then(function(o){
+        showBanner(true, "Sent to "+(BK.provider()||"broker")+" · "+String(o.side).toUpperCase()+" "+o.qty+" "+o.ticker+" · "+String(o.status||"").replace(/_/g," "));
+        if(placeBtn && !reduce){ placeBtn.classList.remove("tm-pulse"); void placeBtn.offsetWidth; placeBtn.classList.add("tm-pulse"); }
+        bkLoad(true);
+      })
+      .catch(function(e){ showBanner(false, "Broker rejected the order — "+String(e && e.message || e)); paintTicket(); });
+  }
+
+  (function(){
+    var f=$("#tmBkForm"), envSeg=$("#tmBkEnv"), msg=$("#tmBkMsg"), out=$("#tmBkOut"), ref=$("#tmBkRefresh");
+    var env="paper";
+    if(!BK){ if(msg) msg.textContent="Brokerage connector unavailable."; return; }
+    if(envSeg) envSeg.addEventListener("click", function(e){
+      var b=e.target.closest?e.target.closest("[data-env]"):null; if(!b) return;
+      env=b.getAttribute("data-env");
+      $$("[data-env]",envSeg).forEach(function(o){ o.setAttribute("aria-pressed", String(o===b)); });
+      if(msg) msg.innerHTML = (env==="live")
+        ? '<b style="color:var(--crimson)">Live money.</b> Orders you place here are real.'
+        : 'Keys live in this browser only · <a href="https://alpaca.markets/" target="_blank" rel="noopener" style="color:var(--cyan)">get Alpaca keys</a>';
+    });
+    if(f) f.addEventListener("submit", function(e){
+      e.preventDefault();
+      var k=$("#tmBkKey"), sec=$("#tmBkSec"), btn=$("#tmBkConnect");
+      var kv=(k&&k.value||"").trim(), sv=(sec&&sec.value||"").trim();
+      if(!kv || !sv){ if(msg) msg.textContent="Both the key id and the secret are needed."; return; }
+      if(env==="live" && !window.confirm("Connect a LIVE brokerage account?\n\nOrders placed in Brokerage mode will use real money.")) return;
+      if(btn){ btn.disabled=true; btn.textContent="Checking…"; }
+      if(msg) msg.textContent="Verifying with "+(env==="live"?"Alpaca live":"Alpaca paper")+"…";
+      BK.connect({ provider:"alpaca", key:kv, secret:sv, paper:(env!=="live") })
+        .then(function(a){
+          if(sec) sec.value=""; if(k) k.value="";
+          if(btn){ btn.disabled=false; btn.textContent="Connect brokerage"; }
+          if(msg) msg.textContent="Connected.";
+          if(F.toast) F.toast("Brokerage connected · "+money(a.equity)+" equity",{icon:"🔗"});
+          bkData=null; bkErr=null; bkLoad(true); BK.poll(20000);
+        })
+        .catch(function(err){
+          if(btn){ btn.disabled=false; btn.textContent="Connect brokerage"; }
+          if(msg) msg.innerHTML='<span style="color:var(--crimson)">'+String(err && err.message || err)+'</span>';
+        });
+    });
+    if(out) out.addEventListener("click", function(){
+      if(!window.confirm("Disconnect your brokerage from this browser?")) return;
+      BK.disconnect(); BK.stopPoll(); bkData=null; bkErr=null; bkRepaint();
+      if(F.toast) F.toast("Brokerage disconnected.",{icon:"🔌"});
+    });
+    if(ref) ref.addEventListener("click", function(){ bkLoad(true); });
+    window.addEventListener("flux-broker-data", function(e){ bkData=e.detail; bkErr=null; bkRepaint(); });
+    bkPanes();
+    if(bkOn() && brokerMode()){ bkLoad(true); BK.poll(20000); }
+  })();
 
   /* ---------- paper / brokerage account toggle ---------- */
   (function(){
@@ -1297,7 +1754,8 @@ document.addEventListener("DOMContentLoaded", function(){
       try{ localStorage.setItem("flux_acct_mode", ACCT_MODE); }catch(e){}
       // repaint every account-derived panel so paper numbers never masquerade as broker data
       paintTicket(); paintOrders(); paintPositions();
-      if(ACCT_MODE==="paper"){ paintAccount(); drawAcctSpark(); }
+      if(ACCT_MODE==="paper"){ paintAccount(); drawAcctSpark(); if(BK) BK.stopPoll(); }
+      else { paintBroker(); if(bkOn()){ bkLoad(true); BK.poll(20000); } }
     }
     seg.addEventListener("click", function(e){
       var b=e.target.closest?e.target.closest("[data-acct]"):null; if(!b) return;
@@ -1381,7 +1839,40 @@ document.addEventListener("DOMContentLoaded", function(){
     kmEl.innerHTML = rows.map(function(r){
       return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v '+(r[2]||"")+'">'+r[1]+'</span></div>';
     }).join("");
+    renderKeyMetricsOB();
   }
+
+  /* Extra fundamentals from OpenBB, when the research bridge is deployed.
+     Appended after the base rows so the card is complete either way. */
+  var obSeq = 0;
+  function renderKeyMetricsOB(){
+    var R = F.Research;
+    if(!R || R.ready() === false || !kmEl) return;
+    var t = ACTIVE, id = ++obSeq;
+    Promise.all([R.fundamentals(t), R.estimates(t)]).then(function(res){
+      if(id !== obSeq || ACTIVE !== t || !kmEl) return;
+      var f = res[0], e = res[1], rows = [];
+      if(f){
+        if(f.forward_pe != null)       rows.push(["Forward P/E", R.num(f.forward_pe), ""]);
+        if(f.profit_margin != null)    rows.push(["Profit margin", R.pct(f.profit_margin), ""]);
+        if(f.return_on_equity != null) rows.push(["Return on equity", R.pct(f.return_on_equity), ""]);
+        if(f.debt_to_equity != null)   rows.push(["Debt / equity", R.num(f.debt_to_equity), ""]);
+        if(f.revenue_growth != null)   rows.push(["Revenue growth", R.pct(f.revenue_growth), (f.revenue_growth>=0?"up":"down")]);
+        if(f.dividend_yield != null)   rows.push(["Dividend yield", R.pct(f.dividend_yield,2), ""]);
+      }
+      if(e && e.target != null){
+        var px = priceOf(t), up = px ? ((e.target-px)/px*100) : 0;
+        rows.push(["Analyst target", money(e.target)+" ("+(up>=0?"+":"−")+Math.abs(up).toFixed(1)+"%)", up>=0?"up":"down"]);
+        if(e.analysts) rows.push(["Analyst coverage", e.analysts+" analysts"+(e.recommendation?(" · "+String(e.recommendation).replace(/_/g," ")):""), ""]);
+      }
+      if(!rows.length) return;
+      kmEl.insertAdjacentHTML("beforeend", rows.map(function(r){
+        return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v '+(r[2]||"")+'">'+r[1]+'</span></div>';
+      }).join(""));
+      var cap = $("#tmKmCap"); if(cap) cap.textContent = "fundamentals · live · OpenBB";
+    });
+  }
+
 
   /* ---------- market pulse: fear & greed + breadth + movers (from the live universe) ---------- */
   function pulseData(){
