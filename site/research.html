@@ -7,15 +7,16 @@
 <meta name="description" content="Flux AI Research reads filings, earnings calls, the news wire and the options tape, then writes you the answer — with model forecasts, catalysts and risk, on a schedule.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=17">
-<script src="./assets/flux-supa.js?v=17" defer></script>
-<script src="./assets/flux-site.js?v=17" defer></script>
-<script src="./assets/flux-universe.js?v=17" defer></script>
-<script src="./assets/flux-feed.js?v=17" defer></script>
-<script src="./assets/flux-fund.js?v=17" defer></script>
-<script src="./assets/flux-kronos.js?v=17" defer></script>
-<script src="./assets/flux-tv.js?v=17" defer></script>
-<script src="./assets/flux-jarvis.js?v=17" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=18">
+<script src="./assets/flux-supa.js?v=18" defer></script>
+<script src="./assets/flux-site.js?v=18" defer></script>
+<script src="./assets/flux-universe.js?v=18" defer></script>
+<script src="./assets/flux-feed.js?v=18" defer></script>
+<script src="./assets/flux-fund.js?v=18" defer></script>
+<script src="./assets/flux-kronos.js?v=18" defer></script>
+<script src="./assets/flux-research.js?v=18" defer></script>
+<script src="./assets/flux-tv.js?v=18" defer></script>
+<script src="./assets/flux-jarvis.js?v=18" defer></script>
 <style>
   /* interactive research tool */
   .rtool{display:flex;gap:9px;margin:16px 0 6px;flex-wrap:wrap}
@@ -93,6 +94,12 @@
   .chart-card canvas{width:100%;height:260px;display:block}
   @media(max-width:640px){.chart-card canvas{height:200px}}
   .chart-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px}
+  .mcell{border:1px solid var(--line);border-radius:12px;padding:14px 15px;background:var(--glass)}
+  .mcell .k{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
+  .mcell .v{display:block;margin-top:7px;font-size:1.35rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .mcell .v.up{color:var(--emerald)}.mcell .v.down{color:var(--crimson)}
+  .mcell .s{display:block;margin-top:4px;font-family:var(--f-mono);font-size:10px;color:var(--text-faint)}
   .chart-legend .k{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
 </style>
 </head>
@@ -237,6 +244,56 @@ document.addEventListener("DOMContentLoaded", function(){
 </div>
 
 <!-- ============ WHAT IT READS ============ -->
+
+<!-- ============ MACRO BACKDROP (OpenBB) ============ -->
+<section class="section" id="macro" style="padding-top:0" hidden>
+  <div class="wrap">
+    <div class="glass reveal" style="padding:26px 24px">
+      <div class="rep-head" style="margin-bottom:6px">
+        <span class="pill pill-cyan"><i></i> Macro</span>
+        <span class="ttl grad-text">The backdrop every report is written against</span>
+        <span class="ts" id="macroTs">—</span>
+      </div>
+      <div class="mgrid" id="macroGrid"></div>
+      <div class="rep-foot" style="margin-top:16px">
+        <span>US Treasury curve, policy rate, CPI and unemployment · via OpenBB</span>
+        <span style="margin-left:auto">Official data · not advice</span>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+/* Macro card — renders only when the OpenBB research bridge is deployed.
+   With no bridge the section stays hidden and the page is unchanged. */
+document.addEventListener("DOMContentLoaded", function(){
+  function ready(){
+    var F = window.FLUX;
+    if(!F || !F.Research){ return setTimeout(ready, 150); }
+    var sec = document.getElementById("macro"), grid = document.getElementById("macroGrid"), ts = document.getElementById("macroTs");
+    F.Research.macro().then(function(m){
+      if(!m || !grid) return;
+      var R = F.Research, cells = [];
+      function cell(k, v, sub, cls){ if(v==null) return; cells.push('<div class="mcell"><span class="k">'+k+'</span><span class="v '+(cls||"")+'">'+v+'</span>'+(sub?'<span class="s">'+sub+'</span>':'')+'</div>'); }
+      var c = m.curve || {};
+      cell("10-year Treasury", R.num(c.y10)!=null ? R.num(c.y10)+"%" : null, c.date||"");
+      cell("2-year Treasury", R.num(c.y2)!=null ? R.num(c.y2)+"%" : null, c.date||"");
+      if(c.spread_10y_2y != null){
+        cell("10y − 2y spread", (c.spread_10y_2y>=0?"+":"−")+Math.abs(c.spread_10y_2y).toFixed(2)+"%",
+             c.inverted ? "curve inverted" : "curve positive", c.inverted ? "down" : "up");
+      }
+      if(m.policy_rate) cell("Fed funds (effective)", R.num(m.policy_rate.value)!=null ? R.num(m.policy_rate.value)+"%" : null, m.policy_rate.date||"");
+      if(m.cpi_yoy) cell("CPI, year over year", R.pct(m.cpi_yoy.value), m.cpi_yoy.date||"");
+      if(m.unemployment) cell("Unemployment", R.pct(m.unemployment.value), m.unemployment.date||"");
+      if(!cells.length) return;
+      grid.innerHTML = cells.join("");
+      if(ts && m.as_of) ts.textContent = "as of " + String(m.as_of).slice(0,10);
+      sec.hidden = false;
+    });
+  }
+  ready();
+});
+</script>
+
 <section class="section" id="sources">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">

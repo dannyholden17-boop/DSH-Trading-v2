@@ -7,18 +7,19 @@
 <meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money — not investment advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=17">
+<link rel="stylesheet" href="./assets/flux.css?v=18">
 <!-- TradingView Lightweight Charts (Apache-2.0, vendored locally — see assets/vendor/) -->
-<script src="./assets/vendor/lightweight-charts.js?v=17" defer></script>
-<script src="./assets/flux-supa.js?v=17" defer></script>
-<script src="./assets/flux-site.js?v=17" defer></script>
-<script src="./assets/flux-universe.js?v=17" defer></script>
-<script src="./assets/flux-feed.js?v=17" defer></script>
-<script src="./assets/flux-fund.js?v=17" defer></script>
-<script src="./assets/flux-kronos.js?v=17" defer></script>
-<script src="./assets/flux-tv.js?v=17" defer></script>
-<script src="./assets/flux-news.js?v=17" defer></script>
-<script src="./assets/flux-broker.js?v=17" defer></script>
+<script src="./assets/vendor/lightweight-charts.js?v=18" defer></script>
+<script src="./assets/flux-supa.js?v=18" defer></script>
+<script src="./assets/flux-site.js?v=18" defer></script>
+<script src="./assets/flux-universe.js?v=18" defer></script>
+<script src="./assets/flux-feed.js?v=18" defer></script>
+<script src="./assets/flux-fund.js?v=18" defer></script>
+<script src="./assets/flux-kronos.js?v=18" defer></script>
+<script src="./assets/flux-tv.js?v=18" defer></script>
+<script src="./assets/flux-news.js?v=18" defer></script>
+<script src="./assets/flux-broker.js?v=18" defer></script>
+<script src="./assets/flux-research.js?v=18" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -549,7 +550,7 @@
       <section class="tm-card" aria-label="Key metrics">
         <div class="tm-hd">
           <h3 id="tmKmTitle">Key metrics · NVDA</h3>
-          <span class="tm-cap">fundamentals · live</span>
+          <span class="tm-cap" id="tmKmCap">fundamentals · live</span>
         </div>
         <div class="tm-km" id="tmKm"></div>
         <div class="tm-cap" style="margin-top:10px">Model estimates on simulated / delayed data · not investment advice.</div>
@@ -1838,7 +1839,40 @@ document.addEventListener("DOMContentLoaded", function(){
     kmEl.innerHTML = rows.map(function(r){
       return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v '+(r[2]||"")+'">'+r[1]+'</span></div>';
     }).join("");
+    renderKeyMetricsOB();
   }
+
+  /* Extra fundamentals from OpenBB, when the research bridge is deployed.
+     Appended after the base rows so the card is complete either way. */
+  var obSeq = 0;
+  function renderKeyMetricsOB(){
+    var R = F.Research;
+    if(!R || R.ready() === false || !kmEl) return;
+    var t = ACTIVE, id = ++obSeq;
+    Promise.all([R.fundamentals(t), R.estimates(t)]).then(function(res){
+      if(id !== obSeq || ACTIVE !== t || !kmEl) return;
+      var f = res[0], e = res[1], rows = [];
+      if(f){
+        if(f.forward_pe != null)       rows.push(["Forward P/E", R.num(f.forward_pe), ""]);
+        if(f.profit_margin != null)    rows.push(["Profit margin", R.pct(f.profit_margin), ""]);
+        if(f.return_on_equity != null) rows.push(["Return on equity", R.pct(f.return_on_equity), ""]);
+        if(f.debt_to_equity != null)   rows.push(["Debt / equity", R.num(f.debt_to_equity), ""]);
+        if(f.revenue_growth != null)   rows.push(["Revenue growth", R.pct(f.revenue_growth), (f.revenue_growth>=0?"up":"down")]);
+        if(f.dividend_yield != null)   rows.push(["Dividend yield", R.pct(f.dividend_yield,2), ""]);
+      }
+      if(e && e.target != null){
+        var px = priceOf(t), up = px ? ((e.target-px)/px*100) : 0;
+        rows.push(["Analyst target", money(e.target)+" ("+(up>=0?"+":"−")+Math.abs(up).toFixed(1)+"%)", up>=0?"up":"down"]);
+        if(e.analysts) rows.push(["Analyst coverage", e.analysts+" analysts"+(e.recommendation?(" · "+String(e.recommendation).replace(/_/g," ")):""), ""]);
+      }
+      if(!rows.length) return;
+      kmEl.insertAdjacentHTML("beforeend", rows.map(function(r){
+        return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v '+(r[2]||"")+'">'+r[1]+'</span></div>';
+      }).join(""));
+      var cap = $("#tmKmCap"); if(cap) cap.textContent = "fundamentals · live · OpenBB";
+    });
+  }
+
 
   /* ---------- market pulse: fear & greed + breadth + movers (from the live universe) ---------- */
   function pulseData(){
