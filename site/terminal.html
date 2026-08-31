@@ -18,6 +18,7 @@
 <script src="./assets/flux-kronos.js?v=17" defer></script>
 <script src="./assets/flux-tv.js?v=17" defer></script>
 <script src="./assets/flux-news.js?v=17" defer></script>
+<script src="./assets/flux-broker.js?v=17" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -121,6 +122,9 @@
   .tm-wl-px{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;flex:none}
   .tm-wl-px .l{font-weight:700;font-size:.78rem}
   .tm-wl-px .c{font-size:.68rem;font-weight:700;margin-top:2px}
+  .tm-k{font-family:var(--f-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--tm-faint);display:block;margin-bottom:4px}
+  .tm-lnkbtn{background:none;border:0;padding:0;cursor:pointer;color:var(--tm-faint);font:inherit;text-decoration:underline;text-underline-offset:2px}
+  .tm-lnkbtn:hover{color:var(--crimson)}
   .tm-add{width:100%;background:var(--tm-card-2);border:1px solid var(--tm-line);border-radius:9px;color:var(--tm-txt);
     font-family:var(--f-sans);font-size:.8rem;padding:8px 11px;margin-top:9px}
   .tm-add::placeholder{color:var(--tm-faint)}
@@ -411,11 +415,39 @@
           <div class="tm-cap" style="margin-top:8px">Paper · simulated · virtual money</div>
         </div>
         <div id="tmBrokerPane" hidden>
-          <p style="font-size:.84rem;color:var(--tm-dim);line-height:1.55;margin:4px 0 12px">
-            Trade this terminal with your <b style="color:var(--tm-txt)">own brokerage account</b>.
-            Connect it once and switch here anytime — Flux never trades it without your rules.</p>
-          <a class="btn btn-primary btn-sm" href="./portfolio.html" style="width:100%;text-align:center">Connect brokerage →</a>
-          <div class="tm-cap" style="margin-top:10px">Brokerage connect is rolling out — join from the Portfolio page.</div>
+          <!-- not connected -->
+          <div id="tmBkOff">
+            <p style="font-size:.84rem;color:var(--tm-dim);line-height:1.55;margin:4px 0 10px">
+              Trade this terminal with your <b style="color:var(--tm-txt)">own brokerage account</b>.
+              Paste your Alpaca API keys — they stay in this browser and are never saved to Flux.</p>
+            <form id="tmBkForm" novalidate>
+              <label class="tm-k" for="tmBkKey">API key id</label>
+              <input class="tm-add" id="tmBkKey" type="text" autocomplete="off" spellcheck="false" placeholder="PK…">
+              <label class="tm-k" for="tmBkSec" style="margin-top:8px;display:block">Secret key</label>
+              <input class="tm-add" id="tmBkSec" type="password" autocomplete="off" spellcheck="false" placeholder="••••••••">
+              <div class="tm-acctseg" id="tmBkEnv" role="group" aria-label="Account environment" style="margin-top:9px">
+                <button type="button" data-env="paper" aria-pressed="true">Alpaca paper</button>
+                <button type="button" data-env="live" aria-pressed="false">Live money</button>
+              </div>
+              <button class="btn btn-primary btn-sm" id="tmBkConnect" type="submit" style="width:100%;text-align:center;margin-top:10px">Connect brokerage</button>
+            </form>
+            <div class="tm-cap" id="tmBkMsg" style="margin-top:9px">Keys live in this browser only · <a href="https://alpaca.markets/" target="_blank" rel="noopener" style="color:var(--cyan)">get Alpaca keys</a></div>
+          </div>
+          <!-- connected -->
+          <div id="tmBkOn" hidden>
+            <div class="tm-acct-top">
+              <div>
+                <div class="tm-eq" id="tmBkEq">—</div>
+                <div class="tm-day" id="tmBkDay"><span class="lbl">Today</span></div>
+              </div>
+            </div>
+            <div class="tm-km" id="tmBkFacts" style="margin-top:8px;grid-template-columns:1fr"></div>
+            <div class="tm-cap" style="margin-top:9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span id="tmBkWho">—</span>
+              <button class="tm-mini" id="tmBkRefresh" type="button" title="Refresh from the broker" aria-label="Refresh">⟳</button>
+              <button class="tm-lnkbtn" id="tmBkOut" type="button">Disconnect</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -674,7 +706,7 @@ document.addEventListener("DOMContentLoaded", function(){
   try{ ACCT_MODE = localStorage.getItem("flux_acct_mode") || "paper"; }catch(e){}
   if(ACCT_MODE !== "broker") ACCT_MODE = "paper";
   function brokerMode(){ return ACCT_MODE === "broker"; }
-  var BROKER_EMPTY = 'No brokerage connected yet — <a href="./portfolio.html" style="color:var(--cyan)">connect yours</a> and your real account data will appear here.';
+  var BROKER_EMPTY = 'No brokerage connected yet — add your keys in the Account card and your real account data appears here.';
 
   /* ---------- element refs ---------- */
   var eqEl=$("#tmEq"), dayEl=$("#tmDay"), acctSpark=$("#tmAcctSpark"), resetBtn=$("#tmReset");
@@ -1164,14 +1196,24 @@ document.addEventListener("DOMContentLoaded", function(){
     if(ticketTtl) ticketTtl.textContent="Order · "+ACTIVE;
     if(brokerMode()){
       // brokerage view: never show paper numbers as if they were the broker's
+      var a = bkAcct();
       if(estK) estK.textContent=(side==="buy")?"Estimated cost":"Estimated proceeds";
-      if(estV) estV.textContent="—";
-      if(buyPow) buyPow.textContent="—";
-      if(heldEl) heldEl.textContent="—";
+      if(estV) estV.textContent = a ? money(qtyVal()*ticketPrice()) : "—";
+      if(buyPow) buyPow.textContent = a ? money(a.buying_power) : "—";
+      if(heldEl) heldEl.textContent = a ? (bkHeld(ACTIVE)+" sh") : "—";
       if(placeBtn){
-        placeBtn.textContent="Connect brokerage to trade";
-        placeBtn.className="tm-place";
-        placeBtn.disabled=true;
+        if(!bkOn()){
+          placeBtn.textContent="Connect brokerage to trade";
+          placeBtn.className="tm-place"; placeBtn.disabled=true;
+        } else if(!a){
+          placeBtn.textContent = bkErr ? "Brokerage unavailable" : "Loading account…";
+          placeBtn.className="tm-place"; placeBtn.disabled=true;
+        } else {
+          var lv = BK.live();
+          placeBtn.textContent=(side==="buy"?"Buy ":"Sell ")+ACTIVE+(lv?" · REAL MONEY":" · broker paper");
+          placeBtn.className="tm-place "+(side==="buy"?"tm-side-buy":"tm-side-sell");
+          placeBtn.disabled=false;
+        }
       }
       return;
     }
@@ -1210,7 +1252,21 @@ document.addEventListener("DOMContentLoaded", function(){
   function paintOrders(){
     if(!ordersBody) return;
     if(brokerMode()){
-      ordersBody.innerHTML='<tr><td colspan="6" class="tm-empty">'+BROKER_EMPTY+'</td></tr>';
+      var m = bkMsg();
+      if(m){ ordersBody.innerHTML='<tr><td colspan="6" class="tm-empty">'+m+'</td></tr>'; return; }
+      var bo = bkOrders();
+      if(!bo.length){ ordersBody.innerHTML='<tr><td colspan="6" class="tm-empty">No orders at your broker.</td></tr>'; return; }
+      ordersBody.innerHTML=bo.map(function(o){
+        var sc=(o.side==="buy")?"tm-side-b":"tm-side-s";
+        return '<tr data-tk="'+o.ticker+'">'+
+          '<td><b>'+o.ticker+'</b></td>'+
+          '<td class="'+sc+'">'+String(o.side).toUpperCase()+'</td>'+
+          '<td>'+o.qty+'</td>'+
+          '<td>'+(o.price?("$"+Number(o.price).toFixed(2)):"—")+'</td>'+
+          '<td class="tm-otag">'+o.type+'</td>'+
+          '<td><span class="tm-st">'+String(o.status||"").replace(/_/g," ").replace(/^./,function(c){return c.toUpperCase();})+'</span></td>'+
+        '</tr>';
+      }).join("");
       return;
     }
     var orders=(Book.get().orders)||[];
@@ -1234,7 +1290,19 @@ document.addEventListener("DOMContentLoaded", function(){
   function paintPositions(){
     if(!posBody) return;
     if(brokerMode()){
-      posBody.innerHTML='<tr><td colspan="4" class="tm-empty">'+BROKER_EMPTY+'</td></tr>';
+      var pm = bkMsg();
+      if(pm){ posBody.innerHTML='<tr><td colspan="4" class="tm-empty">'+pm+'</td></tr>'; return; }
+      var bp = bkPos();
+      if(!bp.length){ posBody.innerHTML='<tr><td colspan="4" class="tm-empty">No open positions at your broker.</td></tr>'; return; }
+      posBody.innerHTML=bp.map(function(p){
+        var c2=p.pl>=0?"up":"down";
+        return '<tr data-tk="'+p.ticker+'">'+
+          '<td><b>'+p.ticker+'</b></td>'+
+          '<td>'+p.qty+'</td>'+
+          '<td>'+money(p.mkt)+'</td>'+
+          '<td class="'+c2+'">'+(p.pl>=0?"+$":"−$")+Math.abs(p.pl).toFixed(2)+' ('+(p.plPct>=0?"+":"−")+Math.abs(p.plPct).toFixed(2)+'%)</td>'+
+        '</tr>';
+      }).join("");
       return;
     }
     var list=Book.positionsList();
@@ -1251,6 +1319,81 @@ document.addEventListener("DOMContentLoaded", function(){
         '<td class="'+cls+'">'+(p.pl>=0?"+$":"−$")+Math.abs(p.pl).toFixed(2)+' ('+(p.plpct>=0?"+":"−")+Math.abs(p.plpct).toFixed(2)+'%)</td>'+
       '</tr>';
     }).join("");
+  }
+
+
+  /* ---------- brokerage: the user's own account ----------
+     In Brokerage mode every number on this page comes from the broker's own
+     API (equity, buying power, market value, unrealised P/L) — paper values
+     are never shown here, and until an account is connected the panels stay
+     honestly empty. */
+  var BK = window.FLUXBroker || null;
+  var bkData = null, bkErr = null, bkLoading = false;
+  function bkOn(){ return !!(BK && BK.connected()); }
+  function bkAcct(){ return (bkOn() && bkData && bkData.account) || null; }
+  function bkPos(){ return (bkOn() && bkData && bkData.positions) || []; }
+  function bkOrders(){ return (bkOn() && bkData && bkData.orders) || []; }
+  function bkHeld(t){
+    var l = bkPos(); for(var i=0;i<l.length;i++) if(l[i].ticker===t) return l[i].qty;
+    return 0;
+  }
+  function bkMsg(){
+    if(!bkOn()) return BROKER_EMPTY;
+    if(bkErr) return 'Brokerage error — ' + bkErr;
+    if(!bkData) return 'Loading your brokerage account…';
+    return null;
+  }
+  function bkPanes(){
+    var off=$("#tmBkOff"), on=$("#tmBkOn");
+    if(off) off.hidden = bkOn();
+    if(on) on.hidden = !bkOn();
+  }
+  function paintBroker(){
+    bkPanes();
+    if(!bkOn()) return;
+    var a = bkAcct(), eq=$("#tmBkEq"), day=$("#tmBkDay"), facts=$("#tmBkFacts"), who=$("#tmBkWho");
+    var meta = BK.get() || {};
+    if(who){
+      who.innerHTML = (meta.provider||"alpaca").replace(/^./,function(c){return c.toUpperCase();}) +
+        ' · <b style="color:'+(meta.paper?"var(--tm-dim)":"var(--crimson)")+'">'+(meta.paper?"PAPER":"LIVE MONEY")+'</b>' +
+        (meta.keyTail ? ' · ••••'+meta.keyTail : '');
+    }
+    if(!a){
+      if(eq) eq.textContent = bkErr ? "—" : "…";
+      if(day) day.innerHTML = '<span class="lbl">'+(bkErr ? ("Error: "+bkErr) : "Loading from your broker…")+'</span>';
+      if(facts) facts.innerHTML = "";
+      return;
+    }
+    if(eq) eq.textContent = money(a.equity);
+    if(day){
+      var up = a.day_pl >= 0;
+      day.innerHTML = '<span>'+(up?"▲":"▼")+" "+(up?"+$":"−$")+Math.abs(a.day_pl).toFixed(2)+
+        " ("+(up?"+":"−")+Math.abs(a.day_pl_pct).toFixed(2)+'%)</span><span class="lbl">Today · broker</span>';
+      day.className = "tm-day "+(up?"up":"down");
+    }
+    if(facts){
+      var rows = [
+        ["Cash", money(a.cash)],
+        ["Buying power", money(a.buying_power)],
+        ["Positions", String(bkPos().length)],
+        ["Account", a.account_number || "—"],
+        ["Status", (a.trading_blocked ? "Trading blocked" : (a.status || "—"))]
+      ];
+      facts.innerHTML = rows.map(function(r){
+        return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v">'+r[1]+'</span></div>';
+      }).join("");
+    }
+  }
+  function bkRepaint(){ paintBroker(); paintTicket(); paintOrders(); paintPositions(); }
+  function bkLoad(force){
+    if(!bkOn()){ bkData=null; bkErr=null; bkRepaint(); return; }
+    if(bkLoading) return;
+    bkLoading = true;
+    BK.snapshot(force !== false).then(function(d){
+      bkLoading=false; bkData=d; bkErr=null; bkRepaint();
+    }).catch(function(e){
+      bkLoading=false; bkErr=String(e && e.message || e); bkRepaint();
+    });
   }
 
   /* ---------- orchestration ---------- */
@@ -1477,7 +1620,7 @@ document.addEventListener("DOMContentLoaded", function(){
     form.addEventListener("input", function(e){ if(e.target===qtyEl||e.target===limitEl) paintTicket(); });
     form.addEventListener("submit", function(e){
       e.preventDefault();
-      if(brokerMode()){ showBanner(false,"No brokerage connected — connect yours on the Portfolio page, or switch to Paper."); return; }
+      if(brokerMode()){ submitBrokerOrder(); return; }
       var order={side:side,ticker:ACTIVE,qty:qtyVal(),type:otype,limit:(otype==="limit"?limitEl.value:undefined),silent:true};
       var res=Book.place(order);
       showBanner(res.ok,res.msg);
@@ -1498,6 +1641,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* reset */
   if(resetBtn) resetBtn.addEventListener("click", function(){
+    if(brokerMode()){ showBanner(false,"Reset only applies to the paper account — your brokerage is never touched."); return; }
     if(window.confirm("Reset your paper account to a fresh $100,000? This clears all simulated positions and orders.")){
       Book.reset();
       showBanner(true,"Paper account reset to $100,000.");
@@ -1532,6 +1676,71 @@ document.addEventListener("DOMContentLoaded", function(){
     renderTickers(); renderKeyMetrics();
   });
 
+  /* ---------- brokerage: connect form + real orders ---------- */
+  function submitBrokerOrder(){
+    if(!bkOn()){ showBanner(false,"No brokerage connected — paste your keys in the Account card, or switch to Paper."); return; }
+    var qv=qtyVal();
+    if(!(qv>0)){ showBanner(false,"Enter a share quantity first."); return; }
+    var lv=BK.live(), lim=(otype==="limit" && limitEl) ? parseFloat(limitEl.value) : null;
+    var what=(side==="buy"?"Buy ":"Sell ")+qv+" "+ACTIVE+(otype==="limit"?(" at a $"+(lim||0).toFixed(2)+" limit"):" at market");
+    var warn = lv
+      ? (what+"\n\nThis is a REAL order at your brokerage, with real money. Send it?")
+      : (what+"\n\nThis sends a real order to your broker's paper account. Send it?");
+    if(!window.confirm(warn)) return;
+    if(placeBtn){ placeBtn.disabled=true; placeBtn.textContent="Sending to broker…"; }
+    BK.place({ ticker:ACTIVE, qty:qv, side:side, type:otype, limit_price:lim, tif:"day" })
+      .then(function(o){
+        showBanner(true, "Sent to "+(BK.provider()||"broker")+" · "+String(o.side).toUpperCase()+" "+o.qty+" "+o.ticker+" · "+String(o.status||"").replace(/_/g," "));
+        if(placeBtn && !reduce){ placeBtn.classList.remove("tm-pulse"); void placeBtn.offsetWidth; placeBtn.classList.add("tm-pulse"); }
+        bkLoad(true);
+      })
+      .catch(function(e){ showBanner(false, "Broker rejected the order — "+String(e && e.message || e)); paintTicket(); });
+  }
+
+  (function(){
+    var f=$("#tmBkForm"), envSeg=$("#tmBkEnv"), msg=$("#tmBkMsg"), out=$("#tmBkOut"), ref=$("#tmBkRefresh");
+    var env="paper";
+    if(!BK){ if(msg) msg.textContent="Brokerage connector unavailable."; return; }
+    if(envSeg) envSeg.addEventListener("click", function(e){
+      var b=e.target.closest?e.target.closest("[data-env]"):null; if(!b) return;
+      env=b.getAttribute("data-env");
+      $$("[data-env]",envSeg).forEach(function(o){ o.setAttribute("aria-pressed", String(o===b)); });
+      if(msg) msg.innerHTML = (env==="live")
+        ? '<b style="color:var(--crimson)">Live money.</b> Orders you place here are real.'
+        : 'Keys live in this browser only · <a href="https://alpaca.markets/" target="_blank" rel="noopener" style="color:var(--cyan)">get Alpaca keys</a>';
+    });
+    if(f) f.addEventListener("submit", function(e){
+      e.preventDefault();
+      var k=$("#tmBkKey"), sec=$("#tmBkSec"), btn=$("#tmBkConnect");
+      var kv=(k&&k.value||"").trim(), sv=(sec&&sec.value||"").trim();
+      if(!kv || !sv){ if(msg) msg.textContent="Both the key id and the secret are needed."; return; }
+      if(env==="live" && !window.confirm("Connect a LIVE brokerage account?\n\nOrders placed in Brokerage mode will use real money.")) return;
+      if(btn){ btn.disabled=true; btn.textContent="Checking…"; }
+      if(msg) msg.textContent="Verifying with "+(env==="live"?"Alpaca live":"Alpaca paper")+"…";
+      BK.connect({ provider:"alpaca", key:kv, secret:sv, paper:(env!=="live") })
+        .then(function(a){
+          if(sec) sec.value=""; if(k) k.value="";
+          if(btn){ btn.disabled=false; btn.textContent="Connect brokerage"; }
+          if(msg) msg.textContent="Connected.";
+          if(F.toast) F.toast("Brokerage connected · "+money(a.equity)+" equity",{icon:"🔗"});
+          bkData=null; bkErr=null; bkLoad(true); BK.poll(20000);
+        })
+        .catch(function(err){
+          if(btn){ btn.disabled=false; btn.textContent="Connect brokerage"; }
+          if(msg) msg.innerHTML='<span style="color:var(--crimson)">'+String(err && err.message || err)+'</span>';
+        });
+    });
+    if(out) out.addEventListener("click", function(){
+      if(!window.confirm("Disconnect your brokerage from this browser?")) return;
+      BK.disconnect(); BK.stopPoll(); bkData=null; bkErr=null; bkRepaint();
+      if(F.toast) F.toast("Brokerage disconnected.",{icon:"🔌"});
+    });
+    if(ref) ref.addEventListener("click", function(){ bkLoad(true); });
+    window.addEventListener("flux-broker-data", function(e){ bkData=e.detail; bkErr=null; bkRepaint(); });
+    bkPanes();
+    if(bkOn() && brokerMode()){ bkLoad(true); BK.poll(20000); }
+  })();
+
   /* ---------- paper / brokerage account toggle ---------- */
   (function(){
     var seg=$("#tmAcctSeg"), paper=$("#tmPaperPane"), broker=$("#tmBrokerPane");
@@ -1544,7 +1753,8 @@ document.addEventListener("DOMContentLoaded", function(){
       try{ localStorage.setItem("flux_acct_mode", ACCT_MODE); }catch(e){}
       // repaint every account-derived panel so paper numbers never masquerade as broker data
       paintTicket(); paintOrders(); paintPositions();
-      if(ACCT_MODE==="paper"){ paintAccount(); drawAcctSpark(); }
+      if(ACCT_MODE==="paper"){ paintAccount(); drawAcctSpark(); if(BK) BK.stopPoll(); }
+      else { paintBroker(); if(bkOn()){ bkLoad(true); BK.poll(20000); } }
     }
     seg.addEventListener("click", function(e){
       var b=e.target.closest?e.target.closest("[data-acct]"):null; if(!b) return;
