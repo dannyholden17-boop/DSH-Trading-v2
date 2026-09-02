@@ -7,15 +7,16 @@
 <meta name="description" content="Your Flux members dashboard: the AI Daily Brief, ranked AI trade recommendations, your sample portfolio, watchlist and quick links into the trading app. Simulated sample account — illustrative, not advice.">
 <meta name="theme-color" content="#020617">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=18">
-<script src="./assets/flux-supa.js?v=18" defer></script>
-<script src="./assets/flux-site.js?v=18" defer></script>
-<script src="./assets/flux-universe.js?v=18" defer></script>
-<script src="./assets/flux-feed.js?v=18" defer></script>
-<script src="./assets/flux-fund.js?v=18" defer></script>
-<script src="./assets/flux-kronos.js?v=18" defer></script>
-<script src="./assets/flux-news.js?v=18" defer></script>
-<script src="./assets/flux-jarvis.js?v=18" defer></script>
+<link rel="stylesheet" href="./assets/flux.css?v=19">
+<script src="./assets/flux-supa.js?v=19" defer></script>
+<script src="./assets/flux-site.js?v=19" defer></script>
+<script src="./assets/flux-universe.js?v=19" defer></script>
+<script src="./assets/flux-feed.js?v=19" defer></script>
+<script src="./assets/flux-fund.js?v=19" defer></script>
+<script src="./assets/flux-kronos.js?v=19" defer></script>
+<script src="./assets/flux-desk.js?v=19" defer></script>
+<script src="./assets/flux-news.js?v=19" defer></script>
+<script src="./assets/flux-jarvis.js?v=19" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: dashboard.html (db- prefixed)
@@ -157,6 +158,24 @@
   .db-qa h3{font-size:1.02rem}
   .db-qa p{color:var(--text-dim);font-size:.85rem;margin-top:6px;line-height:1.5}
   .db-qa .go{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);margin-top:12px;display:inline-block}
+  /* live desk widget */
+  .dk-w-idle{font-family:var(--f-mono);font-size:.8rem;color:var(--text-faint)}
+  .dk-w-top{display:flex;align-items:center;gap:9px;font-size:.92rem}
+  .dk-w-dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
+  .dk-w-dot.on{background:var(--emerald);animation:dkw 1.6s infinite}
+  @keyframes dkw{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}70%{box-shadow:0 0 0 7px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  .dk-w-ago{margin-left:auto;font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint)}
+  .dk-w-bar{height:4px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden;margin:10px 0 9px}
+  .dk-w-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),#8b5cf6);transition:width .6s ease}
+  .dk-w-sub{font-family:var(--f-mono);font-size:.72rem;color:var(--text-dim);letter-spacing:.03em}
+  .dk-w-sub .ok{color:var(--emerald)} .dk-w-sub .mut{color:var(--text-faint)}
+  .dk-call{border:1px solid var(--line);border-radius:14px;background:var(--glass);padding:15px 16px}
+  .dk-call .t{display:flex;align-items:center;gap:9px}
+  .dk-call .tk{font-family:var(--f-mono);font-weight:800}
+  .dk-call .vd{margin-left:auto;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;border:1px solid currentColor;border-radius:100px;padding:3px 8px}
+  .dk-call p{margin:8px 0 0;font-size:.86rem;color:var(--text-dim);line-height:1.5}
+  .dk-call .lv{margin-top:9px;font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint)}
 </style>
 </head>
 <body>
@@ -167,11 +186,12 @@
     <nav class="nav-links" id="navLinks">
       <a href="./terminal.html">Trade</a>
       <a href="./ai.html">Flux AI</a>
+      <a href="./desk.html">Desk</a>
       <a href="./autopilot.html">Autopilot</a>
       <a href="./fund.html">Fund</a>
       <a href="./portfolio.html">Portfolio</a>
       <a href="./research.html">Research</a>
-      <a href="./ideas.html">Trade Ideas</a>
+      <a href="./ideas.html">Ideas</a>
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
@@ -347,6 +367,17 @@ document.addEventListener("DOMContentLoaded", function(){
     <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return — <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:.8rem">Forecast-driven · not advice.</span></p>
     <div class="grid g-3 reveal" id="kSignals" style="margin-top:22px"></div>
     <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
+  </div>
+</section>
+
+<!-- ============ THE DESK (live research loop) ============ -->
+<section class="section" style="padding-top:0" id="deskLive">
+  <div class="wrap">
+    <span class="eyebrow">The desk</span>
+    <h2 class="h2 reveal">Research that never stops.</h2>
+    <p class="lede reveal" style="max-width:64ch">Three analysts, a Director of Research, Kronos and the DSA engine, and an Executive with the green light — running in a loop right now. <a href="./desk.html" style="color:var(--cyan)">Watch the desk →</a></p>
+    <div class="glass reveal" id="dbDesk" style="margin-top:22px;padding:16px 18px"><span class="dk-w-idle">Connecting to the desk…</span></div>
+    <div class="grid g-3 reveal" id="dbDeskCalls" style="margin-top:14px"></div>
   </div>
 </section>
 
@@ -711,8 +742,9 @@ document.addEventListener("DOMContentLoaded",function(){
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Trade Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+      <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
     <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
@@ -1010,6 +1042,37 @@ document.addEventListener("DOMContentLoaded", function(){
   /* pick up dynamically injected reveal targets */
   if(F.initReveal) F.initReveal();
 });
+
+  /* ---- the live desk ---- */
+  (function(){
+    function go(){
+      var F = window.FLUX;
+      if(!F || !F.Desk){ return setTimeout(go, 200); }
+      var D = F.Desk;
+      D.mountStatus(document.getElementById("dbDesk"), { every: 20000 });
+      function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+        return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); }
+      function calls(){
+        D.decisions(3).then(function(list){
+          var host = document.getElementById("dbDeskCalls"); if(!host) return;
+          if(!list.length){ host.innerHTML = ""; return; }
+          host.innerHTML = list.map(function(d){
+            return '<article class="dk-call">' +
+              '<div class="t"><span class="tk">' + esc(d.ticker) + '</span>' +
+              '<span style="font-size:.78rem;color:var(--text-faint)">' + esc(d.name || "") + '</span>' +
+              '<span class="vd" style="color:' + D.verdictColor(d.verdict) + '">' + esc(d.verdict) + '</span></div>' +
+              '<p>' + esc(d.headline) + '</p>' +
+              '<div class="lv">' + esc(d.side) + ' · entry ' + D.money(d.entry) + ' · stop ' + D.money(d.stop) +
+              ' · target ' + D.money(d.target) + ' · ' + D.ago(d.created_at) + '</div>' +
+            '</article>';
+          }).join("");
+        });
+      }
+      calls(); setInterval(calls, 60000);
+      window.addEventListener("flux-auth", calls);
+    }
+    go();
+  })();
 </script>
 </body>
 </html>
