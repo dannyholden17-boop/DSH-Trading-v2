@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fluxi — your AI trading desk</title>
 <meta name="description" content="Talk to Flux — an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
-<script src="./assets/flux-tv.js?v=19" defer></script>
-<script src="./assets/flux-news.js?v=19" defer></script>
-<script src="./assets/flux-jarvis.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
+<script src="./assets/flux-tv.js?v=21" defer></script>
+<script src="./assets/flux-news.js?v=21" defer></script>
+<script src="./assets/flux-jarvis.js?v=21" defer></script>
 <style>
   /* ===== full-screen, no page-scroll app shell ===== */
   html,body{height:100%}
@@ -33,18 +34,18 @@
   .chtitle .nm{font-size:1.06rem;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
   .chtitle .livetag{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
     color:var(--emerald);display:inline-flex;align-items:center;gap:5px}
-  .chtitle .stln{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;color:var(--text-faint);
+  .chtitle .stln{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;color:var(--text-faint);
     text-transform:uppercase;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .chtitle .stln #orbSt{color:var(--cyan)}
-  .decktoggle{flex:none;font-family:var(--f-mono);font-size:.72rem;padding:8px 13px;border-radius:100px;cursor:pointer;
+  .decktoggle{flex:none;font-family:var(--f-mono);font-size:.75rem;padding:8px 13px;border-radius:100px;cursor:pointer;
     border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
   .decktoggle:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan)}
 
   .clog{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
     padding:8px 6px 6px;scroll-behavior:smooth}
   .clog::-webkit-scrollbar{width:6px}.clog::-webkit-scrollbar-thumb{background:rgba(var(--glow-c),.3);border-radius:3px}
-  .msg{max-width:82%;padding:11px 15px;border-radius:15px;font-size:.95rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
-  .msg.u{align-self:flex-end;background:rgba(var(--glow),.12);border:1px solid rgba(var(--glow-c),.32);color:#eafcff}
+  .msg{max-width:82%;padding:11px 15px;border-radius:4px;font-size:.95rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+  .msg.u{align-self:flex-end;background:rgba(var(--glow),.12);border:1px solid rgba(var(--glow-c),.32);color:#eae6dc}
   .msg.a{align-self:flex-start;background:var(--glass-2);border:1px solid var(--line);color:var(--text)}
   .msg.a b,.msg.a strong{color:var(--cyan)}
   .typing{align-self:flex-start;display:inline-flex;gap:5px;padding:12px 14px}
@@ -56,26 +57,26 @@
   .composer{flex:none;padding:8px 0 10px}
   .chips{display:flex;gap:8px;margin-bottom:11px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
   .chips::-webkit-scrollbar{height:0}
-  .chip{flex:none;font-family:var(--f-mono);font-size:.73rem;padding:7px 12px;border-radius:100px;cursor:pointer;
+  .chip{flex:none;font-family:var(--f-mono);font-size:.75rem;padding:7px 12px;border-radius:100px;cursor:pointer;
     border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s;white-space:nowrap}
-  .chip:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan);box-shadow:0 0 16px -6px rgba(var(--glow),.6)}
+  .chip:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan);box-shadow:var(--lift-1)}
   .cinput{display:flex;gap:9px;align-items:center}
-  .cinput input{flex:1;min-width:0;background:#040914;border:1px solid var(--line);border-radius:13px;color:var(--text);
+  .cinput input{flex:1;min-width:0;background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);
     padding:14px 16px;font-size:.96rem;font-family:var(--f-sans);outline:none;transition:border-color .2s,box-shadow .2s}
-  .cinput input:focus{border-color:rgba(var(--glow-c),.6);box-shadow:0 0 0 3px rgba(var(--glow),.12)}
-  .iconbtn{width:48px;height:48px;flex:none;border-radius:13px;border:1px solid rgba(var(--glow-c),.4);
+  .cinput input:focus{border-color:rgba(var(--glow-c),.6);box-shadow:0 0 0 2px rgba(232,179,60,.5)}
+  .iconbtn{width:48px;height:48px;flex:none;border-radius:4px;border:1px solid rgba(var(--glow-c),.4);
     background:rgba(var(--glow),.08);color:var(--cyan);cursor:pointer;display:grid;place-items:center;font-size:1.2rem;transition:.18s}
-  .iconbtn:hover{border-color:var(--cyan);box-shadow:0 0 20px -4px rgba(var(--glow),.7)}
-  .iconbtn.send{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#022530;border:none}
-  .iconbtn.mic.on{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ff9d9d;animation:micPulse 1.2s infinite}
-  @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+  .iconbtn:hover{border-color:var(--cyan);box-shadow:var(--lift-1)}
+  .iconbtn.send{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#15100a;border:none}
+  .iconbtn.mic.on{background:rgba(232,103,74,.15);border-color:#e8674a;color:#ff9d9d;animation:micPulse 1.2s infinite}
+  @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,103,74,.5)}70%{box-shadow:0 0 0 10px rgba(232,103,74,0)}}
   .iconbtn[disabled]{opacity:.4;cursor:not-allowed}
   .voicerow{display:flex;align-items:center;gap:12px;margin-top:9px;flex-wrap:wrap;font-size:.8rem;color:var(--text-dim)}
   .tgl{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
   .tgl input{appearance:none;width:38px;height:22px;border-radius:100px;background:#1a2338;position:relative;cursor:pointer;transition:.2s;border:1px solid var(--line)}
   .tgl input:checked{background:rgba(var(--glow),.4);border-color:rgba(var(--glow-c),.6)}
   .tgl input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cfe9f2;transition:.2s}
-  .tgl input:checked::after{transform:translateX(16px);background:#eafcff}
+  .tgl input:checked::after{transform:translateX(16px);background:#eae6dc}
   .microdisc{font-family:var(--f-mono);font-size:.6rem;color:var(--text-faint);margin-left:auto;letter-spacing:.04em}
 
   /* ===== corner widget dock ===== */
@@ -84,7 +85,7 @@
   .dock::-webkit-scrollbar{width:6px}.dock::-webkit-scrollbar-thumb{background:rgba(var(--glow-c),.25);border-radius:3px}
   body.deck-open .dock{display:flex}
   .dockcap{display:flex;align-items:center;justify-content:space-between;font-family:var(--f-mono);
-    font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);padding:0 2px 2px}
+    font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);padding:0 2px 2px}
   .dockcap button{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:.9rem;line-height:1}
   .dockcap button:hover{color:var(--cyan)}
   .dock .panel{padding:12px 13px;margin:0}
@@ -102,26 +103,26 @@
   .vrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-2)}
   .vrow:last-child{border-bottom:none}
   .vrow .tk{font-family:var(--f-mono);font-weight:700;font-size:.8rem}
-  .vrow .tk small{display:block;color:var(--text-faint);font-weight:400;font-size:.64rem;letter-spacing:0}
+  .vrow .tk small{display:block;color:var(--text-faint);font-weight:400;font-size:.75rem;letter-spacing:0}
   .vrow .rt{text-align:right;font-family:var(--f-mono);font-size:.76rem}
-  .vrow .rt .e{font-weight:700}.vrow .rt small{display:block;color:var(--text-faint);font-size:.62rem}
+  .vrow .rt .e{font-weight:700}.vrow .rt small{display:block;color:var(--text-faint);font-size:.75rem}
   .briefline{color:var(--text-dim);font-size:.83rem;line-height:1.5;margin-top:6px}
   .pos{color:var(--emerald)}.neg{color:var(--crimson)}
   .flux-note{font-family:var(--f-mono);font-size:.58rem;color:var(--text-faint);margin-top:8px;letter-spacing:.04em}
-  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px var(--emerald);display:inline-block;animation:blink 1.6s infinite}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);box-shadow:var(--lift-1);display:inline-block;animation:blink 1.6s infinite}
   .fbrow{display:flex;gap:6px;margin-top:8px}
-  .fb{background:transparent;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:.8rem;padding:2px 8px;transition:.15s;filter:grayscale(.3)}
-  .fb:hover{border-color:rgba(var(--glow-c),.5);filter:none;box-shadow:0 0 12px -5px rgba(var(--glow),.6)}
+  .fb{background:transparent;border:1px solid var(--line);border-radius:4px;cursor:pointer;font-size:.8rem;padding:2px 8px;transition:.15s;filter:grayscale(.3)}
+  .fb:hover{border-color:rgba(var(--glow-c),.5);filter:none;box-shadow:var(--lift-1)}
   .fbok{font-family:var(--f-mono);font-size:.7rem;color:var(--emerald)}
   .memitem{font-size:.78rem;color:var(--text-dim);padding:6px 0;border-bottom:1px solid var(--line-2);line-height:1.4}
   .memitem:last-child{border-bottom:none}
   .memitem .k{font-family:var(--f-mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-right:6px}
-  .memitem.self .k{color:var(--emerald)}.memitem.research .k{color:#c4abff}
+  .memitem.self .k{color:var(--emerald)}.memitem.research .k{color:#9db8e2}
 
   /* ---- dock becomes a slide-in drawer on narrow screens ---- */
   @media(max-width:1000px){
     .dock{position:absolute;top:0;right:0;height:100%;width:min(330px,90vw);z-index:40;
-      padding:16px 14px;background:rgba(2,6,23,.95);backdrop-filter:blur(16px);
+      padding:16px 14px;background:rgba(27,25,23,.95);
       border-left:1px solid var(--line);box-shadow:-24px 0 60px -24px #000}
   }
   @media(max-width:560px){
@@ -148,7 +149,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
@@ -181,7 +182,7 @@
       </div>
       <div class="voicerow">
         <label class="tgl"><input type="checkbox" id="spk"> <span>Speak replies</span></label>
-        <span id="voiceHint" class="mono" style="font-size:.72rem;color:var(--text-faint)"></span>
+        <span id="voiceHint" class="mono" style="font-size:.75rem;color:var(--text-faint)"></span>
         <span class="microdisc">Model estimates · simulated · not advice</span>
       </div>
     </div>
@@ -189,7 +190,7 @@
 
   <!-- CORNER WIDGET DOCK -->
   <aside class="dock" id="dock">
-    <div class="dockcap"><span>Live desk</span><button id="deckClose" title="Hide">✕</button></div>
+    <div class="dockcap"><span>Live desk</span><button id="deckClose" title="Hide"><i class="ic-i i-close" aria-hidden="true"></i></button></div>
 
     <div class="glass panel pulse-glow">
       <h3><span class="glyph2">◇</span> Live Brief</h3>
@@ -274,8 +275,8 @@
         var fb = document.createElement("div"); fb.className = "fbrow";
         fb.innerHTML = '<button class="fb" title="Good answer">👍</button><button class="fb" title="Off — I\'ll learn">👎</button>';
         var btns = fb.querySelectorAll(".fb");
-        btns[0].onclick = function(){ JARVIS.feedback(true, text); fb.innerHTML = '<span class="fbok">✓ thanks — noted</span>'; };
-        btns[1].onclick = function(){ JARVIS.feedback(false, text); fb.innerHTML = '<span class="fbok">✓ got it — I\'ll weight that read more carefully</span>'; };
+        btns[0].onclick = function(){ JARVIS.feedback(true, text); fb.innerHTML = '<span class="fbok">Thanks — noted</span>'; };
+        btns[1].onclick = function(){ JARVIS.feedback(false, text); fb.innerHTML = '<span class="fbok">Got it — I\'ll weight that read more carefully</span>'; };
         d.appendChild(fb);
       }
       log.scrollTop = log.scrollHeight; return d;
@@ -478,7 +479,7 @@
         if(!tv || !bubbleEl.isConnected) return;
         var col = F.TV.color(tv.score);
         var line = document.createElement("div");
-        line.style.cssText = "margin-top:8px;font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint)";
+        line.style.cssText = "margin-top:8px;font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint)";
         line.innerHTML = '◎ TradingView: <b style="color:'+col+'">'+tv.label+'</b>'+
           (tv.score!=null?(' ('+tv.score.toFixed(2)+')'):'')+(tv.price!=null?(' · $'+tv.price):'');
         var fb = bubbleEl.querySelector('.fbrow');

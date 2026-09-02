@@ -5,32 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Autopilot — Flux</title>
 <meta name="description" content="Flux Autopilot runs a live $10,000 paper account, makes its own decisions and posts hourly and daily reports — so you can watch exactly how it thinks before you ever let it near your money. Simulated, not advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   /* ============================================================
      page-only styles: autopilot.html
      — LAYOUT (ap- prefixed) + the animation utility classes the
-       page relies on (grad-anim / fx-float / marquee / live / sheen).
+       page relies on ( / fx-float / marquee / live / sheen).
        These names are not defined by the shared design system, so
        they are declared here rather than redefined.
      ============================================================ */
 
   /* ---- animation utilities ---- */
-  .grad-anim{background-size:220% 220%;animation:apGrad 7s ease infinite}
+  .{background-size:220% 220%;animation:apGrad 7s ease infinite}
   @keyframes apGrad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
   .fx-float{animation:apFloat 7s ease-in-out infinite}
   @keyframes apFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
   .live{display:inline-flex;align-items:center;gap:8px}
   .live::before{content:"";width:8px;height:8px;border-radius:50%;flex:none;background:var(--emerald);
-    box-shadow:0 0 10px var(--emerald);animation:apPulse 1.6s ease-in-out infinite}
+    box-shadow:var(--lift-1);animation:apPulse 1.6s ease-in-out infinite}
   @keyframes apPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.68)}}
   .sheen{position:relative;overflow:hidden}
   .sheen::before{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;pointer-events:none;z-index:3;
@@ -48,9 +49,9 @@
   .ap-mq-item .s{font-weight:700}
   .ap-mq-item .px{color:var(--text-faint)}
   .ap-mq-sep{color:rgba(255,255,255,.14)}
-  .ap-mq-band{border-block:1px solid var(--line-2);background:rgba(5,10,24,.5);backdrop-filter:blur(10px);padding-block:16px}
-  .ap-mq-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
-    color:var(--amber);border:1px solid rgba(245,181,68,.3);border-radius:6px;padding:2px 7px;background:rgba(245,181,68,.08)}
+  .ap-mq-band{border-block:1px solid var(--line-2);background:rgba(5,10,24,.5);padding-block:16px}
+  .ap-mq-tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    color:var(--amber);border:1px solid rgba(232,179,60,.3);border-radius:3px;padding:2px 7px;background:rgba(232,179,60,.08)}
 
   /* ---- hero ---- */
   .ap-hero{display:grid;grid-template-columns:1.04fr .96fr;gap:48px;align-items:start}
@@ -64,19 +65,19 @@
   .ap-fund{padding:20px}
   .ap-fund > *{position:relative;z-index:1}
   .ap-fund .fhd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-  .ap-fund .fhd .k{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
+  .ap-fund .fhd .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .ap-eq{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(2rem,1.4rem + 2.6vw,2.7rem);letter-spacing:-.02em;
     font-variant-numeric:tabular-nums}
   .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.92rem}
-  .ap-cap{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .ap-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .ap-fund canvas{width:100%;height:150px;display:block;margin:14px 0 4px}
   .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
-  .ap-qs{border:1px solid var(--line-2);border-radius:11px;background:var(--well);padding:10px}
+  .ap-qs{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
   .ap-qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
-  .ap-qs .l{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
-  .ap-fund .foot{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  .ap-qs .l{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .ap-fund .foot{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
 
   /* ---- fund showcase (#fund) ---- */
@@ -85,28 +86,28 @@
   .ap-panel{padding:20px}
   .ap-panel > *{position:relative;z-index:1}
   .ap-panel .phd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .ap-panel .phd .k{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
+  .ap-panel .phd .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .ap-log-wrap{overflow-x:auto}
   .ap-log{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:460px}
-  .ap-log th{text-align:left;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
+  .ap-log th{text-align:left;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
     font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
   .ap-log th.r,.ap-log td.r{text-align:right;padding-right:0}
   .ap-log td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
   .ap-log tbody tr{animation:apRowIn .5s ease}
   @keyframes apRowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-  .ap-side{display:inline-block;font-weight:700;font-size:9.5px;letter-spacing:.06em;padding:2px 7px;border-radius:5px}
-  .ap-side.buy{color:var(--emerald);background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3)}
-  .ap-side.sell{color:var(--crimson);background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3)}
-  .ap-panel .foot{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  .ap-side{display:inline-block;font-weight:700;font-size:11px;letter-spacing:.06em;padding:2px 7px;border-radius:3px}
+  .ap-side.buy{color:var(--emerald);background:rgba(86,185,127,.12);border:1px solid rgba(86,185,127,.3)}
+  .ap-side.sell{color:var(--crimson);background:rgba(232,103,74,.12);border:1px solid rgba(232,103,74,.3)}
+  .ap-panel .foot{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
 
   .ap-metrics{display:flex;flex-direction:column;gap:14px}
   .ap-metric{padding:16px 18px;position:relative}
   .ap-metric > *{position:relative;z-index:1}
-  .ap-metric .l{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
+  .ap-metric .l{font-family:var(--f-mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
   .ap-metric .v{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums}
-  .ap-metric .cap{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:5px}
+  .ap-metric .cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:5px}
   .ap-metric canvas{width:100%;height:40px;display:block;margin-top:10px}
 
   /* ---- reports timeline + sample ---- */
@@ -116,7 +117,7 @@
   .ap-tl-item{position:relative;padding-bottom:26px}
   .ap-tl-item:last-child{padding-bottom:0}
   .ap-tl-item::before{content:"";position:absolute;left:-26px;top:6px;width:9px;height:9px;border-radius:50%;
-    background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+    background:var(--cyan);box-shadow:var(--lift-1)}
   .ap-tl-item .hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .ap-tl-item .tm{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);font-weight:700;white-space:nowrap}
   .ap-tl-item h3{font-size:1.05rem}
@@ -126,7 +127,7 @@
   .ap-report > *{position:relative;z-index:1}
   .ap-rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line-2)}
   .ap-rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
-  .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint)}
   .ap-rep-body{padding:16px 18px 6px}
   .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;display:flex;gap:9px}
   .ap-rline::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
@@ -134,10 +135,10 @@
   .ap-report.typing .ap-rline{opacity:0;transform:translateY(6px)}
   .ap-report.typing .ap-rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
   .ap-rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line-2);
-    font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
 
   /* ---- disclaimer strip ---- */
-  .ap-strip{margin-top:22px;border:1px solid rgba(245,181,68,.22);border-radius:14px;background:rgba(245,181,68,.05);
+  .ap-strip{margin-top:22px;border:1px solid rgba(232,179,60,.22);border-radius:4px;background:rgba(232,179,60,.05);
     padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
   .ap-strip .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none}
   .ap-strip p{color:var(--text-dim);font-size:.82rem;line-height:1.55}
@@ -154,36 +155,36 @@
   @media(max-width:560px){.ap-guards{grid-template-columns:1fr}}
 
   /* ---- strategy simulator (paper) ---- */
-  .ap-sim-warn{margin-top:26px;border:1px solid rgba(245,181,68,.28);border-radius:14px;background:rgba(245,181,68,.06);
+  .ap-sim-warn{margin-top:26px;border:1px solid rgba(232,179,60,.28);border-radius:4px;background:rgba(232,179,60,.06);
     padding:15px 18px;display:flex;gap:12px;align-items:flex-start}
   .ap-sim-warn .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none;font-size:1.05rem;line-height:1.4}
   .ap-sim-warn p{color:var(--text-dim);font-size:.84rem;line-height:1.55}
   .ap-sim-warn b{color:var(--text)}
   .ap-sim-presets{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
-  .ap-preset{cursor:pointer;text-align:left;flex:1 1 220px;min-width:min(220px,100%);padding:14px 16px;border-radius:14px;
+  .ap-preset{cursor:pointer;text-align:left;flex:1 1 220px;min-width:min(220px,100%);padding:14px 16px;border-radius:4px;
     border:1px solid var(--line-2);background:var(--well);transition:border-color .2s,transform .2s;font-family:inherit;color:inherit}
-  .ap-preset:hover{transform:translateY(-2px);border-color:rgba(0,242,255,.35)}
-  .ap-preset.on{border-color:var(--cyan);background:rgba(0,242,255,.07);box-shadow:0 0 18px rgba(0,242,255,.12)}
+  .ap-preset:hover{transform:translateY(-2px);border-color:rgba(232,179,60,.35)}
+  .ap-preset.on{border-color:var(--cyan);background:rgba(232,179,60,.07);box-shadow:var(--lift-1)}
   .ap-preset .nm{font-family:var(--f-mono);font-weight:700;font-size:.98rem;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
   .ap-preset .nm .dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
-  .ap-preset.on .nm .dot{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
-  .ap-preset .sub{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:6px}
+  .ap-preset.on .nm .dot{background:var(--cyan);box-shadow:var(--lift-1)}
+  .ap-preset .sub{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:6px}
   .ap-sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start}
   @media(max-width:900px){.ap-sim-grid{grid-template-columns:1fr;gap:20px}}
   .ap-sim-desc{color:var(--text-dim);font-size:.88rem;line-height:1.55;margin-bottom:16px}
   .ap-sim-tbl-wrap{overflow-x:auto}
   .ap-sim-tbl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:340px}
-  .ap-sim-tbl th{text-align:left;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
+  .ap-sim-tbl th{text-align:left;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
     font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
   .ap-sim-tbl th.r,.ap-sim-tbl td.r{text-align:right;padding-right:0}
   .ap-sim-tbl td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
   .ap-sim-tbl td.rs{color:var(--text-dim);white-space:normal;min-width:150px}
   .ap-sim-canvas{width:100%;max-width:100%;height:180px;display:block;margin:4px 0 10px}
   .ap-sim-res{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:6px 0 4px}
-  .ap-sim-res .box{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:12px 14px}
-  .ap-sim-res .l{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .ap-sim-res .box{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:12px 14px}
+  .ap-sim-res .l{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .ap-sim-res .v{font-family:var(--f-mono);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;margin-top:5px;font-variant-numeric:tabular-nums}
-  .ap-sim-note{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:12px;line-height:1.5}
+  .ap-sim-note{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:12px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -203,7 +204,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
@@ -217,8 +218,7 @@
 <section class="section phero">
   <div class="wrap ap-hero">
     <div class="reveal">
-      <span class="eyebrow">Flux Autopilot</span>
-      <h1 class="h1">An AI that trades —<br><span class="grad-text grad-anim">and shows its work.</span></h1>
+<h1 class="h1">An AI that trades —<br><span class="">and shows its work.</span></h1>
       <p class="lede">Flux runs a live $10,000 paper account, makes its own decisions, and posts hourly and
         daily reports so you can watch exactly how it thinks — before you ever let it near your money.</p>
       <div class="ap-pillrow">
@@ -240,14 +240,14 @@
         <span class="val mono" id="heroEq">$12,480.00</span>
         <span class="chg up" id="heroChg">+1.24%</span>
       </div>
-      <div class="ap-cap">Virtual equity · paper account · simulated</div>
+      <div class="ap-cap disclosure">Virtual equity · paper account · simulated</div>
       <canvas id="heroCurve" aria-label="Illustrative simulated equity curve for the Flux paper fund"></canvas>
       <div class="ap-qstats">
         <div class="ap-qs"><div class="n mono">6</div><div class="l">Open positions</div></div>
         <div class="ap-qs"><div class="n mono">14</div><div class="l">Trades today</div></div>
         <div class="ap-qs"><div class="n mono up">63%</div><div class="l">Win rate</div></div>
       </div>
-      <div class="foot">Simulated / hypothetical · not indicative of future results</div>
+      <div class="foot disclosure">Simulated / hypothetical · not indicative of future results</div>
     </div>
   </div>
 </section>
@@ -263,8 +263,7 @@
 <section class="section" id="fund">
   <div class="wrap">
     <div class="reveal" style="max-width:64ch">
-      <span class="eyebrow">The live fund</span>
-      <h2 class="h2" style="margin-top:16px">Watch it trade, in real time, with fake money.</h2>
+<h2 class="h2" style="margin-top:16px">Watch it trade, in real time, with fake money.</h2>
       <p class="lede" style="margin-top:16px">Every fill below is Flux acting on its own inside a $10,000
         paper account. No real orders, no real dollars — just a transparent record of what the AI decided
         and why, so you can judge it before it ever touches your book.</p>
@@ -293,7 +292,7 @@
             <tbody id="logBody"></tbody>
           </table>
         </div>
-        <div class="foot">Simulated fills · virtual $10,000 · resets are possible</div>
+        <div class="foot disclosure">Simulated fills · virtual $10,000 · resets are possible</div>
       </div>
 
       <div class="ap-metrics">
@@ -340,8 +339,7 @@
 <section class="section" id="simulator">
   <div class="wrap">
     <div class="reveal" style="max-width:64ch">
-      <span class="eyebrow">Strategy simulator · paper</span>
-      <h2 class="h2" style="margin-top:16px">Pick a rule. Watch it play out — on synthetic prices.</h2>
+<h2 class="h2" style="margin-top:16px">Pick a rule. Watch it play out — on synthetic prices.</h2>
       <p class="lede" style="margin-top:16px">This is the same idea behind Autopilot, made transparent: choose a
         simple, readable rule, see exactly which names it holds right now and why, then run a seeded 30-day
         paper simulation on a synthetic price path. No real money, no live orders — just the concept, in the open.</p>
@@ -372,7 +370,7 @@
             <tbody id="simPicks"></tbody>
           </table>
         </div>
-        <div class="foot">Selections computed live from the Flux universe · equal-weight · simulated, not advice.</div>
+        <div class="foot disclosure">Selections computed live from the Flux universe · equal-weight · simulated, not advice.</div>
       </div>
 
       <div class="glass ap-panel reveal">
@@ -388,8 +386,8 @@
         <div class="btn-row" style="margin-top:16px">
           <button type="button" class="btn btn-primary" id="simRun">Run 30-day simulation</button>
         </div>
-        <div class="ap-sim-note" id="simTag">SIMULATED · seeded demo · not a real or predictive result.</div>
-        <div class="phd" style="margin-top:20px"><span class="k" style="margin-left:0">Simulated trades · day 0 · paper $100,000</span></div>
+        <div class="ap-sim-note disclosure" id="simTag">SIMULATED · seeded demo · not a real or predictive result.</div>
+        <div class="phd" style="margin-top:20px"><span class="k disclosure" style="margin-left:0">Simulated trades · day 0 · paper $100,000</span></div>
         <div class="ap-sim-tbl-wrap">
           <table class="ap-sim-tbl">
             <thead>
@@ -413,8 +411,7 @@
 <section class="section band" id="how">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">How Autopilot decides</span>
-      <h2 class="h2" style="margin-top:16px">Every trade walks the same five gates.</h2>
+<h2 class="h2" style="margin-top:16px">Every trade walks the same five gates.</h2>
       <p class="lede" style="margin-top:16px">Nothing is discretionary and nothing is hidden. A fill only lands
         in the log after it clears scan, score, risk and execution — and each step is written down.</p>
     </div>
@@ -445,8 +442,7 @@
 <section class="section" id="reports">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Hourly + daily reports</span>
-      <h2 class="h2" style="margin-top:16px">It never trades quietly.</h2>
+<h2 class="h2" style="margin-top:16px">It never trades quietly.</h2>
       <p class="lede" style="margin-top:16px">Every market hour and every close, Flux writes up what it did and
         why. The transparency is the point — you should be able to read a full day of decisions before you
         trust it with a cent.</p>
@@ -476,7 +472,7 @@
       <div class="glass ap-report reveal" id="report">
         <div class="ap-rep-head">
           <span class="pill pill-violet"><i></i> Daily wrap</span>
-          <span class="ttl grad-text">Flux Fund</span>
+          <span class="ttl">Flux Fund</span>
           <span class="ts" id="repTs">—</span>
         </div>
         <div class="ap-rep-body">
@@ -502,8 +498,7 @@
 <section class="section band" id="models">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Under the hood</span>
-      <h2 class="h2" style="margin-top:16px">The models behind the fund.</h2>
+<h2 class="h2" style="margin-top:16px">The models behind the fund.</h2>
       <p class="lede" style="margin-top:16px">The trade log is the last step. Behind it, six specialised models
         each answer one narrow question, and the fund only acts when enough of them agree.</p>
     </div>
@@ -518,8 +513,7 @@
 <section class="section" id="control">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">You're in control</span>
-      <h2 class="h2" style="margin-top:16px">Guardrails you set — and can pull anytime.</h2>
+<h2 class="h2" style="margin-top:16px">Guardrails you set — and can pull anytime.</h2>
       <p class="lede" style="margin-top:16px">The paper fund runs on its own. Your real account never does
         unless you say so, on rules you write, with a stop button that's always yours.</p>
     </div>
@@ -577,8 +571,7 @@
 <section class="section" id="faq">
   <div class="wrap">
     <div class="reveal center" style="max-width:62ch;margin-inline:auto">
-      <span class="eyebrow c">Questions</span>
-      <h2 class="h2" style="margin-top:16px">The fair questions.</h2>
+<h2 class="h2" style="margin-top:16px">The fair questions.</h2>
     </div>
     <div class="faq reveal" style="margin-top:40px">
       <details open><summary>Is this real money?</summary>
@@ -611,8 +604,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Watch Flux trade. Then decide.</h2>
+<h2 class="h2" style="margin-top:14px">Watch Flux trade. Then decide.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Follow the paper fund for a week, read the
         reports, and only then connect a brokerage — on your rules, with your stop button.</p>
       <div class="btn-row" style="justify-content:center">
@@ -631,12 +623,12 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account without your explicit approval and rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -648,7 +640,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var $ = F.$ || function(s,r){return (r||document).querySelector(s);};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
   var SIGNALS = F.SIGNALS || [];
-  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a", CY = F.CY || "#e8b33c";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* reference prices for the illustrative simulated fills */
@@ -828,7 +820,7 @@ document.addEventListener("DOMContentLoaded", function(){
   if(!FS || !FS.ready || typeof FS.autopilot !== "function") return; // offline → keep demo
 
   var F = window.FLUX || {};
-  var CY = F.CY || "#00f2ff", EM = F.EM || "#10b981", CR = F.CR || "#ef4444";
+  var CY = F.CY || "#e8b33c", EM = F.EM || "#56b97f", CR = F.CR || "#e8674a";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function $(s, r){ return (r || document).querySelector(s); }
   function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
@@ -1188,7 +1180,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   if(!F.FUND){ return; } // engine not present → leave section static
-  var CY = F.CY || "#00f2ff", EM = F.EM || "#10b981", CR = F.CR || "#ef4444";
+  var CY = F.CY || "#e8b33c", EM = F.EM || "#56b97f", CR = F.CR || "#e8674a";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function $(s){ return document.querySelector(s); }
 

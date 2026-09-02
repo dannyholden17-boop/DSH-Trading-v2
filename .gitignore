@@ -2,3 +2,11 @@
 *.zip
 .DS_Store
 node_modules/
+
+# Impeccable working state: review captures, build machine state, comps.
+# The durable records (PRODUCT.md, .impeccable/surfaces/, .impeccable/config.json)
+# are committed; these are per-run artifacts.
+.impeccable/review/
+.impeccable/build/
+.impeccable/mocks/
+.impeccable/hook.cache.json

@@ -5,95 +5,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Desk — Flux</title>
 <meta name="description" content="Flux's research desk runs continuously: three analysts file on the tape, a Director of Research synthesises, Kronos and the DSA engine price the trade, and an Executive gives — or refuses — the green light. Simulated / educational, not investment advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-desk.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-desk.js?v=21" defer></script>
 <style>
   .dk-wrap{max-width:1240px;margin-inline:auto;padding:22px var(--gutter) 60px}
 
   /* ---- live header ---- */
   .dk-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .dk-top h1{font-size:clamp(1.4rem,1.1rem + 1.4vw,2rem);letter-spacing:-.02em;margin:0}
-  .dk-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
-    text-transform:uppercase;font-weight:700;color:var(--emerald);border:1px solid rgba(16,185,129,.4);
-    background:rgba(16,185,129,.08);padding:4px 11px;border-radius:100px}
+  .dk-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:700;color:var(--emerald);border:1px solid rgba(86,185,127,.4);
+    background:rgba(86,185,127,.08);padding:4px 11px;border-radius:100px}
   .dk-live .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);animation:dkp 1.6s infinite}
-  @keyframes dkp{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  @keyframes dkp{0%{box-shadow:0 0 0 0 rgba(86,185,127,.55)}70%{box-shadow:0 0 0 8px rgba(86,185,127,0)}100%{box-shadow:0 0 0 0 rgba(86,185,127,0)}}
   .dk-sub{color:var(--text-dim);font-size:.95rem;margin-top:8px;max-width:70ch;line-height:1.6}
-  .dk-meta{margin-left:auto;font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);text-align:right;line-height:1.7}
+  .dk-meta{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);text-align:right;line-height:1.7}
 
   /* ---- the chain of command ---- */
   .dk-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 26px}
   @media(max-width:900px){.dk-chain{grid-template-columns:1fr 1fr}}
   @media(max-width:520px){.dk-chain{grid-template-columns:1fr}}
-  .dk-node{border:1px solid var(--line);border-radius:14px;background:var(--glass);padding:15px 16px;position:relative;
-    transition:border-color .25s,box-shadow .25s}
-  .dk-node .role{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
-  .dk-node h3{font-size:1rem;margin:6px 0 4px;letter-spacing:-.01em}
-  .dk-node p{font-size:.82rem;color:var(--text-dim);line-height:1.5;margin:0}
-  .dk-node .who{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
-  .dk-node .who span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
-    border:1px solid var(--line);border-radius:100px;padding:3px 8px;color:var(--text-faint)}
-  .dk-node.on{border-color:rgba(0,242,255,.55);box-shadow:0 0 0 1px rgba(0,242,255,.18),0 10px 40px -22px rgba(0,242,255,.7)}
-  .dk-node.on .role{color:var(--cyan)}
-  .dk-node.done{border-color:rgba(16,185,129,.32)}
-  .dk-node .tick{position:absolute;top:13px;right:14px;font-size:12px;color:var(--emerald);opacity:0}
-  .dk-node.done .tick{opacity:1}
+  /* Each desk is a carbon copy of the same filing, lying on the blotter,
+     waiting for its stamp. The paper is on the page before any data is. */
+  .dk-node{background:var(--paper);color:var(--ink);border:1px solid rgba(21,16,10,.2);border-radius:2px;
+    padding:15px 16px 16px;position:relative;box-shadow:var(--lift-2);
+    transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s}
+  .dk-chain>.dk-node:nth-child(odd){transform:rotate(-.45deg)}
+  .dk-chain>.dk-node:nth-child(even){transform:rotate(.35deg)}
+  .dk-node .role{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(21,16,10,.58)}
+  .dk-node h2{font-size:1.16rem;margin:6px 0 5px;letter-spacing:-.02em;color:var(--ink);
+    font-family:var(--f-display);font-weight:800;max-width:15ch}
+  .dk-node p{font-size:.85rem;color:rgba(21,16,10,.74);line-height:1.5;margin:0}
+  .dk-node .who{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}
+  .dk-node .who span{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid rgba(21,16,10,.26);border-radius:100px;padding:3px 8px;color:rgba(21,16,10,.62)}
+  .dk-chain>.dk-node.on{transform:rotate(0deg) translateY(-4px);box-shadow:var(--lift-3)}
+  .dk-node.on{border-color:rgba(200,64,42,.45)}
+  .dk-node.done{border-color:rgba(28,82,51,.45)}
+  .dk-node .tick{display:none}
 
   /* ---- progress ---- */
   .dk-bar{height:4px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden;margin:0 0 26px}
-  .dk-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),#8b5cf6);transition:width .6s ease}
+  .dk-bar i{display:block;height:100%;width:100%;background:var(--gold);transform-origin:left;
+    transform:scaleX(0);transition:transform .6s cubic-bezier(.16,1,.3,1)}
 
   /* ---- decisions ---- */
   .dk-h2{display:flex;align-items:baseline;gap:12px;margin:34px 0 14px}
-  .dk-h2 h2{font-size:1.15rem;letter-spacing:-.01em;margin:0}
-  .dk-h2 .cap{font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto}
-  .dk-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
-  .dk-card{border:1px solid var(--line);border-radius:15px;background:var(--glass);padding:16px 17px}
+  .dk-h2 h2{font-size:1.5rem;letter-spacing:-.025em;margin:0}
+  .dk-h2 .cap{font-family:var(--f-mono);font-size:.79rem;color:var(--text-faint);margin-left:auto}
+  .dk-ledger{border:1px solid var(--line);border-radius:2px;background:var(--blotter-2);
+    box-shadow:var(--lift-2);overflow:hidden}
+  .dk-row{display:grid;grid-template-columns:74px 1fr 96px 96px 96px 82px;gap:14px;align-items:baseline;
+    padding:13px 16px;border-top:1px solid var(--line-2);font-size:.9rem}
+  .dk-row:first-child{border-top:0}
+  .dk-row:hover{background:rgba(232,179,60,.05)}
+  .dk-row .r-tk{font-family:var(--f-display);font-weight:900;font-size:1.02rem;letter-spacing:-.02em}
+  .dk-row .r-head{color:var(--text-dim);font-size:.88rem;line-height:1.45;min-width:0}
+  .dk-row .r-num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.84rem;text-align:right}
+  .dk-row .r-num span{display:block;font-size:12px;color:var(--text-faint);letter-spacing:.09em;text-transform:uppercase}
+  .dk-row .r-verdict{text-align:right}
+  .dk-ledger-head{display:grid;grid-template-columns:74px 1fr 96px 96px 96px 82px;gap:14px;
+    padding:10px 16px;background:var(--rail);border-bottom:1px solid var(--line)}
+  .dk-ledger-head span{font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--text-faint)}
+  .dk-ledger-head span:nth-child(n+3){text-align:right}
+  @media(max-width:900px){
+    .dk-row,.dk-ledger-head{grid-template-columns:64px 1fr 84px}
+    .dk-row .r-num:nth-of-type(2),.dk-row .r-num:nth-of-type(3),
+    .dk-ledger-head span:nth-child(4),.dk-ledger-head span:nth-child(5){display:none}
+  }
+  /* the stamp lands on the paper, which is where a stamp belongs */
+  .dk-stamp{position:absolute;top:12px;right:13px;font-size:11.5px;padding:4px 8px}
+  .dk-node .stamp-pending{opacity:1;color:rgba(21,16,10,.4);border-color:rgba(21,16,10,.3)}
+  .dk-node.done .dk-stamp{border-style:solid;opacity:.95;color:#1c5233;
+    border-color:rgba(28,82,51,.6);transform:rotate(-3deg)}
+  .dk-node.on .dk-stamp{border-style:solid;opacity:.95;color:#7a1d0e;
+    border-color:rgba(122,29,14,.55);transform:rotate(-3deg)}
+  .dk-card{border:1px solid var(--line);border-radius:4px;background:var(--glass);padding:16px 17px}
   .dk-card .row1{display:flex;align-items:center;gap:10px}
   .dk-card .tk{font-family:var(--f-mono);font-weight:800;font-size:1.05rem;letter-spacing:.02em}
   .dk-card .px{font-family:var(--f-mono);font-size:.8rem;color:var(--text-dim)}
-  .dk-verdict{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;
+  .dk-verdict{margin-left:auto;font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;padding:4px 9px;border-radius:100px;border:1px solid currentColor}
   .dk-card .head{margin-top:9px;font-size:.92rem;font-weight:600;line-height:1.45}
   .dk-card .reason{margin-top:7px;font-size:.83rem;color:var(--text-dim);line-height:1.55}
   .dk-lvls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
-  .dk-lvls div{border:1px solid var(--line-2);border-radius:9px;padding:7px 8px;text-align:center}
-  .dk-lvls .k{display:block;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .dk-lvls div{border:1px solid var(--line-2);border-radius:4px;padding:7px 8px;text-align:center}
+  .dk-lvls .k{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .dk-lvls .v{display:block;font-family:var(--f-mono);font-size:.78rem;font-weight:700;margin-top:3px}
   .dk-votes{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
-  .dk-vote{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  .dk-vote{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
     border:1px solid var(--line);border-radius:100px;padding:4px 9px;color:var(--text-dim)}
   .dk-vote b{color:var(--text)}
-  .dk-flags{margin-top:10px;font-family:var(--f-mono);font-size:.68rem;color:#f6c453;line-height:1.5}
-  .dk-empty{border:1px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--text-dim);font-size:.9rem}
+  .dk-flags{margin-top:10px;font-family:var(--f-mono);font-size:.75rem;color:#e8b33c;line-height:1.5}
+  .dk-empty{border:1px dashed var(--line);border-radius:4px;padding:26px;text-align:center;color:var(--text-dim);font-size:.9rem}
 
   /* ---- filings (members) ---- */
-  .dk-filings{border:1px solid var(--line);border-radius:15px;background:var(--glass);overflow:hidden}
+  .dk-filings{border:1px solid var(--line);border-radius:4px;background:var(--glass);overflow:hidden}
   .dk-fbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
-  .dk-fbar select{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;color:var(--text);
+  .dk-fbar select{background:var(--surface-2);border:1px solid var(--line);border-radius:4px;color:var(--text);
     font-family:var(--f-mono);font-size:.76rem;padding:6px 9px}
   .dk-note{padding:13px 15px;border-bottom:1px solid var(--line-2)}
   .dk-note:last-child{border-bottom:0}
   .dk-note .nh{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-  .dk-agent{font-family:var(--f-mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  .dk-agent{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
     padding:3px 8px;border-radius:100px;border:1px solid var(--line)}
-  .dk-agent.fundamentals{color:#6ab8ff;border-color:rgba(106,184,255,.4)}
-  .dk-agent.catalyst{color:#f6c453;border-color:rgba(246,196,83,.4)}
-  .dk-agent.tape{color:#8b5cf6;border-color:rgba(139,92,246,.4)}
-  .dk-agent.director{color:var(--cyan);border-color:rgba(0,242,255,.45)}
-  .dk-agent.kronos,.dk-agent.dsa{color:var(--emerald);border-color:rgba(16,185,129,.4)}
+  .dk-agent.fundamentals{color:#6f9ad6;border-color:rgba(111,154,214,.4)}
+  .dk-agent.catalyst{color:#e8b33c;border-color:rgba(246,196,83,.4)}
+  .dk-agent.tape{color:#6f9ad6;border-color:rgba(111,154,214,.4)}
+  .dk-agent.director{color:var(--cyan);border-color:rgba(232,179,60,.45)}
+  .dk-agent.kronos,.dk-agent.dsa{color:var(--emerald);border-color:rgba(86,185,127,.4)}
   .dk-note .ntk{font-family:var(--f-mono);font-weight:700;font-size:.82rem}
-  .dk-note .nv{font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto}
+  .dk-note .nv{font-family:var(--f-mono);font-size:.79rem;color:var(--text-faint);margin-left:auto}
   .dk-note p{margin:7px 0 0;font-size:.85rem;color:var(--text-dim);line-height:1.55}
   .dk-note .ev{margin-top:6px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
   .dk-gate{padding:26px;text-align:center;color:var(--text-dim);font-size:.9rem}
-  .dk-disc{font-family:var(--f-mono);font-size:.66rem;color:var(--text-faint);margin-top:24px;letter-spacing:.03em;line-height:1.7}
+  .dk-disc{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);margin-top:24px;letter-spacing:.03em;line-height:1.7}
 </style>
 </head>
 <body>
@@ -112,7 +147,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
       <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
@@ -134,23 +169,23 @@
   <div class="dk-bar" style="margin-top:18px"><i id="dkProgress" style="width:0"></i></div>
 
   <div class="dk-chain">
-    <div class="dk-node" id="dkN1"><span class="tick">●</span>
-      <span class="role">Stage 1</span><h3>Three analysts</h3>
+    <div class="dk-node" id="dkN1"><span class="stamp stamp-pending dk-stamp">Filed</span>
+      <span class="role">Stage 1</span><h2>Three analysts</h2>
       <p>Each works one lens over the round's names and files a view, a conviction and the evidence behind it.</p>
       <div class="who"><span>Fundamentals</span><span>Catalyst</span><span>Tape</span></div>
     </div>
-    <div class="dk-node" id="dkN2"><span class="tick">●</span>
-      <span class="role">Stage 2</span><h3>Director of Research</h3>
+    <div class="dk-node" id="dkN2"><span class="stamp stamp-pending dk-stamp">Passed</span>
+      <span class="role">Stage 2</span><h2>Director of Research</h2>
       <p>Resolves where the analysts disagree, drops what isn't worth the traders' time, and hands down one package per name.</p>
       <div class="who"><span>Synthesis</span><span>Scores −100…100</span></div>
     </div>
-    <div class="dk-node" id="dkN3"><span class="tick">●</span>
-      <span class="role">Stage 3</span><h3>Two traders</h3>
+    <div class="dk-node" id="dkN3"><span class="stamp stamp-pending dk-stamp">Priced</span>
+      <span class="role">Stage 3</span><h2>Two traders</h2>
       <p>Kronos forecasts the next candles; the DSA engine scores value, momentum, range and drawdown. Each proposes entry, stop and target.</p>
       <div class="who"><span>Kronos</span><span>DSA</span></div>
     </div>
-    <div class="dk-node" id="dkN4"><span class="tick">●</span>
-      <span class="role">Stage 4</span><h3>Executive</h3>
+    <div class="dk-node" id="dkN4"><span class="stamp stamp-pending dk-stamp">Ruled</span>
+      <span class="role">Stage 4</span><h2>Executive</h2>
       <p>Nothing trades without the green light. Approves, cuts the size, or rejects — and says which trader it sided with.</p>
       <div class="who"><span>Approve</span><span>Reduce</span><span>Reject</span></div>
     </div>
@@ -160,7 +195,29 @@
     <h2>Green-lit calls</h2>
     <span class="cap" id="dkDecCap">latest rulings</span>
   </div>
-  <div class="dk-cards" id="dkDecisions"></div>
+  <div id="dkTicketSlot">
+    <article class="ticket punched" aria-busy="true">
+      <div class="tkt-head">
+        <span class="tkt-org">DSH TRADING<span>Flux research desk</span></span>
+        <span class="tkt-no">TICKET <b>—</b></span>
+      </div>
+      <div class="tkt-main">
+        <div class="tkt-instrument">
+          <span class="field-k">Instrument</span>
+          <span class="tkt-sym">— — — —</span>
+        </div>
+        <p class="tkt-headline">Reading the last ruling off the record.</p>
+      </div>
+      <div class="tkt-chain">
+        <div class="tkt-stage"><span class="field-k">Analysts</span><span class="stamp stamp-pending">—</span></div>
+        <div class="tkt-stage"><span class="field-k">Director</span><span class="stamp stamp-pending">—</span></div>
+        <div class="tkt-stage"><span class="field-k">Traders</span><span class="stamp stamp-pending">—</span></div>
+        <div class="tkt-stage"><span class="field-k">Executive</span><span class="stamp stamp-pending">—</span></div>
+      </div>
+      <div class="tkt-foot"><span class="tkt-sim">Simulated · virtual money · not investment advice</span></div>
+    </article>
+  </div>
+  <div class="dk-ledger" id="dkDecisions"></div>
 
   <div class="dk-h2">
     <h2>The filings</h2>
@@ -168,9 +225,9 @@
   </div>
   <div class="dk-filings">
     <div class="dk-fbar">
-      <span style="font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint)">Round</span>
+      <span style="font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint)">Round</span>
       <select id="dkRound" aria-label="Choose a round"></select>
-      <span class="cap" id="dkRoundCap" style="font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto"></span>
+      <span class="cap" id="dkRoundCap" style="font-family:var(--f-mono);font-size:.79rem;color:var(--text-faint);margin-left:auto"></span>
     </div>
     <div id="dkNotes"><div class="dk-gate">Loading…</div></div>
   </div>
@@ -209,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function(){
         var live = s.status === "running";
         $("#dkStage").textContent = live ? D.stageLabel(s.stage) : ("round " + s.seq + " filed");
         $("#dkLive").style.opacity = live ? "1" : ".72";
-        $("#dkProgress").style.width = Math.round(D.stageIndex(s.stage) / (D.STAGES.length - 1) * 100) + "%";
+        $("#dkProgress").style.transform = "scaleX(" + (D.stageIndex(s.stage) / (D.STAGES.length - 1)).toFixed(3) + ")";
         $("#dkMeta").innerHTML =
           "round #" + s.seq + " · " + D.ago(s.finished_at || s.started_at) + "<br>" +
           (s.rounds_today || 0) + " rounds in 24h · " + (s.approved || 0) + " green-lit this round";
@@ -224,57 +281,96 @@ document.addEventListener("DOMContentLoaded", function(){
         var who = $("#dkN1").querySelector(".who");
         if(who && s.tickers && s.tickers.length){
           who.innerHTML = '<span>Fundamentals</span><span>Catalyst</span><span>Tape</span>' +
-            '<span style="color:var(--cyan);border-color:rgba(0,242,255,.4)">' + esc(s.tickers.slice(0,4).join(" ")) + '</span>';
+            '<span style="color:var(--cyan);border-color:rgba(232,179,60,.4)">' + esc(s.tickers.slice(0,4).join(" ")) + '</span>';
         }
       });
     }
 
     /* ---------- the executive's rulings ---------- */
-    function levels(d){
-      return '<div class="dk-lvls">' +
-        '<div><span class="k">Price</span><span class="v">' + D.money(d.price) + '</span></div>' +
-        '<div><span class="k">Entry</span><span class="v">' + D.money(d.entry) + '</span></div>' +
-        '<div><span class="k">Stop</span><span class="v" style="color:var(--crimson)">' + D.money(d.stop) + '</span></div>' +
-        '<div><span class="k">Target</span><span class="v" style="color:var(--emerald)">' + D.money(d.target) + '</span></div>' +
+    /* The top ruling is filed as a full ticket — the same document the rest of
+       the site passes around. Everything under it is the blotter's ledger. */
+    function ticketHTML(d){
+      var sell = (d.side === "avoid" || d.side === "short");
+      var v = String(d.verdict || "").toLowerCase();
+      var stampCls = v === "approved" ? "stamp-ok" : v === "reduced" ? "stamp-cut" : "stamp-no";
+      var k = d.kronos || {}, sc = d.dsa || {};
+      return '<article class="ticket punched' + (sell ? " is-sell" : "") + '" style="margin-bottom:20px">' +
+        '<header class="tkt-head"><span class="tkt-org">DSH&nbsp;TRADING <span>RESEARCH DESK</span></span>' +
+        '<span class="tkt-no">TICKET <b>' + String(100000 + (d.id || 0)).slice(-6) + '</b></span></header>' +
+        '<div class="tkt-main">' +
+          '<div class="tkt-instrument"><span class="field-k">Instrument</span>' +
+          '<span class="tkt-sym">' + esc(d.ticker) + '</span>' +
+          '<span class="tkt-name">' + esc(d.name || "") + '</span></div>' +
+          '<dl class="tkt-fields">' +
+            fld("Side", String(d.side || "—").toUpperCase()) +
+            fld("Entry", D.money(d.entry)) + fld("Stop", D.money(d.stop)) +
+            fld("Target", D.money(d.target)) +
+            fld("Size", d.size_pct ? d.size_pct + "%" : "—") +
+            fld("Horizon", esc(d.horizon || "—")) +
+          '</dl>' +
+          '<p class="tkt-headline">' + esc(d.headline) + '</p>' +
+          (d.reason ? '<p style="margin-top:9px;font-size:.9rem;line-height:1.5;color:rgba(21,16,10,.78);max-width:62ch">' + esc(d.reason) + '</p>' : "") +
+        '</div>' +
+        '<aside class="tkt-chain">' +
+          stage("Analysts", "Filed", "stamp-ok") + stage("Director", (d.director_score >= 0 ? "+" : "") + (d.director_score == null ? "—" : d.director_score), "stamp-ok") +
+          stage("Kronos", esc(k.action || "—"), k.action === "BUY" ? "stamp-ok" : "stamp-no") +
+          stage("DSA", (sc.score == null ? "—" : (sc.score >= 0 ? "+" : "") + sc.score), (sc.score >= 0 ? "stamp-ok" : "stamp-no")) +
+          stage("Executive", esc(d.verdict), stampCls) +
+        '</aside>' +
+        '<footer class="tkt-foot"><span class="tkt-sim">Simulated · virtual money · not investment advice</span>' +
+        (d.risk_flags && d.risk_flags !== "none"
+          ? '<span class="tkt-sim" style="margin-left:auto;max-width:46ch;text-transform:none;letter-spacing:0">⚠ ' + esc(d.risk_flags) + '</span>' : "") +
+        '</footer></article>';
+    }
+    function fld(k, v){ return '<div><dt class="field-k">' + k + '</dt><dd>' + v + '</dd></div>'; }
+    function stage(k, v, cls){
+      return '<div class="tkt-stage"><span class="field-k">' + k + '</span>' +
+             '<span class="stamp land ' + cls + '">' + v + '</span></div>';
+    }
+
+    function ledgerRow(d){
+      return '<div class="dk-row">' +
+        '<span class="r-tk">' + esc(d.ticker) + '</span>' +
+        '<span class="r-head">' + esc(d.headline) + '</span>' +
+        '<span class="r-num">' + D.money(d.entry) + '<span>entry</span></span>' +
+        '<span class="r-num">' + D.money(d.stop) + '<span>stop</span></span>' +
+        '<span class="r-num">' + D.money(d.target) + '<span>target</span></span>' +
+        '<span class="r-verdict"><span class="stamp ' +
+          (d.verdict === "approved" ? "stamp-ok" : d.verdict === "reduced" ? "stamp-cut" : "stamp-no") +
+          '" style="font-size:12px;padding:3px 7px">' + esc(d.verdict) + '</span></span>' +
       '</div>';
     }
-    function votes(d){
-      var k = d.kronos || {}, s = d.dsa || {};
-      var bits = [];
-      if(k.action) bits.push('<span class="dk-vote">Kronos <b>' + esc(k.action) + '</b> ' +
-        (k.pred_return_pct != null ? ((k.pred_return_pct >= 0 ? "+" : "") + k.pred_return_pct + "%") : "") + '</span>');
-      if(s.score != null) bits.push('<span class="dk-vote">DSA <b>' + esc(s.side || "") + '</b> ' + (s.score >= 0 ? "+" : "") + s.score + '</span>');
-      if(d.director_score != null) bits.push('<span class="dk-vote">Director <b>' + (d.director_score >= 0 ? "+" : "") + d.director_score + '</b></span>');
-      if(d.size_pct) bits.push('<span class="dk-vote">Size <b>' + d.size_pct + '%</b></span>');
-      if(d.conviction != null) bits.push('<span class="dk-vote">Conviction <b>' + d.conviction + '</b></span>');
-      return '<div class="dk-votes">' + bits.join("") + '</div>';
+
+    /* the blank ticket stays on the pad whatever happens — the world is
+       never contingent on a network round-trip. */
+    function restTicket(slot, msg){
+      var t = slot.querySelector(".ticket");
+      if(!t){ return; }
+      t.removeAttribute("aria-busy");
+      var hl = t.querySelector(".tkt-headline");
+      if(hl){ hl.textContent = msg; }
     }
-    function card(d){
-      return '<article class="dk-card">' +
-        '<div class="row1">' +
-          '<span class="tk">' + esc(d.ticker) + '</span>' +
-          '<span class="px">' + esc(d.name || "") + '</span>' +
-          '<span class="dk-verdict" style="color:' + D.verdictColor(d.verdict) + '">' + esc(d.verdict) + '</span>' +
-        '</div>' +
-        '<div class="head">' + esc(d.headline) + '</div>' +
-        '<div class="reason">' + esc(d.reason) + '</div>' +
-        levels(d) + votes(d) +
-        (d.risk_flags && d.risk_flags !== "none" ? '<div class="dk-flags">⚠ ' + esc(d.risk_flags) + '</div>' : "") +
-        '<div class="px" style="margin-top:9px;font-size:.68rem;color:var(--text-faint)">' +
-          esc(d.side) + ' · ' + esc(d.horizon) + ' · ' + D.ago(d.created_at) + '</div>' +
-      '</article>';
-    }
+
     function paintDecisions(){
       return D.decisions(24).then(function(list){
-        var host = $("#dkDecisions");
+        var slot = $("#dkTicketSlot"), host = $("#dkDecisions");
         if(!list.length){
-          host.innerHTML = '<div class="dk-empty">No rulings filed yet — the desk is on its first round. This page updates itself.</div>';
+          restTicket(slot, "No rulings filed yet — the desk is on its first round.");
+          host.innerHTML = '<div class="dk-empty" style="border:0">Nothing on the record yet. This page updates itself.</div>';
           return;
         }
-        host.innerHTML = list.map(card).join("");
+        slot.innerHTML = ticketHTML(list[0]);
+        var rest = list.slice(1);
+        host.innerHTML = rest.length
+          ? '<div class="dk-ledger-head"><span>Name</span><span>The call</span><span>Entry</span><span>Stop</span><span>Target</span><span>Ruling</span></div>' +
+            rest.map(ledgerRow).join("")
+          : '<div class="dk-empty" style="border:0">This round filed one ruling. The next is along shortly.</div>';
         $("#dkDecCap").textContent = signedIn()
           ? (list.length + " latest rulings")
           : "one call per round shown — sign in for all of them";
+      }).catch(function(){
+        restTicket($("#dkTicketSlot"), "The record is unreachable right now. Reload to try again.");
+        $("#dkDecisions").innerHTML = '<div class="dk-empty" style="border:0">Could not reach the desk record.</div>';
       });
     }
 

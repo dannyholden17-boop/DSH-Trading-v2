@@ -3,25 +3,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Markets — Flux</title>
 <meta name="description" content="The whole tape in one view: indices, movers, sector rotation, live signals and the week's catalysts. A simulated market demo of the Flux desk.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
-<script src="./assets/flux-tv.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
+<script src="./assets/flux-tv.js?v=21" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}
   .idx{padding:15px 16px}
   .idx .sy{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
   .idx .sy b{font-family:var(--f-mono);font-size:.9rem;letter-spacing:.04em}
-  .idx .sy em{font-style:normal;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .idx .sy em{font-style:normal;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .idx .px{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.32rem;font-weight:700;
-    letter-spacing:-.02em;margin-top:9px;border-radius:7px;padding:1px 5px;margin-left:-5px;width:max-content}
+    letter-spacing:-.02em;margin-top:9px;border-radius:4px;padding:1px 5px;margin-left:-5px;width:max-content}
   .idx .ch{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.8rem;margin-top:3px}
   @keyframes tickup{from{background:color-mix(in srgb,var(--emerald) 26%,transparent)}to{background:transparent}}
   @keyframes tickdn{from{background:color-mix(in srgb,var(--crimson) 26%,transparent)}to{background:transparent}}
@@ -33,43 +34,43 @@
     padding:8px 15px;border-radius:100px;cursor:pointer;color:var(--text-dim);
     border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
   .tab:hover{color:var(--text)}
-  .tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.08)}
+  .tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
 
   .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.mk{width:100%;min-width:660px;border-collapse:collapse;font-size:.9rem}
-  table.mk th{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  table.mk th{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 10px;white-space:nowrap}
   table.mk th:first-child,table.mk td:first-child{text-align:left;padding-left:4px}
   table.mk th:last-child,table.mk td:last-child{padding-right:4px}
   table.mk td{text-align:right;padding:10px 12px;border-top:1px solid var(--line-2);white-space:nowrap}
   table.mk tbody tr{cursor:pointer;transition:background .15s}
-  table.mk tbody tr:hover{background:rgba(0,242,255,.05)}
+  table.mk tbody tr:hover{background:rgba(232,179,60,.05)}
   table.mk tbody tr:focus-visible{outline:1px solid var(--cyan);outline-offset:-1px}
   .tk-cell b{font-family:var(--f-mono);font-weight:700;font-size:.92rem;letter-spacing:.03em}
-  .tk-cell span{display:block;color:var(--text-faint);font-size:.74rem;line-height:1.3}
-  .val{border-radius:6px;padding:1px 5px}
+  .tk-cell span{display:block;color:var(--text-faint);font-size:.75rem;line-height:1.3}
+  .val{border-radius:3px;padding:1px 5px}
   .spark{display:block;margin-left:auto}
 
   .heat{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px}
-  .sec{border-radius:14px;padding:15px 16px;border:1px solid var(--line-2);
+  .sec{border-radius:4px;padding:15px 16px;border:1px solid var(--line-2);
     transition:transform .18s,border-color .18s;min-width:0}
   .sec:hover{transform:translateY(-3px)}
   .sec .nm{font-size:.86rem;font-weight:600;line-height:1.25}
   .sec .pc{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.18rem;font-weight:700;margin-top:8px}
-  .sec .wt{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:2px}
+  .sec .wt{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:2px}
 
   .feed{display:flex;flex-direction:column;gap:9px;min-height:330px}
   .feed .sig{animation:pop .45s both}
 
   table.cal{width:100%;min-width:440px;border-collapse:collapse;font-size:.9rem}
-  table.cal th{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  table.cal th{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;text-align:left;padding:0 10px 10px}
   table.cal td{padding:11px 10px;border-top:1px solid var(--line-2);vertical-align:middle}
   table.cal th:first-child,table.cal td:first-child{padding-left:2px}
   table.cal th:last-child,table.cal td:last-child{padding-right:2px;text-align:right}
-  .imp{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:3px 9px;border-radius:6px;white-space:nowrap}
-  .imp-h{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#ff9a9a}
+  .imp{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:3px 9px;border-radius:3px;white-space:nowrap}
+  .imp-h{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#f3ab97}
   .imp-m{background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
   .imp-l{background:rgba(255,255,255,.06);color:var(--text-faint)}
 
@@ -81,26 +82,26 @@
   .scr-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
   .scr-field{position:relative;display:flex;align-items:center}
   .scr-input,.scr-select{font-family:inherit;font-size:.86rem;color:var(--text);
-    background:var(--well);border:1px solid var(--line);border-radius:9px;padding:9px 12px;outline:none;
+    background:var(--well);border:1px solid var(--line);border-radius:4px;padding:9px 12px;outline:none;
     transition:border-color .18s,box-shadow .18s}
   .scr-input{min-width:190px}
   .scr-input::placeholder{color:var(--text-faint)}
-  .scr-input:focus,.scr-select:focus{border-color:rgba(0,242,255,.5);box-shadow:0 0 0 3px rgba(0,242,255,.09)}
+  .scr-input:focus,.scr-select:focus{border-color:rgba(232,179,60,.5);box-shadow:0 0 0 3px rgba(232,179,60,.09)}
   .scr-select{cursor:pointer}
-  .scr-count{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);margin-left:auto}
+  .scr-count{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);margin-left:auto}
   table.mk th.sorth{cursor:pointer;user-select:none}
   table.mk th.sorth:hover{color:var(--text-dim)}
   table.mk th.sorth[aria-sort]{color:var(--cyan)}
-  table.mk th.sorth .ar{font-size:9px;margin-left:3px}
+  table.mk th.sorth .ar{font-size:11px;margin-left:3px}
   .scr-act{display:inline-flex;gap:6px;align-items:center;justify-content:flex-end}
   .scr-star{background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:2px 3px;
     color:var(--text-faint);transition:color .15s,transform .12s}
   .scr-star:hover{transform:scale(1.15)}
   .scr-star.on{color:var(--amber)}
-  .scr-trade{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
-    color:var(--cyan);border:1px solid rgba(0,242,255,.32);border-radius:6px;padding:4px 9px;text-decoration:none;
+  .scr-trade{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+    color:var(--cyan);border:1px solid rgba(232,179,60,.32);border-radius:3px;padding:4px 9px;text-decoration:none;
     white-space:nowrap;transition:background .15s,border-color .15s}
-  .scr-trade:hover{background:rgba(0,242,255,.1);border-color:rgba(0,242,255,.55)}
+  .scr-trade:hover{background:rgba(232,179,60,.1);border-color:rgba(232,179,60,.55)}
   @media(max-width:520px){
     .idx .px{font-size:1.18rem}
     .panel{padding:16px}
@@ -124,7 +125,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
@@ -138,8 +139,7 @@
 <section class="section phero">
   <div class="wrap">
     <div class="reveal" style="max-width:64ch">
-      <span class="eyebrow">Markets</span>
-      <h1 class="h1" style="margin-top:18px">The whole tape,<br><span class="grad-text">ranked by what matters.</span></h1>
+<h1 class="h1" style="margin-top:18px">The whole tape,<br><span class="">ranked by what matters.</span></h1>
       <p class="lede">Indices, movers, sector rotation, live engine output and the week's catalysts —
         one screen, continuously re-ranked. No tabs to babysit, no chart walls to decode.</p>
       <div class="btn-row" style="margin-top:28px">
@@ -156,7 +156,7 @@
   <div class="wrap reveal">
     <div class="phead">
       <h3 class="h3">Index overview</h3>
-      <span class="mono" style="font-size:.74rem;color:var(--text-faint)" id="clock">—</span>
+      <span class="mono" style="font-size:.75rem;color:var(--text-faint)" id="clock">—</span>
     </div>
     <div class="idx-strip" id="idxStrip"></div>
     <p class="disclaimer" style="margin-top:16px">Prices and daily changes are a real market snapshot; relative-volume and
@@ -168,8 +168,7 @@
 <section class="section" style="padding-top:clamp(30px,4vw,50px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Movers</span>
-      <h2 class="h2" style="margin-top:16px">Who's actually moving.</h2>
+<h2 class="h2" style="margin-top:16px">Who's actually moving.</h2>
       <p class="lede" style="margin-top:14px">The Scanner engine re-ranks the universe every few seconds.
         Relative volume is the tell — a 5% move on 0.4× volume is noise, on 3.8× it's a story.</p>
     </div>
@@ -200,7 +199,7 @@
           <tbody id="moverBody"></tbody>
         </table>
       </div>
-      <p class="mono" style="margin-top:14px;font-size:.72rem;color:var(--text-faint)">
+      <p class="mono" style="margin-top:14px;font-size:.75rem;color:var(--text-faint)">
         Select any row to open it in the Flux desk.</p>
     </div>
   </div>
@@ -210,8 +209,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Screener</span>
-      <h2 class="h2" style="margin-top:16px">Filter the whole universe.</h2>
+<h2 class="h2" style="margin-top:16px">Filter the whole universe.</h2>
       <p class="lede" style="margin-top:14px">Every name the desk tracks, with live price, change and fundamentals.
         Filter by sector or search, sort any column, star what you want to watch — then trade it.</p>
     </div>
@@ -264,8 +262,7 @@
 <section class="section band" style="padding-block:clamp(48px,6vw,80px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Rotation</span>
-      <h2 class="h2" style="margin-top:16px">Where the money went today.</h2>
+<h2 class="h2" style="margin-top:16px">Where the money went today.</h2>
       <p class="lede" style="margin-top:14px">Sector strength, sized by conviction. When semis lead and
         utilities lag, the tape is risk-on — and the engines weight their signals accordingly.</p>
     </div>
@@ -285,7 +282,7 @@
         <span class="pill"><i></i> streaming</span>
       </div>
       <div class="feed" id="feed"></div>
-      <p class="mono" style="margin-top:14px;font-size:.72rem;color:var(--text-faint)">
+      <p class="mono" style="margin-top:14px;font-size:.75rem;color:var(--text-faint)">
         Sample output. Confidence is the ensemble's score, not a promise.</p>
     </div>
 
@@ -313,7 +310,7 @@
           </tbody>
         </table>
       </div>
-      <p class="mono" style="margin-top:14px;font-size:.72rem;color:var(--text-faint)">
+      <p class="mono" style="margin-top:14px;font-size:.75rem;color:var(--text-faint)">
         Illustrative schedule for the demo.</p>
     </div>
   </div>
@@ -323,8 +320,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c" style="justify-content:center">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Stop reading the tape. Let it read itself.</h2>
+<h2 class="h2" style="margin-top:14px">Stop reading the tape. Let it read itself.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Flux watches all of it — indices,
         movers, rotation, catalysts — and only interrupts you when something crosses your bar.</p>
       <div class="btn-row" style="justify-content:center">
@@ -345,11 +341,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -362,7 +358,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
   var rnd = F.rnd || function(a){return a[Math.floor(Math.random()*a.length)]};
-  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444";
+  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
   function flash(el, up){
