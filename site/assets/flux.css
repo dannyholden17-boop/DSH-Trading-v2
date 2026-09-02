@@ -384,7 +384,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .footer{border-top:1px solid var(--line);background:var(--rail);padding-block:48px 30px;margin-top:24px}
 .footer-grid{display:grid;grid-template-columns:1.7fr repeat(4,1fr);gap:34px}
 @media(max-width:860px){.footer-grid{grid-template-columns:1fr 1fr;gap:26px}}
-.footer h3,.footer h4{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
+.footer h2,.footer h3,.footer h4{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--text-faint);margin:0 0 12px;font-weight:600}
 .footer a{display:block;color:var(--text-dim);font-size:.9rem;padding:5px 0}
 .footer a:hover{color:var(--gold)}

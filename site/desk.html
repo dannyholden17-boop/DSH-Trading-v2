@@ -7,13 +7,13 @@
 <meta name="description" content="Flux's research desk runs continuously: three analysts file on the tape, a Director of Research synthesises, Kronos and the DSA engine price the trade, and an Executive gives — or refuses — the green light. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-desk.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-desk.js?v=26" defer></script>
 <style>
   .dk-wrap{max-width:1240px;margin-inline:auto;padding:22px var(--gutter) 60px}
 
@@ -34,7 +34,7 @@
   @media(max-width:520px){.dk-chain{grid-template-columns:1fr}}
   /* Each desk is a station on the floor. The stage in flight lights its
      leading edge gold; a finished stage goes green and keeps its stamp. */
-  .dk-node{position:relative;overflow:hidden;border-radius:3px;padding:15px 16px 17px;
+  .dk-node{position:relative;overflow:hidden;border-radius:4px;padding:15px 16px 17px;
     background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
     border:1px solid var(--line-2);box-shadow:var(--lift-2);
     transition:transform var(--t-hover) var(--ease),box-shadow var(--t-hover) var(--ease),
@@ -42,7 +42,8 @@
   .dk-node::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
     background:var(--chrome);transition:background var(--t-stage) var(--ease)}
   .dk-node.done::before{background:var(--clearing)}
-  .dk-node.on::before{background:var(--gold);box-shadow:0 0 14px 1px rgba(245,185,60,.6)}
+  .dk-node.on::before{background:linear-gradient(180deg,transparent,var(--gold) 40%,var(--gold) 60%,transparent);
+    background-size:100% 300%;animation:wire 1.7s linear infinite}
   .dk-node:hover{transform:translateY(-3px);box-shadow:var(--lift-3);border-color:var(--line)}
   .dk-node .role{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--text-faint)}

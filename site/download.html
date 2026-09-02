@@ -5,14 +5,14 @@
 <meta name="description" content="Get Flux on every device. The full pro workstation on Mac and Windows, the autonomous desk in your pocket on iPhone and Android, and instant web access.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-fund.js?v=25" defer></script>
-<script src="./assets/flux-kronos.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ==========================================================
      Page-only layout for download.html.
@@ -44,7 +44,7 @@
   /* ---- hero release card ---- */
   .rel-card{padding:24px}
   .rel-card .rc-h{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-  .rel-card h3{font-size:1rem}
+  .rel-card h3,.rel-card h2{font-size:1rem}
   .rc-rows{margin-top:18px;display:flex;flex-direction:column;gap:0}
   .rc-row{display:flex;justify-content:space-between;align-items:center;gap:16px;
     padding:11px 0;border-bottom:1px solid var(--line-2);font-size:.9rem}
@@ -71,7 +71,7 @@
   .win{padding:0;overflow:hidden}
   .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
     border-bottom:1px solid var(--line-2);background:var(--well)}
-  .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:rgba(255,255,255,.14)}
+  .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:var(--line)}
   .win-bar i:nth-child(1){background:rgba(255,111,82,.55)}
   .win-bar i:nth-child(2){background:rgba(245,185,60,.55)}
   .win-bar i:nth-child(3){background:rgba(61,220,151,.55)}
@@ -94,7 +94,7 @@
   .qr{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding:28px}
   @media(max-width:640px){.qr{grid-template-columns:1fr;gap:24px;justify-items:center;text-align:center}}
   .qr-card{width:198px;max-width:100%;flex:none;background:#f2f5fb;border-radius:4px;padding:13px;
-    box-shadow:0 24px 32px -28px rgba(245,185,60,.55), inset 0 0 0 1px rgba(27,25,23,.08)}
+    box-shadow:0 24px 32px -28px rgba(0,0,0,.9), inset 0 0 0 1px rgba(160,180,220,.10)}
   .qr-card svg{width:100%;height:auto;display:block}
   .qr-steps{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-direction:column;gap:11px;
     font-size:.9rem;color:var(--text-dim);counter-reset:qs}
@@ -123,7 +123,7 @@
   /* ---- system requirements ---- */
   .req{padding:22px;display:flex;flex-direction:column}
   .req .os{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
-  .req h3{font-size:1rem;margin-top:9px}
+  .req h3,.req h2{font-size:1rem;margin-top:9px}
   .req ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:0}
   .req li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;
     border-bottom:1px dashed var(--line-2);font-size:13px;color:var(--text-dim)}
@@ -150,6 +150,7 @@
   .shead p{margin-top:16px}
   .shead.c{margin-inline:auto;text-align:center}
   .shead.c .lede{margin-inline:auto}
+  .dl-h{font-size:1rem;margin:0}
 </style>
 </head>
 <body>
@@ -242,7 +243,7 @@
 
     <div class="glass rel-card reveal">
       <div class="rc-h">
-        <h3>Latest release</h3>
+        <h2 class="dl-h">Latest release</h2>
         <span class="pill"><i></i> 2.4.1 stable</span>
       </div>
       <div class="rc-rows">
@@ -281,7 +282,7 @@
     <div class="grid g-3" style="margin-top:44px">
       <div class="glass feat glass-hover dl-card reveal">
         <div class="ic">▤</div>
-        <h3>Flux Desktop</h3>
+        <h2 class="dl-h">Flux Desktop</h2>
         <p>The full workstation. Native, GPU-accelerated charts and the whole terminal
           with nothing hidden behind a tab.</p>
         <ul class="dl-list">
@@ -296,7 +297,7 @@
 
       <div class="glass feat glass-hover dl-card reveal">
         <div class="ic">▮</div>
-        <h3>Flux Mobile</h3>
+        <h2 class="dl-h">Flux Mobile</h2>
         <p>The autonomous desk in your pocket. Signals arrive as push notifications the
           moment an engine fires — with the reasoning attached.</p>
         <ul class="dl-list">
@@ -376,7 +377,7 @@
     <div class="glass qr reveal">
       <div class="qr-card" id="qrCard"></div>
       <div>
-<h2 class="h2" style="font-size:clamp(1.5rem,1.2rem + 1.4vw,2rem);margin-top:14px">Scan to install on your phone.</h2>
+<h2 class="h2" style="font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);margin-top:14px">Scan to install on your phone.</h2>
         <p class="muted" style="margin-top:12px;font-size:1rem;max-width:46ch">Point your camera
           at the code. It opens the Flux beta page on your device — one field, no download
           manager, no sideloading.</p>
@@ -604,11 +605,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

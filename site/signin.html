@@ -7,14 +7,14 @@
 <meta name="description" content="Sign in to Flux to unlock your AI trading desk — the daily brief, ranked trade recommendations, and your paper portfolio synced across devices. Trading is simulated; no real brokerage is connected.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-fund.js?v=25" defer></script>
-<script src="./assets/flux-kronos.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ---- page-only layout: signin.html ---- */
   .si-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:40px;align-items:stretch}
@@ -28,7 +28,7 @@
 
   /* left marketing panel */
   .si-left{padding:clamp(24px,3.4vw,36px);display:flex;flex-direction:column}
-  .si-left h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.3rem);margin-top:18px;line-height:1.08}
+  .si-left h2{font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);margin-top:18px;line-height:1.08}
   .si-left .lede{margin-top:14px;font-size:1rem}
   .si-bullets{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:14px}
   .si-bullets li{display:flex;gap:13px;align-items:flex-start}
@@ -52,7 +52,7 @@
   .si-tab{flex:1;padding:11px 10px;border:0;border-radius:4px;background:transparent;
     color:var(--text-dim);font-weight:700;font-size:13.5px;cursor:pointer;font-family:var(--f-sans);
     transition:color .18s,background .18s}
-  .si-tab[aria-selected="true"]{background:var(--grad);color:#120d05;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+  .si-tab[aria-selected="true"]{background:var(--grad);color:#120d05;box-shadow:inset 0 1px 0 rgba(160,180,220,.40)}
   .si-tab:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 
   .si-field{margin-bottom:15px}
@@ -260,11 +260,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Sign-in shown here is a client-side demo; no credentials are verified or transmitted. Figures shown are illustrative/simulated. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

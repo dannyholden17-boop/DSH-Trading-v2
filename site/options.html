@@ -7,14 +7,14 @@
 <meta name="description" content="The Flux options-chain explorer: browse a simulated options chain, read illustrative greeks, and place simulated (paper) option trades. Simulated with an illustrative pricing model — not real quotes, not advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-fund.js?v=25" defer></script>
-<script src="./assets/flux-kronos.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: options.html (op- prefixed)
@@ -36,7 +36,7 @@
   .op-sel:focus{outline:1px solid rgba(245,185,60,.5);border-color:rgba(245,185,60,.45)}
   .op-price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .op-big{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;
-    font-size:clamp(1.4rem,1.1rem + 1.5vw,1.95rem);letter-spacing:-.02em;border-radius:4px;padding:1px 6px;margin-left:-6px}
+    font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);letter-spacing:-.02em;border-radius:4px;padding:1px 6px;margin-left:-6px}
   .op-chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
   .op-chips{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;align-items:center}
   .op-chip{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:8px 12px;min-width:0}
@@ -114,9 +114,9 @@
   .op-place{width:100%;margin-top:12px;padding:14px;border-radius:4px;border:1px solid transparent;font-weight:700;
     font-size:1rem;cursor:pointer;font-family:var(--f-sans);letter-spacing:.01em}
   .op-place.op-side-buy{background:linear-gradient(120deg,#3ddc97,#6fe3b0);color:#120d05;
-    box-shadow:0 10px 30px -12px rgba(61,220,151,.6)}
-  .op-place.op-side-sell{background:linear-gradient(120deg,#ff6f52,#ff7f63);color:#fff;
-    box-shadow:0 10px 30px -12px rgba(255,111,82,.6)}
+    box-shadow:0 10px 30px -14px rgba(0,0,0,.85)}
+  .op-place.op-side-sell{background:linear-gradient(120deg,#ff6f52,#ff7f63);color:var(--text);
+    box-shadow:0 8px 24px -10px rgba(0,0,0,.8)}
   @keyframes opPulse{0%{transform:scale(1)}45%{transform:scale(.965)}100%{transform:scale(1)}}
   .op-pulse{animation:opPulse .4s ease}
   .op-banner{margin-top:12px;border-radius:4px;padding:10px 12px;font-size:.9rem;font-weight:600;display:none}
@@ -227,7 +227,7 @@
     <section class="glass op-pane op-chainpane reveal" aria-label="Options chain">
       <div class="op-phd">
         <h3 id="opChainTitle">Options chain</h3>
-        <span class="op-cap">Simulated · illustrative pricing · paper</span>
+        <span class="op-cap disclosure">Simulated · illustrative pricing · paper</span>
       </div>
       <div class="op-scroll">
         <table class="op-chain" aria-label="Simulated options chain">
@@ -279,7 +279,7 @@
   <section class="glass op-pane reveal" style="margin-top:16px" aria-label="Option order blotter">
     <div class="op-phd">
       <h3>Option blotter</h3>
-      <span class="op-cap">simulated paper option orders</span>
+      <span class="op-cap disclosure">simulated paper option orders</span>
     </div>
     <div class="op-scroll">
       <table class="op-bl">
@@ -350,11 +350,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Options data and trades here are simulated with an illustrative pricing model on a paper account — not real quotes and no real orders are placed. Options carry substantial risk and can expire worthless. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

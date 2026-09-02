@@ -7,14 +7,14 @@
 <meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings — read-only until you say otherwise.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-fund.js?v=25" defer></script>
-<script src="./assets/flux-kronos.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ---- page-only layout: portfolio.html ---- */
   .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -30,7 +30,7 @@
   .pf-sum-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
   .pf-sum-head .lb{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
   .pf-total-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-  .pf-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2rem,1.5rem + 2.4vw,2.9rem);
+  .pf-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2rem,1.15rem + 3.1vw,3.4rem);
     font-weight:750;letter-spacing:-.03em;border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
   .pf-day{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1rem;font-weight:700}
   .pf-spark{width:100%;height:66px;display:block;margin:14px 0 2px}
@@ -83,7 +83,7 @@
   .pf-metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
   .pf-metric{padding:16px 18px}
   .pf-metric .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .pf-metric .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:700;margin-top:7px;letter-spacing:-.02em}
+  .pf-metric .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:700;margin-top:7px;letter-spacing:-.02em}
   .pf-metric .s{font-size:12.5px;color:var(--text-faint);margin-top:4px}
   @media(max-width:420px){.pf-metrics{grid-template-columns:1fr}.pf-quick{grid-template-columns:1fr 1fr}}
 
@@ -361,37 +361,37 @@
 
     <div class="grid g-3" style="margin-top:44px">
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">◎</div><h3>Risk radar</h3>
+        <h3>Risk radar</h3>
         <p>Concentration, correlation and drawdown watch on your real positions. When two of your names move
           as one, you hear about it before the tape does the damage.</p>
         <div class="meta"><span>watches <b>correlation</b></span><span>engine <b>Risk</b></span></div>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">◍</div><h3>Position insights</h3>
+        <h3>Position insights</h3>
         <p>What the models think about each holding — forecast drift, volatility regime and wire sentiment,
           per ticker. Estimates, not advice, with the source kept alongside.</p>
         <div class="meta"><span>per <b>holding</b></span><span>output <b>probabilistic</b></span></div>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⇄</div><h3>Rebalance ideas</h3>
+        <h3>Rebalance ideas</h3>
         <p>Suggestions to trim a crowded name or fill a gap, sized against your own weights and rules —
           <b>suggested, never automatic</b>. You decide what, if anything, to act on.</p>
         <div class="meta"><span>action <b>your call</b></span><span>auto <b>never</b></span></div>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⊟</div><h3>Tax-lot aware</h3>
+        <h3>Tax-lot aware</h3>
         <p>Flux reads your lots and surfaces harvest candidates — positions where a loss could offset a gain —
           so the idea is there when you want it, not lost in a statement.</p>
         <div class="meta"><span>reads <b>cost basis</b></span><span>flags <b>harvest</b></span></div>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">◈</div><h3>Catalysts on your names</h3>
+        <h3>Catalysts on your names</h3>
         <p>Earnings, filings and events on the tickers you actually hold, tracked by the Catalyst engine with
           the historical drift attached — so nothing on your book blindsides you.</p>
         <div class="meta"><span>scope <b>your tickers</b></span><span>engine <b>Catalyst</b></span></div>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">✦</div><h3>Daily portfolio report</h3>
+        <h3>Daily portfolio report</h3>
         <p>A written brief on your book each morning — what moved, what changed and where the risk sits — on
           the same cadence as Flux Research, delivered before the bell.</p>
         <div class="meta"><span>cadence <b>daily</b></span><span>engine <b>Reporter</b></span></div>
@@ -418,7 +418,7 @@
       </div>
 
       <div class="reveal">
-<h3 class="h3" style="margin-top:14px;font-size:1.4rem">Sourced, per-name, and honest about uncertainty.</h3>
+<h3 class="h3" style="margin-top:14px;font-size:1.5rem">Sourced, per-name, and honest about uncertainty.</h3>
         <div class="flist">
           <div class="fi"><span class="k">%</span><div><b>Probabilities, not calls</b>
             <p>Every forecast is a probability with a confidence score — the ensemble's view, never a promise
@@ -454,19 +454,19 @@
     <div class="reveal">
       <div class="grid g-2">
         <div class="glass sheen feat">
-          <div class="ic">⚑</div><h3>Your rules</h3>
+          <h3>Your rules</h3>
           <p>Position caps, daily loss limit and allowed tickers — Autopilot cannot step outside them.</p>
         </div>
         <div class="glass sheen feat">
-          <div class="ic">⊘</div><h3>Read-only default</h3>
+          <h3>Read-only default</h3>
           <p>Trading is off until you switch it on. No opt-in, no orders — ever.</p>
         </div>
         <div class="glass sheen feat">
-          <div class="ic">▤</div><h3>Full log</h3>
+          <h3>Full log</h3>
           <p>Every order, fill and decision is written down and timestamped for you to review.</p>
         </div>
         <div class="glass sheen feat">
-          <div class="ic">◼</div><h3>Kill-switch</h3>
+          <h3>Kill-switch</h3>
           <p>One tap pauses Autopilot and returns your account to read-only immediately.</p>
         </div>
       </div>
@@ -485,19 +485,19 @@
 
     <div class="grid g-3" style="margin-top:44px">
       <div class="glass glass-hover feat reveal">
-        <div class="ic">⊘</div><h3>Read-only by default</h3>
+        <h3>Read-only by default</h3>
         <p>A new connection can see your positions and history — and nothing else. It cannot place a trade.</p>
       </div>
       <div class="glass glass-hover feat reveal">
-        <div class="ic">↺</div><h3>Revoke access anytime</h3>
+        <h3>Revoke access anytime</h3>
         <p>Disconnect in one tap, in Flux or at your broker. The link is yours to cut whenever you want.</p>
       </div>
       <div class="glass glass-hover feat reveal">
-        <div class="ic">🔒</div><h3>Encrypted connections</h3>
+        <h3>Encrypted connections</h3>
         <p>Connections are encrypted in transit and at rest. Flux never sees or stores your broker password.</p>
       </div>
       <div class="glass glass-hover feat reveal">
-        <div class="ic">⦸</div><h3>We never sell your data</h3>
+        <h3>We never sell your data</h3>
         <p>Your portfolio is yours. Flux does not sell it, and does not share it to advertise to you.</p>
       </div>
       <div class="glass glass-hover feat reveal">
@@ -505,7 +505,7 @@
         <p>Any trading permission is a deliberate, explicit opt-in — with your rules attached before a single order.</p>
       </div>
       <div class="glass glass-hover feat reveal">
-        <div class="ic">◼</div><h3>Nothing autonomous without your rules</h3>
+        <h3>Nothing autonomous without your rules</h3>
         <p>Autopilot will not act until you've set its guardrails and switched it on. No rules, no trades.</p>
       </div>
     </div>
@@ -585,11 +585,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Portfolio figures shown are an illustrative sample. Brokerage connections are read-only unless you explicitly enable trading, and Autopilot never trades your account without your approval and your rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

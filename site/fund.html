@@ -7,14 +7,14 @@
 <meta name="description" content="The Flux Fund: a simulated AI that trades a paper account live and shows every fill. Watch it trade in real time, browse its positions and its whole order history. Simulated, virtual money, not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-fund.js?v=25" defer></script>
-<script src="./assets/flux-kronos.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   .fd-shell{max-width:1280px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,32px)}
   /* hero */
@@ -25,9 +25,9 @@
     padding:5px 12px;border-radius:2px;font-weight:700}
   .fd-live .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(61,220,151,.6);animation:fdpulse 1.6s infinite}
   @keyframes fdpulse{0%{box-shadow:0 0 0 0 rgba(61,220,151,.55)}70%{box-shadow:0 0 0 10px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
-  .fd-hero h1{margin-top:16px;font-size:clamp(2rem,1.4rem + 3vw,3.3rem);line-height:1.04;letter-spacing:-.03em}
+  .fd-hero h1{margin-top:16px;font-size:clamp(2rem,1.15rem + 3.1vw,3.4rem);line-height:1.04;letter-spacing:-.03em}
   .fd-aumcard{padding:24px}
-  .fd-aum{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2.2rem,1.6rem + 3vw,3.2rem);
+  .fd-aum{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2rem,1.15rem + 3.1vw,3.4rem);
     font-weight:750;letter-spacing:-.03em;border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
   .fd-aumrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:4px}
   .fd-ret{font-family:var(--f-mono);font-weight:700;font-size:1rem}
@@ -44,7 +44,7 @@
   @media(max-width:520px){.fd-stats{grid-template-columns:repeat(2,1fr)}}
   .fd-stat{padding:15px 16px}
   .fd-stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .fd-stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.3rem;font-weight:750;margin-top:6px;letter-spacing:-.02em}
+  .fd-stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.18rem;font-weight:750;margin-top:6px;letter-spacing:-.02em}
 
   /* chart */
   .fd-chartwrap{padding:18px;margin-top:22px}
@@ -87,9 +87,9 @@
   .fd-think .tx{font-size:.9rem;line-height:1.5;color:var(--text-dim)}
   .fd-think .tx b{color:var(--text)}
 
-  .fd-strip{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:16px 18px;border:1px solid rgba(245,158,11,.28);
-    background:rgba(245,158,11,.06);border-radius:4px}
-  .fd-strip .ic{color:#f59e0b;font-size:1rem;line-height:1.3}
+  .fd-strip{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:16px 18px;border:1px solid rgba(245,185,60,.28);
+    background:rgba(245,185,60,.08);border-radius:4px}
+  .fd-strip .ic{color:var(--gold);font-size:1rem;line-height:1.3}
   .fd-strip p{font-size:13px;line-height:1.6;color:var(--text-dim)}
   .fd-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 
@@ -157,8 +157,8 @@
   <!-- HERO -->
   <section class="fd-hero">
     <div>
-      <span class="fd-live"><span class="dot"></span><span id="liveLbl">LIVE · trading now</span></span>
       <h1>An AI fund that trades —<br><span class="">live, and in the open.</span></h1>
+      <span class="fd-live" style="margin-top:14px"><span class="dot"></span><span id="liveLbl">Trading now</span></span>
       <p class="lede" style="max-width:56ch;margin-top:16px">This is the <b>Flux Fund</b>: a simulated AI running its own paper account. It places real-time paper trades, marks to live quotes, and shows you <b>every single fill</b>. Watch it work, then scroll its whole order history below.</p>
       <div class="fd-cta">
         <a class="btn btn-primary btn-lg" href="#tape">See it trading ↓</a>
@@ -223,7 +223,7 @@
   <section class="glass fd-alloc reveal">
     <div class="fd-ph" style="border:none;padding:0 0 8px">
       <span class="pill live">Allocation</span>
-      <h3 style="margin:0;font-size:1rem">Where the money is — invested per name</h3>
+      <h2 style="margin:0;font-size:1rem">Where the money is — invested per name</h2>
       <span class="k allocsum" id="allocSum">—</span>
     </div>
     <div id="allocBody"></div>
@@ -234,13 +234,13 @@
     <div class="glass fd-pane reveal">
       <div class="fd-ph">
         <span class="pill live">Live order tape</span>
-        <h3 style="font-size:1rem;margin:0">Every fill, as it happens</h3>
+        <h2 style="font-size:1rem;margin:0">Every fill, as it happens</h2>
         <span class="k" id="tapeCount">—</span>
       </div>
       <div class="fd-tape" id="tapeBody"></div>
     </div>
     <div class="glass fd-pane reveal">
-      <div class="fd-ph"><h3 style="margin:0">Current book</h3><span class="k">marked to live quotes</span></div>
+      <div class="fd-ph"><h2 style="margin:0">Current book</h2><span class="k">marked to live quotes</span></div>
       <div class="fd-hscroll">
         <table class="fd-hold">
           <thead><tr><th>Ticker</th><th>Qty</th><th>Avg</th><th>Last</th><th>Value</th><th>P/L</th></tr></thead>
@@ -270,12 +270,12 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./fund.html">Flux Fund</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account without your explicit approval and rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var maxMkt = Math.max.apply(null, s.positions.map(function (p) { return p.mkt; }).concat([1]));
     var rows = s.positions.map(function (p) {
       var w = Math.max(2, p.mkt / maxMkt * 100), up = p.pl >= 0;
-      var grad = up ? "linear-gradient(90deg,#0891b2,#3ddc97)" : "linear-gradient(90deg,#b45309,#ff6f52)";
+      var grad = up ? "linear-gradient(90deg,var(--floor),#3ddc97)" : "linear-gradient(90deg,#5a3d02,#ff6f52)";
       return '<div class="row"><div class="tk"><b>' + p.t + '</b><span>' + p.sec + '</span></div>' +
         '<div class="track"><div class="fill" style="width:' + w.toFixed(1) + '%;background:' + grad + '"></div></div>' +
         '<div class="val">' + m0(p.mkt) + '<span>' + p.weight + '% of book</span></div>' +
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }).join("");
     var cw = Math.max(2, Math.min(100, s.cash / maxMkt * 100));
     rows += '<div class="row"><div class="tk"><b>CASH</b><span>buying power</span></div>' +
-      '<div class="track"><div class="fill" style="width:' + cw.toFixed(1) + '%;background:rgba(148,163,184,.45)"></div></div>' +
+      '<div class="track"><div class="fill" style="width:' + cw.toFixed(1) + '%;background:var(--text-faint)"></div></div>' +
       '<div class="val">' + m0(s.cash) + '<span>' + (s.aum ? (s.cash / s.aum * 100).toFixed(1) : 0) + '% of acct</span></div><div class="pl"></div></div>';
     host.innerHTML = rows;
     var unreal = s.positions.reduce(function (a, p) { return a + p.pl; }, 0);

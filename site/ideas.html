@@ -7,14 +7,14 @@
 <meta name="description" content="Today's AI trade ideas from Flux — momentum leaders and beaten-down rebound names, each with a full brief. First idea free; sign in to see them all. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=25">
-<link rel="stylesheet" href="./assets/flux.css?v=25">
-<script src="./assets/flux-supa.js?v=25" defer></script>
-<script src="./assets/flux-site.js?v=25" defer></script>
-<script src="./assets/flux-universe.js?v=25" defer></script>
-<script src="./assets/flux-feed.js?v=25" defer></script>
-<script src="./assets/flux-fund.js?v=25" defer></script>
-<script src="./assets/flux-kronos.js?v=25" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* single-screen, no page scroll */
   html,body{height:100%}
@@ -27,7 +27,7 @@
     padding:4px 11px;border-radius:2px;font-weight:700}
   .id-live .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);animation:idp 1.6s infinite}
   @keyframes idp{0%{box-shadow:0 0 0 0 rgba(61,220,151,.55)}70%{box-shadow:0 0 0 8px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
-  .id-head h1{font-size:clamp(1.2rem,1rem + 1.2vw,1.7rem);letter-spacing:-.02em;line-height:1;margin:0}
+  .id-head h1{font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);letter-spacing:-.02em;line-height:1;margin:0}
   .id-cap{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);margin-left:auto}
 
   /* fit area — content scales to fit, never scrolls */
@@ -62,7 +62,7 @@
   }
   .irow.locked{cursor:default;border-style:dashed;justify-content:center;grid-template-columns:1fr}
   .irow.locked .lk{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
-  .irow.locked .lk .em{font-size:22px}
+  .irow.locked .lk .em{font-size:1.5rem}
   .irow.locked .lk b{font-size:1rem}
   .irow.locked .lk span{color:var(--text-faint);font-size:13px}
 
@@ -142,7 +142,7 @@
   <div class="brief-sheet glass">
     <div class="bm-head">
       <span class="pill live">Fluxi brief</span>
-      <h3 id="briefTitle" style="margin:0;font-size:1rem"></h3>
+      <h2 id="briefTitle" style="margin:0;font-size:1rem"></h3>
       <button type="button" class="bm-x" data-close aria-label="Close"><i class="ic-i i-close" aria-hidden="true"></i></button>
     </div>
     <div class="bm-body" id="briefBody"></div>

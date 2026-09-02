@@ -166,7 +166,7 @@
                 '<b>' + (live ? D.stageLabel(s.stage) : "Round " + s.seq + " filed") + '</b>' +
                 '<span class="dk-w-ago">' + D.ago(s.finished_at || s.started_at) + '</span>' +
               '</div>' +
-              '<div class="dk-w-bar"><i style="width:' + pct + '%"></i></div>' +
+              '<div class="dk-w-bar"><i style="transform:scaleX(' + (pct/100) + ')"></i></div>' +
               '<div class="dk-w-sub">' +
                 (s.tickers || []).slice(0, 6).join(" · ") +
                 (s.approved ? ' <b class="ok">' + s.approved + ' green-lit</b>' : "") +
