@@ -17,6 +17,12 @@ colors:
   clearing: "#56b97f"
   stamp: "#e8674a"
   stamp-deep: "#c8402a"
+  card-buy-lift: "#ecc069"
+  card-sell-lift: "#ef8a70"
+  chrome: "#3c3934"
+  chrome-hi: "#4e4a43"
+  clearing-tint: "#7cc99a"
+  stamp-tint: "#f3ab97"
   stamp-ok-paper: "#1c5233"
   stamp-cut-paper: "#5a3d02"
   stamp-no-paper: "#7a1d0e"
@@ -29,6 +35,12 @@ colors:
   line-2: "rgba(233,228,215,.07)"
   line-3: "rgba(233,228,215,.04)"
 typography:
+  claim:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(2rem, 1.15rem + 3.1vw, 3.4rem)"
+    fontWeight: 900
+    lineHeight: 1.05
+    letterSpacing: "-0.032em"
   display:
     fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
     fontSize: "clamp(2.5rem, 1.6rem + 3.6vw, 4.2rem)"
@@ -49,7 +61,7 @@ typography:
     letterSpacing: "-0.015em"
   body:
     fontFamily: "Public Sans, -apple-system, Segoe UI, Roboto, sans-serif"
-    fontSize: "16px"
+    fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.6
     letterSpacing: "normal"
@@ -60,14 +72,14 @@ typography:
     lineHeight: 1.6
     letterSpacing: "normal"
   label:
-    fontFamily: "Azeret Mono, ui-monospace, SF Mono, Menlo, Consolas, monospace"
-    fontSize: "11px"
+    fontFamily: "Azeret Mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "12px"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "0.13em"
   data:
-    fontFamily: "Azeret Mono, ui-monospace, SF Mono, Menlo, Consolas, monospace"
-    fontSize: "0.98rem"
+    fontFamily: "Azeret Mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "1rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "-0.02em"
@@ -78,6 +90,56 @@ typography:
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "0.005em"
+  caption:
+    fontFamily: "Azeret Mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "13px"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "0.02em"
+  bodySmall:
+    fontFamily: "Public Sans, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontSize: "0.9rem"
+    fontWeight: 400
+    lineHeight: 1.55
+    letterSpacing: "normal"
+  subtitle:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "1.12rem"
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: "-0.015em"
+  sectionTitle:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "1.7rem"
+    fontWeight: 800
+    lineHeight: 1.12
+    letterSpacing: "-0.025em"
+  pageTitle:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "2.1rem"
+    fontWeight: 800
+    lineHeight: 1.06
+    letterSpacing: "-0.03em"
+  amount:
+    fontFamily: "Azeret Mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "2.7rem"
+    fontWeight: 700
+    lineHeight: 1.05
+    letterSpacing: "-0.03em"
+    fontFeature: "tabular-nums"
+  figure:
+    fontFamily: "Azeret Mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "1.5rem"
+    fontWeight: 700
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
+    fontFeature: "tabular-nums"
+  instrument:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(2.4rem, 1.6rem + 2.6vw, 3.6rem)"
+    fontWeight: 900
+    lineHeight: 0.92
+    letterSpacing: "-0.045em"
 rounded:
   cut: "2px"
   sm: "4px"

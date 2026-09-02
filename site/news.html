@@ -7,34 +7,34 @@
 <meta name="description" content="A live finance news feed: real headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg, MarketWatch and Yahoo Finance, merged and shuffled, filterable by category and your watchlist. News is informational only — not investment advice.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=21">
-<link rel="stylesheet" href="./assets/flux.css?v=21">
-<script src="./assets/flux-supa.js?v=21" defer></script>
-<script src="./assets/flux-site.js?v=21" defer></script>
-<script src="./assets/flux-universe.js?v=21" defer></script>
-<script src="./assets/flux-feed.js?v=21" defer></script>
-<script src="./assets/flux-fund.js?v=21" defer></script>
-<script src="./assets/flux-kronos.js?v=21" defer></script>
-<script src="./assets/flux-news.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=22">
+<link rel="stylesheet" href="./assets/flux.css?v=22">
+<script src="./assets/flux-supa.js?v=22" defer></script>
+<script src="./assets/flux-site.js?v=22" defer></script>
+<script src="./assets/flux-universe.js?v=22" defer></script>
+<script src="./assets/flux-feed.js?v=22" defer></script>
+<script src="./assets/flux-fund.js?v=22" defer></script>
+<script src="./assets/flux-kronos.js?v=22" defer></script>
+<script src="./assets/flux-news.js?v=22" defer></script>
 <style>
   /* ---- page-only layout: news.html ---- */
   .nw-hero{max-width:66ch}
   .nw-hero .h2{margin-top:16px}
   .nw-hero .lede{margin-top:16px}
   .nw-hero .nw-badges{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:24px}
-  .nw-note{margin-top:16px;color:var(--text-faint);font-size:.85rem;max-width:64ch}
+  .nw-note{margin-top:16px;color:var(--text-faint);font-size:.9rem;max-width:64ch}
   .nw-note b{color:var(--text-dim);font-weight:600}
 
   /* ---- filter bar ---- */
   .nw-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .nw-chips{display:flex;gap:8px;flex-wrap:wrap;min-width:0}
-  .nw-chip{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+  .nw-chip{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
     padding:8px 14px;border-radius:2px;cursor:pointer;color:var(--text-dim);
     border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
   .nw-chip:hover{color:var(--text)}
   .nw-chip[aria-pressed="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
   .nw-chip:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
-  .nw-clock{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);white-space:nowrap}
+  .nw-clock{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);white-space:nowrap}
   @media(max-width:560px){.nw-clock{margin-left:0;width:100%}}
 
   /* ---- feed layout ---- */
@@ -47,25 +47,25 @@
   .nw-card>*{position:relative;z-index:1}
   .nw-card.nw-new{animation:pop .5s both}
   .nw-chead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
-  .nw-sent{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:3px 9px;border-radius:3px;white-space:nowrap}
+  .nw-sent{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:3px 9px;border-radius:2px;white-space:nowrap}
   .nw-sent.bull{background:color-mix(in srgb,var(--emerald) 15%,transparent);color:#5ee9b5}
   .nw-sent.bear{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#f3ab97}
   .nw-sent.neut{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
-  .nw-time{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);white-space:nowrap}
-  .nw-hl{font-size:1.02rem;font-weight:700;line-height:1.34;letter-spacing:-.01em}
+  .nw-time{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);white-space:nowrap}
+  .nw-hl{font-size:1rem;font-weight:700;line-height:1.34;letter-spacing:-.01em}
   .nw-sum{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-top:9px}
-  .nw-ai{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;font-weight:700;color:var(--cyan);
-    border:1px solid rgba(232,179,60,.3);border-radius:3px;padding:1px 5px;background:rgba(232,179,60,.08);
+  .nw-ai{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;font-weight:700;color:var(--cyan);
+    border:1px solid rgba(232,179,60,.3);border-radius:2px;padding:1px 5px;background:rgba(232,179,60,.08);
     vertical-align:1px;margin-right:4px}
   .nw-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
   .nw-tks{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
-  .nw-tk{font-family:var(--f-mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;
+  .nw-tk{font-family:var(--f-mono);font-size:12px;font-weight:700;padding:3px 8px;border-radius:2px;
     border:1px solid var(--line-2);background:var(--well)}
-  .nw-tk em{font-style:normal;font-weight:600;font-size:10px;margin-left:5px}
-  .nw-src{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
+  .nw-tk em{font-style:normal;font-weight:600;font-size:12px;margin-left:5px}
+  .nw-src{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
   .nw-impact{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);
-    font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
+    font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
   .nw-impact .bars{display:inline-flex;gap:3px}
   .nw-impact .bars i{width:5px;height:11px;border-radius:2px;background:rgba(255,255,255,.1)}
   .nw-impact .bars i.on{background:var(--cyan);box-shadow:var(--lift-1)}
@@ -77,8 +77,8 @@
   .nw-panel{padding:18px}
   .nw-panel>*{position:relative;z-index:1}
   .nw-phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .nw-phead h3{font-size:1.02rem}
-  .nw-phead .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
+  .nw-phead h3{font-size:1rem}
+  .nw-phead .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--text-faint)}
 
   /* pulse (typewriter reveal) */
@@ -96,18 +96,18 @@
   .nw-trend{display:flex;flex-direction:column}
   .nw-trow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--line-2)}
   .nw-trow:first-child{border-top:0}
-  .nw-trow .r{font-family:var(--f-mono);font-size:11px;color:var(--text-faint);width:16px;flex:none}
+  .nw-trow .r{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);width:16px;flex:none}
   .nw-trow .t{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
-  .nw-trow .n{color:var(--text-faint);font-size:.8rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .nw-trow .m{margin-left:auto;font-family:var(--f-mono);font-size:.82rem;font-weight:700}
+  .nw-trow .n{color:var(--text-faint);font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nw-trow .m{margin-left:auto;font-family:var(--f-mono);font-size:13px;font-weight:700}
 
   /* ---- sector sentiment strip ---- */
   .nw-sect{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
   .nw-sec{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:14px 15px;min-width:0}
-  .nw-sec .nm{font-size:.86rem;font-weight:600;line-height:1.25}
-  .nw-sec .lb{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
-  .nw-sec .track{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:9px}
-  .nw-sec .track i{display:block;height:100%;border-radius:3px;transition:width .6s ease}
+  .nw-sec .nm{font-size:.9rem;font-weight:600;line-height:1.25}
+  .nw-sec .lb{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
+  .nw-sec .track{height:5px;border-radius:2px;background:rgba(233,228,215,.08);overflow:hidden;margin-top:9px}
+  .nw-sec .track i{display:block;height:100%;border-radius:2px;transition:width .6s ease}
 </style>
 </head>
 <body>
@@ -200,7 +200,7 @@
           <span class="k">from the scanner</span>
         </div>
         <div class="nw-movers" id="nwMovers"></div>
-        <p class="mono" style="margin-top:12px;font-size:.75rem;color:var(--text-faint)">
+        <p class="mono" style="margin-top:12px;font-size:12px;color:var(--text-faint)">
           Sample engine output · confidence is model agreement, not a promise.</p>
       </div>
 
@@ -225,7 +225,7 @@
         Flux rolls those scores up by sector — so you can see where the tone is turning before the tape does.</p>
     </div>
     <div class="nw-sect reveal" id="nwSect" style="margin-top:32px"></div>
-    <p class="mono reveal" style="margin-top:16px;font-size:.75rem;color:var(--text-faint)">
+    <p class="mono reveal" style="margin-top:16px;font-size:12px;color:var(--text-faint)">
       Simulated sentiment · drifts in-browser for demonstration.</p>
   </div>
 </section>
@@ -252,7 +252,7 @@
         <p>Ranked by impact and relevance, the loud-but-irrelevant is muted and the quiet-but-material rises —
           then the Reporter writes it up in a line you can act on.</p></div>
     </div>
-    <p class="faint reveal" style="font-size:.8rem;margin-top:22px;max-width:74ch">
+    <p class="faint reveal" style="font-size:13px;margin-top:22px;max-width:74ch">
       Sentiment scores describe model agreement with a headline's tone. They are not predictions, not a
       probability of profit, and no summary here is a recommendation to buy or sell.</p>
   </div>

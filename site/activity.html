@@ -7,36 +7,36 @@
 <meta name="description" content="Your Flux paper-trading activity: full order history, realized and unrealized P&L, and your account value over time. Simulated; not investment advice.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=21">
-<link rel="stylesheet" href="./assets/flux.css?v=21">
-<script src="./assets/flux-supa.js?v=21" defer></script>
-<script src="./assets/flux-site.js?v=21" defer></script>
-<script src="./assets/flux-universe.js?v=21" defer></script>
-<script src="./assets/flux-feed.js?v=21" defer></script>
-<script src="./assets/flux-fund.js?v=21" defer></script>
-<script src="./assets/flux-kronos.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=22">
+<link rel="stylesheet" href="./assets/flux.css?v=22">
+<script src="./assets/flux-supa.js?v=22" defer></script>
+<script src="./assets/flux-site.js?v=22" defer></script>
+<script src="./assets/flux-universe.js?v=22" defer></script>
+<script src="./assets/flux-feed.js?v=22" defer></script>
+<script src="./assets/flux-fund.js?v=22" defer></script>
+<script src="./assets/flux-kronos.js?v=22" defer></script>
 <style>
   .ac-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
   @media(max-width:900px){.ac-cards{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:520px){.ac-cards{grid-template-columns:1fr}}
   .ac-card{padding:16px}
   .ac-card b{font-size:1.5rem;font-weight:800;letter-spacing:-.01em;display:block}
-  .ac-card span{color:var(--text-faint);font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-top:4px;display:block}
+  .ac-card span{color:var(--text-faint);font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-top:4px;display:block}
   .ac-chartwrap{padding:18px;margin-top:20px}
   .ac-chartwrap canvas{width:100%;height:220px;display:block}
   .ac-tabs{display:flex;gap:8px;margin:24px 0 10px;flex-wrap:wrap}
-  .ac-tab{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+  .ac-tab{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
     padding:7px 14px;border-radius:2px;cursor:pointer;border:1px solid var(--line);background:var(--glass);color:var(--text-dim)}
   .ac-tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
   .ac-scroll{overflow-x:auto}
   table.ac-t{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
-  table.ac-t th{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+  table.ac-t th{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
     text-align:right;padding:10px 14px;border-bottom:1px solid var(--line)}
   table.ac-t th:first-child,table.ac-t td:first-child{text-align:left}
   table.ac-t td{text-align:right;padding:10px 14px;border-bottom:1px solid var(--line-2);font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   table.ac-t td.side-buy{color:var(--emerald)} table.ac-t td.side-sell{color:var(--crimson)}
   .ac-empty{color:var(--text-faint);padding:26px 14px;text-align:center}
-  .ac-pill{font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:4px;border:1px solid var(--line);color:var(--text-faint)}
+  .ac-pill{font-family:var(--f-mono);font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid var(--line);color:var(--text-faint)}
 </style>
 </head>
 <body>
@@ -68,7 +68,7 @@
 <section class="section">
   <div class="wrap">
 <h1 class="h2" style="margin-top:10px">Your track record. <span class="">Every fill.</span></h1>
-    <p class="lede" style="max-width:60ch">Every paper order you've placed, your realized and unrealized P&amp;L, and how your account value has moved. <span class="mono" style="font-size:.8rem">Simulated · virtual money · not advice.</span></p>
+    <p class="lede" style="max-width:60ch">Every paper order you've placed, your realized and unrealized P&amp;L, and how your account value has moved. <span class="mono" style="font-size:13px">Simulated · virtual money · not advice.</span></p>
 
     <div class="ac-cards" id="acCards"></div>
 
@@ -93,7 +93,7 @@
       <div class="ac-scroll"><table class="ac-t" id="posT"></table></div>
     </div>
 
-    <p class="mono" style="color:var(--text-faint);font-size:11px;margin-top:16px">
+    <p class="mono" style="color:var(--text-faint);font-size:12px;margin-top:16px">
       Realized P&amp;L uses average-cost accounting on your paper fills. Figures are simulated and illustrative, not a statement of real performance. Flux is not investment advice and not a broker-dealer.</p>
     <div class="btn-row" style="margin-top:22px">
       <a class="btn btn-primary" href="./terminal.html">Open the terminal →</a>

@@ -1,3 +1,24 @@
 {
-  "buildPath": "code"
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#ff5f57",
+        "createdAt": "2026-09-02T17:05:04.956Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#febc2e",
+        "createdAt": "2026-09-02T17:05:05.050Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#28c840",
+        "createdAt": "2026-09-02T17:05:05.144Z"
+      }
+    ]
+  }
 }

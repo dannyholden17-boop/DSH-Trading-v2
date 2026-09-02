@@ -7,26 +7,26 @@
 <meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a backtest attached — every one gated by the Risk engine. Never a naked 'buy this'.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=21">
-<link rel="stylesheet" href="./assets/flux.css?v=21">
-<script src="./assets/flux-supa.js?v=21" defer></script>
-<script src="./assets/flux-site.js?v=21" defer></script>
-<script src="./assets/flux-universe.js?v=21" defer></script>
-<script src="./assets/flux-feed.js?v=21" defer></script>
-<script src="./assets/flux-fund.js?v=21" defer></script>
-<script src="./assets/flux-kronos.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=22">
+<link rel="stylesheet" href="./assets/flux.css?v=22">
+<script src="./assets/flux-supa.js?v=22" defer></script>
+<script src="./assets/flux-site.js?v=22" defer></script>
+<script src="./assets/flux-universe.js?v=22" defer></script>
+<script src="./assets/flux-feed.js?v=22" defer></script>
+<script src="./assets/flux-fund.js?v=22" defer></script>
+<script src="./assets/flux-kronos.js?v=22" defer></script>
 <style>
   /* ---- page-only layout: trade-ideas.html ---- */
   .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
   @media(max-width:960px){.t-hero{grid-template-columns:1fr;gap:36px}}
   .t-hero h1{margin-top:18px}
   .t-hero .btn-row{margin-top:30px}
-  .hero-note{display:flex;gap:18px;margin-top:26px;flex-wrap:wrap;color:var(--text-faint);font-size:.85rem}
+  .hero-note{display:flex;gap:18px;margin-top:26px;flex-wrap:wrap;color:var(--text-faint);font-size:.9rem}
   .hero-note span{display:inline-flex;align-items:center;gap:7px}
   .hero-note b{color:var(--emerald);font-weight:700}
   .feed-card{padding:18px}
   .feed-card .fh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1}
-  .feed-card .fh .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
+  .feed-card .fh .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .feed-rows{display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
 
@@ -39,38 +39,38 @@
     font-family:var(--f-mono);font-weight:700;font-size:12px;border:1px solid var(--line);
     background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.18),rgba(111,154,214,.12))}
   .idea-top .id{min-width:0}
-  .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
-  .idea-top .sub{font-size:.8rem;color:var(--text-faint);margin-top:2px}
-  .eng-tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:4px 9px;border-radius:3px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+  .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
+  .idea-top .sub{font-size:13px;color:var(--text-faint);margin-top:2px}
+  .eng-tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:4px 9px;border-radius:2px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
   .idea-top .cf{margin-left:auto;text-align:right;flex:none}
-  .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;line-height:1}
-  .idea-top .cf .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
-  .cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:14px 0 16px}
-  .cbar i{display:block;height:100%;border-radius:3px}
+  .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.18rem;line-height:1}
+  .idea-top .cf .l{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .cbar{height:4px;border-radius:2px;background:rgba(233,228,215,.07);overflow:hidden;margin:14px 0 16px}
+  .cbar i{display:block;height:100%;border-radius:2px}
   .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
   @media(max-width:760px){.idea-body{grid-template-columns:1fr;gap:16px}}
-  .thesis{font-size:.95rem;color:var(--text-dim);line-height:1.6}
+  .thesis{font-size:1rem;color:var(--text-dim);line-height:1.6}
   .kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
   @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}}
   .kv{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:9px 10px;min-width:0}
-  .kv .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
-  .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.92rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
+  .kv .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
+  .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.9rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
   .idea-chart{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
   .idea-chart canvas{width:100%;height:118px;display:block}
-  .idea-chart .cl{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  .idea-chart .cl{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:8px}
   .idea-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;
     padding-top:15px;border-top:1px solid var(--line-2)}
-  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
+  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
   .idea-foot .gate b{color:var(--emerald);font-weight:700}
   @media(max-width:560px){.idea-foot .gate{margin-left:0;width:100%}}
 
   /* brief rows (catalyst / risk) */
   .brief-rows{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
-  .brief-rows > div{font-size:.86rem;line-height:1.5;color:var(--text-dim);padding-left:76px;position:relative}
-  .brief-rows span{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;
+  .brief-rows > div{font-size:.9rem;line-height:1.5;color:var(--text-dim);padding-left:76px;position:relative}
+  .brief-rows span{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--text-faint);width:66px}
   @media(max-width:560px){.brief-rows > div{padding-left:0}.brief-rows span{position:static;display:block;margin-bottom:2px}}
 
@@ -79,8 +79,8 @@
     border-style:dashed !important;background:linear-gradient(180deg,rgba(232,179,60,.04),transparent)}
   .lock-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;text-align:left;padding:16px}
   .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(232,179,60,.4))}
-  .lock-tx b{display:block;font-size:1.05rem}
-  .lock-tx span{display:block;color:var(--text-faint);font-size:.86rem;margin-top:3px;max-width:38ch}
+  .lock-tx b{display:block;font-size:1rem}
+  .lock-tx span{display:block;color:var(--text-faint);font-size:.9rem;margin-top:3px;max-width:38ch}
 
   /* brief modal */
   .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;
@@ -90,15 +90,15 @@
   .bm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-2);
     position:sticky;top:0;background:var(--glass);z-index:1}
   .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:4px;
-    width:32px;height:32px;cursor:pointer;font-size:14px}
+    width:32px;height:32px;cursor:pointer;font-size:.9rem}
   .bm-x:hover{color:var(--text);border-color:var(--cyan)}
   .bm-body{padding:18px}
-  .bm-headline{font-size:1.05rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:16px}
+  .bm-headline{font-size:1rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:16px}
   .bm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2)}
   @media(max-width:520px){.bm-row{grid-template-columns:1fr;gap:3px}}
-  .bm-k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
-  .bm-v{font-size:.92rem;line-height:1.55;color:var(--text-dim)}
-  .bm-disc{margin-top:16px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
+  .bm-k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
+  .bm-v{font-size:.9rem;line-height:1.55;color:var(--text-dim)}
+  .bm-disc{margin-top:16px;font-size:12px;color:var(--text-faint);line-height:1.5}
   .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line-2);
     position:sticky;bottom:0;background:var(--glass);}
 
@@ -108,11 +108,11 @@
   .anno-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line-2)}
   .anno-row:last-child{border-bottom:0}
   .anno-row .n{width:24px;height:24px;flex:none;border-radius:4px;display:grid;place-items:center;
-    font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--cyan);
+    font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--cyan);
     background:rgba(232,179,60,.08);border:1px solid rgba(232,179,60,.25)}
   .anno-row .c{min-width:0;flex:1}
-  .anno-row .c .t{font-family:var(--f-mono);font-size:.85rem;font-weight:700}
-  .anno-row .c .d{font-size:.82rem;color:var(--text-faint);margin-top:3px}
+  .anno-row .c .t{font-family:var(--f-mono);font-size:.9rem;font-weight:700}
+  .anno-row .c .d{font-size:13px;color:var(--text-faint);margin-top:3px}
 
   /* ---- risk gates ---- */
   .gates{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
@@ -172,7 +172,7 @@
         <span class="k">ranked by confidence</span>
       </div>
       <div class="feed-rows" id="feedRows"></div>
-      <p class="faint mono" style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-top:14px;position:relative;z-index:1">
+      <p class="faint mono" style="font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin-top:14px;position:relative;z-index:1">
         Illustrative sample feed · not advice</p>
     </div>
   </div>
@@ -196,7 +196,7 @@
       <p class="lede" style="margin-top:16px">Each morning Fluxi scans the market — momentum leaders and beaten-down
         names with rebound potential — and writes a full brief for each: the thesis, the catalyst, the risk, and how
         much conviction it has. <b>The first is free; sign in to see them all.</b></p>
-      <p class="mono" id="feedCap" style="font-size:.8rem;color:var(--text-faint);margin-top:10px"></p>
+      <p class="mono" id="feedCap" style="font-size:13px;color:var(--text-faint);margin-top:10px"></p>
     </div>
     <div class="ideas" id="ideaList"></div>
     <p class="disclaimer reveal" style="margin-top:26px">Sample ideas and levels shown are illustrative and
@@ -247,7 +247,7 @@
       <div class="anno-row"><span class="n">5</span><div class="c">
         <div class="t">Risk gate</div>
         <div class="d">Sized to 0.8% of book · correlation 0.41 vs. holdings · passed</div></div></div>
-      <p class="faint mono disclosure" style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-top:16px">
+      <p class="faint mono disclosure" style="font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin-top:16px">
         Illustrative example · hypothetical figures</p>
     </div>
   </div>
@@ -275,7 +275,7 @@
         <p>AlphaRank re-scores the survivor against five years of outcomes and assigns the confidence figure —
           then the Risk engine decides whether it fits your book at all.</p></div>
     </div>
-    <p class="faint reveal" style="font-size:.8rem;margin-top:22px;max-width:74ch">
+    <p class="faint reveal" style="font-size:13px;margin-top:22px;max-width:74ch">
       A high confidence score means the engines agree and the historical pattern was consistent. It is not a
       probability of profit, not a guarantee, and not a substitute for your own judgement.</p>
   </div>
@@ -386,7 +386,7 @@
   <div class="brief-sheet glass">
     <div class="bm-head">
       <span class="pill live">Fluxi brief</span>
-      <h3 id="briefTitle" style="margin:0;font-size:1.05rem"></h3>
+      <h3 id="briefTitle" style="margin:0;font-size:1rem"></h3>
       <button type="button" class="bm-x" data-close aria-label="Close"><i class="ic-i i-close" aria-hidden="true"></i></button>
     </div>
     <div class="bm-body" id="briefBody"></div>
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function(){
       '<div class="idea-top">' +
         '<div class="av">' + esc(s.ticker.slice(0,3)) + '</div>' +
         '<div class="id">' +
-          '<div class="tk">' + esc(s.ticker) + (mv ? ' <span class="' + (up?"up":"down") + '" style="font-size:.85rem">' + mv + ' today</span>' : '') + '</div>' +
+          '<div class="tk">' + esc(s.ticker) + (mv ? ' <span class="' + (up?"up":"down") + '" style="font-size:.9rem">' + mv + ' today</span>' : '') + '</div>' +
           '<div class="sub">' + esc(s.name||s.ticker) + ' · ' + kindLbl + ' idea</div>' +
         '</div>' +
         '<span class="eng-tag">Fluxi · Opus</span>' +
@@ -555,7 +555,7 @@ document.addEventListener("DOMContentLoaded", function(){
       el.className = "glass idea reveal";
       el.innerHTML =
         '<div class="idea-top"><div class="av">' + s.t.slice(0,3) + '</div>' +
-          '<div class="id"><div class="tk">' + s.t + ' <span class="' + (long?"up":"down") + '" style="font-size:.85rem">' + s.mv + '</span></div>' +
+          '<div class="id"><div class="tk">' + s.t + ' <span class="' + (long?"up":"down") + '" style="font-size:.9rem">' + s.mv + '</span></div>' +
           '<div class="sub">' + s.name + ' · ' + (long?"long setup":"short setup") + '</div></div>' +
           '<span class="eng-tag">Kronos engine</span>' +
           '<div class="cf"><div class="n" style="color:' + col + '">' + s.conf + '%</div><div class="l">conviction</div></div></div>' +

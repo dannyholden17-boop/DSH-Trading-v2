@@ -7,14 +7,14 @@
 <meta name="description" content="Flux Autopilot runs a live $10,000 paper account, makes its own decisions and posts hourly and daily reports — so you can watch exactly how it thinks before you ever let it near your money. Simulated, not advice.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=21">
-<link rel="stylesheet" href="./assets/flux.css?v=21">
-<script src="./assets/flux-supa.js?v=21" defer></script>
-<script src="./assets/flux-site.js?v=21" defer></script>
-<script src="./assets/flux-universe.js?v=21" defer></script>
-<script src="./assets/flux-feed.js?v=21" defer></script>
-<script src="./assets/flux-fund.js?v=21" defer></script>
-<script src="./assets/flux-kronos.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=22">
+<link rel="stylesheet" href="./assets/flux.css?v=22">
+<script src="./assets/flux-supa.js?v=22" defer></script>
+<script src="./assets/flux-site.js?v=22" defer></script>
+<script src="./assets/flux-universe.js?v=22" defer></script>
+<script src="./assets/flux-feed.js?v=22" defer></script>
+<script src="./assets/flux-fund.js?v=22" defer></script>
+<script src="./assets/flux-kronos.js?v=22" defer></script>
 <style>
   /* ============================================================
      page-only styles: autopilot.html
@@ -45,39 +45,39 @@
   .marquee-track{display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;animation:apMarquee 36s linear infinite}
   .marquee:hover .marquee-track{animation-play-state:paused}
   @keyframes apMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  .ap-mq-item{display:inline-flex;align-items:center;gap:9px;padding:0 22px;font-family:var(--f-mono);font-size:.82rem;color:var(--text-dim)}
+  .ap-mq-item{display:inline-flex;align-items:center;gap:9px;padding:0 22px;font-family:var(--f-mono);font-size:13px;color:var(--text-dim)}
   .ap-mq-item .s{font-weight:700}
   .ap-mq-item .px{color:var(--text-faint)}
   .ap-mq-sep{color:rgba(255,255,255,.14)}
   .ap-mq-band{border-block:1px solid var(--line-2);background:rgba(5,10,24,.5);padding-block:16px}
-  .ap-mq-tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
-    color:var(--amber);border:1px solid rgba(232,179,60,.3);border-radius:3px;padding:2px 7px;background:rgba(232,179,60,.08)}
+  .ap-mq-tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    color:var(--amber);border:1px solid rgba(232,179,60,.3);border-radius:2px;padding:2px 7px;background:rgba(232,179,60,.08)}
 
   /* ---- hero ---- */
   .ap-hero{display:grid;grid-template-columns:1.04fr .96fr;gap:48px;align-items:start}
   @media(max-width:960px){.ap-hero{grid-template-columns:1fr;gap:36px}}
   .ap-hero h1{margin-top:18px}
   .ap-hero .btn-row{margin-top:30px}
-  .ap-trust{margin-top:20px;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.04em;color:var(--text-faint)}
+  .ap-trust{margin-top:20px;font-family:var(--f-mono);font-size:12.5px;letter-spacing:.04em;color:var(--text-faint)}
   .ap-pillrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px}
 
   /* ---- fund card (hero right) ---- */
   .ap-fund{padding:20px}
   .ap-fund > *{position:relative;z-index:1}
   .ap-fund .fhd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-  .ap-fund .fhd .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
+  .ap-fund .fhd .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .ap-eq{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(2rem,1.4rem + 2.6vw,2.7rem);letter-spacing:-.02em;
     font-variant-numeric:tabular-nums}
-  .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.92rem}
-  .ap-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
+  .ap-cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .ap-fund canvas{width:100%;height:150px;display:block;margin:14px 0 4px}
   .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
   .ap-qs{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
-  .ap-qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
-  .ap-qs .l{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
-  .ap-fund .foot{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  .ap-qs .n{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
+  .ap-qs .l{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .ap-fund .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
 
   /* ---- fund showcase (#fund) ---- */
@@ -86,28 +86,28 @@
   .ap-panel{padding:20px}
   .ap-panel > *{position:relative;z-index:1}
   .ap-panel .phd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .ap-panel .phd .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
+  .ap-panel .phd .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .ap-log-wrap{overflow-x:auto}
-  .ap-log{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:460px}
-  .ap-log th{text-align:left;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
+  .ap-log{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:13px;min-width:460px}
+  .ap-log th{text-align:left;font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
     font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
   .ap-log th.r,.ap-log td.r{text-align:right;padding-right:0}
   .ap-log td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
   .ap-log tbody tr{animation:apRowIn .5s ease}
   @keyframes apRowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-  .ap-side{display:inline-block;font-weight:700;font-size:11px;letter-spacing:.06em;padding:2px 7px;border-radius:3px}
+  .ap-side{display:inline-block;font-weight:700;font-size:12px;letter-spacing:.06em;padding:2px 7px;border-radius:2px}
   .ap-side.buy{color:var(--emerald);background:rgba(86,185,127,.12);border:1px solid rgba(86,185,127,.3)}
   .ap-side.sell{color:var(--crimson);background:rgba(232,103,74,.12);border:1px solid rgba(232,103,74,.3)}
-  .ap-panel .foot{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  .ap-panel .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
 
   .ap-metrics{display:flex;flex-direction:column;gap:14px}
   .ap-metric{padding:16px 18px;position:relative}
   .ap-metric > *{position:relative;z-index:1}
-  .ap-metric .l{font-family:var(--f-mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
-  .ap-metric .v{font-family:var(--f-mono);font-weight:700;font-size:1.35rem;letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums}
-  .ap-metric .cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:5px}
+  .ap-metric .l{font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
+  .ap-metric .v{font-family:var(--f-mono);font-weight:700;font-size:1.5rem;letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums}
+  .ap-metric .cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:5px}
   .ap-metric canvas{width:100%;height:40px;display:block;margin-top:10px}
 
   /* ---- reports timeline + sample ---- */
@@ -119,15 +119,15 @@
   .ap-tl-item::before{content:"";position:absolute;left:-26px;top:6px;width:9px;height:9px;border-radius:50%;
     background:var(--cyan);box-shadow:var(--lift-1)}
   .ap-tl-item .hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-  .ap-tl-item .tm{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);font-weight:700;white-space:nowrap}
-  .ap-tl-item h3{font-size:1.05rem}
-  .ap-tl-item p{color:var(--text-dim);font-size:.92rem;margin-top:7px;max-width:58ch}
+  .ap-tl-item .tm{font-family:var(--f-mono);font-size:13px;color:var(--cyan);font-weight:700;white-space:nowrap}
+  .ap-tl-item h3{font-size:1rem}
+  .ap-tl-item p{color:var(--text-dim);font-size:.9rem;margin-top:7px;max-width:58ch}
 
   .ap-report{padding:0;overflow:hidden}
   .ap-report > *{position:relative;z-index:1}
   .ap-rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line-2)}
   .ap-rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
-  .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint)}
+  .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
   .ap-rep-body{padding:16px 18px 6px}
   .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;display:flex;gap:9px}
   .ap-rline::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
@@ -135,18 +135,18 @@
   .ap-report.typing .ap-rline{opacity:0;transform:translateY(6px)}
   .ap-report.typing .ap-rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
   .ap-rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line-2);
-    font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+    font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
 
   /* ---- disclaimer strip ---- */
   .ap-strip{margin-top:22px;border:1px solid rgba(232,179,60,.22);border-radius:4px;background:rgba(232,179,60,.05);
     padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
   .ap-strip .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none}
-  .ap-strip p{color:var(--text-dim);font-size:.82rem;line-height:1.55}
+  .ap-strip p{color:var(--text-dim);font-size:13px;line-height:1.55}
 
   /* ---- model cards ---- */
   .ap-model{padding:20px}
   .ap-model .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .ap-model h3{font-size:1.05rem;font-family:var(--f-mono);letter-spacing:-.01em}
+  .ap-model h3{font-size:1rem;font-family:var(--f-mono);letter-spacing:-.01em}
   .ap-model p{color:var(--text-dim);font-size:.9rem;margin-top:10px}
 
   /* ---- guardrails ---- */
@@ -157,24 +157,24 @@
   /* ---- strategy simulator (paper) ---- */
   .ap-sim-warn{margin-top:26px;border:1px solid rgba(232,179,60,.28);border-radius:4px;background:rgba(232,179,60,.06);
     padding:15px 18px;display:flex;gap:12px;align-items:flex-start}
-  .ap-sim-warn .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none;font-size:1.05rem;line-height:1.4}
-  .ap-sim-warn p{color:var(--text-dim);font-size:.84rem;line-height:1.55}
+  .ap-sim-warn .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none;font-size:1rem;line-height:1.4}
+  .ap-sim-warn p{color:var(--text-dim);font-size:13px;line-height:1.55}
   .ap-sim-warn b{color:var(--text)}
   .ap-sim-presets{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
   .ap-preset{cursor:pointer;text-align:left;flex:1 1 220px;min-width:min(220px,100%);padding:14px 16px;border-radius:4px;
     border:1px solid var(--line-2);background:var(--well);transition:border-color .2s,transform .2s;font-family:inherit;color:inherit}
   .ap-preset:hover{transform:translateY(-2px);border-color:rgba(232,179,60,.35)}
   .ap-preset.on{border-color:var(--cyan);background:rgba(232,179,60,.07);box-shadow:var(--lift-1)}
-  .ap-preset .nm{font-family:var(--f-mono);font-weight:700;font-size:.98rem;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+  .ap-preset .nm{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
   .ap-preset .nm .dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
   .ap-preset.on .nm .dot{background:var(--cyan);box-shadow:var(--lift-1)}
-  .ap-preset .sub{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:6px}
+  .ap-preset .sub{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:6px}
   .ap-sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start}
   @media(max-width:900px){.ap-sim-grid{grid-template-columns:1fr;gap:20px}}
-  .ap-sim-desc{color:var(--text-dim);font-size:.88rem;line-height:1.55;margin-bottom:16px}
+  .ap-sim-desc{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-bottom:16px}
   .ap-sim-tbl-wrap{overflow-x:auto}
-  .ap-sim-tbl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;min-width:340px}
-  .ap-sim-tbl th{text-align:left;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
+  .ap-sim-tbl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:13px;min-width:340px}
+  .ap-sim-tbl th{text-align:left;font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
     font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
   .ap-sim-tbl th.r,.ap-sim-tbl td.r{text-align:right;padding-right:0}
   .ap-sim-tbl td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
@@ -182,9 +182,9 @@
   .ap-sim-canvas{width:100%;max-width:100%;height:180px;display:block;margin:4px 0 10px}
   .ap-sim-res{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:6px 0 4px}
   .ap-sim-res .box{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:12px 14px}
-  .ap-sim-res .l{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .ap-sim-res .l{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .ap-sim-res .v{font-family:var(--f-mono);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;margin-top:5px;font-variant-numeric:tabular-nums}
-  .ap-sim-note{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:12px;line-height:1.5}
+  .ap-sim-note{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:12px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -271,7 +271,7 @@
         <a class="btn btn-primary btn-lg" href="./fund.html">Open the live fund desk →</a>
         <button type="button" class="btn btn-ghost btn-lg" id="copyFundBtn">Copy the fund → my paper account</button>
       </div>
-      <p class="faint" style="font-size:.78rem;margin-top:12px;max-width:60ch">Mirrors the fund's current stance
+      <p class="faint" style="font-size:12.5px;margin-top:12px;max-width:60ch">Mirrors the fund's current stance
         into your own simulated $10,000 paper account — equal-weight, in virtual money. Simulated, not advice.</p>
     </div>
 
@@ -432,7 +432,7 @@
         <p>The fill, the reason and the running P/L are written to the live log and rolled into the hourly
           and daily reports.</p></div>
     </div>
-    <p class="faint reveal" style="font-size:.8rem;margin-top:22px;max-width:74ch">
+    <p class="faint reveal" style="font-size:13px;margin-top:22px;max-width:74ch">
       Engine outputs are probabilistic estimates, not predictions or recommendations. Every action described
       here happens inside a simulated paper account.</p>
   </div>
@@ -503,7 +503,7 @@
         each answer one narrow question, and the fund only acts when enough of them agree.</p>
     </div>
     <div class="grid g-3" id="modelGrid" style="margin-top:44px"></div>
-    <p class="faint reveal" style="font-size:.8rem;margin-top:20px;max-width:72ch">
+    <p class="faint reveal" style="font-size:13px;margin-top:20px;max-width:72ch">
       Model names describe the class of technique used for each task. Outputs are probabilistic estimates,
       not predictions or recommendations, and drive a simulated paper account only.</p>
   </div>

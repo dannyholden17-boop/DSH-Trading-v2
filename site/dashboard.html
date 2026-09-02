@@ -7,17 +7,17 @@
 <meta name="description" content="Your Flux members dashboard: the AI Daily Brief, ranked AI trade recommendations, your sample portfolio, watchlist and quick links into the trading app. Simulated sample account — illustrative, not advice.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=21">
-<link rel="stylesheet" href="./assets/flux.css?v=21">
-<script src="./assets/flux-supa.js?v=21" defer></script>
-<script src="./assets/flux-site.js?v=21" defer></script>
-<script src="./assets/flux-universe.js?v=21" defer></script>
-<script src="./assets/flux-feed.js?v=21" defer></script>
-<script src="./assets/flux-fund.js?v=21" defer></script>
-<script src="./assets/flux-kronos.js?v=21" defer></script>
-<script src="./assets/flux-desk.js?v=21" defer></script>
-<script src="./assets/flux-news.js?v=21" defer></script>
-<script src="./assets/flux-jarvis.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=22">
+<link rel="stylesheet" href="./assets/flux.css?v=22">
+<script src="./assets/flux-supa.js?v=22" defer></script>
+<script src="./assets/flux-site.js?v=22" defer></script>
+<script src="./assets/flux-universe.js?v=22" defer></script>
+<script src="./assets/flux-feed.js?v=22" defer></script>
+<script src="./assets/flux-fund.js?v=22" defer></script>
+<script src="./assets/flux-kronos.js?v=22" defer></script>
+<script src="./assets/flux-desk.js?v=22" defer></script>
+<script src="./assets/flux-news.js?v=22" defer></script>
+<script src="./assets/flux-jarvis.js?v=22" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: dashboard.html (db- prefixed)
@@ -29,22 +29,22 @@
   .db-hello{min-width:0}
   .db-hello h1{font-size:clamp(1.55rem,1.15rem + 2.2vw,2.4rem);font-weight:750;letter-spacing:-.02em;line-height:1.1}
   .db-sub{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
-  .db-date{font-family:var(--f-mono);font-size:.85rem;color:var(--text-faint);font-variant-numeric:tabular-nums}
+  .db-date{font-family:var(--f-mono);font-size:.9rem;color:var(--text-faint);font-variant-numeric:tabular-nums}
   .db-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
   /* ---- section heads ---- */
   .db-shead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
   .db-shead .lede{margin-top:12px}
-  .db-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:18px}
+  .db-cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:18px}
 
   /* ---- AI daily brief ---- */
   .db-brief{padding:22px;overflow:hidden}
   .db-brief > *{position:relative;z-index:1}
   .db-brief-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
   .db-brief-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
-  .db-clock{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .db-clock{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
   .db-lines{display:flex;flex-direction:column}
-  .db-line{font-size:.95rem;line-height:1.6;color:var(--text-dim);margin-bottom:9px;display:flex;gap:10px}
+  .db-line{font-size:1rem;line-height:1.6;color:var(--text-dim);margin-bottom:9px;display:flex;gap:10px}
   .db-line::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
   .db-line b{color:var(--text);font-weight:600}
   .db-line .up{font-weight:700}
@@ -55,8 +55,8 @@
   .db-caret.done{display:none}
   @keyframes dbBlink{50%{opacity:0}}
   .db-brief-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
-  .db-brief-foot .st{font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
-  .db-brief-foot .cap{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+  .db-brief-foot .st{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+  .db-brief-foot .cap{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
 
   /* ---- recommendation cards ---- */
   .db-rec{padding:18px;display:flex;flex-direction:column}
@@ -65,22 +65,22 @@
   .db-rank{font-family:var(--f-mono);font-weight:700;font-size:12px;color:var(--cyan);flex:none;
     border:1px solid rgba(232,179,60,.25);background:rgba(232,179,60,.08);border-radius:4px;padding:5px 8px;line-height:1}
   .db-rec-id{min-width:0;flex:1}
-  .db-rec-tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
-  .db-rec-tk span{font-size:.82rem}
-  .db-rec-sub{font-size:.76rem;color:var(--text-faint);margin-top:2px}
-  .db-eng{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;flex:none;
-    padding:4px 8px;border-radius:3px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
-  .db-thesis{font-size:.88rem;color:var(--text-dim);line-height:1.55;margin-top:14px}
+  .db-rec-tk{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
+  .db-rec-tk span{font-size:13px}
+  .db-rec-sub{font-size:12px;color:var(--text-faint);margin-top:2px}
+  .db-eng{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;flex:none;
+    padding:4px 8px;border-radius:2px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+  .db-thesis{font-size:.9rem;color:var(--text-dim);line-height:1.55;margin-top:14px}
   .db-conf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;font-family:var(--f-mono)}
-  .db-conf .n{font-weight:700;font-size:1.05rem;line-height:1}
-  .db-conf .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .db-cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:9px 0 0}
-  .db-cbar i{display:block;height:100%;border-radius:3px}
+  .db-conf .n{font-weight:700;font-size:1rem;line-height:1}
+  .db-conf .l{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .db-cbar{height:4px;border-radius:2px;background:rgba(233,228,215,.07);overflow:hidden;margin:9px 0 0}
+  .db-cbar i{display:block;height:100%;border-radius:2px}
   .db-kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}
   @media(max-width:480px){.db-kvs{grid-template-columns:1fr 1fr}}
   .db-kv{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:8px 9px;min-width:0}
-  .db-kv .k{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
-  .db-kv .v{font-family:var(--f-mono);font-weight:700;font-size:.85rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
+  .db-kv .k{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
+  .db-kv .v{font-family:var(--f-mono);font-weight:700;font-size:.9rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
   .db-rec-spark{margin-top:14px;border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:8px}
   .db-rec-spark canvas{width:100%;height:52px;display:block}
   .db-rec-foot{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-2)}
@@ -91,28 +91,28 @@
   .db-pf{align-items:start;margin-top:8px}
   .db-hold-card{padding:22px}
   .db-tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table.db-hold{width:100%;min-width:520px;border-collapse:collapse;font-size:.88rem}
-  table.db-hold th{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  table.db-hold{width:100%;min-width:520px;border-collapse:collapse;font-size:.9rem}
+  table.db-hold th{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 12px;white-space:nowrap}
   table.db-hold th:first-child,table.db-hold td:first-child{text-align:left;padding-left:2px}
   table.db-hold th:last-child,table.db-hold td:last-child{padding-right:2px}
   table.db-hold td{text-align:right;padding:12px;border-top:1px solid var(--line-2);white-space:nowrap;
     font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-  .db-tk b{font-weight:700;font-size:.92rem;letter-spacing:.03em}
-  .db-tk span{display:block;color:var(--text-faint);font-size:.75rem;line-height:1.3;font-family:var(--f-sans)}
-  .db-wt-bar{position:relative;display:inline-block;width:48px;height:6px;border-radius:3px;
-    background:rgba(255,255,255,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
-  .db-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--grad)}
-  .db-foot-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--text-faint);margin-top:16px;
+  .db-tk b{font-weight:700;font-size:.9rem;letter-spacing:.03em}
+  .db-tk span{display:block;color:var(--text-faint);font-size:12px;line-height:1.3;font-family:var(--f-sans)}
+  .db-wt-bar{position:relative;display:inline-block;width:48px;height:6px;border-radius:2px;
+    background:rgba(233,228,215,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
+  .db-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:2px;background:var(--grad)}
+  .db-foot-cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--text-faint);margin-top:16px;
     display:flex;align-items:center;gap:8px}
 
   .db-mstack{display:flex;flex-direction:column;gap:14px}
   .db-metric{padding:16px 18px}
-  .db-metric .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .db-metric .s{font-size:.78rem;color:var(--text-faint);margin-top:4px}
+  .db-metric .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .db-metric .s{font-size:12.5px;color:var(--text-faint);margin-top:4px}
   .db-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-.03em;
     font-size:clamp(1.7rem,1.3rem + 2vw,2.35rem);border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
-  .db-total-sub{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.92rem;font-weight:700;margin-top:6px}
+  .db-total-sub{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.9rem;font-weight:700;margin-top:6px}
   .db-mrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:420px){.db-mrow{grid-template-columns:1fr}}
   .db-metric .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:700;margin-top:7px;letter-spacing:-.02em}
@@ -126,17 +126,17 @@
   .db-wl-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line-2)}
   .db-wl-row:first-child{border-top:0}
   .db-wl-av{width:34px;height:34px;border-radius:4px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
-    font-weight:700;font-size:11px;border:1px solid var(--line);
+    font-weight:700;font-size:12px;border:1px solid var(--line);
     background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.16),rgba(111,154,214,.1))}
   .db-wl-id{min-width:0;flex:1}
-  .db-wl-id b{font-family:var(--f-mono);font-weight:700;font-size:.92rem}
-  .db-wl-id span{display:block;font-size:.75rem;color:var(--text-faint)}
+  .db-wl-id b{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
+  .db-wl-id span{display:block;font-size:12px;color:var(--text-faint)}
   .db-wl-spark{width:66px;height:26px;flex:none;display:block}
   @media(max-width:400px){.db-wl-spark{display:none}}
   .db-wl-px{text-align:right;font-family:var(--f-mono);flex:none;font-variant-numeric:tabular-nums}
   .db-wl-px .last{font-weight:700;font-size:.9rem}
-  .db-wl-px .chg{font-size:.78rem;font-weight:700;margin-top:2px}
-  .db-wl-hint{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:14px}
+  .db-wl-px .chg{font-size:12.5px;font-weight:700;margin-top:2px}
+  .db-wl-hint{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:14px}
 
   /* ---- autopilot status ---- */
   .db-ap{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:24px}
@@ -146,37 +146,37 @@
   .db-ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(1.6rem,1.2rem + 2vw,2.2rem);
     letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .db-ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
-  .db-ap-note{color:var(--text-dim);font-size:.85rem;line-height:1.55;margin-top:12px;max-width:52ch}
+  .db-ap-note{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-top:12px;max-width:52ch}
   .db-ap-stats{display:flex;gap:26px;flex-wrap:wrap}
-  .db-ap-stats .qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
-  .db-ap-stats .qs .l{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .db-ap-stats .qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.18rem;letter-spacing:-.01em}
+  .db-ap-stats .qs .l{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .db-ap-right{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 
   /* ---- quick actions ---- */
   .db-qa{padding:22px}
   .db-qa .ic{width:44px;height:44px;border-radius:4px;display:grid;place-items:center;font-family:var(--f-mono);font-size:20px;
     border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.16),rgba(111,154,214,.1));margin-bottom:14px}
-  .db-qa h3{font-size:1.02rem}
-  .db-qa p{color:var(--text-dim);font-size:.85rem;margin-top:6px;line-height:1.5}
-  .db-qa .go{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);margin-top:12px;display:inline-block}
+  .db-qa h3{font-size:1rem}
+  .db-qa p{color:var(--text-dim);font-size:.9rem;margin-top:6px;line-height:1.5}
+  .db-qa .go{font-family:var(--f-mono);font-size:13px;color:var(--cyan);margin-top:12px;display:inline-block}
   /* live desk widget */
-  .dk-w-idle{font-family:var(--f-mono);font-size:.8rem;color:var(--text-faint)}
-  .dk-w-top{display:flex;align-items:center;gap:9px;font-size:.92rem}
+  .dk-w-idle{font-family:var(--f-mono);font-size:13px;color:var(--text-faint)}
+  .dk-w-top{display:flex;align-items:center;gap:9px;font-size:.9rem}
   .dk-w-dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
   .dk-w-dot.on{background:var(--emerald);animation:dkw 1.6s infinite}
   @keyframes dkw{0%{box-shadow:0 0 0 0 rgba(86,185,127,.5)}70%{box-shadow:0 0 0 7px rgba(86,185,127,0)}100%{box-shadow:0 0 0 0 rgba(86,185,127,0)}}
-  .dk-w-ago{margin-left:auto;font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint)}
-  .dk-w-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;margin:10px 0 9px}
+  .dk-w-ago{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
+  .dk-w-bar{height:4px;border-radius:2px;background:rgba(233,228,215,.07);overflow:hidden;margin:10px 0 9px}
   .dk-w-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),#6f9ad6);transition:width .6s ease}
-  .dk-w-sub{font-family:var(--f-mono);font-size:.75rem;color:var(--text-dim);letter-spacing:.03em}
+  .dk-w-sub{font-family:var(--f-mono);font-size:12px;color:var(--text-dim);letter-spacing:.03em}
   .dk-w-sub .ok{color:var(--emerald)} .dk-w-sub .mut{color:var(--text-faint)}
   .dk-call{border:1px solid var(--line);border-radius:4px;background:var(--glass);padding:15px 16px}
   .dk-call .t{display:flex;align-items:center;gap:9px}
   .dk-call .tk{font-family:var(--f-mono);font-weight:800}
-  .dk-call .vd{margin-left:auto;font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;
+  .dk-call .vd{margin-left:auto;font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;border:1px solid currentColor;border-radius:2px;padding:3px 8px}
-  .dk-call p{margin:8px 0 0;font-size:.86rem;color:var(--text-dim);line-height:1.5}
-  .dk-call .lv{margin-top:9px;font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint)}
+  .dk-call p{margin:8px 0 0;font-size:.9rem;color:var(--text-dim);line-height:1.5}
+  .dk-call .lv{margin-top:9px;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
 </style>
 </head>
 <body>
@@ -228,8 +228,8 @@
     <div class="glass reveal" id="dbBrief" style="margin-top:18px;padding:16px 18px;display:flex;gap:13px;align-items:flex-start">
       <span style="font-size:1.3rem;line-height:1.2;filter:drop-shadow(0 0 8px rgba(var(--glow-c),.6))">◇</span>
       <div style="min-width:0;flex:1">
-        <div class="mono" style="font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">Fluxi · your morning read</div>
-        <p id="dbBriefText" style="margin-top:6px;color:var(--text-dim);font-size:.95rem;line-height:1.55">Reading the tape…</p>
+        <div class="mono" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">Fluxi · your morning read</div>
+        <p id="dbBriefText" style="margin-top:6px;color:var(--text-dim);font-size:1rem;line-height:1.55">Reading the tape…</p>
         <a class="btn btn-ghost btn-sm" href="./ai.html" style="margin-top:10px">Ask Fluxi anything →</a>
       </div>
     </div>
@@ -268,11 +268,11 @@
     <div class="glass sheen" style="padding:22px;position:relative;overflow:hidden">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span class="pill live">Getting started</span>
-        <b style="font-size:1.05rem">Welcome to Flux — <span id="obCount">0/5</span> done. Let's get you trading.</b>
+        <b style="font-size:1rem">Welcome to Flux — <span id="obCount">0/5</span> done. Let's get you trading.</b>
         <button class="btn btn-ghost btn-sm" type="button" id="obDismiss" style="margin-left:auto">Dismiss</button>
       </div>
-      <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin:16px 0">
-        <i id="obBar" style="display:block;height:100%;border-radius:3px;background:var(--grad);width:0;transition:width .5s ease"></i></div>
+      <div style="height:6px;border-radius:2px;background:rgba(233,228,215,.08);overflow:hidden;margin:16px 0">
+        <i id="obBar" style="display:block;height:100%;border-radius:2px;background:var(--grad);width:0;transition:width .5s ease"></i></div>
       <div class="grid g-3" id="obList"></div>
     </div>
   </div>
@@ -298,8 +298,8 @@ document.addEventListener("DOMContentLoaded", function(){
         : '<span style="font-family:var(--f-mono);color:var(--cyan)">'+(i+1)+'</span>';
       return '<a class="glass glass-hover" data-ob="'+s.k+'" href="'+s.href+'" style="text-decoration:none;color:inherit;padding:15px;display:block;'+(ok?'opacity:.7':'')+'">'+
         '<div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:4px;border:1px solid var(--line);display:grid;place-items:center;flex:none">'+mark+'</span>'+
-        '<b style="font-size:.95rem">'+s.ic+' '+s.t+'</b></div>'+
-        '<div class="muted" style="font-size:.82rem;margin-top:8px">'+s.d+'</div></a>';
+        '<b style="font-size:1rem">'+s.ic+' '+s.t+'</b></div>'+
+        '<div class="muted" style="font-size:13px;margin-top:8px">'+s.d+'</div></a>';
     }).join("");
     document.getElementById("obCount").textContent = doneN+"/"+steps.length;
     document.getElementById("obBar").style.width = (doneN/steps.length*100)+"%";
@@ -363,9 +363,9 @@ document.addEventListener("DOMContentLoaded", function(){
 <section class="section" style="padding-top:0" id="kronosSignals">
   <div class="wrap">
 <h2 class="h2 reveal">Today's forecast signals.</h2>
-    <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return — <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:.8rem">Forecast-driven · not advice.</span></p>
+    <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return — <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:13px">Forecast-driven · not advice.</span></p>
     <div class="grid g-3 reveal" id="kSignals" style="margin-top:22px"></div>
-    <p class="mono" style="font-size:11px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
+    <p class="mono" style="font-size:12px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
   </div>
 </section>
 
@@ -407,15 +407,15 @@ document.addEventListener("DOMContentLoaded", function(){
       var col = r.action==="BUY" ? F.EM : (r.action==="SELL" ? F.CR : "var(--text-faint)");
       var nm = (F.NAMES && F.NAMES[r.ticker]) || "";
       return '<a class="glass feat glass-hover sheen" style="text-decoration:none;color:inherit" href="./terminal.html?symbol='+r.ticker+'">'+
-        '<div style="display:flex;align-items:center;gap:10px"><b style="font-family:var(--f-mono);font-size:1.05rem">'+r.ticker+'</b>'+
-        '<span style="font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:3px;border:1px solid '+col+';color:'+col+'">'+r.action+'</span>'+
-        '<span class="mono" style="margin-left:auto;font-size:11px;color:var(--text-faint)">'+(r.model||"Kronos")+'</span></div>'+
-        '<div class="muted" style="font-size:.78rem;margin-top:6px">'+nm+'</div>'+
+        '<div style="display:flex;align-items:center;gap:10px"><b style="font-family:var(--f-mono);font-size:1rem">'+r.ticker+'</b>'+
+        '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:2px;border:1px solid '+col+';color:'+col+'">'+r.action+'</span>'+
+        '<span class="mono" style="margin-left:auto;font-size:12px;color:var(--text-faint)">'+(r.model||"Kronos")+'</span></div>'+
+        '<div class="muted" style="font-size:12.5px;margin-top:6px">'+nm+'</div>'+
         '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-family:var(--f-mono)">'+
-          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Pred. return</div>'+
-          '<div style="font-weight:700;font-size:1.15rem;color:'+col+'">'+K.fmtPct(r.predReturn)+'</div></div>'+
-          '<div style="text-align:right"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Confidence</div>'+
-          '<div style="font-weight:700;font-size:1.15rem">'+r.confidence+'%</div></div>'+
+          '<div><div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Pred. return</div>'+
+          '<div style="font-weight:700;font-size:1.18rem;color:'+col+'">'+K.fmtPct(r.predReturn)+'</div></div>'+
+          '<div style="text-align:right"><div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Confidence</div>'+
+          '<div style="font-weight:700;font-size:1.18rem">'+r.confidence+'%</div></div>'+
         '</div></a>';
     }).join("");
     var src = document.querySelector("#kSrc");
@@ -436,8 +436,8 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="split wide-l reveal" style="margin-top:26px">
       <div class="glass" style="padding:0;overflow:hidden">
         <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2)">
-          <b style="font-size:14px">Positions</b>
-          <span class="mono" style="margin-left:auto;font-size:11px;color:var(--text-faint)">paper · live P/L</span>
+          <b style="font-size:.9rem">Positions</b>
+          <span class="mono" style="margin-left:auto;font-size:12px;color:var(--text-faint)">paper · live P/L</span>
         </div>
         <div style="overflow-x:auto"><table id="paPos" style="width:100%;border-collapse:collapse;font-size:.9rem;min-width:460px"></table></div>
         <div style="display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line-2);flex-wrap:wrap">
@@ -449,19 +449,19 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
       </div>
       <div class="glass" style="padding:18px">
-        <b style="font-size:14px">Price alerts</b>
-        <p class="mono" style="font-size:11px;color:var(--text-faint);margin:4px 0 12px">notify me when a symbol crosses a level</p>
+        <b style="font-size:.9rem">Price alerts</b>
+        <p class="mono" style="font-size:12px;color:var(--text-faint);margin:4px 0 12px">notify me when a symbol crosses a level</p>
         <form id="alForm" novalidate style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input id="alTk" placeholder="Ticker" autocomplete="off" style="flex:1;min-width:90px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-size:13px;outline:none;text-transform:uppercase">
-          <select id="alOp" style="background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px;font-size:13px"><option value="above">rises above</option><option value="below">falls below</option></select>
-          <input id="alPx" placeholder="Price" inputmode="decimal" autocomplete="off" style="width:92px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-size:13px;outline:none">
+          <input id="alTk" placeholder="Ticker" autocomplete="off" style="flex:1;min-width:90px;background:var(--well,var(--well));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-size:13px;outline:none;text-transform:uppercase">
+          <select id="alOp" style="background:var(--well,var(--well));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px;font-size:13px"><option value="above">rises above</option><option value="below">falls below</option></select>
+          <input id="alPx" placeholder="Price" inputmode="decimal" autocomplete="off" style="width:92px;background:var(--well,var(--well));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-size:13px;outline:none">
           <button class="btn btn-primary btn-sm" type="submit">Add</button>
         </form>
-        <div id="alMsg" class="mono" style="font-size:11px;min-height:15px;margin-top:8px"></div>
+        <div id="alMsg" class="mono" style="font-size:12px;min-height:15px;margin-top:8px"></div>
         <div id="alList" style="margin-top:6px;display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
-    <p class="mono" style="font-size:11px;color:var(--text-faint);margin-top:14px">Simulated paper account · virtual money · not real trading · not advice.</p>
+    <p class="mono" style="font-size:12px;color:var(--text-faint);margin-top:14px">Simulated paper account · virtual money · not real trading · not advice.</p>
   </div>
 </section>
 <script>
@@ -484,7 +484,7 @@ document.addEventListener("DOMContentLoaded",function(){
     if(tb){
       if(!pos.length){tb.innerHTML='<tr><td style="padding:22px 18px;color:var(--text-faint)">No paper positions yet — open the terminal to place your first trade.</td></tr>';}
       else{
-        tb.innerHTML='<thead><tr>'+["Ticker","Qty","Avg","Last","Mkt value","P/L"].map(function(h,i){return '<th style="text-align:'+(i?"right":"left")+';padding:9px 14px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--line-2)">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+
+        tb.innerHTML='<thead><tr>'+["Ticker","Qty","Avg","Last","Mkt value","P/L"].map(function(h,i){return '<th style="text-align:'+(i?"right":"left")+';padding:9px 14px;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--line-2)">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+
         pos.map(function(p){return '<tr>'+
           '<td style="padding:10px 14px;font-weight:700">'+p.ticker+'</td>'+
           '<td style="padding:10px 14px;text-align:right">'+p.qty+'</td>'+
@@ -524,12 +524,12 @@ document.addEventListener("DOMContentLoaded",function(){
   function renderAlerts(){
     if(!A)return;var list=$("#alList");if(!list)return;
     var a=A.get();
-    if(!a.length){list.innerHTML='<p class="mono" style="font-size:11px;color:var(--text-faint)">No alerts set.</p>';return;}
+    if(!a.length){list.innerHTML='<p class="mono" style="font-size:12px;color:var(--text-faint)">No alerts set.</p>';return;}
     list.innerHTML=a.map(function(al){
       var live=F.priceOf?F.priceOf(al.ticker):null;var trig=al.status==="triggered";
       return '<div class="glass" style="padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12.5px;'+(trig?'border-color:rgba(86,185,127,.5)':'')+'">'+
         '<b>'+al.ticker+'</b><span class="mono" style="color:var(--text-dim)">'+(al.op==="above"?"↑ above":"↓ below")+' $'+al.price.toFixed(2)+'</span>'+
-        '<span class="mono" style="margin-left:auto;font-size:11px;color:'+(trig?"var(--emerald)":"var(--text-faint)")+'">'+(trig?"TRIGGERED @ $"+(al.firedPrice||live||0).toFixed(2):(live!=null?"now $"+live.toFixed(2):"armed"))+'</span>'+
+        '<span class="mono" style="margin-left:auto;font-size:12px;color:'+(trig?"var(--emerald)":"var(--text-faint)")+'">'+(trig?"TRIGGERED @ $"+(al.firedPrice||live||0).toFixed(2):(live!=null?"now $"+live.toFixed(2):"armed"))+'</span>'+
         '<button class="btn btn-ghost btn-sm" type="button" data-del="'+al.id+'" style="padding:4px 9px"><i class="ic-i i-close" aria-hidden="true"></i></button>'+
       '</div>';
     }).join("");
@@ -568,7 +568,7 @@ document.addEventListener("DOMContentLoaded",function(){
       <div class="glass sheen db-hold-card reveal">
         <div class="db-shead" style="margin-bottom:14px">
           <h3 class="h3">Holdings</h3>
-          <span class="pill" style="padding:5px 11px;font-size:10px"><i></i> live</span>
+          <span class="pill" style="padding:5px 11px;font-size:12px"><i></i> live</span>
         </div>
         <div class="db-tscroll">
           <table class="db-hold">
@@ -1051,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", function(){
           host.innerHTML = list.map(function(d){
             return '<article class="dk-call">' +
               '<div class="t"><span class="tk">' + esc(d.ticker) + '</span>' +
-              '<span style="font-size:.78rem;color:var(--text-faint)">' + esc(d.name || "") + '</span>' +
+              '<span style="font-size:12.5px;color:var(--text-faint)">' + esc(d.name || "") + '</span>' +
               '<span class="vd" style="color:' + D.verdictColor(d.verdict) + '">' + esc(d.verdict) + '</span></div>' +
               '<p>' + esc(d.headline) + '</p>' +
               '<div class="lv">' + esc(d.side) + ' · entry ' + D.money(d.entry) + ' · stop ' + D.money(d.stop) +

@@ -5,14 +5,14 @@
 <meta name="description" content="Get Flux on every device. The full pro workstation on Mac and Windows, the autonomous desk in your pocket on iPhone and Android, and instant web access.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=21">
-<link rel="stylesheet" href="./assets/flux.css?v=21">
-<script src="./assets/flux-supa.js?v=21" defer></script>
-<script src="./assets/flux-site.js?v=21" defer></script>
-<script src="./assets/flux-universe.js?v=21" defer></script>
-<script src="./assets/flux-feed.js?v=21" defer></script>
-<script src="./assets/flux-fund.js?v=21" defer></script>
-<script src="./assets/flux-kronos.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=22">
+<link rel="stylesheet" href="./assets/flux.css?v=22">
+<script src="./assets/flux-supa.js?v=22" defer></script>
+<script src="./assets/flux-site.js?v=22" defer></script>
+<script src="./assets/flux-universe.js?v=22" defer></script>
+<script src="./assets/flux-feed.js?v=22" defer></script>
+<script src="./assets/flux-fund.js?v=22" defer></script>
+<script src="./assets/flux-kronos.js?v=22" defer></script>
 <style>
   /* ==========================================================
      Page-only layout for download.html.
@@ -22,10 +22,10 @@
 
   /* ---- hero ---- */
   .dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-  .dl-meta{margin-top:15px;font-size:.76rem;letter-spacing:.05em;color:var(--text-faint)}
+  .dl-meta{margin-top:15px;font-size:12px;letter-spacing:.05em;color:var(--text-faint)}
   .dl-note{margin-top:18px;display:none;gap:12px;align-items:flex-start;max-width:54ch;
     padding:13px 16px;border-radius:4px;border:1px solid rgba(232,179,60,.32);
-    background:rgba(232,179,60,.06);font-size:.88rem;color:var(--text-dim);line-height:1.5}
+    background:rgba(232,179,60,.06);font-size:.9rem;color:var(--text-dim);line-height:1.5}
   .dl-note.show{display:flex;animation:pop .35s both}
   .dl-note .nk{font-family:var(--f-mono);color:var(--cyan);font-weight:700;flex:none;line-height:1.5}
   .dl-note b{color:var(--text)}
@@ -39,20 +39,20 @@
   .store-badge:active{transform:scale(.975)}
   .store-badge.on{border-color:rgba(232,179,60,.6);box-shadow:var(--lift-1)}
   .store-badge svg{display:block;width:172px;height:52px}
-  .store-caption{margin-top:14px;font-size:.78rem;color:var(--text-faint);max-width:50ch;line-height:1.55}
+  .store-caption{margin-top:14px;font-size:12.5px;color:var(--text-faint);max-width:50ch;line-height:1.55}
 
   /* ---- hero release card ---- */
   .rel-card{padding:24px}
   .rel-card .rc-h{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-  .rel-card h3{font-size:1.05rem}
+  .rel-card h3{font-size:1rem}
   .rc-rows{margin-top:18px;display:flex;flex-direction:column;gap:0}
   .rc-row{display:flex;justify-content:space-between;align-items:center;gap:16px;
-    padding:11px 0;border-bottom:1px solid var(--line-2);font-size:.86rem}
+    padding:11px 0;border-bottom:1px solid var(--line-2);font-size:.9rem}
   .rc-row:last-child{border-bottom:0}
   .rc-row span{color:var(--text-dim)}
-  .rc-row b{font-family:var(--f-mono);font-weight:600;font-size:.82rem;color:var(--text)}
+  .rc-row b{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--text)}
   .rc-sha{margin-top:16px;padding:11px 13px;border-radius:4px;background:var(--well);
-    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:11px;
+    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;
     color:var(--text-faint);word-break:break-all;line-height:1.5}
   .rc-sha b{color:var(--cyan);font-weight:600}
 
@@ -62,15 +62,15 @@
   .ph-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px 4px}
   .ph-t{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;font-weight:700}
   .ph-core{padding:16px 0 6px}
-  .ph-status{font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  .ph-status{font-family:var(--f-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
     color:var(--text-dim);text-align:center;padding-bottom:14px}
-  .ph-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  .ph-label{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
     color:var(--text-faint);padding:0 16px 9px}
   .ph-feed{padding:0 12px 16px;display:flex;flex-direction:column;gap:8px}
 
   .win{padding:0;overflow:hidden}
   .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
-    border-bottom:1px solid var(--line-2);background:rgba(3,8,20,.72)}
+    border-bottom:1px solid var(--line-2);background:var(--well)}
   .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:rgba(255,255,255,.14)}
   .win-bar i:nth-child(1){background:rgba(232,103,74,.55)}
   .win-bar i:nth-child(2){background:rgba(232,179,60,.55)}
@@ -85,9 +85,9 @@
   /* ---- platform cards ---- */
   .dl-card{display:flex;flex-direction:column}
   .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;
-    font-size:.88rem;color:var(--text-dim)}
+    font-size:.9rem;color:var(--text-dim)}
   .dl-list li{display:flex;gap:9px;align-items:flex-start}
-  .dl-list li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;font-size:.82rem;flex:none;line-height:1.6}
+  .dl-list li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;font-size:13px;flex:none;line-height:1.6}
   .dl-card .btn{margin-top:20px;width:100%}
 
   /* ---- QR ---- */
@@ -97,36 +97,36 @@
     box-shadow:0 24px 32px -28px rgba(232,179,60,.55), inset 0 0 0 1px rgba(27,25,23,.08)}
   .qr-card svg{width:100%;height:auto;display:block}
   .qr-steps{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-direction:column;gap:11px;
-    font-size:.89rem;color:var(--text-dim);counter-reset:qs}
+    font-size:.9rem;color:var(--text-dim);counter-reset:qs}
   .qr-steps li{display:flex;gap:11px;align-items:flex-start;text-align:left}
   .qr-steps li::before{counter-increment:qs;content:counter(qs);flex:none;width:22px;height:22px;border-radius:4px;
     background:rgba(232,179,60,.09);border:1px solid rgba(232,179,60,.28);color:var(--cyan);
-    font-family:var(--f-mono);font-size:11px;font-weight:700;display:grid;place-items:center;line-height:1}
+    font-family:var(--f-mono);font-size:12px;font-weight:700;display:grid;place-items:center;line-height:1}
   @media(max-width:640px){.qr-steps li{text-align:left}}
 
   /* ---- comparison table ---- */
   .cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:4px;padding:2px}
-  .cmp{width:100%;min-width:580px;border-collapse:collapse;font-size:.92rem}
+  .cmp{width:100%;min-width:580px;border-collapse:collapse;font-size:.9rem}
   .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--line-2)}
-  .cmp thead th{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  .cmp thead th{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--line)}
   .cmp thead th:not(:first-child){color:var(--text-dim)}
   .cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:15%}
   .cmp tbody tr:last-child td{border-bottom:0}
   .cmp tbody tr:hover{background:rgba(232,179,60,.035)}
   .cmp td:first-child{color:var(--text)}
-  .mk{font-family:var(--f-mono);font-weight:700;font-size:.95rem}
+  .mk{font-family:var(--f-mono);font-weight:700;font-size:1rem}
   .mk.y{color:var(--cyan)}
   .mk.n{color:var(--text-faint)}
-  .cmp-note{margin-top:16px;font-size:.78rem;color:var(--text-faint)}
+  .cmp-note{margin-top:16px;font-size:12.5px;color:var(--text-faint)}
 
   /* ---- system requirements ---- */
   .req{padding:22px;display:flex;flex-direction:column}
-  .req .os{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
-  .req h3{font-size:1.02rem;margin-top:9px}
+  .req .os{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  .req h3{font-size:1rem;margin-top:9px}
   .req ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:0}
   .req li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;
-    border-bottom:1px dashed var(--line-2);font-size:.83rem;color:var(--text-dim)}
+    border-bottom:1px dashed var(--line-2);font-size:13px;color:var(--text-dim)}
   .req li:last-child{border-bottom:0}
   .req li b{color:var(--text);font-weight:600;text-align:right}
 
@@ -141,7 +141,7 @@
   .rel-i.past::before{border-color:rgba(111,154,214,.55);box-shadow:none}
   .rel-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .rel-v{font-family:var(--f-mono);font-size:1rem;font-weight:700;letter-spacing:-.01em}
-  .rel-d{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;color:var(--text-faint)}
+  .rel-d{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--text-faint)}
   .rel-i p{margin-top:6px;color:var(--text-dim);font-size:.9rem;max-width:64ch}
 
   /* ---- misc ---- */
@@ -194,7 +194,7 @@
         <a class="btn btn-lg btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Windows (beta)</a>
         <a class="btn btn-lg btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux (beta)</a>
       </div>
-      <p class="mono" style="margin-top:10px;color:var(--emerald);font-size:.82rem">Nothing to install — Flux runs in your browser. Trade now on web, sync to your phone.</p>
+      <p class="mono" style="margin-top:10px;color:var(--emerald);font-size:13px">Nothing to install — Flux runs in your browser. Trade now on web, sync to your phone.</p>
       <p class="mono dl-meta" id="dlMetaLine">version 2.4.1 · 84 MB · macOS 12+ (Apple Silicon &amp; Intel)</p>
 
       <div class="dl-note" id="betaNote" role="status" aria-live="polite">
@@ -243,7 +243,7 @@
         <div class="rc-row"><span>Update channel</span><b>stable</b></div>
       </div>
       <div class="rc-sha"><b>SHA-256</b> · flux-2.4.1-universal.dmg<br>9f2c 41ab 77d0 e6c3 8b15 aa92 3fd7 0c48 e1b6 5a29 cc74 90f1 2d83 be55 617a 04df</div>
-      <p class="muted" style="margin-top:16px;font-size:.85rem">Every build is signed and notarized, and the
+      <p class="muted" style="margin-top:16px;font-size:.9rem">Every build is signed and notarized, and the
         desktop app verifies its own signature before it updates itself. <a href="#whats-new" style="color:var(--cyan)">See what changed →</a></p>
     </div>
   </div>
@@ -329,7 +329,7 @@
         <div class="device-screen">
           <div class="ph-top">
             <span class="ph-t">FLUX</span>
-            <span class="pill" style="padding:4px 10px;font-size:11px"><i></i> live</span>
+            <span class="pill" style="padding:4px 10px;font-size:12px"><i></i> live</span>
           </div>
           <div class="ph-core">
             <div class="orb" style="--sz:104px">
@@ -367,7 +367,7 @@
       <div class="qr-card" id="qrCard"></div>
       <div>
 <h2 class="h2" style="font-size:clamp(1.5rem,1.2rem + 1.4vw,2rem);margin-top:14px">Scan to install on your phone.</h2>
-        <p class="muted" style="margin-top:12px;font-size:.95rem;max-width:46ch">Point your camera
+        <p class="muted" style="margin-top:12px;font-size:1rem;max-width:46ch">Point your camera
           at the code. It opens the Flux beta page on your device — one field, no download
           manager, no sideloading.</p>
         <ol class="qr-steps">
@@ -375,7 +375,7 @@
           <li>Tap the link and enter the email on your Flux account.</li>
           <li>TestFlight or Play beta invite lands the same day.</li>
         </ol>
-        <p class="faint mono" style="margin-top:18px;font-size:.75rem">decorative code · beta invites are sent by email</p>
+        <p class="faint mono" style="margin-top:18px;font-size:12px">decorative code · beta invites are sent by email</p>
       </div>
     </div>
   </div>
@@ -393,7 +393,7 @@
     <div class="glass reveal" style="margin-top:40px;padding:6px">
       <div class="cmp-scroll">
         <table class="cmp">
-          <caption class="faint" style="caption-side:bottom;text-align:left;padding:14px 18px;font-size:.76rem">Feature availability by client, Flux 2.4.1.</caption>
+          <caption class="faint" style="caption-side:bottom;text-align:left;padding:14px 18px;font-size:12px">Feature availability by client, Flux 2.4.1.</caption>
           <thead>
             <tr>
               <th scope="col">Feature</th>
@@ -493,7 +493,7 @@
         </ul>
       </div>
     </div>
-    <p class="faint reveal" style="margin-top:24px;font-size:.82rem">A live internet connection is
+    <p class="faint reveal" style="margin-top:24px;font-size:13px">A live internet connection is
       required — Flux streams market data continuously. Cached charts and saved layouts stay
       readable offline.</p>
   </div>
