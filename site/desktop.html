@@ -5,21 +5,22 @@
 <title>Flux Desktop — Pro Workstation</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Flux Desktop — a pro multi-panel trading workstation: advanced charts with MACD/RSI, order ladder, time & sales, screener, alerts, news, and a full paper order engine.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<script src="./assets/dsh-store.js?v=20"></script>
-<script src="./assets/dsh-feed.js?v=20"></script>
-<script src="./assets/dsh.js?v=20" defer></script>
+<script src="./assets/dsh-store.js?v=21"></script>
+<script src="./assets/dsh-feed.js?v=21"></script>
+<script src="./assets/dsh.js?v=21" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
 <style>
   :root{
     color-scheme:dark;
-    --bg:#17181b; --panel:#050b1a; --panel-2:#081020; --well:rgba(0,0,0,.35);
+    --bg:#1b1917; --panel:#22201d; --panel-2:#2a2724; --well:rgba(0,0,0,.35);
     --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.055);
     --cyan:#e8b33c; --violet:#6f9ad6; --em:#56b97f; --cr:#e8674a; --am:#e8b33c;
-    --text:#eae6dc; --dim:#a9a396; --faint:#8d8879;
+    --text:#eae6dc; --dim:#a9a396; --faint:#a09a89;
     --grad:linear-gradient(120deg,var(--cyan),var(--violet));
-    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"Azeret Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
@@ -39,7 +40,7 @@
     background:linear-gradient(180deg,#071021,#040a17)}
   .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;letter-spacing:-.01em}
   .glyph{width:24px;height:24px;border-radius:4px;border:1px solid var(--line);
-    background:#17181b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E") center/cover}
+    background:#1b1917 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E") center/cover}
   .search{display:flex;align-items:center;gap:7px;background:var(--well);border:1px solid var(--line);border-radius:4px;
     padding:5px 10px;width:190px}
   .search:focus-within{border-color:rgba(232,179,60,.5)}
@@ -94,7 +95,7 @@
   .ind{display:flex;gap:3px;margin-left:auto}
   .ind button.on{border-color:rgba(111,154,214,.55);color:#9db8e2;background:rgba(111,154,214,.1)}
   .chartwrap{flex:1;position:relative;min-height:0;background:
-    radial-gradient(600px 300px at 90% 0%,rgba(111,154,214,.05),transparent 60%),#101113}
+    radial-gradient(600px 300px at 90% 0%,rgba(111,154,214,.05),transparent 60%),#131211}
   #chart,#xhair{position:absolute;inset:0;width:100%;height:100%}
   #xhair{z-index:2}
   .ohlcbox{position:absolute;top:8px;left:10px;z-index:3;font-family:var(--mono);font-size:11px;color:var(--dim);
@@ -132,9 +133,13 @@
     padding:7px 8px;font-family:var(--mono);font-size:12px;outline:none}
   .fld input:focus,.fld select:focus{border-color:rgba(232,179,60,.5)}
   .fld select{appearance:none}
-  .place{width:100%;padding:10px;border:none;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;color:#15100a;
-    background:var(--grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
-  .place.sellmode{background:linear-gradient(120deg,#e8674a,#ff7b6b);color:#2a0505}
+  /* the order button is card stock: ochre to buy, vermillion to sell */
+  .place{width:100%;padding:10px;border:none;border-radius:2px;font-family:var(--mono);font-weight:700;
+    font-size:13px;letter-spacing:.04em;cursor:pointer;color:#15100a;
+    background:#e0b354;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+  .place:hover{background:#eabf68}
+  .place.sellmode{background:#e0654a;color:#2a0505}
+  .place.sellmode:hover{background:#ea7359}
   .bp{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--faint)}
 
   /* ===== bottom dock ===== */
@@ -199,7 +204,7 @@
   .replist .newsrow{cursor:pointer}
   .replist .newsrow:hover{background:rgba(232,179,60,.04)}
 
-  .repview{position:fixed;top:0;right:0;bottom:0;width:min(600px,92vw);z-index:70;background:#050b1a;
+  .repview{position:fixed;top:0;right:0;bottom:0;width:min(600px,92vw);z-index:70;background:#22201d;
     border-left:1px solid var(--line);box-shadow:-30px 0 80px -30px #000;transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.7,.2,1);
     display:flex;flex-direction:column}
   .repview.on{transform:none}
@@ -234,6 +239,10 @@
     .main{grid-template-columns:1fr}
     .col.left,.col.right{display:none}
     .indices{display:none}
+  }
+  @media(max-width:620px){
+    .top{height:auto;flex-wrap:wrap;row-gap:8px;padding:8px 12px}
+    .top .acct,.top .pill{margin-left:0}
   }
 </style>
 </head>
@@ -412,10 +421,10 @@ document.addEventListener("DOMContentLoaded", function(){
     function Y(p){return 8+priceH*(1-(p-lo)/(hi-lo))}
     geom={X:X,Y:Y,cw:cw,n:n,padR:padR,priceH:priceH,hi:hi,lo:lo};
     // grid + axis
-    c.font="10px 'JetBrains Mono',monospace";c.textAlign="left";
+    c.font="10px 'Azeret Mono',monospace";c.textAlign="left";
     for(var g=0;g<=4;g++){var yy=8+priceH*g/4,pp=hi-(hi-lo)*g/4;
       c.strokeStyle="rgba(255,255,255,.045)";c.beginPath();c.moveTo(0,yy);c.lineTo(w-padR,yy);c.stroke();
-      c.fillStyle="#8d8879";c.fillText(pp.toFixed(2),w-padR+6,yy+3);}
+      c.fillStyle="#a09a89";c.fillText(pp.toFixed(2),w-padR+6,yy+3);}
     // volume
     var vy0=8+priceH+volH;
     cs.forEach(function(k,i){var vh=volH*(k.v/mv);
@@ -440,12 +449,12 @@ document.addEventListener("DOMContentLoaded", function(){
     c.strokeStyle="rgba(232,179,60,.45)";c.setLineDash([3,3]);
     c.beginPath();c.moveTo(0,yL);c.lineTo(w-padR,yL);c.stroke();c.setLineDash([]);
     c.fillStyle=CY;c.fillRect(w-padR,yL-8,padR,16);
-    c.fillStyle="#15100a";c.font="700 10px 'JetBrains Mono',monospace";c.fillText(last.toFixed(2),w-padR+5,yL+3);
+    c.fillStyle="#15100a";c.font="700 10px 'Azeret Mono',monospace";c.fillText(last.toFixed(2),w-padR+5,yL+3);
     // sub panes
     var py=mainH+4;
     function paneAxis(y0,label){
       c.strokeStyle="rgba(255,255,255,.08)";c.beginPath();c.moveTo(0,y0);c.lineTo(w,y0);c.stroke();
-      c.fillStyle="#8d8879";c.font="9px 'JetBrains Mono',monospace";c.fillText(label,6,y0+12);}
+      c.fillStyle="#a09a89";c.font="9px 'Azeret Mono',monospace";c.fillText(label,6,y0+12);}
     if(IND.macd){
       var m=macdCalc(cl),vals=m.line.concat(m.sig,m.hist),mx=Math.max.apply(null,vals.map(Math.abs))||1;
       var y0=py,hh=subH-6,mid=y0+hh/2;paneAxis(y0,"MACD 12·26·9");
@@ -463,7 +472,7 @@ document.addEventListener("DOMContentLoaded", function(){
         c.beginPath();c.moveTo(0,Ry(l));c.lineTo(w,Ry(l));c.stroke();c.setLineDash([]);});
       c.beginPath();rs.forEach(function(v,i){i?c.lineTo(X(i),Ry(v)):c.moveTo(X(i),Ry(v))});
       c.strokeStyle=VI;c.lineWidth=1.3;c.stroke();
-      var lastR=rs[rs.length-1];c.fillStyle=VI;c.font="700 9px 'JetBrains Mono',monospace";c.fillText(lastR.toFixed(0),w-padR+6,Ry(lastR)+3);
+      var lastR=rs[rs.length-1];c.fillStyle=VI;c.font="700 9px 'Azeret Mono',monospace";c.fillText(lastR.toFixed(0),w-padR+6,Ry(lastR)+3);
     }
     updateOhlc(hover!=null?cs[hover]:cs[n-1]);
   }
@@ -486,7 +495,7 @@ document.addEventListener("DOMContentLoaded", function(){
       if(y>8&&y<8+geom.priceH){
         var p=geom.hi-(y-8)/geom.priceH*(geom.hi-geom.lo);
         c.fillStyle="#1a2440";c.fillRect(r.width-geom.padR,y-8,geom.padR,16);
-        c.fillStyle="#eae6dc";c.font="10px 'JetBrains Mono',monospace";c.fillText(p.toFixed(2),r.width-geom.padR+5,y+3);}
+        c.fillStyle="#eae6dc";c.font="10px 'Azeret Mono',monospace";c.fillText(p.toFixed(2),r.width-geom.padR+5,y+3);}
       updateOhlc(candles(SYM,TF)[i]);
     }
     function clear(){hover=null;var c=xc.getContext("2d");c.clearRect(0,0,xc.width,xc.height);drawTick();}

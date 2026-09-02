@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Desk — Flux</title>
 <meta name="description" content="Flux's research desk runs continuously: three analysts file on the tape, a Director of Research synthesises, Kronos and the DSA engine price the trade, and an Executive gives — or refuses — the green light. Simulated / educational, not investment advice.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-desk.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-desk.js?v=21" defer></script>
 <style>
   .dk-wrap{max-width:1240px;margin-inline:auto;padding:22px var(--gutter) 60px}
 
   /* ---- live header ---- */
   .dk-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .dk-top h1{font-size:clamp(1.4rem,1.1rem + 1.4vw,2rem);letter-spacing:-.02em;margin:0}
-  .dk-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;
+  .dk-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
     text-transform:uppercase;font-weight:700;color:var(--emerald);border:1px solid rgba(86,185,127,.4);
     background:rgba(86,185,127,.08);padding:4px 11px;border-radius:100px}
   .dk-live .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);animation:dkp 1.6s infinite}
@@ -32,19 +32,25 @@
   .dk-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 26px}
   @media(max-width:900px){.dk-chain{grid-template-columns:1fr 1fr}}
   @media(max-width:520px){.dk-chain{grid-template-columns:1fr}}
-  .dk-node{border:1px solid var(--line);border-radius:4px;background:var(--glass);padding:15px 16px;position:relative;
-    transition:border-color .25s,box-shadow .25s}
-  .dk-node .role{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
-  .dk-node h2{font-size:1.16rem;margin:6px 0 5px;letter-spacing:-.02em}
-  .dk-node p{font-size:.82rem;color:var(--text-dim);line-height:1.5;margin:0}
-  .dk-node .who{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
-  .dk-node .who span{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    border:1px solid var(--line);border-radius:100px;padding:3px 8px;color:var(--text-faint)}
-  .dk-node.on{border-color:rgba(232,179,60,.55);box-shadow:0 0 0 1px rgba(232,179,60,.18),0 10px 40px -22px rgba(232,179,60,.7)}
-  .dk-node.on .role{color:var(--cyan)}
-  .dk-node.done{border-color:rgba(86,185,127,.32)}
-  .dk-node .tick{position:absolute;top:13px;right:14px;font-size:12px;color:var(--emerald);opacity:0}
-  .dk-node.done .tick{opacity:1}
+  /* Each desk is a carbon copy of the same filing, lying on the blotter,
+     waiting for its stamp. The paper is on the page before any data is. */
+  .dk-node{background:var(--paper);color:var(--ink);border:1px solid rgba(21,16,10,.2);border-radius:2px;
+    padding:15px 16px 16px;position:relative;box-shadow:var(--lift-2);
+    transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s}
+  .dk-chain>.dk-node:nth-child(odd){transform:rotate(-.45deg)}
+  .dk-chain>.dk-node:nth-child(even){transform:rotate(.35deg)}
+  .dk-node .role{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(21,16,10,.58)}
+  .dk-node h2{font-size:1.16rem;margin:6px 0 5px;letter-spacing:-.02em;color:var(--ink);
+    font-family:var(--f-display);font-weight:800;max-width:15ch}
+  .dk-node p{font-size:.85rem;color:rgba(21,16,10,.74);line-height:1.5;margin:0}
+  .dk-node .who{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}
+  .dk-node .who span{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid rgba(21,16,10,.26);border-radius:100px;padding:3px 8px;color:rgba(21,16,10,.62)}
+  .dk-chain>.dk-node.on{transform:rotate(0deg) translateY(-4px);box-shadow:var(--lift-3)}
+  .dk-node.on{border-color:rgba(200,64,42,.45)}
+  .dk-node.done{border-color:rgba(28,82,51,.45)}
+  .dk-node .tick{display:none}
 
   /* ---- progress ---- */
   .dk-bar{height:4px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden;margin:0 0 26px}
@@ -54,7 +60,7 @@
   /* ---- decisions ---- */
   .dk-h2{display:flex;align-items:baseline;gap:12px;margin:34px 0 14px}
   .dk-h2 h2{font-size:1.5rem;letter-spacing:-.025em;margin:0}
-  .dk-h2 .cap{font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto}
+  .dk-h2 .cap{font-family:var(--f-mono);font-size:.79rem;color:var(--text-faint);margin-left:auto}
   .dk-ledger{border:1px solid var(--line);border-radius:2px;background:var(--blotter-2);
     box-shadow:var(--lift-2);overflow:hidden}
   .dk-row{display:grid;grid-template-columns:74px 1fr 96px 96px 96px 82px;gap:14px;align-items:baseline;
@@ -64,11 +70,11 @@
   .dk-row .r-tk{font-family:var(--f-display);font-weight:900;font-size:1.02rem;letter-spacing:-.02em}
   .dk-row .r-head{color:var(--text-dim);font-size:.88rem;line-height:1.45;min-width:0}
   .dk-row .r-num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.84rem;text-align:right}
-  .dk-row .r-num span{display:block;font-size:11px;color:var(--text-faint);letter-spacing:.09em;text-transform:uppercase}
+  .dk-row .r-num span{display:block;font-size:12px;color:var(--text-faint);letter-spacing:.09em;text-transform:uppercase}
   .dk-row .r-verdict{text-align:right}
   .dk-ledger-head{display:grid;grid-template-columns:74px 1fr 96px 96px 96px 82px;gap:14px;
     padding:10px 16px;background:var(--rail);border-bottom:1px solid var(--line)}
-  .dk-ledger-head span{font-family:var(--f-mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  .dk-ledger-head span{font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;text-transform:uppercase;
     color:var(--text-faint)}
   .dk-ledger-head span:nth-child(n+3){text-align:right}
   @media(max-width:900px){
@@ -76,23 +82,27 @@
     .dk-row .r-num:nth-of-type(2),.dk-row .r-num:nth-of-type(3),
     .dk-ledger-head span:nth-child(4),.dk-ledger-head span:nth-child(5){display:none}
   }
-  .dk-stamp{position:absolute;top:12px;right:13px;font-size:11px;padding:4px 8px}
-  .dk-node.done .dk-stamp{border-style:solid;opacity:.92;color:#2f7d52;transform:rotate(-3deg)}
-  .dk-node.on .dk-stamp{border-style:solid;opacity:.92;color:var(--gold);transform:rotate(-3deg)}
+  /* the stamp lands on the paper, which is where a stamp belongs */
+  .dk-stamp{position:absolute;top:12px;right:13px;font-size:11.5px;padding:4px 8px}
+  .dk-node .stamp-pending{opacity:1;color:rgba(21,16,10,.4);border-color:rgba(21,16,10,.3)}
+  .dk-node.done .dk-stamp{border-style:solid;opacity:.95;color:#1c5233;
+    border-color:rgba(28,82,51,.6);transform:rotate(-3deg)}
+  .dk-node.on .dk-stamp{border-style:solid;opacity:.95;color:#7a1d0e;
+    border-color:rgba(122,29,14,.55);transform:rotate(-3deg)}
   .dk-card{border:1px solid var(--line);border-radius:4px;background:var(--glass);padding:16px 17px}
   .dk-card .row1{display:flex;align-items:center;gap:10px}
   .dk-card .tk{font-family:var(--f-mono);font-weight:800;font-size:1.05rem;letter-spacing:.02em}
   .dk-card .px{font-family:var(--f-mono);font-size:.8rem;color:var(--text-dim)}
-  .dk-verdict{margin-left:auto;font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;
+  .dk-verdict{margin-left:auto;font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;padding:4px 9px;border-radius:100px;border:1px solid currentColor}
   .dk-card .head{margin-top:9px;font-size:.92rem;font-weight:600;line-height:1.45}
   .dk-card .reason{margin-top:7px;font-size:.83rem;color:var(--text-dim);line-height:1.55}
   .dk-lvls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
   .dk-lvls div{border:1px solid var(--line-2);border-radius:4px;padding:7px 8px;text-align:center}
-  .dk-lvls .k{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .dk-lvls .k{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .dk-lvls .v{display:block;font-family:var(--f-mono);font-size:.78rem;font-weight:700;margin-top:3px}
   .dk-votes{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
-  .dk-vote{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  .dk-vote{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
     border:1px solid var(--line);border-radius:100px;padding:4px 9px;color:var(--text-dim)}
   .dk-vote b{color:var(--text)}
   .dk-flags{margin-top:10px;font-family:var(--f-mono);font-size:.75rem;color:#e8b33c;line-height:1.5}
@@ -106,7 +116,7 @@
   .dk-note{padding:13px 15px;border-bottom:1px solid var(--line-2)}
   .dk-note:last-child{border-bottom:0}
   .dk-note .nh{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-  .dk-agent{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  .dk-agent{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
     padding:3px 8px;border-radius:100px;border:1px solid var(--line)}
   .dk-agent.fundamentals{color:#6f9ad6;border-color:rgba(111,154,214,.4)}
   .dk-agent.catalyst{color:#e8b33c;border-color:rgba(246,196,83,.4)}
@@ -114,7 +124,7 @@
   .dk-agent.director{color:var(--cyan);border-color:rgba(232,179,60,.45)}
   .dk-agent.kronos,.dk-agent.dsa{color:var(--emerald);border-color:rgba(86,185,127,.4)}
   .dk-note .ntk{font-family:var(--f-mono);font-weight:700;font-size:.82rem}
-  .dk-note .nv{font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto}
+  .dk-note .nv{font-family:var(--f-mono);font-size:.79rem;color:var(--text-faint);margin-left:auto}
   .dk-note p{margin:7px 0 0;font-size:.85rem;color:var(--text-dim);line-height:1.55}
   .dk-note .ev{margin-top:6px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
   .dk-gate{padding:26px;text-align:center;color:var(--text-dim);font-size:.9rem}
@@ -185,7 +195,28 @@
     <h2>Green-lit calls</h2>
     <span class="cap" id="dkDecCap">latest rulings</span>
   </div>
-  <div id="dkTicketSlot"></div>
+  <div id="dkTicketSlot">
+    <article class="ticket punched" aria-busy="true">
+      <div class="tkt-head">
+        <span class="tkt-org">DSH TRADING<span>Flux research desk</span></span>
+        <span class="tkt-no">TICKET <b>—</b></span>
+      </div>
+      <div class="tkt-main">
+        <div class="tkt-instrument">
+          <span class="field-k">Instrument</span>
+          <span class="tkt-sym">— — — —</span>
+        </div>
+        <p class="tkt-headline">Reading the last ruling off the record.</p>
+      </div>
+      <div class="tkt-chain">
+        <div class="tkt-stage"><span class="field-k">Analysts</span><span class="stamp stamp-pending">—</span></div>
+        <div class="tkt-stage"><span class="field-k">Director</span><span class="stamp stamp-pending">—</span></div>
+        <div class="tkt-stage"><span class="field-k">Traders</span><span class="stamp stamp-pending">—</span></div>
+        <div class="tkt-stage"><span class="field-k">Executive</span><span class="stamp stamp-pending">—</span></div>
+      </div>
+      <div class="tkt-foot"><span class="tkt-sim">Simulated · virtual money · not investment advice</span></div>
+    </article>
+  </div>
   <div class="dk-ledger" id="dkDecisions"></div>
 
   <div class="dk-h2">
@@ -196,7 +227,7 @@
     <div class="dk-fbar">
       <span style="font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint)">Round</span>
       <select id="dkRound" aria-label="Choose a round"></select>
-      <span class="cap" id="dkRoundCap" style="font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto"></span>
+      <span class="cap" id="dkRoundCap" style="font-family:var(--f-mono);font-size:.79rem;color:var(--text-faint);margin-left:auto"></span>
     </div>
     <div id="dkNotes"><div class="dk-gate">Loading…</div></div>
   </div>
@@ -306,16 +337,26 @@ document.addEventListener("DOMContentLoaded", function(){
         '<span class="r-num">' + D.money(d.target) + '<span>target</span></span>' +
         '<span class="r-verdict"><span class="stamp ' +
           (d.verdict === "approved" ? "stamp-ok" : d.verdict === "reduced" ? "stamp-cut" : "stamp-no") +
-          '" style="font-size:11px;padding:3px 7px">' + esc(d.verdict) + '</span></span>' +
+          '" style="font-size:12px;padding:3px 7px">' + esc(d.verdict) + '</span></span>' +
       '</div>';
+    }
+
+    /* the blank ticket stays on the pad whatever happens — the world is
+       never contingent on a network round-trip. */
+    function restTicket(slot, msg){
+      var t = slot.querySelector(".ticket");
+      if(!t){ return; }
+      t.removeAttribute("aria-busy");
+      var hl = t.querySelector(".tkt-headline");
+      if(hl){ hl.textContent = msg; }
     }
 
     function paintDecisions(){
       return D.decisions(24).then(function(list){
         var slot = $("#dkTicketSlot"), host = $("#dkDecisions");
         if(!list.length){
-          slot.innerHTML = "";
-          host.innerHTML = '<div class="dk-empty" style="border:0">No rulings filed yet — the desk is on its first round. This page updates itself.</div>';
+          restTicket(slot, "No rulings filed yet — the desk is on its first round.");
+          host.innerHTML = '<div class="dk-empty" style="border:0">Nothing on the record yet. This page updates itself.</div>';
           return;
         }
         slot.innerHTML = ticketHTML(list[0]);
@@ -327,6 +368,9 @@ document.addEventListener("DOMContentLoaded", function(){
         $("#dkDecCap").textContent = signedIn()
           ? (list.length + " latest rulings")
           : "one call per round shown — sign in for all of them";
+      }).catch(function(){
+        restTicket($("#dkTicketSlot"), "The record is unreachable right now. Reload to try again.");
+        $("#dkDecisions").innerHTML = '<div class="dk-empty" style="border:0">Could not reach the desk record.</div>';
       });
     }
 

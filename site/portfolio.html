@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portfolio — Flux</title>
 <meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings — read-only until you say otherwise.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   /* ---- page-only layout: portfolio.html ---- */
   .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -197,9 +197,9 @@
       <p class="muted" style="margin-top:10px;font-size:.94rem">Live linking to Robinhood, Fidelity, Schwab and more (read-only) is rolling out. Drop your email and pick your broker — we'll invite you the moment it's live for you.</p>
       <form id="pfWaitForm" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
         <input id="pfWaitEmail" type="email" required placeholder="you@email.com" aria-label="Your email"
-          style="flex:1;min-width:180px;background:#101113;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:16px;outline:none">
+          style="flex:1;min-width:180px;background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:16px;outline:none">
         <select id="pfWaitBroker" aria-label="Your broker"
-          style="background:#101113;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:16px">
+          style="background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:16px">
           <option value="Robinhood">Robinhood</option><option value="Fidelity">Fidelity</option>
           <option value="Schwab">Schwab</option><option value="Webull">Webull</option>
           <option value="E*TRADE">E*TRADE</option><option value="Coinbase">Coinbase</option>
@@ -819,7 +819,7 @@ document.addEventListener("DOMContentLoaded", function(){
     c.fillStyle = "#eae6dc";
     c.font = "700 " + Math.round(R * 0.30) + "px 'JetBrains Mono', monospace";
     c.fillText(kfmt(pfMktSum), cx, cy - 1);
-    c.fillStyle = "#8d8879";
+    c.fillStyle = "#a09a89";
     c.font = "600 " + Math.round(R * 0.13) + "px 'JetBrains Mono', monospace";
     c.fillText(pfPosCount + " HOLDING" + (pfPosCount === 1 ? "" : "S"), cx, cy + R * 0.24);
   }

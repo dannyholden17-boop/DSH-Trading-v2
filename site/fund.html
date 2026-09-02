@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Fund — Flux</title>
 <meta name="description" content="The Flux Fund: a simulated AI that trades a paper account live and shows every fill. Watch it trade in real time, browse its positions and its whole order history. Simulated, virtual money, not investment advice.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   .fd-shell{max-width:1280px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,32px)}
   /* hero */
@@ -113,6 +113,7 @@
   .fd-pnltile .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .fd-pnltile .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.35rem;font-weight:750;margin-top:6px;letter-spacing:-.02em}
   .fd-pnltile .s{font-size:.75rem;color:var(--text-faint);margin-top:3px;font-family:var(--f-mono)}
+  .fd-ph .k.allocsum{margin-left:auto;text-transform:none;letter-spacing:.005em;font-size:12.5px;color:var(--text-dim)}
 </style>
 </head>
 <body>
@@ -212,7 +213,7 @@
     <div class="fd-ph" style="border:none;padding:0 0 8px">
       <span class="pill live">Allocation</span>
       <h3 style="margin:0;font-size:.95rem">Where the money is — invested per name</h3>
-      <span class="k" id="allocSum">—</span>
+      <span class="k allocsum" id="allocSum">—</span>
     </div>
     <div id="allocBody"></div>
   </section>

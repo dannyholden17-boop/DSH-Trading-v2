@@ -18,11 +18,11 @@
   color-scheme:dark;
 
   /* --- the desk --- */
-  --blotter:#17181b;          /* the pad itself: warm graphite, never blue-black */
-  --blotter-2:#1e2024;        /* a document lying on it */
-  --blotter-3:#25272c;        /* a document on a document */
-  --well:#101113;             /* recessed: inputs, wells, tracks */
-  --rail:#0b0c0e;             /* the clip rail, the tape, chrome */
+  --blotter:#1b1917;          /* the pad itself: warm graphite, never blue-black */
+  --blotter-2:#22201d;        /* a document lying on it */
+  --blotter-3:#2a2724;        /* a document on a document */
+  --well:#131211;             /* recessed: inputs, wells, tracks */
+  --rail:#0e0d0c;             /* the clip rail, the tape, chrome */
 
   /* --- card stock --- */
   --card-buy:#e0b354;         /* the buy ticket: manila / ochre */
@@ -40,7 +40,7 @@
   /* --- type on the blotter --- */
   --text:#eae6dc;             /* 14.9:1 */
   --text-dim:#a9a396;         /* 7.1:1  */
-  --text-faint:#98937f;       /* 5.0:1  — the floor, not below */
+  --text-faint:#a09a89;       /* 5.0:1  — the floor, not below */
 
   /* --- rules --- */
   --line:rgba(233,228,215,.14);
@@ -237,10 +237,18 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
   transform:rotate(-3deg);
   opacity:.92;
 }
-.stamp-ok{color:#2f7d52}
-.stamp-cut{color:#a8791c}
-.stamp-no{color:var(--stamp-deep)}
+/* Stamps live on paper, so the inks are mixed for paper: each clears 4.5:1
+   on both the ochre ticket (#e0b354) and the carbon copy (#e9e4d7). The dark
+   ledger gets its own lighter set below. */
+.stamp-ok{color:#1c5233}
+.stamp-cut{color:#5a3d02}
+.stamp-no{color:#7a1d0e}
+.dk-row .stamp-ok,.dk-ledger .stamp-ok{color:#6ec996}
+.dk-row .stamp-cut,.dk-ledger .stamp-cut{color:#e8b33c}
+.dk-row .stamp-no,.dk-ledger .stamp-no{color:#f0866c}
 .stamp-pending{color:var(--text-faint);border-style:dashed;transform:none;opacity:.5}
+/* on card stock the unstamped box is ink, not blotter grey */
+.ticket .stamp-pending,.tkt-chain .stamp-pending{color:rgba(21,16,10,.42);border-color:rgba(21,16,10,.3);opacity:1}
 .stamp.land{animation:stampDown .42s cubic-bezier(.16,1,.3,1) both}
 @keyframes stampDown{
   0%{opacity:0;transform:rotate(-14deg) scale(2.1)}
@@ -315,7 +323,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
   animation:tkscroll 78s linear infinite}
 .ticker:hover .tk-track{animation-play-state:paused}
 .tk-item{display:inline-flex;align-items:center;gap:8px;padding:0 17px;font-family:var(--f-mono);
-  font-size:11.5px;line-height:1;border-right:1px solid var(--line-3);font-variant-numeric:tabular-nums}
+  font-size:12px;line-height:1;border-right:1px solid var(--line-3);font-variant-numeric:tabular-nums}
 .tk-sym{color:var(--paper);font-weight:700;letter-spacing:.02em}
 .tk-px{color:var(--text-dim)}
 .tk-chg{font-weight:600}
@@ -410,13 +418,62 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .band .wrap{display:flex;align-items:center;gap:14px;padding-block:18px;flex-wrap:wrap;justify-content:center}
 .band span{font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
 .band b{color:var(--text-dim);font-weight:600}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-2);
-  border:1px solid var(--line-2)}
-@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
-.stat{background:var(--blotter);padding:20px 18px}
-.stat .v{font-family:var(--f-mono);font-size:clamp(1.5rem,1.2rem + 1.4vw,2.15rem);font-weight:700;
-  letter-spacing:-.04em;color:var(--gold);font-variant-numeric:tabular-nums}
-.stat .k{color:var(--text-dim);font-size:.82rem;margin-top:5px}
+/* the day sheet — what is standing on the pad, read as a ruled docket,
+   not as four hero numbers. Values are operational facts, never results. */
+.daysheet{border:1px solid var(--line-2);background:var(--blotter-2);box-shadow:var(--lift-1)}
+.ds-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding:13px 20px;background:var(--rail);border-bottom:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim)}
+.ds-head .ds-when{color:var(--text-faint);letter-spacing:.1em}
+.ds-list{display:grid;grid-template-columns:1fr 1fr;margin:0;padding:0}
+@media(max-width:720px){.ds-list{grid-template-columns:1fr}}
+.ds-line{display:flex;align-items:baseline;gap:10px;padding:16px 20px;
+  border-bottom:1px solid var(--line-2)}
+.ds-list .ds-line:nth-child(odd){border-right:1px solid var(--line-2)}
+@media(max-width:720px){.ds-list .ds-line:nth-child(odd){border-right:0}}
+.ds-line dt{color:var(--text-dim);font-size:.95rem}
+.ds-line .ds-rule{flex:1;min-width:18px;height:1px;align-self:center;
+  border-bottom:1px dotted var(--line);background:none;height:0}
+.ds-line dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;
+  font-size:1.5rem;font-weight:700;letter-spacing:-.03em;color:var(--gold);white-space:nowrap}
+.ds-line dd i{font-style:normal;font-size:.9rem;font-weight:600;color:var(--text-faint);letter-spacing:0}
+.ds-foot{margin:0;padding:13px 20px;color:var(--text-faint);font-size:.82rem}
+
+/* the three filings — a docket sheet, not an icon card */
+.dockets{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+@media(max-width:960px){.dockets{grid-template-columns:1fr}}
+.filing{display:flex;flex-direction:column;text-decoration:none;color:inherit;
+  background:var(--blotter-2);border:1px solid var(--line-2);box-shadow:var(--lift-1);
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.filing:hover{transform:translateY(-3px);box-shadow:var(--lift-2);border-color:var(--line)}
+.fg-hd{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:11px 18px;background:var(--rail);border-bottom:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase}
+.fg-no{color:var(--gold);font-weight:700}
+.fg-rt{color:var(--floor)}   /* the pit jacket: where the filing is routed */
+.filing h3{margin:20px 18px 0;font-family:var(--f-display);font-size:1.45rem;
+  font-weight:700;letter-spacing:-.02em}
+.filing p{margin:9px 18px 0;color:var(--text-dim);font-size:.94rem;line-height:1.6}
+.fg-ft{margin-top:auto;padding:15px 18px;border-top:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:.82rem;letter-spacing:.06em;color:var(--gold)}
+.filing:hover .fg-ft{background:rgba(232,179,60,.06)}
+
+/* the roster — six engines as a manifest on ruled lines */
+.roster{list-style:none;margin:30px 0 0;padding:0;
+  border:1px solid var(--line-2);background:var(--blotter-2);box-shadow:var(--lift-1)}
+.rs{display:grid;grid-template-columns:auto 1fr auto auto;align-items:baseline;gap:8px 18px;
+  padding:16px 20px;border-top:1px solid var(--line-2)}
+.roster .rs:first-child{border-top:0}
+.rs-n{font-family:var(--f-mono);font-size:.85rem;font-weight:700;color:var(--gold);
+  font-variant-numeric:tabular-nums}
+.rs-b b{display:block;font-size:1.02rem;letter-spacing:-.01em}
+.rs-b p{margin:3px 0 0;color:var(--text-dim);font-size:.9rem;line-height:1.55}
+.rs-c,.rs-o{font-family:var(--f-mono);font-size:.8rem;color:var(--text-faint);white-space:nowrap}
+.rs-o{color:var(--floor);min-width:9ch;text-align:right}
+@media(max-width:820px){
+  .rs{grid-template-columns:auto 1fr;gap:6px 14px}
+  .rs-c,.rs-o{grid-column:2;text-align:left;min-width:0}
+}
 
 /* ---------------------------------------------------------- *
    14. SEQUENCE — the chain of desks
@@ -498,9 +555,6 @@ details p{padding:0 2px 18px;color:var(--text-dim);font-size:.93rem;max-width:70
 @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.marquee-track{animation:none}}
 
-.shimmer{background:linear-gradient(90deg,rgba(233,228,215,.03),rgba(233,228,215,.09),rgba(233,228,215,.03));
-  background-size:200% 100%;animation:shim 1.5s linear infinite;border-radius:2px}
-@keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
 .flash-up{animation:flU .5s ease} .flash-dn{animation:flD .5s ease}
 @keyframes flU{0%{background:rgba(86,185,127,.24)}100%{background:transparent}}
 @keyframes flD{0%{background:rgba(232,103,74,.24)}100%{background:transparent}}
@@ -625,3 +679,13 @@ html,body{overflow-x:hidden;max-width:100%}
   .nav-links.open a{padding:16px var(--gutter)}
 }
 button,[role="button"],a.btn{min-height:24px}
+
+
+/* ---------------------------------------------------------- *
+   DISCLOSURE
+   The legal runs are the one place caps and 11px are wrong:
+   they are read, not scanned, and they must survive a squint.
+ * ---------------------------------------------------------- */
+.disclosure{text-transform:none!important;letter-spacing:.005em!important;
+  font-size:12.5px!important;line-height:1.55;color:var(--text-dim)!important;
+  max-width:70ch}

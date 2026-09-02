@@ -14,7 +14,7 @@ page itself, not a dashboard about it. Refuses the glowing-chart hero this categ
 OWN-WORLD: Open-outcry order tickets. Warm-graphite blotter ground; saturated card fields
 (buy ochre, sell vermillion) owning whole regions, not accents; pit-jacket gold/blue/green
 as the state system. Archivo Black/Expanded for badges and tickers, Public Sans for
-reading, Martian Mono for machine stamps. Hairlines, punch holes, clip rails, carbon rules.
+reading, Azeret Mono for machine stamps (the contract first named Martian Mono; Azeret was substituted at build time — same squared, grid-drawn ledger character, and it is available under the OFL for self-hosting, which Martian's licence route in this environment was not). Hairlines, punch holes, clip rails, carbon rules.
 
 STORY: A visitor sees a real ticket move through four stamps in seconds, reads the
 disagreement on the carbon copy, believes a desk exists, and opens it.

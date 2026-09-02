@@ -3,16 +3,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Download Flux — Desktop, iPhone, iPad &amp; Android</title>
 <meta name="description" content="Get Flux on every device. The full pro workstation on Mac and Windows, the autonomous desk in your pocket on iPhone and Android, and instant web access.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   /* ==========================================================
      Page-only layout for download.html.
@@ -33,7 +33,7 @@
   /* ---- store badges (inline SVG, no external assets) ---- */
   .store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
   .store-badge{display:inline-block;line-height:0;border-radius:4px;overflow:hidden;
-    border:1px solid var(--line);background:#0b0c0e;
+    border:1px solid var(--line);background:#0e0d0c;
     transition:border-color .2s,box-shadow .2s,transform .12s}
   .store-badge:hover{border-color:rgba(232,179,60,.45)}
   .store-badge:active{transform:scale(.975)}
@@ -75,8 +75,8 @@
   .win-bar i:nth-child(1){background:rgba(232,103,74,.55)}
   .win-bar i:nth-child(2){background:rgba(232,179,60,.55)}
   .win-bar i:nth-child(3){background:rgba(86,185,127,.55)}
-  .win-title{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--text-faint);margin-left:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .win-title{font-family:var(--f-mono);font-size:12px;letter-spacing:.04em;
+    color:var(--text-dim);margin-left:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .win-body{padding:14px}
   .win-body canvas{width:100%;height:214px;border-radius:4px;display:block}
   @media(max-width:520px){.win-body canvas{height:170px}}
@@ -94,7 +94,7 @@
   .qr{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding:28px}
   @media(max-width:640px){.qr{grid-template-columns:1fr;gap:24px;justify-items:center;text-align:center}}
   .qr-card{width:198px;max-width:100%;flex:none;background:#eae6dc;border-radius:4px;padding:13px;
-    box-shadow:0 24px 32px -28px rgba(232,179,60,.55), inset 0 0 0 1px rgba(23,24,27,.08)}
+    box-shadow:0 24px 32px -28px rgba(232,179,60,.55), inset 0 0 0 1px rgba(27,25,23,.08)}
   .qr-card svg{width:100%;height:auto;display:block}
   .qr-steps{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-direction:column;gap:11px;
     font-size:.89rem;color:var(--text-dim);counter-reset:qs}
@@ -204,7 +204,7 @@
       <div class="store-row">
         <a class="store-badge" href="#" id="badgeIOS" data-dl="ios" data-os="iOS" aria-label="Download on the App Store">
           <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#0b0c0e"/>
+            <rect width="172" height="52" rx="12" fill="#0e0d0c"/>
             <g transform="translate(17,13) scale(1.08)" fill="#eae6dc">
               <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.75-4.11z" transform="translate(-3,-4)"/>
               <path d="M14.6 4.5c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.3-.58 3.02-1.44z" transform="translate(-3,-4)"/>
@@ -215,7 +215,7 @@
         </a>
         <a class="store-badge" href="#" id="badgeAndroid" data-dl="android" data-os="Android" aria-label="Get it on Google Play">
           <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#0b0c0e"/>
+            <rect width="172" height="52" rx="12" fill="#0e0d0c"/>
             <g transform="translate(15,15)">
               <polygon points="3,2 14,10 3,10" fill="#00d67f"/>
               <polygon points="3,18 14,10 3,10" fill="#00a0ff"/>
@@ -346,7 +346,7 @@
       <div class="glass win reveal">
         <div class="win-bar">
           <i></i><i></i><i></i>
-          <span class="win-title">Flux Desktop 2.4.1 — NVDA · 15m · workspace “Open”</span>
+          <span class="win-title">Flux Desktop 2.4.1 — NVDA · 15m</span>
         </div>
         <div class="win-body">
           <canvas id="dlChart" aria-label="Illustrative candlestick chart"></canvas>

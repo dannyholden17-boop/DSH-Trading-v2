@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Autopilot — Flux</title>
 <meta name="description" content="Flux Autopilot runs a live $10,000 paper account, makes its own decisions and posts hourly and daily reports — so you can watch exactly how it thinks before you ever let it near your money. Simulated, not advice.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   /* ============================================================
      page-only styles: autopilot.html
@@ -240,14 +240,14 @@
         <span class="val mono" id="heroEq">$12,480.00</span>
         <span class="chg up" id="heroChg">+1.24%</span>
       </div>
-      <div class="ap-cap">Virtual equity · paper account · simulated</div>
+      <div class="ap-cap disclosure">Virtual equity · paper account · simulated</div>
       <canvas id="heroCurve" aria-label="Illustrative simulated equity curve for the Flux paper fund"></canvas>
       <div class="ap-qstats">
         <div class="ap-qs"><div class="n mono">6</div><div class="l">Open positions</div></div>
         <div class="ap-qs"><div class="n mono">14</div><div class="l">Trades today</div></div>
         <div class="ap-qs"><div class="n mono up">63%</div><div class="l">Win rate</div></div>
       </div>
-      <div class="foot">Simulated / hypothetical · not indicative of future results</div>
+      <div class="foot disclosure">Simulated / hypothetical · not indicative of future results</div>
     </div>
   </div>
 </section>
@@ -292,7 +292,7 @@
             <tbody id="logBody"></tbody>
           </table>
         </div>
-        <div class="foot">Simulated fills · virtual $10,000 · resets are possible</div>
+        <div class="foot disclosure">Simulated fills · virtual $10,000 · resets are possible</div>
       </div>
 
       <div class="ap-metrics">
@@ -370,7 +370,7 @@
             <tbody id="simPicks"></tbody>
           </table>
         </div>
-        <div class="foot">Selections computed live from the Flux universe · equal-weight · simulated, not advice.</div>
+        <div class="foot disclosure">Selections computed live from the Flux universe · equal-weight · simulated, not advice.</div>
       </div>
 
       <div class="glass ap-panel reveal">
@@ -386,8 +386,8 @@
         <div class="btn-row" style="margin-top:16px">
           <button type="button" class="btn btn-primary" id="simRun">Run 30-day simulation</button>
         </div>
-        <div class="ap-sim-note" id="simTag">SIMULATED · seeded demo · not a real or predictive result.</div>
-        <div class="phd" style="margin-top:20px"><span class="k" style="margin-left:0">Simulated trades · day 0 · paper $100,000</span></div>
+        <div class="ap-sim-note disclosure" id="simTag">SIMULATED · seeded demo · not a real or predictive result.</div>
+        <div class="phd" style="margin-top:20px"><span class="k disclosure" style="margin-left:0">Simulated trades · day 0 · paper $100,000</span></div>
         <div class="ap-sim-tbl-wrap">
           <table class="ap-sim-tbl">
             <thead>

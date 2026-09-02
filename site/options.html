@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Options — Flux</title>
 <meta name="description" content="The Flux options-chain explorer: browse a simulated options chain, read illustrative greeks, and place simulated (paper) option trades. Simulated with an illustrative pricing model — not real quotes, not advice.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: options.html (op- prefixed)
@@ -239,7 +239,7 @@
       <div class="op-legend">
         <span><b>Click a premium to buy 1 contract</b> — paper · calls buy the upside, puts buy the downside</span>
       </div>
-      <p class="op-cap" style="margin-top:12px">Prices, IV and greeks come from a simple illustrative model — not real quotes,
+      <p class="op-cap disclosure" style="margin-top:12px">Prices, IV and greeks come from a simple illustrative model — not real quotes,
         not a live chain, and not advice. Options can expire worthless.</p>
     </section>
 
@@ -258,7 +258,7 @@
         <div id="opGreeks">
           <p class="op-gk-empty">Click a premium to see its break-even and approximate greeks.</p>
         </div>
-        <p class="op-cap" style="margin-top:12px">Delta, gamma, theta and vega are rough approximations for display only — not
+        <p class="op-cap disclosure" style="margin-top:12px">Delta, gamma, theta and vega are rough approximations for display only — not
           exchange-computed greeks. Selling options can lose more than the premium received.</p>
       </section>
 

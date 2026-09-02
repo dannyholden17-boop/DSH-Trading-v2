@@ -3,16 +3,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pricing — Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .seg{display:inline-flex;gap:4px;padding:4px;border-radius:100px;border:1px solid var(--line);background:var(--well)}
@@ -26,7 +26,7 @@
   @media(max-width:920px){.plans{grid-template-columns:1fr;max-width:440px;margin-inline:auto}}
   .plan{display:flex;flex-direction:column;padding:28px}
   .plan.pop{border-color:rgba(232,179,60,.5);
-    box-shadow:0 0 0 1px rgba(232,179,60,.15), 0 0 34px -20px rgba(232,179,60,.45), inset 0 1px 0 rgba(255,255,255,.06)}
+    box-shadow:0 0 0 1px rgba(232,179,60,.15), inset 0 1px 0 rgba(255,255,255,.06)}
   .plan .nm{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
   .plan .amt{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:2.7rem;font-weight:700;
     letter-spacing:-.03em;margin:14px 0 2px;line-height:1.05}
@@ -49,7 +49,7 @@
   table.cmp thead .pp{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);font-weight:400;display:block;margin-top:4px}
   table.cmp tbody tr:hover{background:rgba(232,179,60,.035)}
   table.cmp .grp td{background:var(--well);border-top:1px solid var(--line);
-    font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);
+    font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);
     padding-block:9px;font-weight:700}
   table.cmp .grp:hover td{background:var(--well)}
   .yes{color:var(--cyan);font-weight:800}
@@ -177,12 +177,12 @@
     </div>
 
     <div class="glass panel reveal" style="margin-top:34px">
-      <p class="mono cmp-hint" style="font-size:.7rem;color:var(--text-faint);margin-bottom:10px">Scroll the table sideways →</p>
+      <p class="mono cmp-hint" style="font-size:.8rem;color:var(--text-dim);margin-bottom:10px">Scroll the table sideways →</p>
       <div class="tscroll">
         <table class="cmp">
           <thead>
             <tr>
-              <th scope="col"><span class="mono" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)">Feature</span></th>
+              <th scope="col"><span class="mono" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)">Feature</span></th>
               <th scope="col"><span class="pn">Scout</span><span class="pp" data-hd="0">$0</span></th>
               <th scope="col"><span class="pn" style="color:var(--cyan)">Trader</span><span class="pp" data-hd="1">$49/mo</span></th>
               <th scope="col"><span class="pn">Desk</span><span class="pp" data-hd="2">$149/mo</span></th>

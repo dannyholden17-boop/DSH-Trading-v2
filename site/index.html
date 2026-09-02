@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux — The autonomous AI trading desk</title>
 <meta name="description" content="Flux is an AI trading desk: an assistant you can ask anything, an Autopilot that trades a live $10,000 paper account and shows its work, and a portfolio brain that connects to your brokerage. Not investment advice.">
-<meta name="theme-color" content="#17181b">
+<meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=20">
-<link rel="stylesheet" href="./assets/flux.css?v=20">
-<script src="./assets/flux-supa.js?v=20" defer></script>
-<script src="./assets/flux-site.js?v=20" defer></script>
-<script src="./assets/flux-universe.js?v=20" defer></script>
-<script src="./assets/flux-feed.js?v=20" defer></script>
-<script src="./assets/flux-fund.js?v=20" defer></script>
-<script src="./assets/flux-kronos.js?v=20" defer></script>
-<script src="./assets/flux-desk.js?v=20" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=21">
+<link rel="stylesheet" href="./assets/flux.css?v=21">
+<script src="./assets/flux-supa.js?v=21" defer></script>
+<script src="./assets/flux-site.js?v=21" defer></script>
+<script src="./assets/flux-universe.js?v=21" defer></script>
+<script src="./assets/flux-feed.js?v=21" defer></script>
+<script src="./assets/flux-fund.js?v=21" defer></script>
+<script src="./assets/flux-kronos.js?v=21" defer></script>
+<script src="./assets/flux-desk.js?v=21" defer></script>
 <style>
   /* ---- page-only layout: index.html ---- */
 
@@ -76,7 +76,7 @@
   .vault{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
   @media(max-width:520px){.vault{grid-template-columns:repeat(2,1fr)}}
   .vault .n{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--glass-2);font-size:.76rem}
-  .vault .n b{display:block;color:var(--cyan);font-family:var(--f-mono);font-size:.7rem;margin-bottom:4px}
+  .vault .n b{display:block;color:var(--cyan);font-family:var(--f-mono);font-size:.8rem;margin-bottom:4px}
   .eng .ic{font-size:1.5rem;width:44px;height:44px;border-radius:4px;display:grid;place-items:center;
     border:1px solid var(--line);background:rgba(111,154,214,.08);margin-bottom:12px}
   .eng h4{font-size:1.02rem;margin-bottom:6px} .eng p{font-size:.88rem}
@@ -93,7 +93,7 @@
   /* ---- Mac product-tour ---- */
   .mac{position:relative;justify-self:center;width:min(660px,97vw)}
   .macwin{position:relative;border-radius:4px;overflow:hidden;border:1px solid var(--line);
-    background:rgba(6,11,26,.92);box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.03),0 0 60px -20px rgba(232,179,60,.25)}
+    background:rgba(6,11,26,.92);box-shadow:0 40px 90px -30px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.03)}
   .macbar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line-2);
     background:linear-gradient(180deg,rgba(20,28,50,.7),rgba(10,16,32,.6))}
   .macbar .dot{width:11px;height:11px;border-radius:50%}
@@ -247,21 +247,24 @@
 <section class="section">
   <div class="wrap">
 <h2 class="h2 reveal">Everything a modern trader wishes their broker had.</h2>
-    <div class="grid g-3" style="margin-top:34px">
-      <a class="glass feat glass-hover sheen flag reveal" href="./ai.html">
-        <div class="ic">◇</div><h3>Flux AI</h3>
-        <p class="muted">Ask anything — "what's my biggest risk?", "why is NVDA moving?" — and get an answer grounded in filings, the tape and your book.</p>
-        <span class="go">Meet Flux AI →</span>
+    <div class="dockets">
+      <a class="filing reveal" href="./ai.html">
+        <header class="fg-hd"><span class="fg-no">File 01</span><span class="fg-rt">Research</span></header>
+        <h3>Flux AI</h3>
+        <p>Ask anything — "what's my biggest risk?", "why is NVDA moving?" — and get an answer grounded in filings, the tape and your book.</p>
+        <div class="fg-ft">Meet Flux AI &rarr;</div>
       </a>
-      <a class="glass feat glass-hover sheen flag reveal" href="./autopilot.html">
-        <div class="ic" style="background:rgba(111,154,214,.08)">⟁</div><h3>Autopilot</h3>
-        <p class="muted">An AI that trades a live $10,000 paper account and posts hourly &amp; daily reports, so you see exactly how it thinks before it ever touches your money.</p>
-        <span class="go">See the live fund →</span>
+      <a class="filing reveal" href="./autopilot.html">
+        <header class="fg-hd"><span class="fg-no">File 02</span><span class="fg-rt">Execution</span></header>
+        <h3>Autopilot</h3>
+        <p>An AI that trades a live $10,000 paper account and posts hourly &amp; daily reports, so you see exactly how it thinks before it ever touches your money.</p>
+        <div class="fg-ft">See the live fund &rarr;</div>
       </a>
-      <a class="glass feat glass-hover sheen flag reveal" href="./portfolio.html">
-        <div class="ic" style="background:rgba(86,185,127,.08)">◎</div><h3>Portfolio</h3>
-        <p class="muted">Connect your brokerage read-only in seconds and put an AI analyst on your real holdings — risk, insights and a daily portfolio brief.</p>
-        <span class="go">Connect your brokerage →</span>
+      <a class="filing reveal" href="./portfolio.html">
+        <header class="fg-hd"><span class="fg-no">File 03</span><span class="fg-rt">Your book</span></header>
+        <h3>Portfolio</h3>
+        <p>Connect your brokerage read-only in seconds and put an AI analyst on your real holdings — risk, insights and a daily portfolio brief.</p>
+        <div class="fg-ft">Connect your brokerage &rarr;</div>
       </a>
     </div>
   </div>
@@ -373,7 +376,7 @@
   <div class="wrap">
 <h2 class="h2 reveal">Six engines that never sleep.</h2>
     <p class="lede reveal">While you're offline, Flux is scanning, parsing and stress-testing — so the moment something matters, it's already on your screen.</p>
-    <div class="grid g-3" id="engines" style="margin-top:32px"></div>
+    <ol class="roster" id="engines"></ol>
   </div>
 </section>
 
@@ -397,14 +400,17 @@
 
 <!-- ============ STATS ============ -->
 <section class="section-sm">
-  <div class="wrap band">
-    <div class="stats">
-      <div class="stat"><b data-count="6400" data-suffix="+">0</b><span>tickers scanned live</span></div>
-      <div class="stat"><b data-count="6">0</b><span>always-on engines</span></div>
-      <div class="stat"><b data-count="10000" data-prefix="$">0</b><span>simulated fund, traded live</span></div>
-      <div class="stat"><b data-count="24" data-suffix="/7">0</b><span>reports on the desk</span></div>
+  <div class="wrap">
+    <div class="daysheet">
+      <div class="ds-head"><span>Standing on the pad</span><span class="ds-when">continuously</span></div>
+      <dl class="ds-list">
+        <div class="ds-line"><dt>Tickers under watch</dt><span class="ds-rule"></span><dd>6,400<i>+</i></dd></div>
+        <div class="ds-line"><dt>Engines on the floor</dt><span class="ds-rule"></span><dd>6</dd></div>
+        <div class="ds-line"><dt>Simulated fund on the book</dt><span class="ds-rule"></span><dd><i>$</i>10,000</dd></div>
+        <div class="ds-line"><dt>Desk hours</dt><span class="ds-rule"></span><dd>24<i>/7</i></dd></div>
+      </dl>
+      <p class="ds-foot">Illustrative figures · simulated · not indicative of future results</p>
     </div>
-    <p class="cap" style="text-align:center;margin-top:14px">Illustrative figures · simulated · not indicative of future results</p>
   </div>
 </section>
 
@@ -546,10 +552,13 @@ document.addEventListener("DOMContentLoaded",function(){
 
   var eng=$("#engines");
   if(eng&&F.ENGINES){
-    eng.innerHTML=F.ENGINES.map(function(e){
-      return '<div class="glass feat glass-hover sheen eng reveal"><div class="ic">'+e.ic+'</div>'+
-        '<h4>'+e.id+'</h4><p class="muted">'+e.d+'</p>'+
-        '<div class="meta"><span>refresh '+e.c+'</span><span>&rarr; '+e.o+'</span></div></div>';
+    eng.innerHTML=F.ENGINES.map(function(e,i){
+      return '<li class="rs">'+
+        '<span class="rs-n">'+(i<9?"0":"")+(i+1)+'</span>'+
+        '<div class="rs-b"><b>'+e.id+'</b><p>'+e.d+'</p></div>'+
+        '<span class="rs-c">every '+e.c+'</span>'+
+        '<span class="rs-o">'+e.o+'</span>'+
+      '</li>';
     }).join("");
     if(F.initReveal)F.initReveal(eng);
   }
