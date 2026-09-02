@@ -1,0 +1,528 @@
+---
+name: Flux — The Blotter
+description: An open-outcry order-ticket world for an AI trading research desk — warm graphite ground, saturated card stock, one stamp.
+colors:
+  blotter: "#1b1917"
+  blotter-2: "#22201d"
+  blotter-3: "#2a2724"
+  well: "#131211"
+  rail: "#0e0d0c"
+  card-buy: "#e0b354"
+  card-sell: "#e0654a"
+  paper: "#e9e4d7"
+  ink: "#15100a"
+  gold: "#e8b33c"
+  gold-deep: "#c8912a"
+  floor: "#6f9ad6"
+  clearing: "#56b97f"
+  stamp: "#e8674a"
+  stamp-deep: "#c8402a"
+  stamp-ok-paper: "#1c5233"
+  stamp-cut-paper: "#5a3d02"
+  stamp-no-paper: "#7a1d0e"
+  stamp-ok-dark: "#6ec996"
+  stamp-no-dark: "#f0866c"
+  text: "#eae6dc"
+  text-dim: "#a9a396"
+  text-faint: "#a09a89"
+  line: "rgba(233,228,215,.14)"
+  line-2: "rgba(233,228,215,.07)"
+  line-3: "rgba(233,228,215,.04)"
+typography:
+  display:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(2.5rem, 1.6rem + 3.6vw, 4.2rem)"
+    fontWeight: 900
+    lineHeight: 1
+    letterSpacing: "-0.035em"
+  headline:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(1.85rem, 1.3rem + 2.1vw, 2.8rem)"
+    fontWeight: 800
+    lineHeight: 1.08
+    letterSpacing: "-0.03em"
+  title:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "1.18rem"
+    fontWeight: 700
+    lineHeight: 1.08
+    letterSpacing: "-0.015em"
+  body:
+    fontFamily: "Public Sans, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontSize: "16px"
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: "normal"
+  lede:
+    fontFamily: "Public Sans, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontSize: "clamp(1.02rem, 0.98rem + 0.35vw, 1.15rem)"
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: "normal"
+  label:
+    fontFamily: "Azeret Mono, ui-monospace, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "11px"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "0.13em"
+  data:
+    fontFamily: "Azeret Mono, ui-monospace, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "0.98rem"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "-0.02em"
+    fontFeature: "tabular-nums"
+  disclosure:
+    fontFamily: "Public Sans, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontSize: "12.5px"
+    fontWeight: 400
+    lineHeight: 1.55
+    letterSpacing: "0.005em"
+rounded:
+  cut: "2px"
+  sm: "4px"
+  lg: "6px"
+spacing:
+  hair: "9px"
+  xs: "10px"
+  sm: "14px"
+  md: "18px"
+  lg: "20px"
+  xl: "34px"
+  gutter: "clamp(20px, 5vw, 56px)"
+  section: "clamp(56px, 7vw, 104px)"
+components:
+  button-primary:
+    backgroundColor: "{colors.card-buy}"
+    textColor: "{colors.ink}"
+    typography: "{typography.title}"
+    rounded: "{rounded.sm}"
+    padding: "13px 24px"
+  button-primary-hover:
+    backgroundColor: "#ecc069"
+    textColor: "{colors.ink}"
+  button-sell:
+    backgroundColor: "{colors.card-sell}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.sm}"
+    padding: "13px 24px"
+  button-sell-hover:
+    backgroundColor: "#e87a61"
+  button-ghost:
+    backgroundColor: "transparent"
+    textColor: "{colors.text}"
+    rounded: "{rounded.sm}"
+    padding: "13px 24px"
+  button-ghost-hover:
+    backgroundColor: "rgba(232,179,60,.06)"
+    textColor: "{colors.gold}"
+  card:
+    backgroundColor: "{colors.blotter-2}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.sm}"
+    padding: "20px 22px"
+  ticket:
+    backgroundColor: "{colors.card-buy}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.cut}"
+    padding: "20px 20px 6px 34px"
+  ticket-sell:
+    backgroundColor: "{colors.card-sell}"
+    textColor: "{colors.ink}"
+  pill:
+    backgroundColor: "{colors.rail}"
+    textColor: "{colors.text-dim}"
+    typography: "{typography.label}"
+    rounded: "{rounded.cut}"
+    padding: "5px 11px"
+  badge:
+    backgroundColor: "{colors.gold}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.cut}"
+    padding: "4px 8px"
+  stamp:
+    backgroundColor: "transparent"
+    textColor: "{colors.stamp-deep}"
+    rounded: "{rounded.cut}"
+    padding: "7px 13px"
+  input-search:
+    backgroundColor: "{colors.well}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.sm}"
+    padding: "15px 17px"
+---
+
+# Design System: Flux — The Blotter
+
+## Overview
+
+**Creative North Star: "The Blotter"**
+
+A trade is a document that collects a stamp at every desk it passes through. The site is
+built as that document, not as a dashboard about it. The ground is a warm graphite desk
+pad; saturated card-stock fields are laid on it and own whole regions rather than acting
+as accents; a chain of custody runs down the right edge of the primary artifact and fills
+in, stamp by stamp. Everything else — grids, dockets, rosters, the news wire — is a ruled
+form, not a deck of icon cards.
+
+Density is high and comfortable at once. Reading surfaces breathe (68ch ledes, 70ch
+disclosures, generous section rhythm); machine surfaces compress (9px gutters in the
+workstation, 11px stencilled field keys, tabular figures everywhere a number is a fact).
+The world is drawn with hairlines, punched holes, dashed clip rails and carbon rules
+instead of glows, gradients or glass. It refuses the glowing-chart hero the category
+ships: the aurora, orb, shader, sheen and gradient-text devices that preceded this world
+are retired to explicit no-ops (`site/assets/flux.css:565-571`) rather than left alive.
+
+Dark is binding, not stylistic. Flux is a trading product looked at for hours; there is no
+light theme and `color-scheme:dark` is declared at the root (`site/assets/flux.css:18`).
+The grounds are warm — red channel above green above blue on every ground token — so the
+ochre and vermillion card stock reads as paper on a desk rather than as a neon panel on
+black glass.
+
+**Key Characteristics:**
+- Warm graphite grounds, never blue-black
+- Saturated card stock (ochre buy, vermillion sell) owning whole regions
+- One motion idiom: the stamp landing
+- Cut corners (2–4px), never pill-rounded surfaces
+- Mono for machine facts, display for badges and tickers, sans for reading
+- Offset-and-blur lift, never a halo
+
+## Colors
+
+A pit-floor palette: warm graphite desk, two saturated card stocks, and a three-state pit
+signal system of gold, blue and green against a vermillion refusal.
+
+### Primary
+- **Jacket Gold** (`{colors.gold}`): the accent that carries the brand mark, active nav,
+  focus rings, caret, selection, filing numbers, roster indices, day-sheet figures, and
+  every hover tint (`rgba(232,179,60,.06)` on rows, `.10` on search results). It is the
+  one color allowed to point.
+- **Buy Ochre** (`{colors.card-buy}`): card stock, not an accent. It fills the whole order
+  ticket and the primary button; text on it is always ink (9.7:1, `flux.css:191`).
+- **Sell Vermillion** (`{colors.card-sell}`): the same role for a disposal — the sell
+  ticket and the sell button.
+
+### Secondary
+- **Pit-Jacket Blue** (`{colors.floor}`): the routing color. It owns where a filing is
+  going and what an engine emits — filing routes (`.fg-rt`) and roster outputs (`.rs-o`).
+  It never becomes a general-purpose accent.
+- **Clearing Green** (`{colors.clearing}`): bid, up, approved, live. Price rises, the live
+  recording dot, the default status dot.
+- **Stamp Vermillion** (`{colors.stamp}`): offer, down, rejected. Price falls and negative
+  states. **Stamp Ink Deep** (`{colors.stamp-deep}`) is the resting ink of a stamp glyph.
+
+### Tertiary
+- **Carbon Copy Paper** (`{colors.paper}`): the light card stock — the copy of the filing,
+  and the ticker's symbol color.
+- **Pen Ink** (`{colors.ink}`): what a pen leaves on card stock. The only text color used
+  on ochre, vermillion or gold fills.
+
+### Neutral
+- **Blotter** (`{colors.blotter}`) — the pad itself; page background.
+- **Blotter 2 / Blotter 3** (`{colors.blotter-2}` / `{colors.blotter-3}`) — a document on
+  the pad, and a document on a document. Cards, panels, toasts.
+- **Well** (`{colors.well}`) — recessed: inputs, tracks, table group rows.
+- **Rail** (`{colors.rail}`) — the clip rail: nav, tape, footer, chrome, scrollbar track.
+- **Text / Dim / Faint** (`{colors.text}` 14.9:1, `{colors.text-dim}` 7.1:1,
+  `{colors.text-faint}` 5.0:1). Faint is the floor and nothing goes below it
+  (`flux.css:41-43`).
+- **Line / Line 2 / Line 3** — hairlines at 14%, 7% and 4% of paper white. Structure is
+  drawn with these, not with fills.
+
+### Named Rules
+
+**The Warm-Ground Rule.** Every ground has R > G > B. A ground that is blue-black is not
+this world's ground; if a surface needs to recede, drop to `{colors.well}` or
+`{colors.rail}`, never toward navy.
+
+**The Card-Stock Rule.** Ochre and vermillion are fields, not accents. They fill a whole
+document (ticket, primary action) or they are not used. Text on them is always
+`{colors.ink}`; a card-stock surface never carries dim grey type.
+
+**The Split-Ink Rule.** Stamp inks are chosen by the ground under them. On paper or ochre:
+`{colors.stamp-ok-paper}` / `{colors.stamp-cut-paper}` / `{colors.stamp-no-paper}`. On the
+dark ledger (`.dk-row`, `.dk-ledger`): `{colors.stamp-ok-dark}` / `{colors.gold}` /
+`{colors.stamp-no-dark}`. Both sets clear WCAG AA against their own ground
+(`flux.css:240-248`). Never take a paper ink onto the blotter or the reverse.
+
+**The Routing-Blue Rule.** `{colors.floor}` means "where this goes / what this emitted."
+It is not decoration and it is not a second accent; if a value is not a route or an
+engine output, it is not blue.
+
+## Typography
+
+**Display Font:** Archivo (with Archivo Expanded, then system sans)
+**Body Font:** Public Sans
+**Label/Mono Font:** Azeret Mono
+
+All three are self-hosted from `site/assets/fonts.css` — 26 `@font-face` rules over six
+woff2 files (latin and latin-ext subsets, `font-display:swap`), so a production page makes
+no third-party font request. The direction contract first named Martian Mono; Azeret Mono
+was substituted at build time for the same squared, grid-drawn ledger character under a
+licence that permits self-hosting, and the contract records the substitution.
+
+**Character:** Archivo at 800–900 with tight negative tracking gives the badge-and-ticker
+voice of a jacket acronym; Public Sans keeps long-form argument plainly readable at 16/1.6;
+Azeret Mono, always tabular, is reserved for anything a machine produced — prices, ticket
+numbers, timestamps, routes, field keys.
+
+### Hierarchy
+- **Display** (Archivo 900, `clamp(2.5rem,1.6rem + 3.6vw,4.2rem)`, line-height 1,
+  −0.035em): the page claim; one per page. The ticket symbol (`.tkt-sym`) is the same
+  register at `clamp(2.4rem,1.6rem + 2.6vw,3.6rem)`, line-height 0.92.
+- **Headline** (Archivo 800, `clamp(1.85rem,1.3rem + 2.1vw,2.8rem)`, −0.03em): section
+  heads.
+- **Title** (Archivo 700, 1.18rem, −0.015em): card and filing heads. Filing titles run
+  1.45rem; step and feature heads run 1.0–1.08rem.
+- **Body** (Public Sans 400, 16px/1.6): all prose. Ledes cap at 68ch, ticket headlines at
+  52ch, the footer disclaimer at 74ch.
+- **Label** (Azeret Mono 600, 11px, +0.13em, uppercase): the stencilled field key
+  (`.field-k`), footer column heads, docket and day-sheet headers (0.76–0.78rem at
+  +0.14em/+0.15em).
+- **Data** (Azeret Mono 600–700, tabular, −0.02em): every price, quantity, score, count
+  and identifier. Day-sheet figures run 1.5rem in gold; ticket fields 0.98rem in ink.
+- **Disclosure** (Public Sans 400, 12.5px/1.55, sentence case, max 70ch): long legal runs.
+
+### Named Rules
+
+**The Machine-Hand Rule.** Azeret Mono means a machine produced this value. If a human
+wrote it, it is Public Sans; if it is a jacket acronym or a headline, it is Archivo. A
+number that can change without an edit is always mono and always tabular.
+
+**The No-Kicker Rule.** There are no eyebrows, kickers or hats above headings. `.eyebrow`
+is hard-disabled (`display:none!important`, `flux.css:150`) so unconverted markup cannot
+reintroduce one. Headings carry their own weight; the label register belongs to field
+keys and column heads, not to decoration above a title.
+
+**The Disclosure Rule.** Legal and risk copy is the one place caps and 11px are wrong. Use
+`.disclosure`: sentence case, 12.5px, ≤70ch, `{colors.text-dim}` (`flux.css:684-691`).
+Caps, +0.1em tracking and 11px are reserved for short labels that are scanned, never for
+runs that are read.
+
+**The Flat-Emphasis Rule.** Emphasis is weight and size. Gradient text is retired to a
+no-op (`.grad-text`, `.grad-anim`, `flux.css:152-153`); no text carries a gradient, a
+glow or a text-shadow.
+
+## Layout
+
+A single centred measure of 1180px (`--maxw`) with a fluid gutter of
+`clamp(20px,5vw,56px)`, collapsing to a flat 16px below 640px. Sections breathe at
+`clamp(56px,7vw,104px)` (a compact `.section-sm` at `clamp(36px,5vw,64px)`).
+
+Marketing pages compose from a small set of grids: `.grid` at a 14px gap with 2/3/4-column
+variants that fold to two columns at 980px and to one at 640px, and `.split` at a 44px gap
+(optionally 1.15fr/0.85fr) folding at 900px. The hero is asymmetric by contract —
+1.85fr ticket beside 1fr carbon copy, folding at 1000px (`site/index.html`, `.hd-grid`).
+The ticket itself is a named-area grid (`"head head" / "main chain" / "foot chain"`, chain
+column 168px) that restacks the chain of custody below the body at 620px.
+
+The workstation shells are a different density on the same tokens: `.tm-app` is a
+262px / fluid / 322px three-column desk at a 9px gap, dropping the left rail under the
+centre at 1080px and stacking fully at 760px, inside a 1760px cap. Desktop viewports above
+1100px apply `zoom:.84` to fit the whole desk, and the chart cancels it with an exact
+inverse (`zoom:1.190476`) so pointer coordinates stay true
+(`site/terminal.html`, `.tm-wrap`).
+
+Spacing rhythm is coarse and repeated rather than a strict scale: 9–10px inside dense
+chrome, 14px between grid cells, 18–22px inside cards, 20px of horizontal card padding
+(34px on a ticket's punched left edge), 34px between docket columns.
+
+Touch: nothing interactive drops below 24px (`flux.css:681`), `.btn-sm` grows to 12×18px
+padding and open nav links to 16px on `hover:none` pointers, and form fields are forced to
+16px below 640px to defeat iOS zoom.
+
+### Named Rules
+
+**The Extend-Never-Redefine Rule.** Page-scoped CSS extends the tokens; it never redefines
+them. Where a shell needs local names (`--tm-bg`, `--tm-card`), they are aliases pointing
+at the same palette values, scoped to the shell's own wrapper — not a second palette.
+
+## Elevation & Depth
+
+Depth is a card lying on a desk: a hard offset edge plus a tight directional blur, never a
+halo and never a colored glow. Three lifts are defined and everything uses one of them.
+Surfaces are additionally separated tonally (blotter → blotter-2 → blotter-3, with well and
+rail cut below the pad) and by hairline, so a flat card without a shadow still reads.
+
+### Shadow Vocabulary
+- **Lift 1** (`box-shadow: 0 1px 0 rgba(0,0,0,.5), 0 2px 6px -2px rgba(0,0,0,.7)`): resting
+  documents — day sheet, dockets, roster, primary button, store chips.
+- **Lift 2** (`box-shadow: 0 2px 0 rgba(0,0,0,.5), 0 14px 28px -16px rgba(0,0,0,.95)`): the
+  standard card at rest (`.glass`), the carbon copy, the close block, a lifted docket.
+- **Lift 3** (`box-shadow: 0 4px 0 rgba(0,0,0,.5), 0 20px 38px -22px rgba(0,0,0,1)`): the
+  ticket, modals, toasts, the device frame — the top of the stack.
+
+One more depth device: the cut top edge. `.glass::after` draws a 1px horizontal gradient
+highlight at 12% white across the middle 76% of the card's top edge — the desk lamp
+catching a cut edge (`flux.css:170-171`).
+
+### Named Rules
+
+**The Offset-Not-Halo Rule.** Every shadow has a hard 1–4px offset row of pure black plus a
+negatively-spread blur. No shadow is centred, none is tinted with an accent, and no element
+gets a glow. Hover raises the lift one step and translates the card 2–3px; it never adds
+color spread.
+
+## Shapes
+
+Card stock is cut, not rounded. Two radii carry the whole system: 2px (`{rounded.cut}`) for
+anything that is a piece of paper or a stamped mark — tickets, badges, pills, tags, stamps,
+the carbon copy, small avatars — and 4px (`{rounded.sm}`) for interface chrome that is not
+paper: buttons, cards, inputs, toasts, the device frame. A 6px step exists
+(`{rounded.lg}`) but is rarely reached for.
+
+Structure is drawn, not filled. Hairline rules at three weights separate everything; the
+chain of custody is divided by a 2px dashed rule in ink; an unstamped box is a dashed
+outline over a 16%-black recess; the day sheet uses dotted leader rules between label and
+figure; `.punched` adds a 9px filing hole inset at the top-left of any card, inset-shadowed
+so it reads as punched through to the blotter. The ticket sits off-square at −0.5deg and
+stamps land at −3deg; nothing else is rotated.
+
+Icons are drawn as CSS masks at one stroke weight (1.75 on a 24-box) and inherit
+`currentColor` — twelve of them in `flux.css:646-657`, plus the three-bar candlestick brand
+glyph. There are no icon fonts and no emoji glyphs in the system layer.
+
+## Components
+
+### Buttons
+- **Shape:** cut corners (4px), 1px transparent border, display face at 700/14.5px.
+- **Primary — the buy ticket:** ochre card stock with ink text, 13px × 24px padding,
+  Lift 1 at rest rising to Lift 2 and `#ecc069` on hover.
+- **Sell:** identical geometry on vermillion card stock; used only when the action is a
+  disposal.
+- **Ghost — an unfiled form:** transparent, ruled with `{colors.line}`, text in
+  `{colors.text}`; on hover the rule and the text go gold over a 6% gold wash.
+- **Press:** every button translates down 1px on `:active` (100ms). Focus is the global
+  2px gold outline at 2px offset.
+- **Sizes:** `.btn-lg` 16px × 30px padding, `.btn-sm` 9px × 16px (12×18 on touch). Full
+  width inside a `.btn-row` on mobile. Disabled drops to 42% opacity and loses its lift.
+- **On card stock:** a button sitting on a ticket inverts — ink fill, card-stock text
+  (`.tkt-foot .btn`, `flux.css:310-311`).
+
+### Chips
+- **Pill:** rail ground, hairline border, 2px corners, mono label at 11px/+0.1em uppercase
+  in dim text, with an optional 6px status dot that defaults to clearing green. Variants
+  recolor both text and border to blue (`.pill-violet`) or gold (`.pill-cyan`).
+- **Badge:** the jacket acronym — 2–4 letters, Archivo 900 at 12px/+0.06em, gold fill, ink
+  text, 2px corners.
+- **Tag:** the quietest form — 10.5px mono on rail with a 7% hairline.
+
+### Cards / Containers
+- **Corner style:** 4px (2px when the card is paper).
+- **Background:** `{colors.blotter-2}`, headers and footers dropped to `{colors.rail}`.
+- **Border:** 1px `{colors.line}` (or the lighter `{colors.line-2}` on ruled dockets).
+- **Shadow:** Lift 2 at rest for `.glass`; Lift 1 for ruled documents. `.glass-hover`
+  raises to Lift 3, translates −2px and warms the border to 36% gold over 180ms.
+- **Padding:** 20–22px; 16–17px in the carbon copy; 12px in workstation cards.
+
+### Inputs / Fields
+- **Style:** recessed `{colors.well}` ground, no side borders, a single hairline bottom
+  rule, 15px × 17px padding, body face at 1.02rem.
+- **Focus:** the global 2px gold outline; caret is gold everywhere.
+- **Selection:** gold ground with ink text, no text-shadow.
+
+### Navigation
+The clip rail: a sticky 62px bar on `{colors.rail}` with a 7% bottom hairline, gaining a
+shadow only once scrolled. Brand is Archivo 900 at 1.12rem beside a 26px gold masked
+candlestick glyph. Links are 0.9rem/500 in dim text, rising to full text on hover; the
+current page goes gold and grows a 2px gold underline flush to the bar's bottom edge.
+Below 1040px the links and CTA collapse behind a 38px ruled toggle and open as a full-width
+rail-colored sheet with 14px rows divided by 4% hairlines.
+
+### The Ticket (signature)
+The order ticket is the system's protagonist: a full-bleed sheet of ochre card stock
+(vermillion when `.is-sell`) at Lift 3, rotated −0.5deg, punched at the top-left, laid out
+as head / main+chain / foot. The head carries the org line in Archivo 900 at +0.08em and a
+right-aligned mono ticket number; the main carries a field key, an oversized symbol, a
+six-column rule-divided field strip in tabular mono, and a ≤52ch headline; the foot carries
+the simulation line and an inverted signing button at bottom-right. Down the right edge, a
+168px column divided by a 2px dashed ink rule holds the chain of custody — one
+`.tkt-stage` per desk, each a mono field key over a stamp. Below 620px the chain unstacks
+into a horizontal wrapping row under the body.
+
+### The Stamp (signature)
+The mark every state change makes. Archivo 900 at 13px/+0.1em uppercase inside a 2px
+`currentColor` box with 2px corners, rotated −3deg at 92% opacity, inked by the split-ink
+rule. An unfilled stage is `.stamp-pending`: dashed, unrotated, 50% opacity — and on card
+stock it is drawn in translucent ink rather than blotter grey so it stays a pencil box, not
+a grey ghost. `.stamp-box` is the dashed recess it lands in.
+
+### Ruled Documents (signature)
+Three shared document treatments replace what would otherwise be icon-card decks:
+- **The day sheet** (`.daysheet`): a rail-colored uppercase mono header, then a two-column
+  ruled list where each line is a label, a dotted leader, and a 1.5rem gold tabular figure.
+  Values are operational facts only — never performance results.
+- **The dockets** (`.filing`): a three-up grid of filing cards, each with a mono header
+  carrying a gold filing number and a blue route, a 1.45rem title, body copy, and a gold
+  mono footer that warms to a 6% gold wash on hover.
+- **The roster** (`.roster`): six engines as a manifest — a mono index in gold, a name and
+  description, a mono capability, and a right-aligned blue output, on ruled lines that
+  collapse to two columns below 820px.
+
+### The Tape
+A 30px rail-colored ticker under the nav, edge-masked to transparent in the outer 4%, with
+mono 12px items separated by 4% hairlines: paper-colored symbol, dim price, colored change.
+It scrolls at 78s linear, pauses on hover, and stops entirely under reduced motion.
+
+### Disclosures
+`<details>` rows are borderless except for a bottom hairline; the summary is Archivo 700
+with a gold masked plus-mark that rotates 45deg into a minus on open. Body copy is 0.93rem
+dim at ≤70ch.
+
+### Named Rules
+
+**The One-Idiom Rule.** The site has exactly one authored motion: the stamp landing
+(`@keyframes stampDown`, 420ms, `cubic-bezier(.16,1,.3,1)` — in from −14deg at 2.1× scale,
+overshooting to −2deg at 0.94×, resting at −3deg). Everything else that moves is
+information moving, not decoration: the tape and marquee scrolls, the recording blink, the
+up/down price flash, and toast entry/exit. A new animation must either be one of those or
+be the stamp.
+
+**The Reduced-Motion Rule.** Under `prefers-reduced-motion`, the stamp still lands — it just
+lands instantly. Animations collapse to 0.01ms, transitions to 60ms, reveals are forced to
+their resting state, and the tape and marquee stop. State changes stay legible; only the
+theatre is removed (`flux.css:87-93`).
+
+## Do's and Don'ts
+
+### Do:
+- **Do** build on `site/assets/flux.css`. Page CSS extends the tokens and adds layout only;
+  it never redefines a token value.
+- **Do** keep grounds warm (R > G > B) and recede toward `{colors.well}` / `{colors.rail}`,
+  never toward navy.
+- **Do** fill whole regions with card stock and set every word on it in `{colors.ink}`.
+- **Do** pick stamp ink by ground: the paper set on ochre and carbon, the dark set inside
+  `.dk-row` / `.dk-ledger`.
+- **Do** set anything machine-produced in Azeret Mono with `font-variant-numeric:tabular-nums`.
+- **Do** use `.disclosure` for every long legal run: sentence case, 12.5px, ≤70ch.
+- **Do** reserve `{colors.floor}` for routes and engine outputs.
+- **Do** use Lift 1/2/3 as written and raise exactly one step on hover.
+- **Do** cut corners at 2px for paper and 4px for chrome.
+- **Do** draw new icons as `.ic-i` masks at 1.75 stroke on a 24-box, inheriting currentColor.
+- **Do** keep every interactive target at or above 24px and form fields at 16px on mobile.
+
+### Don't:
+- **Don't** add a light theme or a light surface for a whole page. Dark is a product
+  constraint (PRODUCT.md, Brand Commitments), and `color-scheme:dark` is declared at the root.
+- **Don't** write a kicker, eyebrow or label hat above a heading. `.eyebrow` is disabled
+  outright and must stay disabled.
+- **Don't** use gradient text, glows, auroras, orbs, shaders, sheens or float/tilt
+  decoration. They are retired to no-ops on purpose; do not revive them and do not write
+  new equivalents.
+- **Don't** give a shadow a color, a centred spread or a halo.
+- **Don't** set caps or 11px type on anything longer than a short label.
+- **Don't** put dim grey type on ochre, vermillion, gold or paper — ink only.
+- **Don't** round a surface into a pill. Card stock is cut.
+- **Don't** use emoji or an icon font where a drawn mask icon belongs.
+- **Don't** reach for `{colors.gold}` as a general highlight on a surface that already has
+  a card-stock field; one voice points per region.
+- **Don't** introduce a new keyframe animation for decoration.
+- **Don't** write new markup against the legacy aliases (`--cyan`, `--violet`, `--emerald`,
+  `--crimson`, `--amber`, `--grad`, `--glow`, `--glass`, `--glass-2`, `--surface-2`). They
+  are a compatibility shim mapping old names onto the new palette
+  (`flux.css:65-78`) so unconverted markup still renders correctly; they are not the
+  vocabulary. New work uses `{colors.gold}`, `{colors.floor}`, `{colors.clearing}`,
+  `{colors.stamp}`, `{colors.blotter-2}` and friends, and any page touched should migrate
+  its remaining alias uses as it goes.
+- **Don't** treat `site/app-classic.html` as a reference. It is an unlinked legacy page
+  still on the old light theme and is outside this system.
