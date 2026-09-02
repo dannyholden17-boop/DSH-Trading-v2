@@ -67,6 +67,34 @@
       var href=(a.getAttribute("href")||"").split("/").pop().toLowerCase();
       if(href&&href===path)a.classList.add("on");
     });
+
+    /* the More menu: click, Escape, click-away, and arrow keys */
+    var more=$(".nav-more"),btn=$(".nav-more-btn",more||document);
+    if(more&&btn){
+      if($$(".nav-menu a.on",more).length)more.setAttribute("data-has-current","1");
+      var setOpen=function(v){
+        more.classList.toggle("open",v);
+        btn.setAttribute("aria-expanded",v?"true":"false");
+      };
+      btn.addEventListener("click",function(e){
+        e.stopPropagation();setOpen(!more.classList.contains("open"));
+      });
+      document.addEventListener("click",function(e){
+        if(!more.contains(e.target))setOpen(false);
+      });
+      document.addEventListener("keydown",function(e){
+        if(e.key==="Escape"&&more.classList.contains("open")){setOpen(false);btn.focus();}
+      });
+      more.addEventListener("keydown",function(e){
+        if(e.key!=="ArrowDown"&&e.key!=="ArrowUp")return;
+        var items=$$(".nav-menu a",more);
+        if(!items.length)return;
+        e.preventDefault();
+        if(!more.classList.contains("open")){setOpen(true);items[0].focus();return;}
+        var i=items.indexOf(document.activeElement);
+        items[(i+(e.key==="ArrowDown"?1:items.length-1)+items.length)%items.length].focus();
+      });
+    }
   };
 
   /* ---- reveal ---- */
@@ -76,7 +104,40 @@
     var io=new IntersectionObserver(function(es){
       es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});
     },{threshold:.12,rootMargin:"0px 0px -8% 0px"});
-    els.forEach(function(e,i){e.style.transitionDelay=(Math.min(i%5,4)*70)+"ms";io.observe(e);});
+    els.forEach(function(e,i){e.style.transitionDelay=(Math.min(i%5,4)*60)+"ms";io.observe(e);});
+  };
+
+  /* Staggered groups: the container is observed, the children arrive in order. */
+  F.initStagger=function(root){
+    var els=$$(".stagger",root||document).filter(function(e){return !e.classList.contains("in")});
+    if(!els.length)return;
+    if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("in")});return;}
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});
+    },{threshold:.1,rootMargin:"0px 0px -6% 0px"});
+    els.forEach(function(e){io.observe(e);});
+  };
+
+  /* Count a figure up to its value once, when it first comes into view.
+     Used for live counts, so the number arriving reads as the desk working. */
+  F.countTo=function(el,value,opts){
+    if(!el)return;
+    opts=opts||{};
+    var to=Number(value);
+    if(!isFinite(to)){el.textContent=value==null?"—":String(value);return;}
+    if(F.reduced&&F.reduced()){el.textContent=to.toLocaleString();return;}
+    var from=Number(String(el.textContent||"").replace(/[^0-9.-]/g,""))||0;
+    if(from===to){return;}
+    var t0=null,dur=opts.duration||900;
+    function step(ts){
+      if(t0===null)t0=ts;
+      var p=Math.min((ts-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e).toLocaleString();
+      if(p<1){requestAnimationFrame(step);return;}
+      el.textContent=to.toLocaleString();
+      el.classList.remove("ticked");void el.offsetWidth;el.classList.add("ticked");
+    }
+    requestAnimationFrame(step);
   };
 
   /* ---- counters ---- */
@@ -663,6 +724,6 @@
   };
 
   document.addEventListener("DOMContentLoaded",function(){
-    F.initNav();F.initReveal();F.initCounters();F.initFX();F.initAuth();F.initTicker();
+    F.initNav();F.initReveal();F.initStagger();F.initCounters();F.initFX();F.initAuth();F.initTicker();
   });
 })();

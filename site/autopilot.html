@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Autopilot — Flux</title>
 <meta name="description" content="Flux Autopilot runs a live $10,000 paper account, makes its own decisions and posts hourly and daily reports — so you can watch exactly how it thinks before you ever let it near your money. Simulated, not advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ============================================================
      page-only styles: autopilot.html
@@ -35,7 +35,7 @@
   @keyframes apPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.68)}}
   .sheen{position:relative;overflow:hidden}
   .sheen::before{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;pointer-events:none;z-index:3;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent)}
+    background:linear-gradient(100deg,transparent,var(--line),transparent)}
   .sheen:hover::before{animation:apSheen .95s ease}
   @keyframes apSheen{to{left:135%}}
 
@@ -48,10 +48,10 @@
   .ap-mq-item{display:inline-flex;align-items:center;gap:9px;padding:0 22px;font-family:var(--f-mono);font-size:13px;color:var(--text-dim)}
   .ap-mq-item .s{font-weight:700}
   .ap-mq-item .px{color:var(--text-faint)}
-  .ap-mq-sep{color:rgba(255,255,255,.14)}
+  .ap-mq-sep{color:var(--line)}
   .ap-mq-band{border-block:1px solid var(--line-2);background:rgba(5,10,24,.5);padding-block:16px}
   .ap-mq-tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
-    color:var(--amber);border:1px solid rgba(232,179,60,.3);border-radius:2px;padding:2px 7px;background:rgba(232,179,60,.08)}
+    color:var(--amber);border:1px solid rgba(245,185,60,.3);border-radius:2px;padding:2px 7px;background:rgba(245,185,60,.08)}
 
   /* ---- hero ---- */
   .ap-hero{display:grid;grid-template-columns:1.04fr .96fr;gap:48px;align-items:start}
@@ -68,7 +68,7 @@
   .ap-fund .fhd .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .ap-eq{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-  .ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(2rem,1.4rem + 2.6vw,2.7rem);letter-spacing:-.02em;
+  .ap-eq .val{font-family:var(--f-mono);font-weight:700;font-size:clamp(2rem,1.15rem + 3.1vw,3.4rem);letter-spacing:-.02em;
     font-variant-numeric:tabular-nums}
   .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
   .ap-cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
@@ -97,8 +97,8 @@
   .ap-log tbody tr{animation:apRowIn .5s ease}
   @keyframes apRowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   .ap-side{display:inline-block;font-weight:700;font-size:12px;letter-spacing:.06em;padding:2px 7px;border-radius:2px}
-  .ap-side.buy{color:var(--emerald);background:rgba(86,185,127,.12);border:1px solid rgba(86,185,127,.3)}
-  .ap-side.sell{color:var(--crimson);background:rgba(232,103,74,.12);border:1px solid rgba(232,103,74,.3)}
+  .ap-side.buy{color:var(--emerald);background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.3)}
+  .ap-side.sell{color:var(--crimson);background:rgba(255,111,82,.12);border:1px solid rgba(255,111,82,.3)}
   .ap-panel .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
 
@@ -138,7 +138,7 @@
     font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
 
   /* ---- disclaimer strip ---- */
-  .ap-strip{margin-top:22px;border:1px solid rgba(232,179,60,.22);border-radius:4px;background:rgba(232,179,60,.05);
+  .ap-strip{margin-top:22px;border:1px solid rgba(245,185,60,.22);border-radius:4px;background:rgba(245,185,60,.05);
     padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
   .ap-strip .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none}
   .ap-strip p{color:var(--text-dim);font-size:13px;line-height:1.55}
@@ -155,7 +155,7 @@
   @media(max-width:560px){.ap-guards{grid-template-columns:1fr}}
 
   /* ---- strategy simulator (paper) ---- */
-  .ap-sim-warn{margin-top:26px;border:1px solid rgba(232,179,60,.28);border-radius:4px;background:rgba(232,179,60,.06);
+  .ap-sim-warn{margin-top:26px;border:1px solid rgba(245,185,60,.28);border-radius:4px;background:rgba(245,185,60,.06);
     padding:15px 18px;display:flex;gap:12px;align-items:flex-start}
   .ap-sim-warn .ic{font-family:var(--f-mono);color:var(--amber);font-weight:700;flex:none;font-size:1rem;line-height:1.4}
   .ap-sim-warn p{color:var(--text-dim);font-size:13px;line-height:1.55}
@@ -163,8 +163,8 @@
   .ap-sim-presets{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
   .ap-preset{cursor:pointer;text-align:left;flex:1 1 220px;min-width:min(220px,100%);padding:14px 16px;border-radius:4px;
     border:1px solid var(--line-2);background:var(--well);transition:border-color .2s,transform .2s;font-family:inherit;color:inherit}
-  .ap-preset:hover{transform:translateY(-2px);border-color:rgba(232,179,60,.35)}
-  .ap-preset.on{border-color:var(--cyan);background:rgba(232,179,60,.07);box-shadow:var(--lift-1)}
+  .ap-preset:hover{transform:translateY(-2px);border-color:rgba(245,185,60,.35)}
+  .ap-preset.on{border-color:var(--cyan);background:rgba(245,185,60,.07);box-shadow:var(--lift-1)}
   .ap-preset .nm{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
   .ap-preset .nm .dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
   .ap-preset.on .nm .dot{background:var(--cyan);box-shadow:var(--lift-1)}
@@ -183,7 +183,7 @@
   .ap-sim-res{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:6px 0 4px}
   .ap-sim-res .box{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:12px 14px}
   .ap-sim-res .l{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .ap-sim-res .v{font-family:var(--f-mono);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;margin-top:5px;font-variant-numeric:tabular-nums}
+  .ap-sim-res .v{font-family:var(--f-mono);font-weight:700;font-size:1.18rem;letter-spacing:-.01em;margin-top:5px;font-variant-numeric:tabular-nums}
   .ap-sim-note{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:12px;line-height:1.5}
 </style>
 </head>
@@ -193,15 +193,25 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
-      <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a>
-      <a href="./autopilot.html">Autopilot</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
-      <a href="./portfolio.html">Portfolio</a>
-      <a href="./research.html">Research</a>
-      <a href="./ideas.html">Ideas</a>
-      <a href="./markets.html">Markets</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more" data-has-current="1">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html" aria-current="page">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
@@ -519,32 +529,32 @@
     </div>
     <div class="ap-guards">
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⊘</div><h3>Never without approval</h3>
+        <h3>Never without approval</h3>
         <p>Flux never touches your real account until you explicitly opt in. Until then it only trades its own
           simulated paper money.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⊞</div><h3>You set the rules</h3>
+        <h3>You set the rules</h3>
         <p>Max position size, daily loss limit, allowed tickers, sectors to avoid — you write the mandate and
           Autopilot trades inside it.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⏸</div><h3>Pause or stop anytime</h3>
+        <h3>Pause or stop anytime</h3>
         <p>One tap freezes new trades or flattens the book. There is no lock-in and no waiting — control is
           always in your hands.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">≡</div><h3>Every action is logged</h3>
+        <h3>Every action is logged</h3>
         <p>Each decision, fill and reason is written down and reported hourly and daily. Nothing happens off
           the record.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⊗</div><h3>Hard risk gates</h3>
+        <h3>Hard risk gates</h3>
         <p>The Risk engine blocks oversized, over-correlated or over-exposed trades before they're placed —
           on paper and, if enabled, on your account.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
-        <div class="ic">⚡</div><h3>Kill-switch on drawdown</h3>
+        <h3>Kill-switch on drawdown</h3>
         <p>Hit your daily loss limit and Autopilot halts itself automatically, then tells you why. The floor
           is a rule, not a hope.</p>
       </div>
@@ -623,12 +633,12 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account without your explicit approval and rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -640,7 +650,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var $ = F.$ || function(s,r){return (r||document).querySelector(s);};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
   var SIGNALS = F.SIGNALS || [];
-  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a", CY = F.CY || "#e8b33c";
+  var EM = F.EM || "#3ddc97", CR = F.CR || "#ff6f52", CY = F.CY || "#f5b93c";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* reference prices for the illustrative simulated fills */
@@ -820,7 +830,7 @@ document.addEventListener("DOMContentLoaded", function(){
   if(!FS || !FS.ready || typeof FS.autopilot !== "function") return; // offline → keep demo
 
   var F = window.FLUX || {};
-  var CY = F.CY || "#e8b33c", EM = F.EM || "#56b97f", CR = F.CR || "#e8674a";
+  var CY = F.CY || "#f5b93c", EM = F.EM || "#3ddc97", CR = F.CR || "#ff6f52";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function $(s, r){ return (r || document).querySelector(s); }
   function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
@@ -1180,7 +1190,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   if(!F.FUND){ return; } // engine not present → leave section static
-  var CY = F.CY || "#e8b33c", EM = F.EM || "#56b97f", CR = F.CR || "#e8674a";
+  var CY = F.CY || "#f5b93c", EM = F.EM || "#3ddc97", CR = F.CR || "#ff6f52";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function $(s){ return document.querySelector(s); }
 

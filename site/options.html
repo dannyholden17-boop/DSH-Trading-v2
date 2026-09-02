@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Options — Flux</title>
 <meta name="description" content="The Flux options-chain explorer: browse a simulated options chain, read illustrative greeks, and place simulated (paper) option trades. Simulated with an illustrative pricing model — not real quotes, not advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: options.html (op- prefixed)
@@ -28,15 +28,15 @@
   .op-sym{display:flex;align-items:center;gap:13px;min-width:0}
   .op-av{width:44px;height:44px;border-radius:4px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
     font-weight:700;font-size:12.5px;border:1px solid var(--line);
-    background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.16),rgba(111,154,214,.1))}
+    background:radial-gradient(circle at 30% 30%,rgba(245,185,60,.16),rgba(122,167,255,.1))}
   .op-field{display:flex;flex-direction:column;gap:5px;min-width:0}
   .op-flab{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .op-sel{background:var(--well);border:1px solid var(--line);border-radius:4px;color:var(--text);
     font-family:var(--f-mono);font-size:.9rem;font-weight:700;padding:9px 11px;cursor:pointer;max-width:100%}
-  .op-sel:focus{outline:1px solid rgba(232,179,60,.5);border-color:rgba(232,179,60,.45)}
+  .op-sel:focus{outline:1px solid rgba(245,185,60,.5);border-color:rgba(245,185,60,.45)}
   .op-price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .op-big{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;
-    font-size:clamp(1.4rem,1.1rem + 1.5vw,1.95rem);letter-spacing:-.02em;border-radius:4px;padding:1px 6px;margin-left:-6px}
+    font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);letter-spacing:-.02em;border-radius:4px;padding:1px 6px;margin-left:-6px}
   .op-chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
   .op-chips{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;align-items:center}
   .op-chip{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:8px 12px;min-width:0}
@@ -72,18 +72,18 @@
   .op-cell{display:block;padding:9px 7px}
   th.op-strike-h,td.op-strike{text-align:center}
   td.op-strike{font-weight:700;color:var(--text);background:var(--well);padding:9px 12px;border-inline:1px solid var(--line-2)}
-  tr.op-atm{background:rgba(232,179,60,.05)}
+  tr.op-atm{background:rgba(245,185,60,.05)}
   tr.op-atm td.op-strike{color:var(--cyan)}
   tr.op-sel-c td.op-cc-q,tr.op-sel-p td.op-pc-q{}
   button.op-q{width:100%;border:0;background:none;color:inherit;font:inherit;text-align:right;
     padding:9px 7px;cursor:pointer;border-radius:2px;font-variant-numeric:tabular-nums}
-  button.op-q:hover{background:rgba(232,179,60,.10);color:var(--text)}
+  button.op-q:hover{background:rgba(245,185,60,.10);color:var(--text)}
   button.op-q:focus-visible{outline:1px solid var(--cyan);outline-offset:-2px}
   button.op-ask{color:var(--emerald)}
   button.op-bid{color:var(--text-dim)}
   button.op-putq{color:#9db8e2}
-  button.op-putq:hover{background:rgba(111,154,214,.12);color:var(--text)}
-  td.op-onsel button.op-q{background:rgba(232,179,60,.12);color:var(--text)}
+  button.op-putq:hover{background:rgba(122,167,255,.12);color:var(--text)}
+  td.op-onsel button.op-q{background:rgba(245,185,60,.12);color:var(--text)}
   .op-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
   .op-legend b{color:var(--text-dim);font-weight:600}
 
@@ -94,8 +94,8 @@
   .op-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
   .op-seg button{font-family:var(--f-mono);font-weight:700;font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;
     padding:11px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--line);background:var(--well);color:var(--text-dim)}
-  .op-seg .op-tobuy[aria-pressed="true"]{border-color:rgba(86,185,127,.55);background:rgba(86,185,127,.12);color:var(--emerald)}
-  .op-seg .op-tosell[aria-pressed="true"]{border-color:rgba(232,103,74,.55);background:rgba(232,103,74,.12);color:var(--crimson)}
+  .op-seg .op-tobuy[aria-pressed="true"]{border-color:rgba(61,220,151,.55);background:rgba(61,220,151,.12);color:var(--emerald)}
+  .op-seg .op-tosell[aria-pressed="true"]{border-color:rgba(255,111,82,.55);background:rgba(255,111,82,.12);color:var(--crimson)}
   .op-tfield{margin-bottom:12px}
   .op-lab{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
     margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
@@ -103,26 +103,26 @@
   .op-inwrap{display:flex;align-items:stretch;gap:8px}
   .op-in{flex:1;min-width:0;background:var(--well);border:1px solid var(--line);border-radius:4px;color:var(--text);
     font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1rem;font-weight:700;padding:11px 12px;text-align:center}
-  .op-in:focus{outline:1px solid rgba(232,179,60,.5);border-color:rgba(232,179,60,.45)}
+  .op-in:focus{outline:1px solid rgba(245,185,60,.5);border-color:rgba(245,185,60,.45)}
   .op-step{width:44px;flex:none;border:1px solid var(--line);border-radius:4px;background:var(--well);color:var(--cyan);
     font-size:1.18rem;font-weight:700;cursor:pointer;font-family:var(--f-mono);line-height:1}
-  .op-step:hover{border-color:rgba(232,179,60,.45)}
+  .op-step:hover{border-color:rgba(245,185,60,.45)}
   .op-est{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:13px;
     padding:8px 0;border-top:1px solid var(--line-2)}
   .op-est .k{color:var(--text-faint)}
   .op-est .v{font-weight:700;font-variant-numeric:tabular-nums}
   .op-place{width:100%;margin-top:12px;padding:14px;border-radius:4px;border:1px solid transparent;font-weight:700;
     font-size:1rem;cursor:pointer;font-family:var(--f-sans);letter-spacing:.01em}
-  .op-place.op-side-buy{background:linear-gradient(120deg,#56b97f,#7cc99a);color:#15100a;
-    box-shadow:0 10px 30px -12px rgba(86,185,127,.6)}
-  .op-place.op-side-sell{background:linear-gradient(120deg,#e8674a,#ef8a70);color:#fff;
-    box-shadow:0 10px 30px -12px rgba(232,103,74,.6)}
+  .op-place.op-side-buy{background:linear-gradient(120deg,#3ddc97,#6fe3b0);color:#120d05;
+    box-shadow:0 10px 30px -14px rgba(0,0,0,.85)}
+  .op-place.op-side-sell{background:linear-gradient(120deg,#ff6f52,#ff7f63);color:var(--text);
+    box-shadow:0 8px 24px -10px rgba(0,0,0,.8)}
   @keyframes opPulse{0%{transform:scale(1)}45%{transform:scale(.965)}100%{transform:scale(1)}}
   .op-pulse{animation:opPulse .4s ease}
   .op-banner{margin-top:12px;border-radius:4px;padding:10px 12px;font-size:.9rem;font-weight:600;display:none}
   .op-banner.show{display:block}
-  .op-banner.ok{background:rgba(86,185,127,.12);border:1px solid rgba(86,185,127,.4);color:#7cc99a}
-  .op-banner.err{background:rgba(232,103,74,.12);border:1px solid rgba(232,103,74,.4);color:#f3ab97}
+  .op-banner.ok{background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.4);color:#6fe3b0}
+  .op-banner.err{background:rgba(255,111,82,.12);border:1px solid rgba(255,111,82,.4);color:#ffab98}
 
   /* ---- greeks summary ---- */
   .op-gk{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -144,7 +144,7 @@
   .op-side-b{color:var(--emerald);font-weight:700}
   .op-side-s{color:var(--crimson);font-weight:700}
   .op-st{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;
-    background:rgba(86,185,127,.14);color:#7cc99a}
+    background:rgba(61,220,151,.14);color:#6fe3b0}
   .op-blfoot{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
   .op-clear{margin-left:auto;background:none;border:0;color:var(--text-faint);font-family:var(--f-mono);font-size:12px;
     cursor:pointer;text-decoration:underline;padding:0}
@@ -155,7 +155,7 @@
   .op-edu h3{font-size:1rem;margin-bottom:8px}
   .op-edu p{color:var(--text-dim);font-size:.9rem;line-height:1.55}
   .op-edu .ic{width:40px;height:40px;border-radius:4px;display:grid;place-items:center;font-family:var(--f-mono);font-size:18px;
-    color:var(--cyan);background:rgba(232,179,60,.07);border:1px solid rgba(232,179,60,.25);margin-bottom:12px}
+    color:var(--cyan);background:rgba(245,185,60,.07);border:1px solid rgba(245,185,60,.25);margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -164,15 +164,25 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
-      <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a>
-      <a href="./autopilot.html">Autopilot</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
-      <a href="./portfolio.html">Portfolio</a>
-      <a href="./research.html">Research</a>
-      <a href="./ideas.html">Ideas</a>
-      <a href="./markets.html">Markets</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
@@ -217,7 +227,7 @@
     <section class="glass op-pane op-chainpane reveal" aria-label="Options chain">
       <div class="op-phd">
         <h3 id="opChainTitle">Options chain</h3>
-        <span class="op-cap">Simulated · illustrative pricing · paper</span>
+        <span class="op-cap disclosure">Simulated · illustrative pricing · paper</span>
       </div>
       <div class="op-scroll">
         <table class="op-chain" aria-label="Simulated options chain">
@@ -269,7 +279,7 @@
   <section class="glass op-pane reveal" style="margin-top:16px" aria-label="Option order blotter">
     <div class="op-phd">
       <h3>Option blotter</h3>
-      <span class="op-cap">simulated paper option orders</span>
+      <span class="op-cap disclosure">simulated paper option orders</span>
     </div>
     <div class="op-scroll">
       <table class="op-bl">
@@ -340,11 +350,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Options data and trades here are simulated with an illustrative pricing model on a paper account — not real quotes and no real orders are placed. Options carry substantial risk and can expire worthless. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

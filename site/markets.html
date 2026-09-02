@@ -3,17 +3,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Markets — Flux</title>
 <meta name="description" content="The whole tape in one view: indices, movers, sector rotation, live signals and the week's catalysts. A simulated market demo of the Flux desk.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
-<script src="./assets/flux-tv.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
+<script src="./assets/flux-tv.js?v=26" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}
@@ -21,7 +21,7 @@
   .idx .sy{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
   .idx .sy b{font-family:var(--f-mono);font-size:.9rem;letter-spacing:.04em}
   .idx .sy em{font-style:normal;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-  .idx .px{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.32rem;font-weight:700;
+  .idx .px{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:700;
     letter-spacing:-.02em;margin-top:9px;border-radius:4px;padding:1px 5px;margin-left:-5px;width:max-content}
   .idx .ch{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:13px;margin-top:3px}
   @keyframes tickup{from{background:color-mix(in srgb,var(--emerald) 26%,transparent)}to{background:transparent}}
@@ -34,7 +34,7 @@
     padding:8px 15px;border-radius:2px;cursor:pointer;color:var(--text-dim);
     border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
   .tab:hover{color:var(--text)}
-  .tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
+  .tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(245,185,60,.45);background:rgba(245,185,60,.08)}
 
   .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.mk{width:100%;min-width:660px;border-collapse:collapse;font-size:.9rem}
@@ -44,7 +44,7 @@
   table.mk th:last-child,table.mk td:last-child{padding-right:4px}
   table.mk td{text-align:right;padding:10px 12px;border-top:1px solid var(--line-2);white-space:nowrap}
   table.mk tbody tr{cursor:pointer;transition:background .15s}
-  table.mk tbody tr:hover{background:rgba(232,179,60,.05)}
+  table.mk tbody tr:hover{background:rgba(245,185,60,.05)}
   table.mk tbody tr:focus-visible{outline:1px solid var(--cyan);outline-offset:-1px}
   .tk-cell b{font-family:var(--f-mono);font-weight:700;font-size:.9rem;letter-spacing:.03em}
   .tk-cell span{display:block;color:var(--text-faint);font-size:12px;line-height:1.3}
@@ -70,9 +70,9 @@
   table.cal th:last-child,table.cal td:last-child{padding-right:2px;text-align:right}
   .imp{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
     padding:3px 9px;border-radius:2px;white-space:nowrap}
-  .imp-h{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#f3ab97}
+  .imp-h{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#ffab98}
   .imp-m{background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
-  .imp-l{background:rgba(233,228,215,.06);color:var(--text-faint)}
+  .imp-l{background:rgba(160,180,220,.07);color:var(--text-faint)}
 
   .panel{padding:20px}
   .phead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
@@ -86,7 +86,7 @@
     transition:border-color .18s,box-shadow .18s}
   .scr-input{min-width:190px}
   .scr-input::placeholder{color:var(--text-faint)}
-  .scr-input:focus,.scr-select:focus{border-color:rgba(232,179,60,.5);box-shadow:0 0 0 3px rgba(232,179,60,.09)}
+  .scr-input:focus,.scr-select:focus{border-color:rgba(245,185,60,.5);box-shadow:0}
   .scr-select{cursor:pointer}
   .scr-count{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);margin-left:auto}
   table.mk th.sorth{cursor:pointer;user-select:none}
@@ -99,9 +99,9 @@
   .scr-star:hover{transform:scale(1.15)}
   .scr-star.on{color:var(--amber)}
   .scr-trade{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
-    color:var(--cyan);border:1px solid rgba(232,179,60,.32);border-radius:2px;padding:4px 9px;text-decoration:none;
+    color:var(--cyan);border:1px solid rgba(245,185,60,.32);border-radius:2px;padding:4px 9px;text-decoration:none;
     white-space:nowrap;transition:background .15s,border-color .15s}
-  .scr-trade:hover{background:rgba(232,179,60,.1);border-color:rgba(232,179,60,.55)}
+  .scr-trade:hover{background:rgba(245,185,60,.1);border-color:rgba(245,185,60,.55)}
   @media(max-width:520px){
     .idx .px{font-size:1.18rem}
     .panel{padding:16px}
@@ -114,15 +114,25 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
-      <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a>
-      <a href="./autopilot.html">Autopilot</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
-      <a href="./portfolio.html">Portfolio</a>
-      <a href="./research.html">Research</a>
-      <a href="./ideas.html">Ideas</a>
-      <a href="./markets.html">Markets</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more" data-has-current="1">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html" aria-current="page">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
@@ -155,7 +165,7 @@
 <section class="section-sm" style="padding-top:0">
   <div class="wrap reveal">
     <div class="phead">
-      <h3 class="h3">Index overview</h3>
+      <h2 class="h3">Index overview</h2>
       <span class="mono" style="font-size:12px;color:var(--text-faint)" id="clock">—</span>
     </div>
     <div class="idx-strip" id="idxStrip"></div>
@@ -217,7 +227,7 @@
     <div class="glass panel reveal" style="margin-top:32px">
       <div class="phead" style="margin-bottom:0">
         <div>
-          <h3 class="h3">Stock screener</h3>
+          <h2 class="h3">Stock screener</h2>
           <p class="faint" style="font-size:13px;margin-top:4px">Click a column header to sort</p>
         </div>
         <span class="pill" style="padding:5px 11px;font-size:12px"><i></i> simulated · live tick</span>
@@ -276,7 +286,7 @@
     <div class="glass panel reveal">
       <div class="phead">
         <div>
-          <h3 class="h3">Live signals</h3>
+          <h2 class="h3">Live signals</h2>
           <p class="faint" style="font-size:13px;margin-top:4px">Six engines, one feed</p>
         </div>
         <span class="pill"><i></i> streaming</span>
@@ -289,7 +299,7 @@
     <div class="glass panel reveal">
       <div class="phead">
         <div>
-          <h3 class="h3">This week's catalysts</h3>
+          <h2 class="h3">This week's catalysts</h2>
           <p class="faint" style="font-size:13px;margin-top:4px">Watched by the Catalyst engine</p>
         </div>
         <span class="tag">calendar</span>
@@ -341,11 +351,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -358,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
   var rnd = F.rnd || function(a){return a[Math.floor(Math.random()*a.length)]};
-  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a";
+  var EM = F.EM || "#3ddc97", CR = F.CR || "#ff6f52";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
   function flash(el, up){

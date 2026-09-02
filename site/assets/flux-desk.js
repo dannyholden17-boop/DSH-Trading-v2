@@ -95,6 +95,15 @@
       });
     },
 
+    /** Per-agent standing: counts, rates and averages only, never text.
+        Backs the Analysts, Traders and Executive pages. */
+    agents: function(){
+      return rpc("desk_agents").then(function(j){
+        if(!j) return null;
+        return (Array.isArray(j) ? j[0] : j) || null;
+      });
+    },
+
     /** Recent rounds, newest first. */
     rounds: function(limit){
       return q("desk_rounds", { select:"id,seq,stage,status,tickers,started_at,finished_at,meta",
@@ -157,7 +166,7 @@
                 '<b>' + (live ? D.stageLabel(s.stage) : "Round " + s.seq + " filed") + '</b>' +
                 '<span class="dk-w-ago">' + D.ago(s.finished_at || s.started_at) + '</span>' +
               '</div>' +
-              '<div class="dk-w-bar"><i style="width:' + pct + '%"></i></div>' +
+              '<div class="dk-w-bar"><i style="transform:scaleX(' + (pct/100) + ')"></i></div>' +
               '<div class="dk-w-sub">' +
                 (s.tickers || []).slice(0, 6).join(" · ") +
                 (s.approved ? ' <b class="ok">' + s.approved + ' green-lit</b>' : "") +

@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Activity & P&amp;L — Flux</title>
 <meta name="description" content="Your Flux paper-trading activity: full order history, realized and unrealized P&L, and your account value over time. Simulated; not investment advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   .ac-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
   @media(max-width:900px){.ac-cards{grid-template-columns:repeat(2,1fr)}}
@@ -27,7 +27,7 @@
   .ac-tabs{display:flex;gap:8px;margin:24px 0 10px;flex-wrap:wrap}
   .ac-tab{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
     padding:7px 14px;border-radius:2px;cursor:pointer;border:1px solid var(--line);background:var(--glass);color:var(--text-dim)}
-  .ac-tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
+  .ac-tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(245,185,60,.45);background:rgba(245,185,60,.08)}
   .ac-scroll{overflow-x:auto}
   table.ac-t{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
   table.ac-t th{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
@@ -45,15 +45,25 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
-      <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a>
-      <a href="./autopilot.html">Autopilot</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
-      <a href="./portfolio.html">Portfolio</a>
-      <a href="./research.html">Research</a>
-      <a href="./ideas.html">Ideas</a>
-      <a href="./markets.html">Markets</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
@@ -109,11 +119,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Activity shown is from a simulated paper account using virtual money; results are hypothetical and do not represent real trading. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -212,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function(){
     function Y(v){ return pad + (h-2*pad)*(1-(v-mn)/rg); }
     // start-value baseline
     c.strokeStyle="rgba(255,255,255,.10)"; c.setLineDash([4,4]); c.beginPath(); c.moveTo(0,Y(base)); c.lineTo(w,Y(base)); c.stroke(); c.setLineDash([]);
-    var up = (data[data.length-1] >= base), col = up ? (F.EM||"#56b97f") : (F.CR||"#e8674a");
+    var up = (data[data.length-1] >= base), col = up ? (F.EM||"#3ddc97") : (F.CR||"#ff6f52");
     var g = c.createLinearGradient(0,0,0,h); g.addColorStop(0, col+"3a"); g.addColorStop(1, col+"00");
     c.beginPath(); c.moveTo(X(0),Y(data[0])); for(var i=1;i<n;i++) c.lineTo(X(i),Y(data[i]));
     c.lineTo(X(n-1),h); c.lineTo(X(0),h); c.closePath(); c.fillStyle=g; c.fill();

@@ -5,30 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Research — Flux</title>
 <meta name="description" content="Flux AI Research reads filings, earnings calls, the news wire and the options tape, then writes you the answer — with model forecasts, catalysts and risk, on a schedule.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
-<script src="./assets/flux-research.js?v=23" defer></script>
-<script src="./assets/flux-tv.js?v=23" defer></script>
-<script src="./assets/flux-jarvis.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
+<script src="./assets/flux-research.js?v=26" defer></script>
+<script src="./assets/flux-tv.js?v=26" defer></script>
+<script src="./assets/flux-jarvis.js?v=26" defer></script>
 <style>
   /* interactive research tool */
   .rtool{display:flex;gap:9px;margin:16px 0 6px;flex-wrap:wrap}
-  .rtool input{flex:1;min-width:160px;background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);
+  .rtool input{flex:1;min-width:160px;background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);
     padding:12px 14px;font-family:var(--f-mono);font-size:1rem;letter-spacing:.04em;text-transform:uppercase;outline:none}
-  .rtool input:focus{border-color:rgba(232,179,60,.55);box-shadow:0 0 0 3px rgba(232,179,60,.12)}
+  .rtool input:focus{border-color:rgba(245,185,60,.55);box-shadow:0}
   .rout{white-space:pre-wrap;font-size:1rem;line-height:1.65;color:var(--text);margin-top:6px}
   .rchips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
   .rchip{font-family:var(--f-mono);font-size:12px;padding:6px 11px;border-radius:2px;cursor:pointer;
     border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
-  .rchip:hover{border-color:rgba(232,179,60,.5);color:var(--cyan)}
+  .rchip:hover{border-color:rgba(245,185,60,.5);color:var(--cyan)}
   /* ---- page-only layout: research.html ---- */
   .r-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:start}
   @media(max-width:960px){.r-hero{grid-template-columns:1fr;gap:36px}}
@@ -110,15 +110,25 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
-      <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a>
-      <a href="./autopilot.html">Autopilot</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
-      <a href="./portfolio.html">Portfolio</a>
-      <a href="./research.html">Research</a>
-      <a href="./ideas.html">Ideas</a>
-      <a href="./markets.html">Markets</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more" data-has-current="1">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html" aria-current="page">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
@@ -252,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="glass reveal" style="padding:26px 24px">
       <div class="rep-head" style="margin-bottom:6px">
         <span class="pill pill-cyan"><i></i> Macro</span>
-        <span class="ttl">The backdrop every report is written against</span>
+        <span class="ttl disclosure">The backdrop every report is written against</span>
         <span class="ts" id="macroTs">—</span>
       </div>
       <div class="mgrid" id="macroGrid"></div>
@@ -420,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="glass chart-card reveal">
       <div class="chart-legend">
         <span class="pill"><i></i> Backtest</span>
-        <span class="k">Simulated equity curve · 1,260 sessions</span>
+        <span class="k disclosure">Simulated equity curve · 1,260 sessions</span>
       </div>
       <canvas id="eqCurve" aria-label="Illustrative simulated equity curve"></canvas>
       <p class="faint mono disclosure" style="font-size:12px;margin-top:10px;letter-spacing:.08em;text-transform:uppercase">
@@ -499,11 +509,11 @@ document.addEventListener("DOMContentLoaded", function(){
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

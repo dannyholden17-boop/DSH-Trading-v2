@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Trade Ideas — Flux</title>
 <meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a backtest attached — every one gated by the Risk engine. Never a naked 'buy this'.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-fund.js?v=26" defer></script>
+<script src="./assets/flux-kronos.js?v=26" defer></script>
 <style>
   /* ---- page-only layout: trade-ideas.html ---- */
   .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -37,7 +37,7 @@
   .idea-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .idea-top .av{width:42px;height:42px;border-radius:4px;flex:none;display:grid;place-items:center;
     font-family:var(--f-mono);font-weight:700;font-size:12px;border:1px solid var(--line);
-    background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.18),rgba(111,154,214,.12))}
+    background:radial-gradient(circle at 30% 30%,rgba(245,185,60,.18),rgba(122,167,255,.12))}
   .idea-top .id{min-width:0}
   .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
   .idea-top .sub{font-size:13px;color:var(--text-faint);margin-top:2px}
@@ -46,7 +46,7 @@
   .idea-top .cf{margin-left:auto;text-align:right;flex:none}
   .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.18rem;line-height:1}
   .idea-top .cf .l{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
-  .cbar{height:4px;border-radius:2px;background:rgba(233,228,215,.07);overflow:hidden;margin:14px 0 16px}
+  .cbar{height:4px;border-radius:2px;background:rgba(160,180,220,.09);overflow:hidden;margin:14px 0 16px}
   .cbar i{display:block;height:100%;border-radius:2px}
   .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
   @media(max-width:760px){.idea-body{grid-template-columns:1fr;gap:16px}}
@@ -76,9 +76,9 @@
 
   /* locked (sign-in gated) idea card */
   .idea-locked{display:flex;align-items:center;justify-content:center;min-height:150px;
-    border-style:dashed !important;background:linear-gradient(180deg,rgba(232,179,60,.04),transparent)}
+    border-style:dashed !important;background:linear-gradient(180deg,rgba(245,185,60,.04),transparent)}
   .lock-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;text-align:left;padding:16px}
-  .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(232,179,60,.4))}
+  .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(245,185,60,.4))}
   .lock-tx b{display:block;font-size:1rem}
   .lock-tx span{display:block;color:var(--text-faint);font-size:.9rem;margin-top:3px;max-width:38ch}
 
@@ -109,7 +109,7 @@
   .anno-row:last-child{border-bottom:0}
   .anno-row .n{width:24px;height:24px;flex:none;border-radius:4px;display:grid;place-items:center;
     font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--cyan);
-    background:rgba(232,179,60,.08);border:1px solid rgba(232,179,60,.25)}
+    background:rgba(245,185,60,.08);border:1px solid rgba(245,185,60,.25)}
   .anno-row .c{min-width:0;flex:1}
   .anno-row .c .t{font-family:var(--f-mono);font-size:.9rem;font-weight:700}
   .anno-row .c .d{font-size:13px;color:var(--text-faint);margin-top:3px}
@@ -126,15 +126,25 @@
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
     <nav class="nav-links" id="navLinks">
-      <a href="./terminal.html">Trade</a>
-      <a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a>
-      <a href="./autopilot.html">Autopilot</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
-      <a href="./portfolio.html">Portfolio</a>
-      <a href="./research.html">Research</a>
-      <a href="./ideas.html">Ideas</a>
-      <a href="./markets.html">Markets</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
@@ -404,11 +414,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h2>Get Flux</h2><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -419,7 +429,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $ = F.$ || function(s,r){return (r||document).querySelector(s)};
   var K = F.Kronos;
-  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a", CY = F.CY || "#e8b33c";
+  var EM = F.EM || "#3ddc97", CR = F.CR || "#ff6f52", CY = F.CY || "#f5b93c";
   function money(n){ return "$" + (+n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function pctS(x){ return (x>=0?"+":"") + (x*100).toFixed(1) + "%"; }
 

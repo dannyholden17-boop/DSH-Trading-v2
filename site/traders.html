@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Traders — Flux</title>
+<meta name="description" content="Kronos forecasts the next candles; the DSA engine scores five components. Both price every Flux desk package independently and both go on the record, including when they disagree. Simulated, not investment advice.">
+<meta name="theme-color" content="#0d1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/fonts.css?v=26">
+<link rel="stylesheet" href="./assets/flux.css?v=26">
+<script src="./assets/flux-supa.js?v=26" defer></script>
+<script src="./assets/flux-site.js?v=26" defer></script>
+<script src="./assets/flux-universe.js?v=26" defer></script>
+<script src="./assets/flux-feed.js?v=26" defer></script>
+<script src="./assets/flux-desk.js?v=26" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./desk.html">Desk</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html" aria-current="page">Traders</a>
+      <a href="./executive.html">Executive</a>
+      <a href="./fund.html">Fund</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main class="st-wrap" id="stBody">
+  <div class="st-top">
+    <h1>Two traders, priced separately</h1>
+    <span class="st-live" id="stLive"><span class="dot"></span><b id="stStage">reading the desk…</b></span>
+    <span class="st-meta" id="stMeta">—</span>
+  </div>
+  <p class="st-sub">The Director hands the same package to both traders and they never confer. Kronos
+    forecasts the next candles; the DSA engine scores the name on five components you can read individually.
+    Each proposes an entry, a stop and a target, and both go on the record — including when they disagree,
+    which is the point.</p>
+
+  <div class="st-cards two stagger">
+    <article class="st-card" style="--accent:#7aa7ff">
+      <span class="lens">Trader 1 · forecast</span><h2>Kronos</h2>
+      <p class="what">A candle-forecasting model. It predicts the next five candles and the agreement between
+        its sampled paths, then turns that into a side and a confidence.</p>
+      <div class="st-figs">
+        <div class="st-fig"><b id="tKPrices">0</b><span>prices made</span></div>
+        <div class="st-fig"><b id="tKConf">0</b><span>avg confidence</span></div>
+        <div class="st-fig"><b id="tKLong">0</b><span>long calls</span></div>
+        <div class="st-fig"><b id="tKAvoid">0</b><span>stand-asides</span></div>
+      </div>
+      <p class="st-note" id="tKModel">—</p>
+    </article>
+    <article class="st-card" style="--accent:#3ddc97">
+      <span class="lens">Trader 2 · score</span><h2>DSA</h2>
+      <p class="what">A transparent composite. Momentum, range, drawdown, value and stretch each contribute a
+        number, and every component is stored with the call so the score can be taken apart.</p>
+      <div class="st-figs">
+        <div class="st-fig"><b id="tDPrices">0</b><span>prices made</span></div>
+        <div class="st-fig"><b id="tDConf">0</b><span>avg confidence</span></div>
+        <div class="st-fig"><b id="tDLong">0</b><span>long calls</span></div>
+        <div class="st-fig"><b id="tDAvoid">0</b><span>stand-asides</span></div>
+      </div>
+      <p class="st-note">Every component is stored with the call. Nothing here is a black box.</p>
+    </article>
+  </div>
+
+  <section class="st-panel">
+    <div class="st-panel-h">Who it sided with <em id="tSideCap">—</em></div>
+    <div style="padding:17px">
+      <div class="st-bar" id="tBar"></div>
+      <div class="st-key" id="tKey"></div>
+      <p class="st-note" style="border:0;padding:0;margin-top:14px" id="tSideNote">—</p>
+    </div>
+  </section>
+
+  <section class="st-panel">
+    <div class="st-panel-h">The last calls <em id="tRecentCap">—</em></div>
+    <ul class="st-rows" id="tRecent"><li>Reading the record…</li></ul>
+  </section>
+
+  <p class="st-disc">Simulated · virtual money · educational research, not investment advice. A forecast is a
+    hypothesis, not a recommendation, and the traders are wrong regularly — which is why nothing they say
+    reaches an account without the Executive and a human hand.</p>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 140); }
+    var D = F.Desk;
+    if(F.initNav) F.initNav();
+    if(F.initFX) F.initFX();
+    if(F.initReveal) F.initReveal();
+    if(F.initStagger) F.initStagger();
+    var $ = function(s){ return document.querySelector(s); };
+    var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); };
+    var num = function(el, v){ if(el) F.countTo(el, v); };
+    function fail(){
+      var s = $("#stStage"); if(s) s.textContent = "record unreachable";
+    }
+
+    D.agents().then(function(a){
+      if(!a) throw new Error("no agents");
+      var t = a.traders || {}, k = t.kronos || {}, d = t.dsa || {}, x = a.executive || {};
+      num($("#tKPrices"), k.prices || 0); num($("#tKConf"), k.avg_confidence || 0);
+      num($("#tKLong"), k.long || 0);     num($("#tKAvoid"), k.avoid || 0);
+      num($("#tDPrices"), d.prices || 0); num($("#tDConf"), d.avg_confidence || 0);
+      num($("#tDLong"), d.long || 0);     num($("#tDAvoid"), d.avoid || 0);
+
+      /* which model actually produced the forecasts -- never imply the big one ran */
+      var mk = $("#tKModel");
+      if(mk){
+        var real = k.real_model || 0, tot = k.prices || 0;
+        mk.textContent = tot === 0
+          ? "Kronos has not priced anything yet."
+          : real === 0
+            ? "Every forecast so far came from the in-browser approximation. The full Kronos model runs "
+              + "only while the Python bridge is connected, and it is not connected right now. The stored "
+              + "payload records which one ran, on every single call."
+            : real + " of " + tot + " forecasts came from the full Kronos model; the rest from the "
+              + "approximation. The stored payload records which one ran, on every call.";
+      }
+
+      var kk = x.sided_kronos || 0, dd = x.sided_dsa || 0, both = x.sided_both || 0, tot2 = x.total || 0;
+      var onlyK = Math.max(0, kk - both), onlyD = Math.max(0, dd - both);
+      var neither = Math.max(0, tot2 - onlyK - onlyD - both);
+      var sum = onlyK + onlyD + both + neither || 1;
+      var seg = [["both", both, "#f5b93c"], ["Kronos only", onlyK, "#7aa7ff"],
+                 ["DSA only", onlyD, "#3ddc97"], ["neither", neither, "#8d9ab6"]];
+      $("#tSideCap").textContent = tot2 + " rulings";
+      $("#tBar").innerHTML = seg.map(function(s){
+        return '<i style="width:' + (s[1] / sum * 100).toFixed(1) + '%;background:' + s[2] + '"></i>';
+      }).join("");
+      $("#tKey").innerHTML = seg.map(function(s){
+        return '<span><i style="background:' + s[2] + '"></i><b>' + s[1] + '</b> ' + esc(s[0]) + '</span>';
+      }).join("");
+      $("#tSideNote").textContent = tot2
+        ? "The Executive's side matched Kronos on " + kk + " rulings and DSA on " + dd + ". They agreed with "
+          + "each other and with the ruling " + both + " times. On " + neither + " it went with neither."
+        : "No rulings on the record yet.";
+    }).catch(fail);
+
+    D.floor().then(function(f){
+      if(!f || !f.round) return;
+      var r = f.round, live = r.status === "running";
+      var el = $("#stLive"); if(el) el.classList.toggle("on", live);
+      $("#stStage").textContent = live ? D.stageLabel(r.stage) : "round " + r.seq + " filed";
+      $("#stMeta").textContent = "Round " + r.seq + " · " + D.ago(r.finished_at || r.started_at);
+    }).catch(function(){});
+
+    D.decisions(12).then(function(list){
+      var host = $("#tRecent");
+      if(!list || !list.length){
+        host.innerHTML = '<li>No calls readable yet. <a href="./signin.html" style="color:var(--gold);' +
+          'text-decoration:underline">Sign in</a> to read every call, not just the round teaser.</li>';
+        return;
+      }
+      $("#tRecentCap").textContent = list.length + " calls";
+      host.innerHTML = list.map(function(d){
+        var k = d.kronos || {}, s = d.dsa || {};
+        var agree = k.side && s.side && k.side === s.side;
+        return '<li><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">' +
+          '<b style="font-family:var(--f-display);font-size:1.02rem">' + esc(d.ticker) + '</b>' +
+          '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;' +
+          'color:' + (agree ? "var(--clearing)" : "var(--gold)") + '">' +
+          (agree ? "agreed" : "split") + '</span>' +
+          '<span style="margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' +
+          D.ago(d.created_at) + '</span></div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:7px;font-size:13px;' +
+          'line-height:1.5;color:var(--text-dim)">' +
+          '<div><span style="font-family:var(--f-mono);font-size:12px;color:var(--floor);' +
+          'letter-spacing:.1em;text-transform:uppercase">Kronos</span><br>' +
+          (k.rationale ? esc(k.rationale) : "no forecast filed") + '</div>' +
+          '<div><span style="font-family:var(--f-mono);font-size:12px;color:var(--clearing);' +
+          'letter-spacing:.1em;text-transform:uppercase">DSA</span><br>' +
+          (s.rationale ? esc(s.rationale) : "no score filed") + '</div>' +
+          '</div></li>';
+      }).join("");
+    }).catch(function(){});
+
+  }
+  boot();
+});
+</script>
+</body>
+</html>
