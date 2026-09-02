@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Trade Ideas — Flux</title>
 <meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a backtest attached — every one gated by the Risk engine. Never a naked 'buy this'.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   /* ---- page-only layout: trade-ideas.html ---- */
   .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -25,7 +26,7 @@
   .hero-note b{color:var(--emerald);font-weight:700}
   .feed-card{padding:18px}
   .feed-card .fh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1}
-  .feed-card .fh .k{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;
+  .feed-card .fh .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--text-faint)}
   .feed-rows{display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
 
@@ -34,17 +35,17 @@
   .idea{padding:20px}
   .idea > *{position:relative;z-index:1}
   .idea-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .idea-top .av{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;
+  .idea-top .av{width:42px;height:42px;border-radius:4px;flex:none;display:grid;place-items:center;
     font-family:var(--f-mono);font-weight:700;font-size:12px;border:1px solid var(--line);
-    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.18),rgba(139,92,246,.12))}
+    background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.18),rgba(111,154,214,.12))}
   .idea-top .id{min-width:0}
   .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
   .idea-top .sub{font-size:.8rem;color:var(--text-faint);margin-top:2px}
-  .eng-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:4px 9px;border-radius:6px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+  .eng-tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:4px 9px;border-radius:3px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
   .idea-top .cf{margin-left:auto;text-align:right;flex:none}
   .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;line-height:1}
-  .idea-top .cf .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .idea-top .cf .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:14px 0 16px}
   .cbar i{display:block;height:100%;border-radius:3px}
   .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
@@ -52,16 +53,16 @@
   .thesis{font-size:.95rem;color:var(--text-dim);line-height:1.6}
   .kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
   @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}}
-  .kv{border:1px solid var(--line-2);border-radius:11px;background:var(--well);padding:9px 10px;min-width:0}
-  .kv .k{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
+  .kv{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:9px 10px;min-width:0}
+  .kv .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
   .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.92rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
-  .idea-chart{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:10px}
+  .idea-chart{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
   .idea-chart canvas{width:100%;height:118px;display:block}
-  .idea-chart .cl{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  .idea-chart .cl{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:8px}
   .idea-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;
     padding-top:15px;border-top:1px solid var(--line-2)}
-  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;
+  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
   .idea-foot .gate b{color:var(--emerald);font-weight:700}
   @media(max-width:560px){.idea-foot .gate{margin-left:0;width:100%}}
@@ -69,46 +70,46 @@
   /* brief rows (catalyst / risk) */
   .brief-rows{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
   .brief-rows > div{font-size:.86rem;line-height:1.5;color:var(--text-dim);padding-left:76px;position:relative}
-  .brief-rows span{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;
+  .brief-rows span{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--text-faint);width:66px}
   @media(max-width:560px){.brief-rows > div{padding-left:0}.brief-rows span{position:static;display:block;margin-bottom:2px}}
 
   /* locked (sign-in gated) idea card */
   .idea-locked{display:flex;align-items:center;justify-content:center;min-height:150px;
-    border-style:dashed !important;background:linear-gradient(180deg,rgba(0,242,255,.04),transparent)}
+    border-style:dashed !important;background:linear-gradient(180deg,rgba(232,179,60,.04),transparent)}
   .lock-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;text-align:left;padding:16px}
-  .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(0,242,255,.4))}
+  .lock-em{font-size:30px;filter:drop-shadow(0 0 12px rgba(232,179,60,.4))}
   .lock-tx b{display:block;font-size:1.05rem}
   .lock-tx span{display:block;color:var(--text-faint);font-size:.86rem;margin-top:3px;max-width:38ch}
 
   /* brief modal */
   .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;
-    padding:20px;background:rgba(2,6,23,.72);backdrop-filter:blur(6px)}
+    padding:20px;background:rgba(23,24,27,.72);}
   .brief-modal.show{display:flex}
-  .brief-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:18px}
+  .brief-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:4px}
   .bm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-2);
-    position:sticky;top:0;background:var(--glass);backdrop-filter:blur(12px);z-index:1}
-  .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:9px;
+    position:sticky;top:0;background:var(--glass);z-index:1}
+  .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:4px;
     width:32px;height:32px;cursor:pointer;font-size:14px}
   .bm-x:hover{color:var(--text);border-color:var(--cyan)}
   .bm-body{padding:18px}
   .bm-headline{font-size:1.05rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:16px}
   .bm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2)}
   @media(max-width:520px){.bm-row{grid-template-columns:1fr;gap:3px}}
-  .bm-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
+  .bm-k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
   .bm-v{font-size:.92rem;line-height:1.55;color:var(--text-dim)}
   .bm-disc{margin-top:16px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
   .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line-2);
-    position:sticky;bottom:0;background:var(--glass);backdrop-filter:blur(12px)}
+    position:sticky;bottom:0;background:var(--glass);}
 
   /* ---- anatomy ---- */
   .anno{padding:18px}
   .anno > *{position:relative;z-index:1}
   .anno-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line-2)}
   .anno-row:last-child{border-bottom:0}
-  .anno-row .n{width:24px;height:24px;flex:none;border-radius:8px;display:grid;place-items:center;
+  .anno-row .n{width:24px;height:24px;flex:none;border-radius:4px;display:grid;place-items:center;
     font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--cyan);
-    background:rgba(0,242,255,.08);border:1px solid rgba(0,242,255,.25)}
+    background:rgba(232,179,60,.08);border:1px solid rgba(232,179,60,.25)}
   .anno-row .c{min-width:0;flex:1}
   .anno-row .c .t{font-family:var(--f-mono);font-size:.85rem;font-weight:700}
   .anno-row .c .d{font-size:.82rem;color:var(--text-faint);margin-top:3px}
@@ -136,7 +137,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
@@ -150,8 +151,7 @@
 <section class="section phero">
   <div class="wrap t-hero">
     <div class="reveal">
-      <span class="eyebrow">AI Trade Ideas</span>
-      <h1 class="h1">Ideas with the <span class="grad-text">homework attached.</span></h1>
+<h1 class="h1">Ideas with the <span class="">homework attached.</span></h1>
       <p class="lede">Anyone can shout a ticker. A Flux idea arrives with the thesis in plain English,
         the levels it lives and dies on, a confidence score you can interrogate, and a backtest that
         shows how the setup behaved the last thousand times it appeared.</p>
@@ -160,9 +160,9 @@
         <a class="btn btn-ghost btn-lg" href="./research.html">How the research works</a>
       </div>
       <div class="hero-note">
-        <span><b>✓</b> Never a naked "buy this"</span>
-        <span><b>✓</b> Risk-gated before it ships</span>
-        <span><b>✓</b> Paper trade every one</span>
+        <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Never a naked "buy this"</span>
+        <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Risk-gated before it ships</span>
+        <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Paper trade every one</span>
       </div>
     </div>
 
@@ -172,7 +172,7 @@
         <span class="k">ranked by confidence</span>
       </div>
       <div class="feed-rows" id="feedRows"></div>
-      <p class="faint mono" style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:14px;position:relative;z-index:1">
+      <p class="faint mono" style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-top:14px;position:relative;z-index:1">
         Illustrative sample feed · not advice</p>
     </div>
   </div>
@@ -192,8 +192,7 @@
 <section class="section" id="feed">
   <div class="wrap">
     <div class="reveal" style="max-width:64ch">
-      <span class="eyebrow">Today's ideas</span>
-      <h2 class="h2" style="margin-top:16px">Fresh trade ideas, every day.</h2>
+<h2 class="h2" style="margin-top:16px">Fresh trade ideas, every day.</h2>
       <p class="lede" style="margin-top:16px">Each morning Fluxi scans the market — momentum leaders and beaten-down
         names with rebound potential — and writes a full brief for each: the thesis, the catalyst, the risk, and how
         much conviction it has. <b>The first is free; sign in to see them all.</b></p>
@@ -210,8 +209,7 @@
 <section class="section band" id="anatomy">
   <div class="wrap split wide-l">
     <div class="reveal">
-      <span class="eyebrow">Anatomy of an idea</span>
-      <h2 class="h2" style="margin-top:16px">Five parts. None of them optional.</h2>
+<h2 class="h2" style="margin-top:16px">Five parts. None of them optional.</h2>
       <p class="lede" style="margin-top:16px">If any one of these is missing, the idea doesn't ship. That rule
         is what stops the feed turning into a wall of tickers with arrows next to them.</p>
       <div class="flist">
@@ -249,7 +247,7 @@
       <div class="anno-row"><span class="n">5</span><div class="c">
         <div class="t">Risk gate</div>
         <div class="d">Sized to 0.8% of book · correlation 0.41 vs. holdings · passed</div></div></div>
-      <p class="faint mono" style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:16px">
+      <p class="faint mono" style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-top:16px">
         Illustrative example · hypothetical figures</p>
     </div>
   </div>
@@ -259,8 +257,7 @@
 <section class="section" id="scoring">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Scoring</span>
-      <h2 class="h2" style="margin-top:16px">From raw signal to a number you can argue with.</h2>
+<h2 class="h2" style="margin-top:16px">From raw signal to a number you can argue with.</h2>
       <p class="lede" style="margin-top:16px">Confidence isn't a vibe. It's the output of four steps, and you
         can open any of them to see why a score is 88 and not 62.</p>
     </div>
@@ -288,8 +285,7 @@
 <section class="section band" id="risk">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Risk first</span>
-      <h2 class="h2" style="margin-top:16px">The last engine to see an idea can kill it.</h2>
+<h2 class="h2" style="margin-top:16px">The last engine to see an idea can kill it.</h2>
       <p class="lede" style="margin-top:16px">A good setup in the wrong size, on top of three correlated
         positions, is a bad trade. Every idea passes the Risk engine before it reaches your feed — and every
         live order passes it again on the way out.</p>
@@ -340,8 +336,7 @@
 <section class="section" id="faq">
   <div class="wrap">
     <div class="reveal center" style="max-width:62ch;margin-inline:auto">
-      <span class="eyebrow c">Questions</span>
-      <h2 class="h2" style="margin-top:16px">The fair questions.</h2>
+<h2 class="h2" style="margin-top:16px">The fair questions.</h2>
     </div>
     <div class="faq reveal" style="margin-top:40px">
       <details open><summary>Do you place trades for me?</summary>
@@ -375,8 +370,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Read the homework. Then decide.</h2>
+<h2 class="h2" style="margin-top:14px">Read the homework. Then decide.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Open the feed, pick an idea apart, and
         paper trade it before a single dollar is at risk.</p>
       <div class="btn-row" style="justify-content:center">
@@ -393,11 +387,11 @@
     <div class="bm-head">
       <span class="pill live">Fluxi brief</span>
       <h3 id="briefTitle" style="margin:0;font-size:1.05rem"></h3>
-      <button type="button" class="bm-x" data-close aria-label="Close">✕</button>
+      <button type="button" class="bm-x" data-close aria-label="Close"><i class="ic-i i-close" aria-hidden="true"></i></button>
     </div>
     <div class="bm-body" id="briefBody"></div>
     <div class="bm-foot">
-      <button type="button" class="btn btn-primary btn-sm" id="briefDl">⬇ Download brief (.txt)</button>
+      <button type="button" class="btn btn-primary btn-sm" id="briefDl"><i class="ic-i i-down" aria-hidden="true"></i> Download brief (.txt)</button>
       <button type="button" class="btn btn-ghost btn-sm" data-close>Close</button>
     </div>
   </div>
@@ -410,11 +404,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -425,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $ = F.$ || function(s,r){return (r||document).querySelector(s)};
   var K = F.Kronos;
-  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a", CY = F.CY || "#e8b33c";
   function money(n){ return "$" + (+n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function pctS(x){ return (x>=0?"+":"") + (x*100).toFixed(1) + "%"; }
 
@@ -515,11 +509,11 @@ document.addEventListener("DOMContentLoaded", function(){
       '</div>' +
       '<div class="idea-foot">' +
         '<button type="button" class="btn btn-primary btn-sm" data-brief="' + esc(s.ticker) + '">📄 Read full brief</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" data-dlbrief="' + esc(s.ticker) + '">⬇ Download</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-dlbrief="' + esc(s.ticker) + '"><i class="ic-i i-down" aria-hidden="true"></i> Download</button>' +
         '<button type="button" class="btn btn-ghost btn-sm" data-paper="' + esc(s.ticker) + '" data-side="buy">Paper trade</button>' +
         '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + esc(s.ticker) + '">' + (F.Watch && F.Watch.has(s.ticker) ? "★ Watching" : "☆ Watch") + '</button>' +
         '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + esc(s.ticker) + '">Terminal</a>' +
-        '<span class="gate"><b>✓</b> Model estimate · not advice</span>' +
+        '<span class="gate"><b><i class="ic-i i-check" aria-hidden="true"></i></b> Model estimate · not advice</span>' +
       '</div>' +
       '<p class="disclaimer" style="margin-top:12px">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
     canvases.push({id: cid, seed: s.ticker, up: mom, col: col});
@@ -545,7 +539,7 @@ document.addEventListener("DOMContentLoaded", function(){
     (d.ideas||[]).forEach(function(s){ list.appendChild(serverCard(s)); });
     var locked = Math.max(0, (d.total || d.ideas.length) - d.ideas.length);
     if(!d.signedIn && locked > 0) list.appendChild(lockedCard(locked));
-    var cap = $("#feedCap");
+    var cap = $("#f0d59ap");
     if(cap && d.day) cap.textContent = "Today's ideas · " + (d.total || d.ideas.length) + " names · updated " + d.day;
     drawAll();
   }
@@ -575,7 +569,7 @@ document.addEventListener("DOMContentLoaded", function(){
         '<div class="idea-foot"><button type="button" class="btn btn-primary btn-sm" data-paper="' + s.t + '" data-side="' + (long?"buy":"sell") + '">Paper trade ' + s.t + '</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" data-watch="' + s.t + '">' + (F.Watch && F.Watch.has(s.t) ? "★ Watching" : "☆ Watch") + '</button>' +
           '<a class="btn btn-ghost btn-sm" href="./terminal.html?symbol=' + s.t + '">Open in terminal</a>' +
-          '<span class="gate"><b>✓</b> Model estimate · size to your own risk</span></div>' +
+          '<span class="gate"><b><i class="ic-i i-check" aria-hidden="true"></i></b> Model estimate · size to your own risk</span></div>' +
         '<p class="disclaimer" style="margin-top:12px">Paper trade — simulated fills on your $100k practice account. Not investment advice.</p>';
       list.appendChild(el);
       canvases.push({id: cid, seed: s.t, up: long, col: col});
@@ -610,7 +604,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     var res = Book.place({ side:side, ticker:ticker, qty:qty, type:"market" });
     if(res && res.ok){
-      btn.textContent = "✓ Added to paper book";
+      btn.textContent = "Added to paper book";
       btn.classList.remove("btn-primary");
       btn.classList.add("btn-ghost");
       btn.disabled = true;

@@ -12,7 +12,7 @@
   F.rnd=function(a){return a[Math.floor(Math.random()*a.length)]};
   F.ri=function(a,b){return Math.floor(a+Math.random()*(b-a+1))};
 
-  F.CY="#00f2ff"; F.VI="#8b5cf6"; F.EM="#10b981"; F.CR="#ef4444"; F.AM="#f5b544";
+  F.CY="#e8b33c"; F.VI="#6f9ad6"; F.EM="#56b97f"; F.CR="#e8674a"; F.AM="#e8b33c";
 
   /* ---- shared demo signals ---- */
   F.SIGNALS=[
@@ -141,7 +141,7 @@
       c.beginPath();c.moveTo(X(i),Y(k.h));c.lineTo(X(i),Y(k.l));c.stroke();
       var yo=Y(k.o),yc=Y(k.c);c.fillRect(X(i)-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)));});
     var last=cs[n-1].c,yL=Y(last);
-    c.strokeStyle="rgba(0,242,255,.5)";c.setLineDash([3,3]);
+    c.strokeStyle="rgba(232,179,60,.5)";c.setLineDash([3,3]);
     c.beginPath();c.moveTo(0,yL);c.lineTo(w,yL);c.stroke();c.setLineDash([]);
   };
 

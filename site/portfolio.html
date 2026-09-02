@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portfolio — Flux</title>
 <meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings — read-only until you say otherwise.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   /* ---- page-only layout: portfolio.html ---- */
   .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -27,17 +28,17 @@
   /* hero summary card */
   .pf-summary{padding:22px}
   .pf-sum-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-  .pf-sum-head .lb{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
+  .pf-sum-head .lb{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
   .pf-total-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
   .pf-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2rem,1.5rem + 2.4vw,2.9rem);
-    font-weight:750;letter-spacing:-.03em;border-radius:9px;padding:1px 6px;margin-left:-6px;width:max-content}
+    font-weight:750;letter-spacing:-.03em;border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
   .pf-day{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.98rem;font-weight:700}
   .pf-spark{width:100%;height:66px;display:block;margin:14px 0 2px}
   .pf-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-  .pf-q{border:1px solid var(--line-2);border-radius:12px;padding:11px 12px;background:var(--well);min-width:0}
-  .pf-q .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .pf-q{border:1px solid var(--line-2);border-radius:4px;padding:11px 12px;background:var(--well);min-width:0}
+  .pf-q .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .pf-q .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1rem;font-weight:700;margin-top:5px;letter-spacing:-.01em}
-  .pf-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--text-faint);margin-top:14px;
+  .pf-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--text-faint);margin-top:14px;
     display:flex;align-items:center;gap:7px}
   @keyframes pfglow{from{background:color-mix(in srgb,var(--cyan) 20%,transparent)}to{background:transparent}}
   .pf-flash{animation:pfglow .7s ease-out}
@@ -48,7 +49,7 @@
     mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
   .pf-chips{display:flex;gap:12px;width:max-content;padding:4px 2px}
   .pf-chip{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;padding:9px 16px;border-radius:100px;
-    border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px);
+    border:1px solid var(--line);background:var(--glass);
     font-family:var(--f-mono);font-size:.82rem;letter-spacing:.03em;color:var(--text-dim);font-weight:600}
   .pf-chip::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--grad);flex:none}
   .pf-static{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
@@ -56,14 +57,14 @@
   /* holdings table */
   .pf-tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.pf-hold{width:100%;min-width:540px;border-collapse:collapse;font-size:.9rem}
-  table.pf-hold th{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  table.pf-hold th{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 12px;white-space:nowrap}
   table.pf-hold th:first-child,table.pf-hold td:first-child{text-align:left;padding-left:4px}
   table.pf-hold th:last-child,table.pf-hold td:last-child{padding-right:4px}
   table.pf-hold td{text-align:right;padding:12px;border-top:1px solid var(--line-2);white-space:nowrap;
     font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   .pf-tk b{font-weight:700;font-size:.94rem;letter-spacing:.03em}
-  .pf-tk span{display:block;color:var(--text-faint);font-size:.72rem;line-height:1.3;font-family:var(--f-sans)}
+  .pf-tk span{display:block;color:var(--text-faint);font-size:.75rem;line-height:1.3;font-family:var(--f-sans)}
   .pf-wt-bar{position:relative;display:inline-block;width:52px;height:6px;border-radius:3px;
     background:rgba(255,255,255,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
   .pf-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--grad)}
@@ -81,7 +82,7 @@
   /* metric cards */
   .pf-metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
   .pf-metric{padding:16px 18px}
-  .pf-metric .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .pf-metric .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .pf-metric .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.4rem;font-weight:700;margin-top:7px;letter-spacing:-.02em}
   .pf-metric .s{font-size:.78rem;color:var(--text-faint);margin-top:4px}
   @media(max-width:420px){.pf-metrics{grid-template-columns:1fr}.pf-quick{grid-template-columns:1fr 1fr}}
@@ -90,13 +91,13 @@
   .pf-brief{padding:20px;overflow:hidden}
   .pf-brief .bh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .pf-brief .bh .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
-  .pf-brief .bh .ts{margin-left:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint)}
+  .pf-brief .bh .ts{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint)}
   .pf-brief .rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:8px}
   .pf-brief .rline b{color:var(--text);font-weight:600}
   .pf-brief.typing .rline{opacity:0;transform:translateY(6px)}
   .pf-brief.typing .rline.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
   .pf-brief .sigs{display:flex;flex-direction:column;gap:9px;margin-top:14px}
-  .pf-brief .foot{margin-top:14px;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--text-faint)}
+  .pf-brief .foot{margin-top:14px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--text-faint)}
 
   /* guardrail badge inside feat */
   .pf-rails{margin-top:26px}
@@ -119,7 +120,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./signin.html">Download</a>
@@ -133,8 +134,7 @@
 <section class="section phero">
   <div class="wrap pf-hero">
     <div class="reveal">
-      <span class="eyebrow">Flux Portfolio</span>
-      <h1 class="h1">Every account.<br><span class="grad-text grad-anim">One intelligent view.</span></h1>
+<h1 class="h1">Every account.<br><span class="">One intelligent view.</span></h1>
       <p class="lede">Connect your brokerage in seconds. Flux reads your positions, watches your risk in
         real time, and puts an AI analyst on your actual holdings — read-only until you say otherwise.</p>
       <div class="btn-row">
@@ -142,9 +142,9 @@
         <a class="btn btn-ghost btn-lg" href="./autopilot.html">See Autopilot</a>
       </div>
       <div class="pf-trust">
-        <span><b>✓</b> Read-only by default</span>
-        <span><b>✓</b> You control everything</span>
-        <span><b>✓</b> Not advice</span>
+        <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Read-only by default</span>
+        <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> You control everything</span>
+        <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Not advice</span>
       </div>
     </div>
 
@@ -182,8 +182,7 @@
 <section class="section" id="connect">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Connecting</span>
-      <h2 class="h2" style="margin-top:16px">Four steps. You hold every key.</h2>
+<h2 class="h2" style="margin-top:16px">Four steps. You hold every key.</h2>
       <p class="lede" style="margin-top:16px">Connecting is read-only by default and encrypted end to end.
         Flux never sees your broker password, never moves money, and never trades a share until you turn it
         on and set the rules yourself.</p>
@@ -198,9 +197,9 @@
       <p class="muted" style="margin-top:10px;font-size:.94rem">Live linking to Robinhood, Fidelity, Schwab and more (read-only) is rolling out. Drop your email and pick your broker — we'll invite you the moment it's live for you.</p>
       <form id="pfWaitForm" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
         <input id="pfWaitEmail" type="email" required placeholder="you@email.com" aria-label="Your email"
-          style="flex:1;min-width:180px;background:#040914;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:12px 14px;font-size:16px;outline:none">
+          style="flex:1;min-width:180px;background:#101113;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:16px;outline:none">
         <select id="pfWaitBroker" aria-label="Your broker"
-          style="background:#040914;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:12px 14px;font-size:16px">
+          style="background:#101113;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:16px">
           <option value="Robinhood">Robinhood</option><option value="Fidelity">Fidelity</option>
           <option value="Schwab">Schwab</option><option value="Webull">Webull</option>
           <option value="E*TRADE">E*TRADE</option><option value="Coinbase">Coinbase</option>
@@ -247,8 +246,7 @@
 <section class="section band" style="padding-block:clamp(48px,6vw,84px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Your book</span>
-      <h2 class="h2" style="margin-top:16px">Your portfolio, understood.</h2>
+<h2 class="h2" style="margin-top:16px">Your portfolio, understood.</h2>
       <p class="lede" style="margin-top:14px">Positions, weight, day moves and concentration in one place —
         the way a desk actually looks at a book, not fifteen tabs you have to reconcile yourself.</p>
     </div>
@@ -345,8 +343,7 @@
 <section class="section" id="insights">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Intelligence</span>
-      <h2 class="h2" style="margin-top:16px">An AI analyst on your actual names.</h2>
+<h2 class="h2" style="margin-top:16px">An AI analyst on your actual names.</h2>
       <p class="lede" style="margin-top:16px">Generic research talks about the market. Flux talks about
         <em>your</em> book — the positions you hold, the risk you're carrying and the catalysts on your
         tickers. Probabilistic, sourced, and never a recommendation.</p>
@@ -395,7 +392,7 @@
       <div class="glass sheen pf-brief reveal" id="pfBrief">
         <div class="bh">
           <span class="pill pill-violet"><i></i> Reporter</span>
-          <span class="ttl grad-text grad-anim">Your Portfolio Brief</span>
+          <span class="ttl">Your Portfolio Brief</span>
           <span class="ts" id="briefTs">—</span>
         </div>
         <p class="rline">Your book is <b>+1.4%</b> this morning, carried by <b>NVDA</b> and <b>COIN</b>; only
@@ -411,8 +408,7 @@
       </div>
 
       <div class="reveal">
-        <span class="eyebrow">How to read it</span>
-        <h3 class="h3" style="margin-top:14px;font-size:1.4rem">Sourced, per-name, and honest about uncertainty.</h3>
+<h3 class="h3" style="margin-top:14px;font-size:1.4rem">Sourced, per-name, and honest about uncertainty.</h3>
         <div class="flist">
           <div class="fi"><span class="k">%</span><div><b>Probabilities, not calls</b>
             <p>Every forecast is a probability with a confidence score — the ensemble's view, never a promise
@@ -433,8 +429,7 @@
 <section class="section band" id="autopilot" style="padding-block:clamp(48px,6vw,84px)">
   <div class="wrap split">
     <div class="reveal">
-      <span class="eyebrow">Opt-in trading</span>
-      <h2 class="h2" style="margin-top:16px">Autopilot, on rails you set.</h2>
+<h2 class="h2" style="margin-top:16px">Autopilot, on rails you set.</h2>
       <p class="lede" style="margin-top:16px">If — and only if — you turn it on, Flux Autopilot can execute
         inside guardrails you define: <b>max position size</b>, a <b>daily loss limit</b>, an <b>allowed-ticker
         list</b> and a strategy you approve. It trades within those rails, logs every action, and stops the
@@ -473,8 +468,7 @@
 <section class="section">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Security &amp; consent</span>
-      <h2 class="h2" style="margin-top:16px">Consent-first, by design.</h2>
+<h2 class="h2" style="margin-top:16px">Consent-first, by design.</h2>
       <p class="lede" style="margin-top:16px">Access is something you grant and can take back. Flux is built so
         the default is the safe one — and nothing happens on your account that you didn't ask for.</p>
     </div>
@@ -497,7 +491,7 @@
         <p>Your portfolio is yours. Flux does not sell it, and does not share it to advertise to you.</p>
       </div>
       <div class="glass glass-hover feat reveal">
-        <div class="ic">✓</div><h3>You approve every permission</h3>
+        <div class="ic"><i class="ic-i i-check" aria-hidden="true"></i></div><h3>You approve every permission</h3>
         <p>Any trading permission is a deliberate, explicit opt-in — with your rules attached before a single order.</p>
       </div>
       <div class="glass glass-hover feat reveal">
@@ -529,8 +523,7 @@
 <section class="section">
   <div class="wrap">
     <div class="reveal center" style="max-width:62ch;margin-inline:auto">
-      <span class="eyebrow c">Questions</span>
-      <h2 class="h2" style="margin-top:16px">What Flux Portfolio is — and isn't.</h2>
+<h2 class="h2" style="margin-top:16px">What Flux Portfolio is — and isn't.</h2>
     </div>
     <div class="faq reveal" style="margin-top:40px">
       <details open><summary>Is my connection read-only?</summary>
@@ -560,8 +553,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c" style="justify-content:center">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Put an AI analyst on your real portfolio.</h2>
+<h2 class="h2" style="margin-top:14px">Put an AI analyst on your real portfolio.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Connect read-only in seconds, see your whole
         book in one view, and only ever hand over more when you decide to.</p>
       <div class="btn-row" style="justify-content:center">
@@ -583,11 +575,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./signin.html">Download</a><a href="./signin.html">iOS · App Store</a><a href="./signin.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Portfolio figures shown are an illustrative sample. Brokerage connections are read-only unless you explicitly enable trading, and Autopilot never trades your account without your approval and your rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -599,8 +591,8 @@ document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-  var CY = F.CY || "#00f2ff", VI = F.VI || "#8b5cf6", EM = F.EM || "#10b981",
-      AM = F.AM || "#f5b544", BL = "#6ab8ff";
+  var CY = F.CY || "#e8b33c", VI = F.VI || "#6f9ad6", EM = F.EM || "#56b97f",
+      AM = F.AM || "#e8b33c", BL = "#6f9ad6";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
   /* ---------------- broker chips ---------------- */
@@ -630,7 +622,7 @@ document.addEventListener("DOMContentLoaded", function(){
       if(btn) btn.disabled=true;
       var done=function(ok){
         if(btn) btn.disabled=false;
-        if(ok){ msg.style.color="var(--emerald)"; msg.textContent="✓ You're on the list for "+broker+" — we'll email "+email+" when it's live."; waitForm.reset(); }
+        if(ok){ msg.style.color="var(--emerald)"; msg.textContent="You're on the list for "+broker+" — we'll email "+email+" when it's live."; waitForm.reset(); }
         else { msg.style.color="var(--crimson)"; msg.textContent="Couldn't save that — try again in a moment."; }
       };
       if(window.FluxSupa && FluxSupa.joinWaitlist){
@@ -656,7 +648,7 @@ document.addEventListener("DOMContentLoaded", function(){
   drawSpark();
 
   /* ---------------- allocation donut + holdings (real paper book) ---------------- */
-  var COLORS = [CY, VI, EM, AM, BL, "#f472b6", "#34d399", "#fbbf24", "#22d3ee", "#c084fc"];
+  var COLORS = [CY, VI, EM, AM, BL, "#f472b6", "#7cc99a", "#fbbf24", "#22d3ee", "#c084fc"];
 
   /* fallback (only used if the paper-account engine isn't loaded) */
   var HOLD = [
@@ -824,10 +816,10 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     /* center label */
     c.textAlign = "center";
-    c.fillStyle = "#dce1fb";
+    c.fillStyle = "#eae6dc";
     c.font = "700 " + Math.round(R * 0.30) + "px 'JetBrains Mono', monospace";
     c.fillText(kfmt(pfMktSum), cx, cy - 1);
-    c.fillStyle = "#6b7a9c";
+    c.fillStyle = "#8d8879";
     c.font = "600 " + Math.round(R * 0.13) + "px 'JetBrains Mono', monospace";
     c.fillText(pfPosCount + " HOLDING" + (pfPosCount === 1 ? "" : "S"), cx, cy + R * 0.24);
   }

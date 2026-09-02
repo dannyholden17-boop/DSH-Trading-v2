@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI News — Flux</title>
 <meta name="description" content="A live finance news feed: real headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg, MarketWatch and Yahoo Finance, merged and shuffled, filterable by category and your watchlist. News is informational only — not investment advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
-<script src="./assets/flux-news.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
+<script src="./assets/flux-news.js?v=20" defer></script>
 <style>
   /* ---- page-only layout: news.html ---- */
   .nw-hero{max-width:66ch}
@@ -31,9 +32,9 @@
     padding:8px 14px;border-radius:100px;cursor:pointer;color:var(--text-dim);
     border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
   .nw-chip:hover{color:var(--text)}
-  .nw-chip[aria-pressed="true"]{color:var(--cyan);border-color:rgba(0,242,255,.45);background:rgba(0,242,255,.08)}
+  .nw-chip[aria-pressed="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
   .nw-chip:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
-  .nw-clock{margin-left:auto;font-family:var(--f-mono);font-size:.74rem;color:var(--text-faint);white-space:nowrap}
+  .nw-clock{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);white-space:nowrap}
   @media(max-width:560px){.nw-clock{margin-left:0;width:100%}}
 
   /* ---- feed layout ---- */
@@ -46,28 +47,28 @@
   .nw-card>*{position:relative;z-index:1}
   .nw-card.nw-new{animation:pop .5s both}
   .nw-chead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
-  .nw-sent{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:3px 9px;border-radius:6px;white-space:nowrap}
+  .nw-sent{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    padding:3px 9px;border-radius:3px;white-space:nowrap}
   .nw-sent.bull{background:color-mix(in srgb,var(--emerald) 15%,transparent);color:#5ee9b5}
-  .nw-sent.bear{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#ff9a9a}
+  .nw-sent.bear{background:color-mix(in srgb,var(--crimson) 16%,transparent);color:#f3ab97}
   .nw-sent.neut{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
   .nw-time{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--text-faint);white-space:nowrap}
   .nw-hl{font-size:1.02rem;font-weight:700;line-height:1.34;letter-spacing:-.01em}
   .nw-sum{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-top:9px}
-  .nw-ai{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;font-weight:700;color:var(--cyan);
-    border:1px solid rgba(0,242,255,.3);border-radius:5px;padding:1px 5px;background:rgba(0,242,255,.08);
+  .nw-ai{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;font-weight:700;color:var(--cyan);
+    border:1px solid rgba(232,179,60,.3);border-radius:3px;padding:1px 5px;background:rgba(232,179,60,.08);
     vertical-align:1px;margin-right:4px}
   .nw-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
   .nw-tks{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
-  .nw-tk{font-family:var(--f-mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;
+  .nw-tk{font-family:var(--f-mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;
     border:1px solid var(--line-2);background:var(--well)}
   .nw-tk em{font-style:normal;font-weight:600;font-size:10px;margin-left:5px}
-  .nw-src{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
+  .nw-src{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
   .nw-impact{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);
-    font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
   .nw-impact .bars{display:inline-flex;gap:3px}
   .nw-impact .bars i{width:5px;height:11px;border-radius:2px;background:rgba(255,255,255,.1)}
-  .nw-impact .bars i.on{background:var(--cyan);box-shadow:0 0 8px rgba(0,242,255,.5)}
+  .nw-impact .bars i.on{background:var(--cyan);box-shadow:var(--lift-1)}
   @media(max-width:560px){.nw-impact{margin-left:0}}
 
   /* ---- sidebar ---- */
@@ -77,7 +78,7 @@
   .nw-panel>*{position:relative;z-index:1}
   .nw-phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .nw-phead h3{font-size:1.02rem}
-  .nw-phead .k{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+  .nw-phead .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--text-faint)}
 
   /* pulse (typewriter reveal) */
@@ -87,7 +88,7 @@
   .nw-pulse.typing .nw-pl{opacity:0;transform:translateY(6px)}
   .nw-pulse.typing .nw-pl.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
   .nw-caret{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:-2px;
-    box-shadow:0 0 8px var(--cyan);animation:blink 1s steps(1) infinite;margin-left:2px}
+    box-shadow:var(--lift-1);animation:blink 1s steps(1) infinite;margin-left:2px}
   .nw-caret.done{display:none}
 
   .nw-movers{display:flex;flex-direction:column;gap:9px}
@@ -102,9 +103,9 @@
 
   /* ---- sector sentiment strip ---- */
   .nw-sect{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-  .nw-sec{border:1px solid var(--line-2);border-radius:14px;background:var(--well);padding:14px 15px;min-width:0}
+  .nw-sec{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:14px 15px;min-width:0}
   .nw-sec .nm{font-size:.86rem;font-weight:600;line-height:1.25}
-  .nw-sec .lb{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
+  .nw-sec .lb{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
   .nw-sec .track{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:9px}
   .nw-sec .track i{display:block;height:100%;border-radius:3px;transition:width .6s ease}
 </style>
@@ -126,7 +127,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./signin.html">Sign in</a>
       <a class="btn btn-primary btn-sm" href="./dashboard.html">Launch app</a>
@@ -139,8 +140,7 @@
 <!-- ============ HERO ============ -->
 <section class="section phero">
   <div class="wrap nw-hero reveal">
-    <span class="eyebrow">AI News</span>
-    <h2 class="h2">The wire, <span class="grad-text">live and shuffled.</span></h2>
+<h2 class="h2">The wire, <span class="">live and shuffled.</span></h2>
     <p class="lede">Real finance headlines from the Wall Street Journal, CNBC, Reuters, Bloomberg,
       MarketWatch, Yahoo Finance and more — merged into one feed, refreshed through the day, and
       filterable by what matters to your book.</p>
@@ -200,7 +200,7 @@
           <span class="k">from the scanner</span>
         </div>
         <div class="nw-movers" id="nwMovers"></div>
-        <p class="mono" style="margin-top:12px;font-size:.72rem;color:var(--text-faint)">
+        <p class="mono" style="margin-top:12px;font-size:.75rem;color:var(--text-faint)">
           Sample engine output · confidence is model agreement, not a promise.</p>
       </div>
 
@@ -220,13 +220,12 @@
 <section class="section band" style="padding-block:clamp(48px,6vw,80px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">Sentiment map</span>
-      <h2 class="h2" style="margin-top:16px">How the wire is leaning, by sector.</h2>
+<h2 class="h2" style="margin-top:16px">How the wire is leaning, by sector.</h2>
       <p class="lede" style="margin-top:14px">FinBERT scores every headline as bullish, bearish or neutral, then
         Flux rolls those scores up by sector — so you can see where the tone is turning before the tape does.</p>
     </div>
     <div class="nw-sect reveal" id="nwSect" style="margin-top:32px"></div>
-    <p class="mono reveal" style="margin-top:16px;font-size:.72rem;color:var(--text-faint)">
+    <p class="mono reveal" style="margin-top:16px;font-size:.75rem;color:var(--text-faint)">
       Simulated sentiment · drifts in-browser for demonstration.</p>
   </div>
 </section>
@@ -235,8 +234,7 @@
 <section class="section">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-      <span class="eyebrow">How it works</span>
-      <h2 class="h2" style="margin-top:16px">How Flux reads the news.</h2>
+<h2 class="h2" style="margin-top:16px">How Flux reads the news.</h2>
       <p class="lede" style="margin-top:16px">A person can skim ten headlines and miss the one that mattered.
         Flux reads the whole wire, scores every line, and only surfaces what actually touches your book.</p>
     </div>
@@ -264,8 +262,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Stop reading the wire. Let it read itself.</h2>
+<h2 class="h2" style="margin-top:14px">Stop reading the wire. Let it read itself.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Your AI Daily Brief pulls the same feed
         into one page each morning — the headlines that touched your book, summarized and scored, before the bell.</p>
       <div class="btn-row" style="justify-content:center">
@@ -286,11 +283,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The news feed aggregates real headlines from public RSS feeds (WSJ, CNBC, Reuters, Bloomberg, MarketWatch, Yahoo Finance and others) and links out to the original publishers; article text is not rehosted. Market data shown may be delayed or simulated. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -302,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff", AM = F.AM || "#f5b544";
+  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a", CY = F.CY || "#e8b33c", AM = F.AM || "#e8b33c";
   var reduce = (F.reduced && F.reduced()) ||
     (window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches);
   var seed = F.seed || function(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%233280;return h||7;};

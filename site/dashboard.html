@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard — Flux</title>
 <meta name="description" content="Your Flux members dashboard: the AI Daily Brief, ranked AI trade recommendations, your sample portfolio, watchlist and quick links into the trading app. Simulated sample account — illustrative, not advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
-<script src="./assets/flux-desk.js?v=19" defer></script>
-<script src="./assets/flux-news.js?v=19" defer></script>
-<script src="./assets/flux-jarvis.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
+<script src="./assets/flux-desk.js?v=20" defer></script>
+<script src="./assets/flux-news.js?v=20" defer></script>
+<script src="./assets/flux-jarvis.js?v=20" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: dashboard.html (db- prefixed)
@@ -34,7 +35,7 @@
   /* ---- section heads ---- */
   .db-shead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
   .db-shead .lede{margin-top:12px}
-  .db-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:18px}
+  .db-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:18px}
 
   /* ---- AI daily brief ---- */
   .db-brief{padding:22px;overflow:hidden}
@@ -50,37 +51,37 @@
   .db-brief.typing .db-line{opacity:0;transform:translateY(6px)}
   .db-brief.typing .db-line.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
   .db-caret{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:-2px;
-    box-shadow:0 0 8px var(--cyan);animation:dbBlink 1s steps(1) infinite;margin-left:2px}
+    box-shadow:var(--lift-1);animation:dbBlink 1s steps(1) infinite;margin-left:2px}
   .db-caret.done{display:none}
   @keyframes dbBlink{50%{opacity:0}}
   .db-brief-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
-  .db-brief-foot .st{font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
-  .db-brief-foot .cap{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+  .db-brief-foot .st{font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
+  .db-brief-foot .cap{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
 
   /* ---- recommendation cards ---- */
   .db-rec{padding:18px;display:flex;flex-direction:column}
   .db-rec > *{position:relative;z-index:1}
   .db-rec-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .db-rank{font-family:var(--f-mono);font-weight:700;font-size:12px;color:var(--cyan);flex:none;
-    border:1px solid rgba(0,242,255,.25);background:rgba(0,242,255,.08);border-radius:8px;padding:5px 8px;line-height:1}
+    border:1px solid rgba(232,179,60,.25);background:rgba(232,179,60,.08);border-radius:4px;padding:5px 8px;line-height:1}
   .db-rec-id{min-width:0;flex:1}
   .db-rec-tk{font-family:var(--f-mono);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
   .db-rec-tk span{font-size:.82rem}
   .db-rec-sub{font-size:.76rem;color:var(--text-faint);margin-top:2px}
-  .db-eng{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;flex:none;
-    padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+  .db-eng{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;flex:none;
+    padding:4px 8px;border-radius:3px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
   .db-thesis{font-size:.88rem;color:var(--text-dim);line-height:1.55;margin-top:14px}
   .db-conf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:16px;font-family:var(--f-mono)}
   .db-conf .n{font-weight:700;font-size:1.05rem;line-height:1}
-  .db-conf .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .db-conf .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .db-cbar{height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:9px 0 0}
   .db-cbar i{display:block;height:100%;border-radius:3px}
   .db-kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}
   @media(max-width:480px){.db-kvs{grid-template-columns:1fr 1fr}}
-  .db-kv{border:1px solid var(--line-2);border-radius:10px;background:var(--well);padding:8px 9px;min-width:0}
-  .db-kv .k{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
+  .db-kv{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:8px 9px;min-width:0}
+  .db-kv .k{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
   .db-kv .v{font-family:var(--f-mono);font-weight:700;font-size:.85rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
-  .db-rec-spark{margin-top:14px;border:1px solid var(--line-2);border-radius:10px;background:var(--well);padding:8px}
+  .db-rec-spark{margin-top:14px;border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:8px}
   .db-rec-spark canvas{width:100%;height:52px;display:block}
   .db-rec-foot{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-2)}
   .db-rec-foot .btn{flex:1 1 0;min-width:0}
@@ -91,26 +92,26 @@
   .db-hold-card{padding:22px}
   .db-tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.db-hold{width:100%;min-width:520px;border-collapse:collapse;font-size:.88rem}
-  table.db-hold th{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  table.db-hold th{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 12px;white-space:nowrap}
   table.db-hold th:first-child,table.db-hold td:first-child{text-align:left;padding-left:2px}
   table.db-hold th:last-child,table.db-hold td:last-child{padding-right:2px}
   table.db-hold td{text-align:right;padding:12px;border-top:1px solid var(--line-2);white-space:nowrap;
     font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   .db-tk b{font-weight:700;font-size:.92rem;letter-spacing:.03em}
-  .db-tk span{display:block;color:var(--text-faint);font-size:.72rem;line-height:1.3;font-family:var(--f-sans)}
+  .db-tk span{display:block;color:var(--text-faint);font-size:.75rem;line-height:1.3;font-family:var(--f-sans)}
   .db-wt-bar{position:relative;display:inline-block;width:48px;height:6px;border-radius:3px;
     background:rgba(255,255,255,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
   .db-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--grad)}
-  .db-foot-cap{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--text-faint);margin-top:16px;
+  .db-foot-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--text-faint);margin-top:16px;
     display:flex;align-items:center;gap:8px}
 
   .db-mstack{display:flex;flex-direction:column;gap:14px}
   .db-metric{padding:16px 18px}
-  .db-metric .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .db-metric .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .db-metric .s{font-size:.78rem;color:var(--text-faint);margin-top:4px}
   .db-total{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-.03em;
-    font-size:clamp(1.7rem,1.3rem + 2vw,2.35rem);border-radius:9px;padding:1px 6px;margin-left:-6px;width:max-content}
+    font-size:clamp(1.7rem,1.3rem + 2vw,2.35rem);border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
   .db-total-sub{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.92rem;font-weight:700;margin-top:6px}
   .db-mrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:420px){.db-mrow{grid-template-columns:1fr}}
@@ -124,18 +125,18 @@
   .db-wl{display:flex;flex-direction:column}
   .db-wl-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line-2)}
   .db-wl-row:first-child{border-top:0}
-  .db-wl-av{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
+  .db-wl-av{width:34px;height:34px;border-radius:4px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
     font-weight:700;font-size:11px;border:1px solid var(--line);
-    background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.16),rgba(139,92,246,.1))}
+    background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.16),rgba(111,154,214,.1))}
   .db-wl-id{min-width:0;flex:1}
   .db-wl-id b{font-family:var(--f-mono);font-weight:700;font-size:.92rem}
-  .db-wl-id span{display:block;font-size:.72rem;color:var(--text-faint)}
+  .db-wl-id span{display:block;font-size:.75rem;color:var(--text-faint)}
   .db-wl-spark{width:66px;height:26px;flex:none;display:block}
   @media(max-width:400px){.db-wl-spark{display:none}}
   .db-wl-px{text-align:right;font-family:var(--f-mono);flex:none;font-variant-numeric:tabular-nums}
   .db-wl-px .last{font-weight:700;font-size:.9rem}
   .db-wl-px .chg{font-size:.78rem;font-weight:700;margin-top:2px}
-  .db-wl-hint{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:14px}
+  .db-wl-hint{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-top:14px}
 
   /* ---- autopilot status ---- */
   .db-ap{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:24px}
@@ -148,13 +149,13 @@
   .db-ap-note{color:var(--text-dim);font-size:.85rem;line-height:1.55;margin-top:12px;max-width:52ch}
   .db-ap-stats{display:flex;gap:26px;flex-wrap:wrap}
   .db-ap-stats .qs .n{font-family:var(--f-mono);font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
-  .db-ap-stats .qs .l{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+  .db-ap-stats .qs .l{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .db-ap-right{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 
   /* ---- quick actions ---- */
   .db-qa{padding:22px}
-  .db-qa .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-mono);font-size:20px;
-    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.16),rgba(139,92,246,.1));margin-bottom:14px}
+  .db-qa .ic{width:44px;height:44px;border-radius:4px;display:grid;place-items:center;font-family:var(--f-mono);font-size:20px;
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.16),rgba(111,154,214,.1));margin-bottom:14px}
   .db-qa h3{font-size:1.02rem}
   .db-qa p{color:var(--text-dim);font-size:.85rem;margin-top:6px;line-height:1.5}
   .db-qa .go{font-family:var(--f-mono);font-size:.8rem;color:var(--cyan);margin-top:12px;display:inline-block}
@@ -163,19 +164,19 @@
   .dk-w-top{display:flex;align-items:center;gap:9px;font-size:.92rem}
   .dk-w-dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
   .dk-w-dot.on{background:var(--emerald);animation:dkw 1.6s infinite}
-  @keyframes dkw{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}70%{box-shadow:0 0 0 7px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  @keyframes dkw{0%{box-shadow:0 0 0 0 rgba(86,185,127,.5)}70%{box-shadow:0 0 0 7px rgba(86,185,127,0)}100%{box-shadow:0 0 0 0 rgba(86,185,127,0)}}
   .dk-w-ago{margin-left:auto;font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint)}
   .dk-w-bar{height:4px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden;margin:10px 0 9px}
-  .dk-w-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),#8b5cf6);transition:width .6s ease}
-  .dk-w-sub{font-family:var(--f-mono);font-size:.72rem;color:var(--text-dim);letter-spacing:.03em}
+  .dk-w-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),#6f9ad6);transition:width .6s ease}
+  .dk-w-sub{font-family:var(--f-mono);font-size:.75rem;color:var(--text-dim);letter-spacing:.03em}
   .dk-w-sub .ok{color:var(--emerald)} .dk-w-sub .mut{color:var(--text-faint)}
-  .dk-call{border:1px solid var(--line);border-radius:14px;background:var(--glass);padding:15px 16px}
+  .dk-call{border:1px solid var(--line);border-radius:4px;background:var(--glass);padding:15px 16px}
   .dk-call .t{display:flex;align-items:center;gap:9px}
   .dk-call .tk{font-family:var(--f-mono);font-weight:800}
-  .dk-call .vd{margin-left:auto;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:.1em;
+  .dk-call .vd{margin-left:auto;font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;border:1px solid currentColor;border-radius:100px;padding:3px 8px}
   .dk-call p{margin:8px 0 0;font-size:.86rem;color:var(--text-dim);line-height:1.5}
-  .dk-call .lv{margin-top:9px;font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint)}
+  .dk-call .lv{margin-top:9px;font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint)}
 </style>
 </head>
 <body>
@@ -195,7 +196,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
       <a class="btn btn-primary btn-sm" href="./dashboard.html">Account</a>
@@ -227,7 +228,7 @@
     <div class="glass reveal" id="dbBrief" style="margin-top:18px;padding:16px 18px;display:flex;gap:13px;align-items:flex-start">
       <span style="font-size:1.3rem;line-height:1.2;filter:drop-shadow(0 0 8px rgba(var(--glow-c),.6))">◇</span>
       <div style="min-width:0;flex:1">
-        <div class="mono" style="font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">Fluxi · your morning read</div>
+        <div class="mono" style="font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">Fluxi · your morning read</div>
         <p id="dbBriefText" style="margin-top:6px;color:var(--text-dim);font-size:.95rem;line-height:1.55">Reading the tape…</p>
         <a class="btn btn-ghost btn-sm" href="./ai.html" style="margin-top:10px">Ask Fluxi anything →</a>
       </div>
@@ -293,10 +294,10 @@ document.addEventListener("DOMContentLoaded", function(){
     var doneN = 0;
     document.getElementById("obList").innerHTML = steps.map(function(s,i){
       var ok = !!s.done(); if(ok) doneN++;
-      var mark = ok ? '<span style="color:var(--emerald);font-weight:800">✓</span>'
+      var mark = ok ? '<span style="color:var(--emerald);font-weight:800"><i class="ic-i i-check" aria-hidden="true"></i></span>'
         : '<span style="font-family:var(--f-mono);color:var(--cyan)">'+(i+1)+'</span>';
       return '<a class="glass glass-hover" data-ob="'+s.k+'" href="'+s.href+'" style="text-decoration:none;color:inherit;padding:15px;display:block;'+(ok?'opacity:.7':'')+'">'+
-        '<div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;flex:none">'+mark+'</span>'+
+        '<div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:4px;border:1px solid var(--line);display:grid;place-items:center;flex:none">'+mark+'</span>'+
         '<b style="font-size:.95rem">'+s.ic+' '+s.t+'</b></div>'+
         '<div class="muted" style="font-size:.82rem;margin-top:8px">'+s.d+'</div></a>';
     }).join("");
@@ -328,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="glass sheen db-brief reveal" id="dbBrief">
       <div class="db-brief-head">
         <span class="pill pill-violet"><i></i> Flux-LM</span>
-        <span class="ttl grad-text grad-anim">AI Daily Brief</span>
+        <span class="ttl">AI Daily Brief</span>
         <span class="db-clock" id="dbClock">—</span>
       </div>
       <div class="db-lines" id="dbBriefLines"></div>
@@ -346,8 +347,7 @@ document.addEventListener("DOMContentLoaded", function(){
   <div class="wrap">
     <div class="db-shead reveal">
       <div style="max-width:60ch">
-        <span class="eyebrow">AI trade recommendations</span>
-        <h2 class="h2" style="margin-top:14px">Ranked by engine agreement.</h2>
+<h2 class="h2" style="margin-top:14px">Ranked by engine agreement.</h2>
         <p class="lede">Eight live research signals, sorted by confidence and expanded in full — the thesis,
           the levels, and a price trace. Every one is a research signal, not advice.</p>
       </div>
@@ -362,19 +362,17 @@ document.addEventListener("DOMContentLoaded", function(){
 <!-- ============ KRONOS AI SIGNALS ============ -->
 <section class="section" style="padding-top:0" id="kronosSignals">
   <div class="wrap">
-    <span class="eyebrow">Kronos AI</span>
-    <h2 class="h2 reveal">Today's forecast signals.</h2>
+<h2 class="h2 reveal">Today's forecast signals.</h2>
     <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return — <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:.8rem">Forecast-driven · not advice.</span></p>
     <div class="grid g-3 reveal" id="kSignals" style="margin-top:22px"></div>
-    <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
+    <p class="mono" style="font-size:11px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
   </div>
 </section>
 
 <!-- ============ THE DESK (live research loop) ============ -->
 <section class="section" style="padding-top:0" id="deskLive">
   <div class="wrap">
-    <span class="eyebrow">The desk</span>
-    <h2 class="h2 reveal">Research that never stops.</h2>
+<h2 class="h2 reveal">Research that never stops.</h2>
     <p class="lede reveal" style="max-width:64ch">Three analysts, a Director of Research, Kronos and the DSA engine, and an Executive with the green light — running in a loop right now. <a href="./desk.html" style="color:var(--cyan)">Watch the desk →</a></p>
     <div class="glass reveal" id="dbDesk" style="margin-top:22px;padding:16px 18px"><span class="dk-w-idle">Connecting to the desk…</span></div>
     <div class="grid g-3 reveal" id="dbDeskCalls" style="margin-top:14px"></div>
@@ -384,8 +382,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <!-- ============ NEWS ============ -->
 <section class="section" style="padding-top:0" id="newsFeed">
   <div class="wrap">
-    <span class="eyebrow">The wire</span>
-    <h2 class="h2 reveal">Finance news, shuffled live.</h2>
+<h2 class="h2 reveal">Finance news, shuffled live.</h2>
     <p class="lede reveal" style="max-width:62ch">WSJ, CNBC, Reuters, Bloomberg, MarketWatch and more — merged and refreshed through the day. <a href="./news.html" style="color:var(--cyan)">Open the full feed →</a></p>
     <div class="glass reveal" id="dbNews" style="margin-top:22px;padding:14px 18px"><div class="fnw-empty">Loading headlines…</div></div>
   </div>
@@ -411,13 +408,13 @@ document.addEventListener("DOMContentLoaded", function(){
       var nm = (F.NAMES && F.NAMES[r.ticker]) || "";
       return '<a class="glass feat glass-hover sheen" style="text-decoration:none;color:inherit" href="./terminal.html?symbol='+r.ticker+'">'+
         '<div style="display:flex;align-items:center;gap:10px"><b style="font-family:var(--f-mono);font-size:1.05rem">'+r.ticker+'</b>'+
-        '<span style="font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:6px;border:1px solid '+col+';color:'+col+'">'+r.action+'</span>'+
-        '<span class="mono" style="margin-left:auto;font-size:9px;color:var(--text-faint)">'+(r.model||"Kronos")+'</span></div>'+
+        '<span style="font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:3px;border:1px solid '+col+';color:'+col+'">'+r.action+'</span>'+
+        '<span class="mono" style="margin-left:auto;font-size:11px;color:var(--text-faint)">'+(r.model||"Kronos")+'</span></div>'+
         '<div class="muted" style="font-size:.78rem;margin-top:6px">'+nm+'</div>'+
         '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-family:var(--f-mono)">'+
-          '<div><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Pred. return</div>'+
+          '<div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Pred. return</div>'+
           '<div style="font-weight:700;font-size:1.15rem;color:'+col+'">'+K.fmtPct(r.predReturn)+'</div></div>'+
-          '<div style="text-align:right"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Confidence</div>'+
+          '<div style="text-align:right"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">Confidence</div>'+
           '<div style="font-weight:700;font-size:1.15rem">'+r.confidence+'%</div></div>'+
         '</div></a>';
     }).join("");
@@ -433,15 +430,14 @@ document.addEventListener("DOMContentLoaded", function(){
 <!-- ============ LIVE PAPER ACCOUNT + ALERTS ============ -->
 <section class="section" style="padding-top:0" id="paperAcct">
   <div class="wrap">
-    <span class="eyebrow">Your paper account</span>
-    <h2 class="h2 reveal">Live from your terminal.</h2>
+<h2 class="h2 reveal">Live from your terminal.</h2>
     <p class="lede reveal" style="max-width:60ch">This is your real (simulated) paper account — every order you place in the trading terminal shows up here. $100,000 of virtual money to learn with.</p>
     <div class="grid g-4 reveal" id="paChips" style="margin-top:24px"></div>
     <div class="split wide-l reveal" style="margin-top:26px">
       <div class="glass" style="padding:0;overflow:hidden">
         <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2)">
           <b style="font-size:14px">Positions</b>
-          <span class="mono" style="margin-left:auto;font-size:10.5px;color:var(--text-faint)">paper · live P/L</span>
+          <span class="mono" style="margin-left:auto;font-size:11px;color:var(--text-faint)">paper · live P/L</span>
         </div>
         <div style="overflow-x:auto"><table id="paPos" style="width:100%;border-collapse:collapse;font-size:.9rem;min-width:460px"></table></div>
         <div style="display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line-2);flex-wrap:wrap">
@@ -454,18 +450,18 @@ document.addEventListener("DOMContentLoaded", function(){
       </div>
       <div class="glass" style="padding:18px">
         <b style="font-size:14px">Price alerts</b>
-        <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin:4px 0 12px">notify me when a symbol crosses a level</p>
+        <p class="mono" style="font-size:11px;color:var(--text-faint);margin:4px 0 12px">notify me when a symbol crosses a level</p>
         <form id="alForm" novalidate style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input id="alTk" placeholder="Ticker" autocomplete="off" style="flex:1;min-width:90px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;outline:none;text-transform:uppercase">
-          <select id="alOp" style="background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px;font-size:13px"><option value="above">rises above</option><option value="below">falls below</option></select>
-          <input id="alPx" placeholder="Price" inputmode="decimal" autocomplete="off" style="width:92px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;outline:none">
+          <input id="alTk" placeholder="Ticker" autocomplete="off" style="flex:1;min-width:90px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-size:13px;outline:none;text-transform:uppercase">
+          <select id="alOp" style="background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px;font-size:13px"><option value="above">rises above</option><option value="below">falls below</option></select>
+          <input id="alPx" placeholder="Price" inputmode="decimal" autocomplete="off" style="width:92px;background:var(--well,rgba(2,6,20,.6));border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-size:13px;outline:none">
           <button class="btn btn-primary btn-sm" type="submit">Add</button>
         </form>
         <div id="alMsg" class="mono" style="font-size:11px;min-height:15px;margin-top:8px"></div>
         <div id="alList" style="margin-top:6px;display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
-    <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:14px">Simulated paper account · virtual money · not real trading · not advice.</p>
+    <p class="mono" style="font-size:11px;color:var(--text-faint);margin-top:14px">Simulated paper account · virtual money · not real trading · not advice.</p>
   </div>
 </section>
 <script>
@@ -488,7 +484,7 @@ document.addEventListener("DOMContentLoaded",function(){
     if(tb){
       if(!pos.length){tb.innerHTML='<tr><td style="padding:22px 18px;color:var(--text-faint)">No paper positions yet — open the terminal to place your first trade.</td></tr>';}
       else{
-        tb.innerHTML='<thead><tr>'+["Ticker","Qty","Avg","Last","Mkt value","P/L"].map(function(h,i){return '<th style="text-align:'+(i?"right":"left")+';padding:9px 14px;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--line-2)">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+
+        tb.innerHTML='<thead><tr>'+["Ticker","Qty","Avg","Last","Mkt value","P/L"].map(function(h,i){return '<th style="text-align:'+(i?"right":"left")+';padding:9px 14px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--line-2)">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+
         pos.map(function(p){return '<tr>'+
           '<td style="padding:10px 14px;font-weight:700">'+p.ticker+'</td>'+
           '<td style="padding:10px 14px;text-align:right">'+p.qty+'</td>'+
@@ -520,7 +516,7 @@ document.addEventListener("DOMContentLoaded",function(){
         if(qty>=1){ var r=B.place({side:"buy",ticker:p.ticker,qty:qty,type:"market"}); if(r&&r.ok)placed++; }
       });
       renderAcct();
-      reset(placed? ("Copied "+placed+" positions ✓") : "Not enough buying power");
+      reset(placed? ("Copied "+placed+" positions") : "Not enough buying power");
     }).catch(function(){ reset("Couldn't reach the fund"); });
   });
 
@@ -531,10 +527,10 @@ document.addEventListener("DOMContentLoaded",function(){
     if(!a.length){list.innerHTML='<p class="mono" style="font-size:11px;color:var(--text-faint)">No alerts set.</p>';return;}
     list.innerHTML=a.map(function(al){
       var live=F.priceOf?F.priceOf(al.ticker):null;var trig=al.status==="triggered";
-      return '<div class="glass" style="padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12.5px;'+(trig?'border-color:rgba(16,185,129,.5)':'')+'">'+
+      return '<div class="glass" style="padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12.5px;'+(trig?'border-color:rgba(86,185,127,.5)':'')+'">'+
         '<b>'+al.ticker+'</b><span class="mono" style="color:var(--text-dim)">'+(al.op==="above"?"↑ above":"↓ below")+' $'+al.price.toFixed(2)+'</span>'+
-        '<span class="mono" style="margin-left:auto;font-size:10.5px;color:'+(trig?"var(--emerald)":"var(--text-faint)")+'">'+(trig?"TRIGGERED @ $"+(al.firedPrice||live||0).toFixed(2):(live!=null?"now $"+live.toFixed(2):"armed"))+'</span>'+
-        '<button class="btn btn-ghost btn-sm" type="button" data-del="'+al.id+'" style="padding:4px 9px">✕</button>'+
+        '<span class="mono" style="margin-left:auto;font-size:11px;color:'+(trig?"var(--emerald)":"var(--text-faint)")+'">'+(trig?"TRIGGERED @ $"+(al.firedPrice||live||0).toFixed(2):(live!=null?"now $"+live.toFixed(2):"armed"))+'</span>'+
+        '<button class="btn btn-ghost btn-sm" type="button" data-del="'+al.id+'" style="padding:4px 9px"><i class="ic-i i-close" aria-hidden="true"></i></button>'+
       '</div>';
     }).join("");
     list.querySelectorAll("[data-del]").forEach(function(btn){btn.addEventListener("click",function(){A.remove(+btn.getAttribute("data-del"));renderAlerts();});});
@@ -563,8 +559,7 @@ document.addEventListener("DOMContentLoaded",function(){
   <div class="wrap" style="display:block">
     <div class="db-shead reveal">
       <div style="max-width:60ch">
-        <span class="eyebrow">Your portfolio</span>
-        <h2 class="h2" style="margin-top:14px">Your book, at a glance.</h2>
+<h2 class="h2" style="margin-top:14px">Your book, at a glance.</h2>
       </div>
       <span class="tag">sample · simulated</span>
     </div>
@@ -657,8 +652,7 @@ document.addEventListener("DOMContentLoaded",function(){
   <div class="wrap" style="display:block">
     <div class="db-shead reveal">
       <div style="max-width:60ch">
-        <span class="eyebrow">Watchlist</span>
-        <h2 class="h2" style="margin-top:14px">The names you're watching.</h2>
+<h2 class="h2" style="margin-top:14px">The names you're watching.</h2>
       </div>
       <span class="tag">simulated quotes</span>
     </div>
@@ -674,8 +668,7 @@ document.addEventListener("DOMContentLoaded",function(){
   <div class="wrap" style="display:block">
     <div class="db-shead reveal">
       <div style="max-width:60ch">
-        <span class="eyebrow">Autopilot</span>
-        <h2 class="h2" style="margin-top:14px">The Flux Fund, running on paper.</h2>
+<h2 class="h2" style="margin-top:14px">The Flux Fund, running on paper.</h2>
       </div>
     </div>
     <div class="glass sheen db-ap reveal">
@@ -705,8 +698,7 @@ document.addEventListener("DOMContentLoaded",function(){
   <div class="wrap" style="display:block">
     <div class="db-shead reveal">
       <div style="max-width:60ch">
-        <span class="eyebrow">Quick actions</span>
-        <h2 class="h2" style="margin-top:14px">Jump back into Flux.</h2>
+<h2 class="h2" style="margin-top:14px">Jump back into Flux.</h2>
       </div>
     </div>
     <div class="grid g-4">
@@ -742,11 +734,11 @@ document.addEventListener("DOMContentLoaded",function(){
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The dashboard shows a simulated sample account with illustrative data; results are hypothetical and do not represent real trading. AI recommendations are research signals, not advice — you decide and place any trade yourself. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -760,7 +752,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var F  = window.FLUX || {};
   var $  = F.$  || function(s,r){return (r||document).querySelector(s);};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
-  var EM = F.EM || "#10b981", CR = F.CR || "#ef4444", CY = F.CY || "#00f2ff";
+  var EM = F.EM || "#56b97f", CR = F.CR || "#e8674a", CY = F.CY || "#e8b33c";
   var SIGNALS = F.SIGNALS || [];
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
@@ -960,7 +952,7 @@ document.addEventListener("DOMContentLoaded", function(){
       var mv = btn.getAttribute("data-mv") || "";
       var added = addWatch(t, up, mv);
       btn.classList.add("added");
-      btn.textContent = added ? "Added ✓" : "In watchlist";
+      btn.textContent = added ? "Added" : "In watchlist";
     });
   }
 

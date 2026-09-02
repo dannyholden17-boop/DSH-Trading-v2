@@ -3,15 +3,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pricing — Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .seg{display:inline-flex;gap:4px;padding:4px;border-radius:100px;border:1px solid var(--line);background:var(--well)}
@@ -19,25 +20,25 @@
     padding:9px 18px;border-radius:100px;border:1px solid transparent;background:transparent;color:var(--text-dim);
     cursor:pointer;transition:color .2s,background .2s,border-color .2s;white-space:nowrap}
   .seg button:hover{color:var(--text)}
-  .seg button[aria-pressed="true"]{color:var(--cyan);background:rgba(0,242,255,.09);border-color:rgba(0,242,255,.4)}
+  .seg button[aria-pressed="true"]{color:var(--cyan);background:rgba(232,179,60,.09);border-color:rgba(232,179,60,.4)}
 
   .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
   @media(max-width:920px){.plans{grid-template-columns:1fr;max-width:440px;margin-inline:auto}}
   .plan{display:flex;flex-direction:column;padding:28px}
-  .plan.pop{border-color:rgba(0,242,255,.5);
-    box-shadow:0 0 0 1px rgba(0,242,255,.15), 0 0 55px -20px rgba(0,242,255,.45), inset 0 1px 0 rgba(255,255,255,.06)}
+  .plan.pop{border-color:rgba(232,179,60,.5);
+    box-shadow:0 0 0 1px rgba(232,179,60,.15), 0 0 34px -20px rgba(232,179,60,.45), inset 0 1px 0 rgba(255,255,255,.06)}
   .plan .nm{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
   .plan .amt{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:2.7rem;font-weight:700;
     letter-spacing:-.03em;margin:14px 0 2px;line-height:1.05}
   .plan .amt small{font-size:1rem;color:var(--text-faint);font-weight:500;letter-spacing:0}
-  .plan .bill{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);min-height:18px}
+  .plan .bill{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);min-height:18px}
   .plan .desc{color:var(--text-dim);font-size:.9rem;margin-top:14px;min-height:46px}
   .plan ul{list-style:none;padding:0;margin:20px 0 26px;display:flex;flex-direction:column;gap:11px}
   .plan li{display:flex;gap:10px;font-size:.92rem;color:var(--text-dim);line-height:1.45}
-  .plan li::before{content:"✓";color:var(--cyan);font-weight:800;flex:none}
+  .plan li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;flex:none}
   .plan .btn{margin-top:auto;width:100%}
-  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#03202a;
-    font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;white-space:nowrap}
+  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#15100a;
+    font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;white-space:nowrap}
 
   .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.cmp{width:100%;min-width:600px;border-collapse:collapse;font-size:.9rem}
@@ -45,10 +46,10 @@
   table.cmp thead th{border-top:0;border-bottom:1px solid var(--line);padding-top:0;vertical-align:bottom}
   table.cmp th:first-child,table.cmp td:first-child{text-align:left;width:38%;min-width:210px;color:var(--text-dim)}
   table.cmp thead .pn{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
-  table.cmp thead .pp{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);font-weight:400;display:block;margin-top:4px}
-  table.cmp tbody tr:hover{background:rgba(0,242,255,.035)}
+  table.cmp thead .pp{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);font-weight:400;display:block;margin-top:4px}
+  table.cmp tbody tr:hover{background:rgba(232,179,60,.035)}
   table.cmp .grp td{background:var(--well);border-top:1px solid var(--line);
-    font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);
     padding-block:9px;font-weight:700}
   table.cmp .grp:hover td{background:var(--well)}
   .yes{color:var(--cyan);font-weight:800}
@@ -83,7 +84,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
@@ -96,8 +97,7 @@
 <!-- ============ HERO ============ -->
 <section class="section phero" style="padding-bottom:0">
   <div class="wrap center reveal">
-    <span class="eyebrow c">Pricing</span>
-    <h1 class="h1" style="margin-top:18px">Start free.<br><span class="grad-text">Upgrade when it earns its keep.</span></h1>
+<h1 class="h1" style="margin-top:18px">Start free.<br><span class="">Upgrade when it earns its keep.</span></h1>
     <p class="lede" style="margin-inline:auto">Every plan runs all six engines and paper trades from day one.
       No card to start, no contract, no cut of your trades — ever.</p>
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:30px">
@@ -172,8 +172,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="reveal center" style="max-width:60ch;margin-inline:auto">
-      <span class="eyebrow c">Compare</span>
-      <h2 class="h2" style="margin-top:16px">Line by line.</h2>
+<h2 class="h2" style="margin-top:16px">Line by line.</h2>
       <p class="lede" style="margin-inline:auto;margin-top:14px">No asterisks, no "contact sales" to find out what you get.</p>
     </div>
 
@@ -183,7 +182,7 @@
         <table class="cmp">
           <thead>
             <tr>
-              <th scope="col"><span class="mono" style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)">Feature</span></th>
+              <th scope="col"><span class="mono" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)">Feature</span></th>
               <th scope="col"><span class="pn">Scout</span><span class="pp" data-hd="0">$0</span></th>
               <th scope="col"><span class="pn" style="color:var(--cyan)">Trader</span><span class="pp" data-hd="1">$49/mo</span></th>
               <th scope="col"><span class="pn">Desk</span><span class="pp" data-hd="2">$149/mo</span></th>
@@ -191,32 +190,32 @@
           </thead>
           <tbody>
             <tr class="grp"><td colspan="4">Data &amp; charting</td></tr>
-            <tr><td>Live market feed</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Live market feed</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
             <tr><td>Watchlists</td><td class="v">1</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
             <tr><td>Chart timeframes</td><td class="v">6</td><td class="v">12</td><td class="v">12 + custom</td></tr>
             <tr><td>Historical depth</td><td class="v">1 year</td><td class="v">10 years</td><td class="v">20 years</td></tr>
-            <tr><td>Level 2 depth</td><td class="no">—</td><td class="v">Add-on</td><td class="yes">✓</td></tr>
+            <tr><td>Level 2 depth</td><td class="no">—</td><td class="v">Add-on</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
 
             <tr class="grp"><td colspan="4">Trading</td></tr>
-            <tr><td>Paper trading</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-            <tr><td>Live trading via your broker</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Paper trading</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Live trading via your broker</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
             <tr><td>Risk-engine order guardrails</td><td class="v">Basic</td><td class="v">Full</td><td class="v">Full + custom</td></tr>
             <tr><td>Automations &amp; scheduled orders</td><td class="no">—</td><td class="v">10</td><td class="v">Unlimited</td></tr>
-            <tr><td>Personalized position sizing</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Personalized position sizing</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
 
             <tr class="grp"><td colspan="4">Intelligence</td></tr>
-            <tr><td>All six engines</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>All six engines</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
             <tr><td>Signals per day</td><td class="v">25</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
-            <tr><td>Flux AI chat</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-            <tr><td>AI agents &amp; scheduled reports</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Flux AI chat</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>AI agents &amp; scheduled reports</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
             <tr><td>Backtesting</td><td class="no">—</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
-            <tr><td>Custom engines &amp; scans</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Custom engines &amp; scans</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
 
             <tr class="grp"><td colspan="4">Support &amp; access</td></tr>
-            <tr><td>Community</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-            <tr><td>Phone + email alerts</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Community</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Phone + email alerts</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
             <tr><td>Support</td><td class="v">Community</td><td class="v">Email</td><td class="v">Dedicated</td></tr>
-            <tr><td>API access</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>API access</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
           </tbody>
         </table>
       </div>
@@ -228,8 +227,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="reveal" style="max-width:60ch">
-      <span class="eyebrow">Add-ons</span>
-      <h2 class="h2" style="margin-top:16px">Bolt on only what you use.</h2>
+<h2 class="h2" style="margin-top:16px">Bolt on only what you use.</h2>
       <p class="lede" style="margin-top:14px">Available on Trader and Desk. Add or drop them any month.</p>
     </div>
     <div class="grid g-3 reveal" style="margin-top:30px">
@@ -258,10 +256,10 @@
 <!-- ============ EVERYONE GETS ============ -->
 <section class="band">
   <div class="wrap">
-    <span><b>✓</b> Paper trading on every plan</span><span>·</span>
-    <span><b>✓</b> No card to start</span><span>·</span>
-    <span><b>✓</b> Cancel anytime, one click</span><span>·</span>
-    <span><b>✓</b> Your keys, your broker, your funds</span>
+    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Paper trading on every plan</span><span>·</span>
+    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> No card to start</span><span>·</span>
+    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Cancel anytime, one click</span><span>·</span>
+    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Your keys, your broker, your funds</span>
   </div>
 </section>
 
@@ -269,8 +267,7 @@
 <section class="section" id="faq">
   <div class="wrap">
     <div class="reveal center" style="max-width:60ch;margin-inline:auto">
-      <span class="eyebrow c">Questions</span>
-      <h2 class="h2" style="margin-top:16px">The things everyone asks about billing.</h2>
+<h2 class="h2" style="margin-top:16px">The things everyone asks about billing.</h2>
     </div>
     <div class="faq reveal" style="margin-top:36px">
       <details open><summary>Can I cancel anytime?</summary>
@@ -302,8 +299,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c" style="justify-content:center">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Try the whole desk for nothing.</h2>
+<h2 class="h2" style="margin-top:14px">Try the whole desk for nothing.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Scout is free forever and runs all six
         engines. Upgrade the day it pays for itself — not before.</p>
       <div class="btn-row" style="justify-content:center">
@@ -325,11 +321,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

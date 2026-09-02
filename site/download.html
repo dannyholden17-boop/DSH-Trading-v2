@@ -3,15 +3,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Download Flux — Desktop, iPhone, iPad &amp; Android</title>
 <meta name="description" content="Get Flux on every device. The full pro workstation on Mac and Windows, the autonomous desk in your pocket on iPhone and Android, and instant web access.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   /* ==========================================================
      Page-only layout for download.html.
@@ -23,20 +24,20 @@
   .dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
   .dl-meta{margin-top:15px;font-size:.76rem;letter-spacing:.05em;color:var(--text-faint)}
   .dl-note{margin-top:18px;display:none;gap:12px;align-items:flex-start;max-width:54ch;
-    padding:13px 16px;border-radius:14px;border:1px solid rgba(0,242,255,.32);
-    background:rgba(0,242,255,.06);font-size:.88rem;color:var(--text-dim);line-height:1.5}
+    padding:13px 16px;border-radius:4px;border:1px solid rgba(232,179,60,.32);
+    background:rgba(232,179,60,.06);font-size:.88rem;color:var(--text-dim);line-height:1.5}
   .dl-note.show{display:flex;animation:pop .35s both}
   .dl-note .nk{font-family:var(--f-mono);color:var(--cyan);font-weight:700;flex:none;line-height:1.5}
   .dl-note b{color:var(--text)}
 
   /* ---- store badges (inline SVG, no external assets) ---- */
   .store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
-  .store-badge{display:inline-block;line-height:0;border-radius:12px;overflow:hidden;
-    border:1px solid var(--line);background:#05070f;
+  .store-badge{display:inline-block;line-height:0;border-radius:4px;overflow:hidden;
+    border:1px solid var(--line);background:#0b0c0e;
     transition:border-color .2s,box-shadow .2s,transform .12s}
-  .store-badge:hover{border-color:rgba(0,242,255,.45)}
+  .store-badge:hover{border-color:rgba(232,179,60,.45)}
   .store-badge:active{transform:scale(.975)}
-  .store-badge.on{border-color:rgba(0,242,255,.6);box-shadow:0 0 24px -6px rgba(0,242,255,.65)}
+  .store-badge.on{border-color:rgba(232,179,60,.6);box-shadow:var(--lift-1)}
   .store-badge svg{display:block;width:172px;height:52px}
   .store-caption{margin-top:14px;font-size:.78rem;color:var(--text-faint);max-width:50ch;line-height:1.55}
 
@@ -50,8 +51,8 @@
   .rc-row:last-child{border-bottom:0}
   .rc-row span{color:var(--text-dim)}
   .rc-row b{font-family:var(--f-mono);font-weight:600;font-size:.82rem;color:var(--text)}
-  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:11px;background:var(--well);
-    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:10.5px;
+  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:4px;background:var(--well);
+    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:11px;
     color:var(--text-faint);word-break:break-all;line-height:1.5}
   .rc-sha b{color:var(--cyan);font-weight:600}
 
@@ -61,9 +62,9 @@
   .ph-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px 4px}
   .ph-t{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;font-weight:700}
   .ph-core{padding:16px 0 6px}
-  .ph-status{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  .ph-status{font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
     color:var(--text-dim);text-align:center;padding-bottom:14px}
-  .ph-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  .ph-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
     color:var(--text-faint);padding:0 16px 9px}
   .ph-feed{padding:0 12px 16px;display:flex;flex-direction:column;gap:8px}
 
@@ -71,13 +72,13 @@
   .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
     border-bottom:1px solid var(--line-2);background:rgba(3,8,20,.72)}
   .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:rgba(255,255,255,.14)}
-  .win-bar i:nth-child(1){background:rgba(239,68,68,.55)}
-  .win-bar i:nth-child(2){background:rgba(245,181,68,.55)}
-  .win-bar i:nth-child(3){background:rgba(16,185,129,.55)}
-  .win-title{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  .win-bar i:nth-child(1){background:rgba(232,103,74,.55)}
+  .win-bar i:nth-child(2){background:rgba(232,179,60,.55)}
+  .win-bar i:nth-child(3){background:rgba(86,185,127,.55)}
+  .win-title{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--text-faint);margin-left:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .win-body{padding:14px}
-  .win-body canvas{width:100%;height:214px;border-radius:12px;display:block}
+  .win-body canvas{width:100%;height:214px;border-radius:4px;display:block}
   @media(max-width:520px){.win-body canvas{height:170px}}
   .win-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
 
@@ -86,33 +87,33 @@
   .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;
     font-size:.88rem;color:var(--text-dim)}
   .dl-list li{display:flex;gap:9px;align-items:flex-start}
-  .dl-list li::before{content:"✓";color:var(--cyan);font-weight:800;font-size:.82rem;flex:none;line-height:1.6}
+  .dl-list li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;font-size:.82rem;flex:none;line-height:1.6}
   .dl-card .btn{margin-top:20px;width:100%}
 
   /* ---- QR ---- */
   .qr{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding:28px}
   @media(max-width:640px){.qr{grid-template-columns:1fr;gap:24px;justify-items:center;text-align:center}}
-  .qr-card{width:198px;max-width:100%;flex:none;background:#eef2ff;border-radius:16px;padding:13px;
-    box-shadow:0 24px 50px -28px rgba(0,242,255,.55), inset 0 0 0 1px rgba(2,6,23,.08)}
+  .qr-card{width:198px;max-width:100%;flex:none;background:#eae6dc;border-radius:4px;padding:13px;
+    box-shadow:0 24px 32px -28px rgba(232,179,60,.55), inset 0 0 0 1px rgba(23,24,27,.08)}
   .qr-card svg{width:100%;height:auto;display:block}
   .qr-steps{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-direction:column;gap:11px;
     font-size:.89rem;color:var(--text-dim);counter-reset:qs}
   .qr-steps li{display:flex;gap:11px;align-items:flex-start;text-align:left}
-  .qr-steps li::before{counter-increment:qs;content:counter(qs);flex:none;width:22px;height:22px;border-radius:7px;
-    background:rgba(0,242,255,.09);border:1px solid rgba(0,242,255,.28);color:var(--cyan);
+  .qr-steps li::before{counter-increment:qs;content:counter(qs);flex:none;width:22px;height:22px;border-radius:4px;
+    background:rgba(232,179,60,.09);border:1px solid rgba(232,179,60,.28);color:var(--cyan);
     font-family:var(--f-mono);font-size:11px;font-weight:700;display:grid;place-items:center;line-height:1}
   @media(max-width:640px){.qr-steps li{text-align:left}}
 
   /* ---- comparison table ---- */
-  .cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:18px;padding:2px}
+  .cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:4px;padding:2px}
   .cmp{width:100%;min-width:580px;border-collapse:collapse;font-size:.92rem}
   .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--line-2)}
-  .cmp thead th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  .cmp thead th{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--line)}
   .cmp thead th:not(:first-child){color:var(--text-dim)}
   .cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:15%}
   .cmp tbody tr:last-child td{border-bottom:0}
-  .cmp tbody tr:hover{background:rgba(0,242,255,.035)}
+  .cmp tbody tr:hover{background:rgba(232,179,60,.035)}
   .cmp td:first-child{color:var(--text)}
   .mk{font-family:var(--f-mono);font-weight:700;font-size:.95rem}
   .mk.y{color:var(--cyan)}
@@ -121,7 +122,7 @@
 
   /* ---- system requirements ---- */
   .req{padding:22px;display:flex;flex-direction:column}
-  .req .os{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  .req .os{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
   .req h3{font-size:1.02rem;margin-top:9px}
   .req ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:0}
   .req li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;
@@ -133,14 +134,14 @@
   .rel-line{position:relative;margin-top:38px;padding-left:28px;max-width:780px;
     display:flex;flex-direction:column;gap:24px}
   .rel-line::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;
-    background:linear-gradient(180deg,var(--cyan),rgba(139,92,246,.45),transparent)}
+    background:linear-gradient(180deg,var(--cyan),rgba(111,154,214,.45),transparent)}
   .rel-i{position:relative}
   .rel-i::before{content:"";position:absolute;left:-28px;top:6px;width:11px;height:11px;border-radius:50%;
-    background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 12px rgba(0,242,255,.7)}
-  .rel-i.past::before{border-color:rgba(139,92,246,.55);box-shadow:none}
+    background:var(--bg);border:2px solid var(--cyan);box-shadow:var(--lift-1)}
+  .rel-i.past::before{border-color:rgba(111,154,214,.55);box-shadow:none}
   .rel-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .rel-v{font-family:var(--f-mono);font-size:1rem;font-weight:700;letter-spacing:-.01em}
-  .rel-d{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;color:var(--text-faint)}
+  .rel-d{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;color:var(--text-faint)}
   .rel-i p{margin-top:6px;color:var(--text-dim);font-size:.9rem;max-width:64ch}
 
   /* ---- misc ---- */
@@ -168,7 +169,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
       <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
@@ -182,8 +183,7 @@
 <section class="section phero">
   <div class="wrap split wide-l">
     <div class="reveal">
-      <span class="eyebrow">Download</span>
-      <h1 class="h1" style="margin-top:18px">Your desk.<br><span class="grad-text">Every device.</span></h1>
+<h1 class="h1" style="margin-top:18px">Your desk.<br><span class="">Every device.</span></h1>
       <p class="lede">The full workstation on Mac and Windows. The same six engines in your
         pocket. And nothing to install at all if you'd rather just open a tab — your
         watchlists, signals and paper book sync across all three.</p>
@@ -194,7 +194,7 @@
         <a class="btn btn-lg btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Windows (beta)</a>
         <a class="btn btn-lg btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux (beta)</a>
       </div>
-      <p class="mono" style="margin-top:10px;color:var(--emerald);font-size:.82rem">✓ Nothing to install — Flux runs in your browser. Trade now on web, sync to your phone.</p>
+      <p class="mono" style="margin-top:10px;color:var(--emerald);font-size:.82rem">Nothing to install — Flux runs in your browser. Trade now on web, sync to your phone.</p>
       <p class="mono dl-meta" id="dlMetaLine">version 2.4.1 · 84 MB · macOS 12+ (Apple Silicon &amp; Intel)</p>
 
       <div class="dl-note" id="betaNote" role="status" aria-live="polite">
@@ -204,26 +204,26 @@
       <div class="store-row">
         <a class="store-badge" href="#" id="badgeIOS" data-dl="ios" data-os="iOS" aria-label="Download on the App Store">
           <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#05070f"/>
-            <g transform="translate(17,13) scale(1.08)" fill="#dce1fb">
+            <rect width="172" height="52" rx="12" fill="#0b0c0e"/>
+            <g transform="translate(17,13) scale(1.08)" fill="#eae6dc">
               <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.75-4.11z" transform="translate(-3,-4)"/>
               <path d="M14.6 4.5c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.3-.58 3.02-1.44z" transform="translate(-3,-4)"/>
             </g>
-            <text x="47" y="22" fill="#9aa8c7" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
-            <text x="46" y="39" fill="#dce1fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
+            <text x="47" y="22" fill="#a9a396" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
+            <text x="46" y="39" fill="#eae6dc" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
           </svg>
         </a>
         <a class="store-badge" href="#" id="badgeAndroid" data-dl="android" data-os="Android" aria-label="Get it on Google Play">
           <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#05070f"/>
+            <rect width="172" height="52" rx="12" fill="#0b0c0e"/>
             <g transform="translate(15,15)">
               <polygon points="3,2 14,10 3,10" fill="#00d67f"/>
               <polygon points="3,18 14,10 3,10" fill="#00a0ff"/>
               <polygon points="3,2 19.4,10 14,10" fill="#ff3a44"/>
               <polygon points="3,18 19.4,10 14,10" fill="#ffce00"/>
             </g>
-            <text x="47" y="22" fill="#9aa8c7" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
-            <text x="46" y="39" fill="#dce1fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
+            <text x="47" y="22" fill="#a9a396" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
+            <text x="46" y="39" fill="#eae6dc" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
           </svg>
         </a>
       </div>
@@ -263,8 +263,7 @@
 <section class="section" id="platforms">
   <div class="wrap">
     <div class="shead reveal">
-      <span class="eyebrow">Three ways in</span>
-      <h2 class="h2">Pick the surface. The desk is the same.</h2>
+<h2 class="h2">Pick the surface. The desk is the same.</h2>
       <p class="lede">The engines run on our side, not yours — so whichever client you open,
         you're looking at the same live state of the same account.</p>
     </div>
@@ -322,16 +321,15 @@
 <section class="section band" style="border-block:1px solid var(--line-2)">
   <div class="wrap">
     <div class="shead reveal">
-      <span class="eyebrow">Same desk, two shapes</span>
-      <h2 class="h2">A glance on the phone. The whole tape on the desk.</h2>
+<h2 class="h2">A glance on the phone. The whole tape on the desk.</h2>
     </div>
 
     <div class="dl-visual" style="margin-top:44px">
       <div class="device reveal">
         <div class="device-screen">
           <div class="ph-top">
-            <span class="ph-t grad-text">FLUX</span>
-            <span class="pill" style="padding:4px 10px;font-size:9px"><i></i> live</span>
+            <span class="ph-t">FLUX</span>
+            <span class="pill" style="padding:4px 10px;font-size:11px"><i></i> live</span>
           </div>
           <div class="ph-core">
             <div class="orb" style="--sz:104px">
@@ -368,8 +366,7 @@
     <div class="glass qr reveal">
       <div class="qr-card" id="qrCard"></div>
       <div>
-        <span class="eyebrow">On your phone</span>
-        <h2 class="h2" style="font-size:clamp(1.5rem,1.2rem + 1.4vw,2rem);margin-top:14px">Scan to install on your phone.</h2>
+<h2 class="h2" style="font-size:clamp(1.5rem,1.2rem + 1.4vw,2rem);margin-top:14px">Scan to install on your phone.</h2>
         <p class="muted" style="margin-top:12px;font-size:.95rem;max-width:46ch">Point your camera
           at the code. It opens the Flux beta page on your device — one field, no download
           manager, no sideloading.</p>
@@ -378,7 +375,7 @@
           <li>Tap the link and enter the email on your Flux account.</li>
           <li>TestFlight or Play beta invite lands the same day.</li>
         </ol>
-        <p class="faint mono" style="margin-top:18px;font-size:.72rem">decorative code · beta invites are sent by email</p>
+        <p class="faint mono" style="margin-top:18px;font-size:.75rem">decorative code · beta invites are sent by email</p>
       </div>
     </div>
   </div>
@@ -388,8 +385,7 @@
 <section class="section" id="compare" style="padding-top:0">
   <div class="wrap">
     <div class="shead reveal">
-      <span class="eyebrow">What's where</span>
-      <h2 class="h2">Feature by feature, honestly.</h2>
+<h2 class="h2">Feature by feature, honestly.</h2>
       <p class="lede">Mobile and web are not cut-down demos — but a phone screen can't hold a
         depth ladder, and a browser tab can't drive four monitors. Here's exactly where the lines are.</p>
     </div>
@@ -408,43 +404,43 @@
           </thead>
           <tbody>
             <tr><td>Live market data</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>Pro charting with MACD/RSI</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>Order ladder &amp; time-&amp;-sales</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
               <td><span class="mk n" role="img" aria-label="Not available">—</span></td>
               <td><span class="mk n" role="img" aria-label="Not available">—</span></td></tr>
             <tr><td>Paper trading</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>Limit &amp; stop orders</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>Screener</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>Price alerts</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>Flux AI chat</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td></tr>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td></tr>
             <tr><td>AI agents &amp; scheduled reports</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
               <td><span class="mk n" role="img" aria-label="Not available">—</span></td></tr>
             <tr><td>Multi-monitor layouts</td>
-              <td><span class="mk y" role="img" aria-label="Included">✓</span></td>
+              <td><span class="mk y" role="img" aria-label="Included"><i class="ic-i i-check" aria-hidden="true"></i></span></td>
               <td><span class="mk n" role="img" aria-label="Not available">—</span></td>
               <td><span class="mk n" role="img" aria-label="Not available">—</span></td></tr>
           </tbody>
@@ -460,8 +456,7 @@
 <section class="section band" id="requirements" style="border-block:1px solid var(--line-2)">
   <div class="wrap">
     <div class="shead reveal">
-      <span class="eyebrow">System requirements</span>
-      <h2 class="h2">It runs on the machine you already have.</h2>
+<h2 class="h2">It runs on the machine you already have.</h2>
       <p class="lede">The heavy work happens on our engines. Flux Desktop is a client, not a
         render farm — these are floors, not recommendations for comfort.</p>
     </div>
@@ -508,8 +503,7 @@
 <section class="section" id="whats-new">
   <div class="wrap">
     <div class="shead reveal">
-      <span class="eyebrow">Release notes</span>
-      <h2 class="h2">What's new.</h2>
+<h2 class="h2">What's new.</h2>
       <p class="lede">Desktop ships on a two-week cadence. Every build is signed, and you can
         pin to the previous version from Settings → Updates.</p>
     </div>
@@ -548,8 +542,7 @@
 <section class="section" id="faq" style="padding-top:0">
   <div class="wrap">
     <div class="shead c reveal">
-      <span class="eyebrow c">Questions</span>
-      <h2 class="h2">Before you install.</h2>
+<h2 class="h2">Before you install.</h2>
     </div>
     <div class="faq reveal" style="margin-top:40px">
       <details open><summary>Is it free?</summary>
@@ -582,8 +575,7 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <div class="cta reveal">
-      <span class="eyebrow c">Get started</span>
-      <h2 class="h2" style="margin-top:14px">Install it tonight. Wake up to the research.</h2>
+<h2 class="h2" style="margin-top:14px">Install it tonight. Wake up to the research.</h2>
       <p class="lede center" style="margin:18px auto 28px">Start on the web in ten seconds, or put
         the full workstation on your machine. Same account either way.</p>
       <div class="btn-row" style="justify-content:center">
@@ -602,11 +594,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -775,7 +767,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     return '<svg viewBox="0 0 ' + size + ' ' + size + '" role="img" ' +
            'aria-label="Decorative QR code linking to the Flux mobile beta page">' +
-           '<rect width="' + size + '" height="' + size + '" fill="#eef2ff"/>' +
+           '<rect width="' + size + '" height="' + size + '" fill="#eae6dc"/>' +
            '<g fill="#050b1c">' + rects + '</g></svg>';
   }
 

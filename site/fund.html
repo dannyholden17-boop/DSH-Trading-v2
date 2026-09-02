@@ -5,34 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Fund — Flux</title>
 <meta name="description" content="The Flux Fund: a simulated AI that trades a paper account live and shows every fill. Watch it trade in real time, browse its positions and its whole order history. Simulated, virtual money, not investment advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   .fd-shell{max-width:1280px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,32px)}
   /* hero */
   .fd-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center}
   @media(max-width:900px){.fd-hero{grid-template-columns:1fr;gap:24px}}
   .fd-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--emerald);border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.08);
+    text-transform:uppercase;color:var(--emerald);border:1px solid rgba(86,185,127,.4);background:rgba(86,185,127,.08);
     padding:5px 12px;border-radius:100px;font-weight:700}
-  .fd-live .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:fdpulse 1.6s infinite}
-  @keyframes fdpulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 10px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  .fd-live .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(86,185,127,.6);animation:fdpulse 1.6s infinite}
+  @keyframes fdpulse{0%{box-shadow:0 0 0 0 rgba(86,185,127,.55)}70%{box-shadow:0 0 0 10px rgba(86,185,127,0)}100%{box-shadow:0 0 0 0 rgba(86,185,127,0)}}
   .fd-hero h1{margin-top:16px;font-size:clamp(2rem,1.4rem + 3vw,3.3rem);line-height:1.04;letter-spacing:-.03em}
   .fd-aumcard{padding:24px}
   .fd-aum{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2.2rem,1.6rem + 3vw,3.2rem);
-    font-weight:750;letter-spacing:-.03em;border-radius:9px;padding:1px 6px;margin-left:-6px;width:max-content}
+    font-weight:750;letter-spacing:-.03em;border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
   .fd-aumrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:4px}
   .fd-ret{font-family:var(--f-mono);font-weight:700;font-size:1rem}
   .fd-heromini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-  .fd-mini{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:11px 13px;min-width:0}
-  .fd-mini .k{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .fd-mini{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:11px 13px;min-width:0}
+  .fd-mini .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .fd-mini .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:1.02rem;margin-top:5px;letter-spacing:-.01em}
   @keyframes fdglow{from{background:color-mix(in srgb,var(--cyan) 22%,transparent)}to{background:transparent}}
   .fd-flash{animation:fdglow .8s ease-out}
@@ -42,7 +43,7 @@
   @media(max-width:900px){.fd-stats{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:520px){.fd-stats{grid-template-columns:repeat(2,1fr)}}
   .fd-stat{padding:15px 16px}
-  .fd-stat .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .fd-stat .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .fd-stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.3rem;font-weight:750;margin-top:6px;letter-spacing:-.02em}
 
   /* chart */
@@ -55,25 +56,25 @@
   .fd-pane{padding:0;overflow:hidden}
   .fd-ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid var(--line-2)}
   .fd-ph h3{font-size:1rem}
-  .fd-ph .k{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .fd-ph .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
 
   /* live tape */
   .fd-tape{max-height:520px;overflow-y:auto}
   .fd-row{display:grid;grid-template-columns:60px 66px 1fr auto;gap:10px;align-items:center;padding:11px 18px;border-bottom:1px solid var(--line-2)}
   .fd-row .tm{font-family:var(--f-mono);font-size:10px;color:var(--text-faint)}
-  .fd-row .sd{font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .fd-row .sd{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
   .fd-row .sd.buy{color:var(--emerald)} .fd-row .sd.sell{color:var(--crimson)}
   .fd-row .mid b{font-family:var(--f-mono);font-weight:700;letter-spacing:.03em}
   .fd-row .mid span{display:block;color:var(--text-faint);font-size:11px;line-height:1.35;margin-top:2px}
   .fd-row .rt{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.85rem}
   .fd-row .rt small{display:block;color:var(--text-faint);font-size:10px}
   .fd-new{animation:fdrow .9s ease-out}
-  @keyframes fdrow{from{background:rgba(0,242,255,.14)}to{background:transparent}}
+  @keyframes fdrow{from{background:rgba(232,179,60,.14)}to{background:transparent}}
 
   /* holdings */
   .fd-hscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.fd-hold{width:100%;border-collapse:collapse;font-size:.86rem;min-width:340px}
-  table.fd-hold th{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+  table.fd-hold th{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
     font-weight:600;text-align:right;padding:10px 14px;border-bottom:1px solid var(--line-2);white-space:nowrap}
   table.fd-hold th:first-child,table.fd-hold td:first-child{text-align:left}
   table.fd-hold td{text-align:right;padding:10px 14px;border-bottom:1px solid var(--line-2);font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -81,13 +82,13 @@
   table.fd-hold .tk span{display:block;color:var(--text-faint);font-size:10px;font-family:var(--f-sans)}
 
   .fd-think{display:flex;align-items:center;gap:12px;padding:15px 18px;margin-top:18px}
-  .fd-think .av{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;font-size:18px;
-    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.18),rgba(139,92,246,.12))}
+  .fd-think .av{width:36px;height:36px;border-radius:4px;flex:none;display:grid;place-items:center;font-size:18px;
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.18),rgba(111,154,214,.12))}
   .fd-think .tx{font-size:.9rem;line-height:1.5;color:var(--text-dim)}
   .fd-think .tx b{color:var(--text)}
 
   .fd-strip{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:16px 18px;border:1px solid rgba(245,158,11,.28);
-    background:rgba(245,158,11,.06);border-radius:14px}
+    background:rgba(245,158,11,.06);border-radius:4px}
   .fd-strip .ic{color:#f59e0b;font-size:16px;line-height:1.3}
   .fd-strip p{font-size:.82rem;line-height:1.6;color:var(--text-dim)}
   .fd-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
@@ -99,8 +100,8 @@
   @media(max-width:640px){.fd-alloc .row{grid-template-columns:72px 1fr 92px}.fd-alloc .row .pl{display:none}}
   .fd-alloc .tk b{font-family:var(--f-mono);font-weight:700;font-size:.9rem;letter-spacing:.03em}
   .fd-alloc .tk span{display:block;color:var(--text-faint);font-size:10px;font-family:var(--f-sans)}
-  .fd-alloc .track{height:20px;background:rgba(255,255,255,.05);border-radius:5px;overflow:hidden}
-  .fd-alloc .fill{height:100%;border-radius:5px;transition:width .5s ease;min-width:2px}
+  .fd-alloc .track{height:20px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
+  .fd-alloc .fill{height:100%;border-radius:3px;transition:width .5s ease;min-width:2px}
   .fd-alloc .val{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:.9rem}
   .fd-alloc .val span{display:block;color:var(--text-faint);font-size:10px;font-weight:400}
   .fd-alloc .pl{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.85rem}
@@ -109,9 +110,9 @@
   .fd-pnl{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
   @media(max-width:640px){.fd-pnl{grid-template-columns:repeat(2,1fr)}}
   .fd-pnltile{padding:15px 16px}
-  .fd-pnltile .k{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .fd-pnltile .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .fd-pnltile .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.35rem;font-weight:750;margin-top:6px;letter-spacing:-.02em}
-  .fd-pnltile .s{font-size:.72rem;color:var(--text-faint);margin-top:3px;font-family:var(--f-mono)}
+  .fd-pnltile .s{font-size:.75rem;color:var(--text-faint);margin-top:3px;font-family:var(--f-mono)}
 </style>
 </head>
 <body>
@@ -130,7 +131,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
       <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
@@ -145,19 +146,19 @@
   <section class="fd-hero">
     <div>
       <span class="fd-live"><span class="dot"></span><span id="liveLbl">LIVE · trading now</span></span>
-      <h1>An AI fund that trades —<br><span class="grad-text grad-anim">live, and in the open.</span></h1>
+      <h1>An AI fund that trades —<br><span class="">live, and in the open.</span></h1>
       <p class="lede" style="max-width:56ch;margin-top:16px">This is the <b>Flux Fund</b>: a simulated AI running its own paper account. It places real-time paper trades, marks to live quotes, and shows you <b>every single fill</b>. Watch it work, then scroll its whole order history below.</p>
       <div class="fd-cta">
         <a class="btn btn-primary btn-lg" href="#tape">See it trading ↓</a>
         <a class="btn btn-ghost btn-lg" href="./trades.html">Every trade →</a>
         <button class="btn btn-ghost btn-lg" id="copyFundBtn" type="button">Mirror it → my paper account</button>
       </div>
-      <p class="mono" style="font-size:.72rem;color:var(--text-faint);margin-top:14px">Simulated · virtual money · not investment advice · never trades your real account.</p>
+      <p class="mono" style="font-size:.75rem;color:var(--text-faint);margin-top:14px">Simulated · virtual money · not investment advice · never trades your real account.</p>
     </div>
     <div class="glass sheen fd-aumcard reveal">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="pill live">Flux Fund · paper</span>
-        <span class="mono" style="margin-left:auto;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)" id="sinceLbl">since launch</span>
+        <span class="mono" style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)" id="sinceLbl">since launch</span>
       </div>
       <div class="fd-aum mono" id="hAum">$—</div>
       <div class="fd-aumrow">
@@ -193,7 +194,7 @@
   <section class="glass fd-chartwrap reveal">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <b style="font-size:1rem">Equity since launch</b>
-      <span class="mono" style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">simulated · paper $250k start</span>
+      <span class="mono" style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)">simulated · paper $250k start</span>
     </div>
     <canvas id="bigCurve" aria-label="Simulated equity curve since launch"></canvas>
   </section>
@@ -257,12 +258,12 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./fund.html">Flux Fund</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./signin.html">Get started</a><a href="./terminal.html">Trade desk</a><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account without your explicit approval and rules. Trading involves risk of loss, including loss of principal. Market data shown may be delayed or simulated.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -351,11 +352,11 @@ document.addEventListener("DOMContentLoaded", function () {
     pad = pad || 6;
     var ys = data.map(function (d) { return d.eq; }), mn = Math.min.apply(null, ys), mx = Math.max.apply(null, ys);
     if (mx - mn < 1) { mx += 1; mn -= 1; }
-    var up = ys[ys.length - 1] >= ys[0], col = up ? "#10b981" : "#ef4444";
+    var up = ys[ys.length - 1] >= ys[0], col = up ? "#56b97f" : "#e8674a";
     var X = function (i) { return pad + (w - pad * 2) * i / (data.length - 1); };
     var Y = function (v) { return pad + (h - pad * 2) * (1 - (v - mn) / (mx - mn)); };
     var g = c.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, up ? "rgba(16,185,129,.28)" : "rgba(239,68,68,.24)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    g.addColorStop(0, up ? "rgba(86,185,127,.28)" : "rgba(232,103,74,.24)"); g.addColorStop(1, "rgba(0,0,0,0)");
     c.beginPath(); c.moveTo(X(0), Y(ys[0])); for (var i = 1; i < data.length; i++) c.lineTo(X(i), Y(ys[i]));
     c.lineTo(X(data.length - 1), h); c.lineTo(X(0), h); c.closePath(); c.fillStyle = g; c.fill();
     c.beginPath(); c.moveTo(X(0), Y(ys[0])); for (i = 1; i < data.length; i++) c.lineTo(X(i), Y(ys[i]));
@@ -380,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var maxMkt = Math.max.apply(null, s.positions.map(function (p) { return p.mkt; }).concat([1]));
     var rows = s.positions.map(function (p) {
       var w = Math.max(2, p.mkt / maxMkt * 100), up = p.pl >= 0;
-      var grad = up ? "linear-gradient(90deg,#0891b2,#10b981)" : "linear-gradient(90deg,#b45309,#ef4444)";
+      var grad = up ? "linear-gradient(90deg,#0891b2,#56b97f)" : "linear-gradient(90deg,#b45309,#e8674a)";
       return '<div class="row"><div class="tk"><b>' + p.t + '</b><span>' + p.sec + '</span></div>' +
         '<div class="track"><div class="fill" style="width:' + w.toFixed(1) + '%;background:' + grad + '"></div></div>' +
         '<div class="val">' + m0(p.mkt) + '<span>' + p.weight + '% of book</span></div>' +
@@ -416,7 +417,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var cb = $("#copyFundBtn");
   if (cb) cb.addEventListener("click", function () {
     var r = F.Fund.copyToBook();
-    if (r && r.ok) { cb.textContent = "✓ Mirrored " + r.placed + " positions"; cb.disabled = true; }
+    if (r && r.ok) { cb.textContent = "Mirrored " + r.placed + " positions"; cb.disabled = true; }
     else if (F.toast) F.toast((r && r.msg) || "Could not mirror the fund.");
   });
 });

@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Today's Ideas — Flux</title>
 <meta name="description" content="Today's AI trade ideas from Flux — momentum leaders and beaten-down rebound names, each with a full brief. First idea free; sign in to see them all. Simulated / educational, not investment advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   /* single-screen, no page scroll */
   html,body{height:100%}
@@ -21,13 +22,13 @@
   .id-shell{flex:1;min-height:0;display:flex;flex-direction:column;
     max-width:1080px;width:100%;margin-inline:auto;padding:14px var(--gutter) 10px}
   .id-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .id-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--emerald);border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.08);
+  .id-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--emerald);border:1px solid rgba(86,185,127,.4);background:rgba(86,185,127,.08);
     padding:4px 11px;border-radius:100px;font-weight:700}
   .id-live .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);animation:idp 1.6s infinite}
-  @keyframes idp{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  @keyframes idp{0%{box-shadow:0 0 0 0 rgba(86,185,127,.55)}70%{box-shadow:0 0 0 8px rgba(86,185,127,0)}100%{box-shadow:0 0 0 0 rgba(86,185,127,0)}}
   .id-head h1{font-size:clamp(1.2rem,1rem + 1.2vw,1.7rem);letter-spacing:-.02em;line-height:1;margin:0}
-  .id-cap{font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);margin-left:auto}
+  .id-cap{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);margin-left:auto}
 
   /* fit area — content scales to fit, never scrolls */
   .id-fit{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:10px}
@@ -36,13 +37,13 @@
   /* compact stacked idea row */
   .irow{display:grid;grid-template-columns:170px 1fr auto;gap:16px;align-items:center;padding:12px 16px;cursor:pointer;
     transition:border-color .15s,transform .15s}
-  .irow:hover{border-color:rgba(0,242,255,.4);transform:translateY(-1px)}
+  .irow:hover{border-color:rgba(232,179,60,.4);transform:translateY(-1px)}
   .ir-lead{display:flex;align-items:center;gap:11px;min-width:0}
-  .ir-av{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
-    font-weight:700;font-size:11px;border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.18),rgba(139,92,246,.12))}
+  .ir-av{width:38px;height:38px;border-radius:4px;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
+    font-weight:700;font-size:11px;border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.18),rgba(111,154,214,.12))}
   .ir-tk{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em;display:flex;align-items:baseline;gap:7px}
   .ir-tk .mv{font-size:.78rem;font-weight:600}
-  .ir-kind{font-size:.72rem;color:var(--text-faint);margin-top:2px;text-transform:capitalize}
+  .ir-kind{font-size:.75rem;color:var(--text-faint);margin-top:2px;text-transform:capitalize}
   .ir-mid{min-width:0}
   .ir-head{font-size:.92rem;font-weight:600;color:var(--text);line-height:1.35;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -53,7 +54,7 @@
   .ir-conf .bar i{display:block;height:100%;border-radius:3px}
   .ir-act{display:flex;align-items:center;gap:7px;flex:none}
   .ir-act .btn{padding:6px 11px;font-size:.78rem}
-  .ir-brief{font-family:var(--f-mono);font-size:.74rem;color:var(--cyan);font-weight:700;white-space:nowrap}
+  .ir-brief{font-family:var(--f-mono);font-size:.75rem;color:var(--cyan);font-weight:700;white-space:nowrap}
   @media(max-width:720px){
     .irow{grid-template-columns:1fr auto;gap:10px}
     .ir-mid{grid-column:1 / -1;order:3}
@@ -65,26 +66,26 @@
   .irow.locked .lk b{font-size:.98rem}
   .irow.locked .lk span{color:var(--text-faint);font-size:.82rem}
 
-  .id-foot{font-size:.68rem;color:var(--text-faint);text-align:center;padding:6px 0 2px;line-height:1.4}
+  .id-foot{font-size:.75rem;color:var(--text-faint);text-align:center;padding:6px 0 2px;line-height:1.4}
   .id-foot a{color:var(--text-dim)}
 
   /* brief modal */
   .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px;
-    background:rgba(2,6,23,.72);backdrop-filter:blur(6px)}
+    background:rgba(23,24,27,.72);}
   .brief-modal.show{display:flex}
-  .brief-sheet{width:min(600px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:18px}
+  .brief-sheet{width:min(600px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:4px}
   .bm-head{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line-2);
-    position:sticky;top:0;background:var(--glass);backdrop-filter:blur(12px);z-index:1}
-  .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:9px;width:32px;height:32px;cursor:pointer;font-size:14px}
+    position:sticky;top:0;background:var(--glass);z-index:1}
+  .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:4px;width:32px;height:32px;cursor:pointer;font-size:14px}
   .bm-x:hover{color:var(--text);border-color:var(--cyan)}
   .bm-body{padding:18px}
   .bm-headline{font-size:1.02rem;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:14px}
   .bm-row{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-2)}
   @media(max-width:520px){.bm-row{grid-template-columns:1fr;gap:3px}}
-  .bm-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
+  .bm-k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
   .bm-v{font-size:.92rem;line-height:1.55;color:var(--text-dim)}
   .bm-disc{margin-top:14px;font-size:.75rem;color:var(--text-faint);line-height:1.5}
-  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--line-2);position:sticky;bottom:0;background:var(--glass);backdrop-filter:blur(12px)}
+  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--line-2);position:sticky;bottom:0;background:var(--glass);}
 </style>
 </head>
 <body>
@@ -104,7 +105,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
       <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
@@ -132,11 +133,11 @@
     <div class="bm-head">
       <span class="pill live">Fluxi brief</span>
       <h3 id="briefTitle" style="margin:0;font-size:1.02rem"></h3>
-      <button type="button" class="bm-x" data-close aria-label="Close">✕</button>
+      <button type="button" class="bm-x" data-close aria-label="Close"><i class="ic-i i-close" aria-hidden="true"></i></button>
     </div>
     <div class="bm-body" id="briefBody"></div>
     <div class="bm-foot">
-      <button type="button" class="btn btn-primary btn-sm" id="briefDl">⬇ Download brief (.txt)</button>
+      <button type="button" class="btn btn-primary btn-sm" id="briefDl"><i class="ic-i i-down" aria-hidden="true"></i> Download brief (.txt)</button>
       <button type="button" class="btn btn-ghost btn-sm" id="briefPaper">Paper trade</button>
       <button type="button" class="btn btn-ghost btn-sm" data-close>Close</button>
     </div>
@@ -148,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function(){
   "use strict";
   var F = window.FLUX || {};
   var $ = function(s,r){ return (r||document).querySelector(s); };
-  var EM = F.EM || "#10b981", CY = F.CY || "#00f2ff";
+  var EM = F.EM || "#56b97f", CY = F.CY || "#e8b33c";
   function fmt(n){ return "$" + (+n).toLocaleString(undefined,{maximumFractionDigits:(+n<10?2:0)}); }
   function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function liveMv(t){ var p=F.priceOf&&F.priceOf(t), pr=F.prevClose&&F.prevClose(t); if(!p||!pr) return ""; var x=(p-pr)/pr; return (x>=0?"+":"")+(x*100).toFixed(1)+"%"; }
@@ -160,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function(){
     IDEAS[s.ticker] = s;
     var kind = (s.kind||"momentum");
     var bear = kind==="overvalued" || s.direction==="avoid";
-    var col = bear ? (F.CR||"#ef4444") : ((kind==="momentum"||kind==="breakout") ? EM : CY);
+    var col = bear ? (F.CR||"#e8674a") : ((kind==="momentum"||kind==="breakout") ? EM : CY);
     var mv = liveMv(s.ticker), up = mv!=="" && mv.indexOf("-")<0;
     var el = document.createElement("div");
     el.className = "glass irow reveal"; el.setAttribute("data-brief", s.ticker);
@@ -190,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function(){
     (d.ideas||[]).forEach(function(s){ list.appendChild(row(s)); });
     var locked = Math.max(0, (d.total||d.ideas.length) - d.ideas.length);
     if(!d.signedIn && locked>0) list.appendChild(lockedRow(locked));
-    var cap = $("#feedCap"); if(cap && d.day) cap.textContent = "Updated "+d.day+" · "+(d.total||d.ideas.length)+" ideas";
+    var cap = $("#f0d59ap"); if(cap && d.day) cap.textContent = "Updated "+d.day+" · "+(d.total||d.ideas.length)+" ideas";
     fit();
   }
   function renderKronos(){
@@ -252,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function placePaper(ticker, side, btn){ var Book=window.FLUXBook; if(!Book||!Book.place){ if(F.toast)F.toast("Paper book unavailable"); return; }
     var px=F.priceOf?F.priceOf(ticker):0, qty=Math.max(1,Math.round(1500/(px||1)));
     var res=Book.place({side:side,ticker:ticker,qty:qty,type:"market"});
-    if(res&&res.ok && btn){ btn.textContent="✓ Added"; btn.disabled=true; } }
+    if(res&&res.ok && btn){ btn.textContent="Added"; btn.disabled=true; } }
   function toggleWatch(ticker, btn){ if(!F.Watch||!F.Watch.toggle) return; F.Watch.toggle(ticker); if(btn) btn.textContent=F.Watch.has(ticker)?"★":"☆"; }
   if(list){ list.addEventListener("click", function(ev){
     var g=function(a){ return ev.target.closest?ev.target.closest("["+a+"]"):null; };

@@ -37,8 +37,8 @@
     var energy = 0.15;          // current energy 0..1
     var target = 0.15;          // eased toward
     var t = 0, raf = null, alive = true;
-    var CY = "76,215,246";      // neon cyan
-    var GR = "74,225,118";      // green
+    var CY = "232,179,60";      // jacket gold
+    var GR = "86,185,127";      // clearing green
 
     // orbiting nodes (the "network / chains")
     var nodes = [];
@@ -99,7 +99,7 @@
       var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.7);
       g.addColorStop(0, "rgba(" + CY + "," + (0.20 + e * 0.35) + ")");
       g.addColorStop(0.5, "rgba(" + CY + "," + (0.05 + e * 0.1) + ")");
-      g.addColorStop(1, "rgba(2,6,23,0)");
+      g.addColorStop(1, "rgba(23,24,27,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
       // outer rings / chains

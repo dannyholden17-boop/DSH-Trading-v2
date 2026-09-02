@@ -5,29 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Account — Flux</title>
 <meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   /* page-only LAYOUT: account.html (acc- prefixed). Shared tokens/classes reused, never redefined. */
   .acc-stack{display:flex;flex-direction:column;gap:18px;margin-top:26px}
   .acc-card{padding:24px}
   .acc-ctop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
   .acc-ctop h2{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
-  .acc-cap{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.05em;color:var(--text-faint);margin-left:auto}
-  .acc-note{font-family:var(--f-mono);font-size:10.5px;color:var(--text-faint);margin-top:14px;line-height:1.5}
+  .acc-cap{font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;color:var(--text-faint);margin-left:auto}
+  .acc-note{font-family:var(--f-mono);font-size:11px;color:var(--text-faint);margin-top:14px;line-height:1.5}
 
   /* profile */
   .acc-prow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .acc-av{width:64px;height:64px;border-radius:16px;flex:none;display:grid;place-items:center;
+  .acc-av{width:64px;height:64px;border-radius:4px;flex:none;display:grid;place-items:center;
     font-family:var(--f-mono);font-weight:700;font-size:1.35rem;letter-spacing:.02em;color:var(--text);
-    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(0,242,255,.2),rgba(139,92,246,.14))}
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.2),rgba(111,154,214,.14))}
   .acc-pid{min-width:0}
   .acc-pid b{font-size:1.05rem;font-weight:700}
   .acc-pid span{display:block;color:var(--text-faint);font-family:var(--f-mono);font-size:.8rem;margin-top:3px;
@@ -35,12 +36,12 @@
 
   .acc-fields{display:flex;flex-direction:column;gap:16px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line-2)}
   .acc-field{display:flex;flex-direction:column;gap:8px}
-  .acc-lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .acc-lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .acc-inrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .acc-input{flex:1;min-width:160px;background:var(--well);border:1px solid var(--line);border-radius:12px;
+  .acc-input{flex:1;min-width:160px;background:var(--well);border:1px solid var(--line);border-radius:4px;
     color:var(--text);padding:12px 14px;font-size:14px;font-family:var(--f-sans);outline:none;
     transition:border-color .2s}
-  .acc-input:focus{border-color:rgba(0,242,255,.45)}
+  .acc-input:focus{border-color:rgba(232,179,60,.45)}
   .acc-input[readonly]{color:var(--text-dim);cursor:default}
   .acc-saved{font-family:var(--f-mono);font-size:12px;color:var(--emerald);opacity:0;transition:opacity .25s}
   .acc-saved.show{opacity:1}
@@ -50,17 +51,17 @@
   .acc-sub-id{min-width:0}
   .acc-plan{font-size:1.45rem;font-weight:750;letter-spacing:-.02em}
   .acc-plan-sub{color:var(--text-dim);font-size:.88rem;margin-top:6px}
-  .acc-pill-ok{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
-    padding:5px 11px;border-radius:100px;border:1px solid rgba(16,185,129,.5);background:rgba(16,185,129,.1);color:var(--emerald)}
+  .acc-pill-ok{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+    padding:5px 11px;border-radius:100px;border:1px solid rgba(86,185,127,.5);background:rgba(86,185,127,.1);color:var(--emerald)}
   .acc-sub-act{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
   /* paper account */
   .acc-chips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:440px){.acc-chips{grid-template-columns:1fr}}
-  .acc-chip{border:1px solid var(--line-2);border-radius:12px;background:var(--well);padding:16px}
+  .acc-chip{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:16px}
   .acc-chip b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:750;
     letter-spacing:-.02em;display:block}
-  .acc-chip span{color:var(--text-faint);font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+  .acc-chip span{color:var(--text-faint);font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
     text-transform:uppercase;margin-top:5px;display:block}
   .acc-pact{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
 
@@ -78,9 +79,9 @@
   .acc-del-note.show{display:block}
   /* your-stocks: watchlist + alerts */
   .star-add,.alert-add{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  .star-add input,.alert-add input,.alert-add select{background:#040914;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
+  .star-add input,.alert-add input,.alert-add select{background:#101113;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
   .star-add input,.alert-add input,.alert-add select{transition:border-color .15s}
-  .star-add input:focus,.alert-add input:focus,.alert-add select:focus{border-color:rgba(0,242,255,.5)}
+  .star-add input:focus,.alert-add input:focus,.alert-add select:focus{border-color:rgba(232,179,60,.5)}
   .star-add input{flex:1;min-width:150px;text-transform:uppercase}
   #alTicker{width:92px;text-transform:uppercase}
   #alPrice{width:112px}
@@ -91,12 +92,12 @@
   .star-chip em{font-style:normal;color:var(--text-faint)}
   .star-chip button,.alert-row button{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:.9rem;line-height:1;padding:2px 4px}
   .star-chip button:hover,.alert-row button:hover{color:var(--crimson)}
-  .acc-sub{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:20px;border-top:1px solid var(--line-2);padding-top:16px}
+  .acc-sub{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:20px;border-top:1px solid var(--line-2);padding-top:16px}
   .byok-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  .byok-row input{flex:1;min-width:200px;background:#040914;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.88rem;outline:none}
-  .byok-row input:focus{border-color:rgba(0,242,255,.5)}
+  .byok-row input{flex:1;min-width:200px;background:#101113;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.88rem;outline:none}
+  .byok-row input:focus{border-color:rgba(232,179,60,.5)}
   .alert-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-  .alert-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--well);border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-family:var(--f-mono);font-size:.84rem}
+  .alert-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--well);border:1px solid var(--line);border-radius:4px;padding:9px 13px;font-family:var(--f-mono);font-size:.84rem}
 </style>
 </head>
 <body>
@@ -116,7 +117,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./dashboard.html">Dashboard</a>
       <a class="btn btn-primary btn-sm" href="./terminal.html">Trade</a>
@@ -127,8 +128,7 @@
 <main id="top">
 <section class="section">
   <div class="wrap">
-    <span class="eyebrow">Account</span>
-    <h1 class="h2" style="margin-top:10px">Your account</h1>
+<h1 class="h2" style="margin-top:10px">Your account</h1>
     <p class="lede" style="max-width:58ch">Your profile, plan, paper account and preferences — all in one place. <span class="mono" style="font-size:.8rem">Simulated · virtual money · not advice.</span></p>
 
     <div class="acc-stack">
@@ -149,7 +149,7 @@
             <div class="acc-inrow">
               <input class="acc-input" id="accName" type="text" autocomplete="name" placeholder="Your name">
               <button class="btn btn-primary btn-sm" type="button" id="accSave">Save</button>
-              <span class="acc-saved" id="accSaved">Saved ✓</span>
+              <span class="acc-saved" id="accSaved">Saved</span>
             </div>
           </div>
           <div class="acc-field">
@@ -297,7 +297,7 @@
 
     </div>
 
-    <p class="mono" style="font-size:10.5px;color:var(--text-faint);margin-top:20px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The paper account is simulated with virtual money; results are hypothetical.</p>
+    <p class="mono" style="font-size:11px;color:var(--text-faint);margin-top:20px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The paper account is simulated with virtual money; results are hypothetical.</p>
   </div>
 </section>
 </main>
@@ -308,11 +308,11 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
     </div>
-    <div><h4>Product</h4><a href="./ai.html">Flux AI</a>
+    <div><h3>Product</h3><a href="./ai.html">Flux AI</a>
       <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h4>Intelligence</h4><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
+    <div><h3>Intelligence</h3><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
     <div><h4>Get Flux</h4><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h4>Company</h4><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h3>Company</h3><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Activity shown is from a simulated paper account using virtual money; results are hypothetical and do not represent real trading. Trading involves risk of loss, including loss of principal.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -519,7 +519,7 @@ document.addEventListener("DOMContentLoaded", function(){
     lset(which==="daily_brief"?"flux_pref_daily_brief":"flux_pref_price_alerts", on);
     if(SUPA && SUPA.savePrefs){
       var o = {}; o[which]=on;
-      SUPA.savePrefs(o).then(function(r){ if(prefCap) prefCap.textContent = r.ok ? "saved ✓" : "sign in to sync"; });
+      SUPA.savePrefs(o).then(function(r){ if(prefCap) prefCap.textContent = r.ok ? "saved" : "sign in to sync"; });
     } else if(prefCap){ prefCap.textContent = "sign in to sync"; }
   }
   if(prefBrief) prefBrief.addEventListener("change", function(){ savePref("daily_brief", prefBrief.checked); });
@@ -537,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!ts.length){ starList.innerHTML = '<span class="acc-note">No starred stocks yet. Add one above — they power your daily brief.</span>'; return; }
     starList.innerHTML = ts.map(function(t){
       var p = window.FLUX && FLUX.priceOf ? FLUX.priceOf(t) : null;
-      return '<span class="star-chip"><b>'+t+'</b>'+(p!=null?('<em>'+money(p)+'</em>'):'')+'<button data-t="'+t+'" title="Remove" aria-label="Remove '+t+'">✕</button></span>';
+      return '<span class="star-chip"><b>'+t+'</b>'+(p!=null?('<em>'+money(p)+'</em>'):'')+'<button data-t="'+t+'" title="Remove" aria-label="Remove '+t+'"><i class="ic-i i-close" aria-hidden="true"></i></button></span>';
     }).join("");
     starList.querySelectorAll("button[data-t]").forEach(function(b){
       b.onclick = function(){ if(window.FLUXWatch && FLUXWatch.remove) FLUXWatch.remove(b.getAttribute("data-t")); renderStars(); };
@@ -562,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function(){
       if(!active.length){ alertList.innerHTML = '<span class="acc-note">No active alerts. Add one above.</span>'; return; }
       alertList.innerHTML = active.map(function(r){
         return '<div class="alert-row"><span><b>'+r.ticker+'</b> '+(r.op==="above"?"rises above":"drops below")+' '+money(r.price)+'</span>'+
-          '<button data-id="'+r.id+'" title="Delete" aria-label="Delete alert">✕</button></div>';
+          '<button data-id="'+r.id+'" title="Delete" aria-label="Delete alert"><i class="ic-i i-close" aria-hidden="true"></i></button></div>';
       }).join("");
       alertList.querySelectorAll("button[data-id]").forEach(function(b){
         b.onclick = function(){ SUPA.removeAlert(+b.getAttribute("data-id")).then(renderAlerts); };
@@ -587,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var B = SUPA && SUPA.byok;
     if(!B || !byokStat) return;
     if(B.active()){
-      byokStat.textContent = "active ✓ unlimited";
+      byokStat.textContent = "active · unlimited";
       if(byokKey) byokKey.placeholder = "•••••••••••• (key saved in this browser)";
       if(byokNote) byokNote.textContent = "Fluxi is running on your Anthropic credits — unlimited, heavy model eligible. Calls today: " + B.callsToday() + ". Your key never leaves this browser.";
     } else {
@@ -620,8 +620,8 @@ document.addEventListener("DOMContentLoaded", function(){
         adminList.innerHTML = rows.length ? rows.map(function(a){
           var owner = (a.note||"") === "owner";
           return '<div class="alert-row"><span><b>'+esc2(a.email)+'</b>'+(owner?' <span class="acc-cap">owner</span>':'')+
-            (a.note?' <span style="color:var(--text-faint);font-size:.72rem">· '+esc2(a.note)+'</span>':'')+'</span>'+
-            (owner?'':'<button data-mail="'+esc2(a.email)+'" title="Remove admin">✕</button>')+'</div>';
+            (a.note?' <span style="color:var(--text-faint);font-size:.75rem">· '+esc2(a.note)+'</span>':'')+'</span>'+
+            (owner?'':'<button data-mail="'+esc2(a.email)+'" title="Remove admin"><i class="ic-i i-close" aria-hidden="true"></i></button>')+'</div>';
         }).join("") : '<span class="acc-note">No admins found.</span>';
         adminList.querySelectorAll("button[data-mail]").forEach(function(b){
           b.onclick = function(){

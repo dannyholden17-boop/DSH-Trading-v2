@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Every trade — Flux Fund</title>
 <meta name="description" content="Every trade the Flux Fund has made — a simple, sortable ledger of price, size and proceeds. Simulated, virtual money, not investment advice. Sign in to view.">
-<meta name="theme-color" content="#020617">
+<meta name="theme-color" content="#17181b">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/flux.css?v=19">
-<script src="./assets/flux-supa.js?v=19" defer></script>
-<script src="./assets/flux-site.js?v=19" defer></script>
-<script src="./assets/flux-universe.js?v=19" defer></script>
-<script src="./assets/flux-feed.js?v=19" defer></script>
-<script src="./assets/flux-fund.js?v=19" defer></script>
-<script src="./assets/flux-kronos.js?v=19" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=20">
+<link rel="stylesheet" href="./assets/flux.css?v=20">
+<script src="./assets/flux-supa.js?v=20" defer></script>
+<script src="./assets/flux-site.js?v=20" defer></script>
+<script src="./assets/flux-universe.js?v=20" defer></script>
+<script src="./assets/flux-feed.js?v=20" defer></script>
+<script src="./assets/flux-fund.js?v=20" defer></script>
+<script src="./assets/flux-kronos.js?v=20" defer></script>
 <style>
   .tw{max-width:1080px;margin-inline:auto;padding:26px var(--gutter) 60px}
   .tw h1{font-size:clamp(1.5rem,1.1rem + 1.6vw,2rem);letter-spacing:-.02em}
@@ -22,10 +23,10 @@
   .trow-top .stat{font-family:var(--f-mono);font-size:.82rem;color:var(--text-dim)}
   .trow-top .stat b{color:var(--text)}
   .trow-top .spacer{margin-left:auto}
-  .xlwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--glass)}
+  .xlwrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--glass)}
   table.xl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.84rem;min-width:640px}
   table.xl thead th{position:sticky;top:0;background:#040b1a;color:var(--text-faint);text-align:right;
-    font-weight:600;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+    font-weight:600;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
   table.xl thead th:first-child,table.xl tbody td:first-child{text-align:left}
   table.xl thead th:nth-child(2),table.xl tbody td:nth-child(2),
   table.xl thead th:nth-child(3),table.xl tbody td:nth-child(3){text-align:left}
@@ -39,7 +40,7 @@
   .lock h2{margin-top:12px;font-size:1.3rem}
   .lock p{color:var(--text-dim);margin-top:8px;font-size:.94rem}
   .lock .btn{margin-top:18px}
-  .disc{font-family:var(--f-mono);font-size:.66rem;color:var(--text-faint);margin-top:16px;letter-spacing:.03em}
+  .disc{font-family:var(--f-mono);font-size:.75rem;color:var(--text-faint);margin-top:16px;letter-spacing:.03em}
 </style>
 </head>
 <body>
@@ -59,7 +60,7 @@
       <a href="./markets.html">Markets</a>
       <a href="./pricing.html">Pricing</a>
     </nav>
-    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
       <a class="btn btn-ghost btn-sm" href="./fund.html">← Back to Fund</a>
       <a class="btn btn-primary btn-sm" href="./signin.html">Sign in</a>
@@ -85,7 +86,7 @@
       <span class="stat">Fills: <b id="tCount">—</b></span>
       <span class="stat">Realized P/L: <b id="tPL">—</b></span>
       <span class="spacer"></span>
-      <button class="btn btn-ghost btn-sm" id="csvBtn" type="button">⬇ Download CSV</button>
+      <button class="btn btn-ghost btn-sm" id="csvBtn" type="button"><i class="ic-i i-down" aria-hidden="true"></i> Download CSV</button>
     </div>
 
     <div class="xlwrap">
