@@ -314,7 +314,7 @@
       body.insertBefore(bar,body.firstChild);
       var onS=function(){
         var d=document.documentElement,max=(d.scrollHeight-d.clientHeight)||1;
-        bar.style.width=Math.min(100,(d.scrollTop/max)*100)+"%";
+        bar.style.transform="scaleX("+Math.min(1,d.scrollTop/max).toFixed(4)+")";
       };
       onS();window.addEventListener("scroll",onS,{passive:true});window.addEventListener("resize",onS);
     }
