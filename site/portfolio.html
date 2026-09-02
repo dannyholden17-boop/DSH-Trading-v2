@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portfolio — Flux</title>
 <meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings — read-only until you say otherwise.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
 <style>
   /* ---- page-only layout: portfolio.html ---- */
   .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -66,7 +66,7 @@
   .pf-tk b{font-weight:700;font-size:.9rem;letter-spacing:.03em}
   .pf-tk span{display:block;color:var(--text-faint);font-size:12px;line-height:1.3;font-family:var(--f-sans)}
   .pf-wt-bar{position:relative;display:inline-block;width:52px;height:6px;border-radius:2px;
-    background:rgba(233,228,215,.08);vertical-align:middle;margin-left:8px;overflow:hidden}
+    background:rgba(160,180,220,.10);vertical-align:middle;margin-left:8px;overflow:hidden}
   .pf-wt-bar i{position:absolute;inset:0 auto 0 0;border-radius:2px;background:var(--grad)}
 
   /* donut */
@@ -197,9 +197,9 @@
       <p class="muted" style="margin-top:10px;font-size:.9rem">Live linking to Robinhood, Fidelity, Schwab and more (read-only) is rolling out. Drop your email and pick your broker — we'll invite you the moment it's live for you.</p>
       <form id="pfWaitForm" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
         <input id="pfWaitEmail" type="email" required placeholder="you@email.com" aria-label="Your email"
-          style="flex:1;min-width:180px;background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:1rem;outline:none">
+          style="flex:1;min-width:180px;background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:1rem;outline:none">
         <select id="pfWaitBroker" aria-label="Your broker"
-          style="background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:1rem">
+          style="background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:12px 14px;font-size:1rem">
           <option value="Robinhood">Robinhood</option><option value="Fidelity">Fidelity</option>
           <option value="Schwab">Schwab</option><option value="Webull">Webull</option>
           <option value="E*TRADE">E*TRADE</option><option value="Coinbase">Coinbase</option>
@@ -591,8 +591,8 @@ document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $  = F.$  || function(s,r){return (r||document).querySelector(s)};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-  var CY = F.CY || "#e8b33c", VI = F.VI || "#6f9ad6", EM = F.EM || "#56b97f",
-      AM = F.AM || "#e8b33c", BL = "#6f9ad6";
+  var CY = F.CY || "#f5b93c", VI = F.VI || "#7aa7ff", EM = F.EM || "#3ddc97",
+      AM = F.AM || "#f5b93c", BL = "#7aa7ff";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
   /* ---------------- broker chips ---------------- */
@@ -648,7 +648,7 @@ document.addEventListener("DOMContentLoaded", function(){
   drawSpark();
 
   /* ---------------- allocation donut + holdings (real paper book) ---------------- */
-  var COLORS = [CY, VI, EM, AM, BL, "#f472b6", "#7cc99a", "#fbbf24", "#22d3ee", "#c084fc"];
+  var COLORS = [CY, VI, EM, AM, BL, "#f472b6", "#6fe3b0", "#fbbf24", "#22d3ee", "#c084fc"];
 
   /* fallback (only used if the paper-account engine isn't loaded) */
   var HOLD = [
@@ -803,7 +803,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var rad = R - th / 2, TAU = Math.PI * 2, start = -Math.PI / 2;
     /* track */
     c.beginPath(); c.arc(cx, cy, rad, 0, TAU);
-    c.strokeStyle = "rgba(233,228,215,.06)"; c.lineWidth = th; c.stroke();
+    c.strokeStyle = "rgba(160,180,220,.07)"; c.lineWidth = th; c.stroke();
     var sweepEnd = start + TAU * prog, acc = 0, gap = 0.035;
     HOLD.forEach(function(s){
       var a0 = start + TAU * (acc / 100), a1 = start + TAU * ((acc + s.w) / 100);
@@ -816,10 +816,10 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     /* center label */
     c.textAlign = "center";
-    c.fillStyle = "#eae6dc";
+    c.fillStyle = "#f2f5fb";
     c.font = "700 " + Math.round(R * 0.30) + "px 'JetBrains Mono', monospace";
     c.fillText(kfmt(pfMktSum), cx, cy - 1);
-    c.fillStyle = "#a09a89";
+    c.fillStyle = "#8d9ab6";
     c.font = "600 " + Math.round(R * 0.13) + "px 'JetBrains Mono', monospace";
     c.fillText(pfPosCount + " HOLDING" + (pfPosCount === 1 ? "" : "S"), cx, cy + R * 0.24);
   }

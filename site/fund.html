@@ -5,26 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Fund — Flux</title>
 <meta name="description" content="The Flux Fund: a simulated AI that trades a paper account live and shows every fill. Watch it trade in real time, browse its positions and its whole order history. Simulated, virtual money, not investment advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
 <style>
   .fd-shell{max-width:1280px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,32px)}
   /* hero */
   .fd-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center}
   @media(max-width:900px){.fd-hero{grid-template-columns:1fr;gap:24px}}
   .fd-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--emerald);border:1px solid rgba(86,185,127,.4);background:rgba(86,185,127,.08);
+    text-transform:uppercase;color:var(--emerald);border:1px solid rgba(61,220,151,.4);background:rgba(61,220,151,.08);
     padding:5px 12px;border-radius:2px;font-weight:700}
-  .fd-live .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(86,185,127,.6);animation:fdpulse 1.6s infinite}
-  @keyframes fdpulse{0%{box-shadow:0 0 0 0 rgba(86,185,127,.55)}70%{box-shadow:0 0 0 10px rgba(86,185,127,0)}100%{box-shadow:0 0 0 0 rgba(86,185,127,0)}}
+  .fd-live .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(61,220,151,.6);animation:fdpulse 1.6s infinite}
+  @keyframes fdpulse{0%{box-shadow:0 0 0 0 rgba(61,220,151,.55)}70%{box-shadow:0 0 0 10px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
   .fd-hero h1{margin-top:16px;font-size:clamp(2rem,1.4rem + 3vw,3.3rem);line-height:1.04;letter-spacing:-.03em}
   .fd-aumcard{padding:24px}
   .fd-aum{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(2.2rem,1.6rem + 3vw,3.2rem);
@@ -69,7 +69,7 @@
   .fd-row .rt{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.9rem}
   .fd-row .rt small{display:block;color:var(--text-faint);font-size:12px}
   .fd-new{animation:fdrow .9s ease-out}
-  @keyframes fdrow{from{background:rgba(232,179,60,.14)}to{background:transparent}}
+  @keyframes fdrow{from{background:rgba(245,185,60,.14)}to{background:transparent}}
 
   /* holdings */
   .fd-hscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -83,7 +83,7 @@
 
   .fd-think{display:flex;align-items:center;gap:12px;padding:15px 18px;margin-top:18px}
   .fd-think .av{width:36px;height:36px;border-radius:4px;flex:none;display:grid;place-items:center;font-size:18px;
-    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.18),rgba(111,154,214,.12))}
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(245,185,60,.18),rgba(122,167,255,.12))}
   .fd-think .tx{font-size:.9rem;line-height:1.5;color:var(--text-dim)}
   .fd-think .tx b{color:var(--text)}
 
@@ -353,11 +353,11 @@ document.addEventListener("DOMContentLoaded", function () {
     pad = pad || 6;
     var ys = data.map(function (d) { return d.eq; }), mn = Math.min.apply(null, ys), mx = Math.max.apply(null, ys);
     if (mx - mn < 1) { mx += 1; mn -= 1; }
-    var up = ys[ys.length - 1] >= ys[0], col = up ? "#56b97f" : "#e8674a";
+    var up = ys[ys.length - 1] >= ys[0], col = up ? "#3ddc97" : "#ff6f52";
     var X = function (i) { return pad + (w - pad * 2) * i / (data.length - 1); };
     var Y = function (v) { return pad + (h - pad * 2) * (1 - (v - mn) / (mx - mn)); };
     var g = c.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, up ? "rgba(86,185,127,.28)" : "rgba(232,103,74,.24)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    g.addColorStop(0, up ? "rgba(61,220,151,.28)" : "rgba(255,111,82,.24)"); g.addColorStop(1, "rgba(0,0,0,0)");
     c.beginPath(); c.moveTo(X(0), Y(ys[0])); for (var i = 1; i < data.length; i++) c.lineTo(X(i), Y(ys[i]));
     c.lineTo(X(data.length - 1), h); c.lineTo(X(0), h); c.closePath(); c.fillStyle = g; c.fill();
     c.beginPath(); c.moveTo(X(0), Y(ys[0])); for (i = 1; i < data.length; i++) c.lineTo(X(i), Y(ys[i]));
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var maxMkt = Math.max.apply(null, s.positions.map(function (p) { return p.mkt; }).concat([1]));
     var rows = s.positions.map(function (p) {
       var w = Math.max(2, p.mkt / maxMkt * 100), up = p.pl >= 0;
-      var grad = up ? "linear-gradient(90deg,#0891b2,#56b97f)" : "linear-gradient(90deg,#b45309,#e8674a)";
+      var grad = up ? "linear-gradient(90deg,#0891b2,#3ddc97)" : "linear-gradient(90deg,#b45309,#ff6f52)";
       return '<div class="row"><div class="tk"><b>' + p.t + '</b><span>' + p.sec + '</span></div>' +
         '<div class="track"><div class="fill" style="width:' + w.toFixed(1) + '%;background:' + grad + '"></div></div>' +
         '<div class="val">' + m0(p.mkt) + '<span>' + p.weight + '% of book</span></div>' +

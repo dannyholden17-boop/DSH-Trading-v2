@@ -3,16 +3,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pricing — Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .seg{display:inline-flex;gap:4px;padding:4px;border-radius:2px;border:1px solid var(--line);background:var(--well)}
@@ -20,13 +20,13 @@
     padding:9px 18px;border-radius:2px;border:1px solid transparent;background:transparent;color:var(--text-dim);
     cursor:pointer;transition:color .2s,background .2s,border-color .2s;white-space:nowrap}
   .seg button:hover{color:var(--text)}
-  .seg button[aria-pressed="true"]{color:var(--cyan);background:rgba(232,179,60,.09);border-color:rgba(232,179,60,.4)}
+  .seg button[aria-pressed="true"]{color:var(--cyan);background:rgba(245,185,60,.09);border-color:rgba(245,185,60,.4)}
 
   .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
   @media(max-width:920px){.plans{grid-template-columns:1fr;max-width:440px;margin-inline:auto}}
   .plan{display:flex;flex-direction:column;padding:28px}
-  .plan.pop{border-color:rgba(232,179,60,.5);
-    box-shadow:0 0 0 1px rgba(232,179,60,.15), inset 0 1px 0 rgba(233,228,215,.06)}
+  .plan.pop{border-color:rgba(245,185,60,.5);
+    box-shadow:0 0 0 1px rgba(245,185,60,.15), inset 0 1px 0 rgba(160,180,220,.07)}
   .plan .nm{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
   .plan .amt{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:2.7rem;font-weight:700;
     letter-spacing:-.03em;margin:14px 0 2px;line-height:1.05}
@@ -37,7 +37,7 @@
   .plan li{display:flex;gap:10px;font-size:.9rem;color:var(--text-dim);line-height:1.45}
   .plan li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;flex:none}
   .plan .btn{margin-top:auto;width:100%}
-  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#15100a;
+  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#120d05;
     font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:2px;white-space:nowrap}
 
   .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -47,7 +47,7 @@
   table.cmp th:first-child,table.cmp td:first-child{text-align:left;width:38%;min-width:210px;color:var(--text-dim)}
   table.cmp thead .pn{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
   table.cmp thead .pp{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);font-weight:400;display:block;margin-top:4px}
-  table.cmp tbody tr:hover{background:rgba(232,179,60,.035)}
+  table.cmp tbody tr:hover{background:rgba(245,185,60,.035)}
   table.cmp .grp td{background:var(--well);border-top:1px solid var(--line);
     font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);
     padding-block:9px;font-weight:700}

@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux — The autonomous AI trading desk</title>
 <meta name="description" content="Flux is an AI trading desk: an assistant you can ask anything, an Autopilot that trades a live $10,000 paper account and shows its work, and a portfolio brain that connects to your brokerage. Not investment advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
-<script src="./assets/flux-desk.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
+<script src="./assets/flux-desk.js?v=24" defer></script>
 <style>
   /* ---- page-only layout: index.html ---- */
 
@@ -61,7 +61,7 @@
   .p-sig{display:flex;flex-direction:column;gap:8px}
   .flag{display:block;text-decoration:none;color:inherit}
   .flag .ic{width:46px;height:46px;border-radius:4px;display:grid;place-items:center;font-size:1.5rem;
-    border:1px solid var(--line);background:rgba(232,179,60,.06);margin-bottom:14px}
+    border:1px solid var(--line);background:rgba(245,185,60,.06);margin-bottom:14px}
   .flag h3{font-size:1.18rem;margin-bottom:8px}
   .flag .go{margin-top:14px;color:var(--cyan);font-family:var(--f-mono);font-size:13px;display:inline-flex;gap:7px;align-items:center;transition:gap .2s}
   .flag:hover .go{gap:11px}
@@ -71,14 +71,14 @@
   .cap{color:var(--text-faint);font-size:12px;font-family:var(--f-mono)}
   .chat{display:flex;flex-direction:column;gap:10px}
   .bub{max-width:88%;padding:11px 14px;border-radius:4px;font-size:.9rem;line-height:1.5}
-  .bub.u{align-self:flex-end;background:rgba(232,179,60,.1);border:1px solid rgba(232,179,60,.28)}
+  .bub.u{align-self:flex-end;background:rgba(245,185,60,.1);border:1px solid rgba(245,185,60,.28)}
   .bub.a{align-self:flex-start;background:var(--glass-2);border:1px solid var(--line)}
   .vault{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
   @media(max-width:520px){.vault{grid-template-columns:repeat(2,1fr)}}
   .vault .n{padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--glass-2);font-size:12px}
   .vault .n b{display:block;color:var(--cyan);font-family:var(--f-mono);font-size:13px;margin-bottom:4px}
   .eng .ic{font-size:1.5rem;width:44px;height:44px;border-radius:4px;display:grid;place-items:center;
-    border:1px solid var(--line);background:rgba(111,154,214,.08);margin-bottom:12px}
+    border:1px solid var(--line);background:rgba(122,167,255,.08);margin-bottom:12px}
   .eng h4{font-size:1rem;margin-bottom:6px} .eng p{font-size:.9rem}
   .eng .meta{margin-top:10px;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);display:flex;justify-content:space-between}
   .stores{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
@@ -107,7 +107,7 @@
   .macside .si{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:4px;font-size:12.5px;
     color:var(--text-dim);cursor:default;transition:.25s;white-space:nowrap}
   .macside .si .g{font-size:.9rem;opacity:.85}
-  .macside .si.on{background:rgba(232,179,60,.1);color:var(--text);box-shadow:inset 0 0 0 1px rgba(232,179,60,.3)}
+  .macside .si.on{background:rgba(245,185,60,.1);color:var(--text);box-shadow:inset 0 0 0 1px rgba(245,185,60,.3)}
   @media(max-width:540px){.macside .si span:last-child{display:none}.macside .si{justify-content:center}}
   .macmain{position:relative;overflow:hidden}
   .scr{position:absolute;inset:0;padding:16px 18px;opacity:0;transform:translateY(10px);
@@ -120,7 +120,7 @@
   .scr.on .scr-ln{opacity:1;transform:none}
   .scr-ln b{color:var(--text)}
   .mrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:12px}
-  .mrow .tk{font-weight:700} .mrow .bar{flex:1;height:5px;border-radius:2px;background:rgba(233,228,215,.08);overflow:hidden;max-width:120px}
+  .mrow .tk{font-weight:700} .mrow .bar{flex:1;height:5px;border-radius:2px;background:rgba(160,180,220,.10);overflow:hidden;max-width:120px}
   .mrow .bar i{display:block;height:100%;border-radius:2px}
   .mac-cur{position:absolute;left:0;top:0;width:20px;height:20px;z-index:8;pointer-events:none;
     transition:transform 1s cubic-bezier(.5,.05,.2,1);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
@@ -249,7 +249,7 @@
       through at this moment — the names it pulled, what the tape says about them, what it read
       on the wire, and what each desk did with it.</p>
 
-    <ol class="fl-chain" id="flChain">
+    <ol class="fl-chain stagger" id="flChain">
       <li class="fl-st" data-st="analysts">
         <span class="stamp stamp-pending">Filed</span>
         <span class="role">Stage 1</span><h3>Three analysts</h3>
@@ -317,7 +317,7 @@
 <section class="section">
   <div class="wrap">
 <h2 class="h2 reveal">Everything a modern trader wishes their broker had.</h2>
-    <div class="dockets">
+    <div class="dockets stagger">
       <a class="filing reveal" href="./ai.html">
         <header class="fg-hd"><span class="fg-no">File 01</span><span class="fg-rt">Research</span></header>
         <h3>Flux AI</h3>
@@ -446,7 +446,7 @@
   <div class="wrap">
 <h2 class="h2 reveal">Six engines that never sleep.</h2>
     <p class="lede reveal">While you're offline, Flux is scanning, parsing and stress-testing — so the moment something matters, it's already on your screen.</p>
-    <ol class="roster" id="engines"></ol>
+    <ol class="roster stagger" id="engines"></ol>
   </div>
 </section>
 
@@ -473,7 +473,7 @@
   <div class="wrap">
     <div class="daysheet">
       <div class="ds-head"><span>Standing on the pad</span><span class="ds-when" id="dsWhen">live</span></div>
-      <dl class="ds-list">
+      <dl class="ds-list stagger">
         <div class="ds-line"><dt>Names scanned each round</dt><span class="ds-rule"></span><dd id="dsScan">—</dd></div>
         <div class="ds-line"><dt>Filings on the record</dt><span class="ds-rule"></span><dd id="dsFilings">—</dd></div>
         <div class="ds-line"><dt>Rulings published</dt><span class="ds-rule"></span><dd id="dsRulings">—</dd></div>
@@ -495,7 +495,7 @@
         <span><small>Download on the</small><b>App Store</b></span>
       </a>
       <a class="store" href="./download.html" aria-label="Get it on Google Play">
-        <svg width="20" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e8b33c" d="M3.6 2.3 13.4 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#56b97f" d="M16.9 8.5 13.4 12 3.9 2.1c.1 0 .3 0 .5.1l12.5 6.3z"/><path fill="#e8674a" d="M16.9 15.5 4.4 21.8c-.2.1-.4.1-.5.1L13.4 12z"/><path fill="#e8b33c" d="M21 10.7c.7.4.7 1.5 0 1.9l-2.8 1.6-1.9-1.9 1.9-1.9z"/></svg>
+        <svg width="20" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#f5b93c" d="M3.6 2.3 13.4 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#3ddc97" d="M16.9 8.5 13.4 12 3.9 2.1c.1 0 .3 0 .5.1l12.5 6.3z"/><path fill="#ff6f52" d="M16.9 15.5 4.4 21.8c-.2.1-.4.1-.5.1L13.4 12z"/><path fill="#f5b93c" d="M21 10.7c.7.4.7 1.5 0 1.9l-2.8 1.6-1.9-1.9 1.9-1.9z"/></svg>
         <span><small>Get it on</small><b>Google Play</b></span>
       </a>
       <a class="btn btn-primary btn-lg" href="./download.html">All downloads</a>
@@ -689,7 +689,14 @@ document.addEventListener("DOMContentLoaded", function(){
         els.forEach(function(el, i){
           if(!el) return;
           var c = counts[i], n = el.querySelector(".fl-n");
-          if(n) n.innerHTML = c[0] ? (c[0] + ' <small>' + esc(c[1]) + '</small>') : '<small>not yet</small>';
+          if(n){
+            if(!c[0]){ n.innerHTML = '<small>not yet</small>'; }
+            else{
+              if(!n.querySelector("b")) n.innerHTML = '<b>0</b> <small>' + esc(c[1]) + '</small>';
+              var sm = n.querySelector("small"); if(sm) sm.textContent = c[1];
+              F.countTo(n.querySelector("b"), c[0]);
+            }
+          }
           if(c[2] && c[0]){
             var w = el.querySelector(".fl-what");
             if(w && !w.dataset.orig) w.dataset.orig = w.textContent;
@@ -757,7 +764,7 @@ document.addEventListener("DOMContentLoaded", function(){
           : "";
 
         /* the day sheet counts the same record, so it states facts */
-        function sheet(id, v){ var el = $(id); if(el && v != null) el.textContent = Number(v).toLocaleString(); }
+        function sheet(id, v){ var el = $(id); if(el && v != null) F.countTo(el, v); }
         sheet("dsScan", f.scanned);
         sheet("dsFilings", f.filings_total);
         sheet("dsRulings", f.rulings_total);
@@ -766,6 +773,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
         /* a new round re-lands every stamp, so the loop is visibly moving */
         if(lastSeq !== null && lastSeq !== r.seq){
+          var board = document.getElementById("floor");
+          if(board && !reduce){
+            board.classList.remove("sweeping"); void board.offsetWidth;
+            board.classList.add("sweeping");
+            setTimeout(function(){ board.classList.remove("sweeping"); }, 1000);
+          }
           els.forEach(function(el){
             var st = el && el.querySelector(".stamp");
             if(st){ delete st.dataset.landed; st.classList.remove("land"); }

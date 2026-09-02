@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fluxi — your AI trading desk</title>
 <meta name="description" content="Talk to Flux — an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
-<script src="./assets/flux-tv.js?v=23" defer></script>
-<script src="./assets/flux-news.js?v=23" defer></script>
-<script src="./assets/flux-jarvis.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
+<script src="./assets/flux-tv.js?v=24" defer></script>
+<script src="./assets/flux-news.js?v=24" defer></script>
+<script src="./assets/flux-jarvis.js?v=24" defer></script>
 <style>
   /* ===== full-screen, no page-scroll app shell ===== */
   html,body{height:100%}
@@ -45,7 +45,7 @@
     padding:8px 6px 6px;scroll-behavior:smooth}
   .clog::-webkit-scrollbar{width:6px}.clog::-webkit-scrollbar-thumb{background:rgba(var(--glow-c),.3);border-radius:2px}
   .msg{max-width:82%;padding:11px 15px;border-radius:4px;font-size:1rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
-  .msg.u{align-self:flex-end;background:rgba(var(--glow),.12);border:1px solid rgba(var(--glow-c),.32);color:#eae6dc}
+  .msg.u{align-self:flex-end;background:rgba(var(--glow),.12);border:1px solid rgba(var(--glow-c),.32);color:#f2f5fb}
   .msg.a{align-self:flex-start;background:var(--glass-2);border:1px solid var(--line);color:var(--text)}
   .msg.a b,.msg.a strong{color:var(--cyan)}
   .typing{align-self:flex-start;display:inline-flex;gap:5px;padding:12px 14px}
@@ -61,22 +61,22 @@
     border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s;white-space:nowrap}
   .chip:hover{border-color:rgba(var(--glow-c),.5);color:var(--cyan);box-shadow:var(--lift-1)}
   .cinput{display:flex;gap:9px;align-items:center}
-  .cinput input{flex:1;min-width:0;background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);
+  .cinput input{flex:1;min-width:0;background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);
     padding:14px 16px;font-size:1rem;font-family:var(--f-sans);outline:none;transition:border-color .2s,box-shadow .2s}
-  .cinput input:focus{border-color:rgba(var(--glow-c),.6);box-shadow:0 0 0 2px rgba(232,179,60,.5)}
+  .cinput input:focus{border-color:rgba(var(--glow-c),.6);box-shadow:0 0 0 2px rgba(245,185,60,.5)}
   .iconbtn{width:48px;height:48px;flex:none;border-radius:4px;border:1px solid rgba(var(--glow-c),.4);
     background:rgba(var(--glow),.08);color:var(--cyan);cursor:pointer;display:grid;place-items:center;font-size:1.18rem;transition:.18s}
   .iconbtn:hover{border-color:var(--cyan);box-shadow:var(--lift-1)}
-  .iconbtn.send{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#15100a;border:none}
-  .iconbtn.mic.on{background:rgba(232,103,74,.15);border-color:#e8674a;color:#ff9d9d;animation:micPulse 1.2s infinite}
-  @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,103,74,.5)}70%{box-shadow:0 0 0 10px rgba(232,103,74,0)}}
+  .iconbtn.send{background:linear-gradient(120deg,var(--cyan),var(--cyan-deep));color:#120d05;border:none}
+  .iconbtn.mic.on{background:rgba(255,111,82,.15);border-color:#ff6f52;color:#ff9d9d;animation:micPulse 1.2s infinite}
+  @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,111,82,.5)}70%{box-shadow:0 0 0 10px rgba(255,111,82,0)}}
   .iconbtn[disabled]{opacity:.4;cursor:not-allowed}
   .voicerow{display:flex;align-items:center;gap:12px;margin-top:9px;flex-wrap:wrap;font-size:13px;color:var(--text-dim)}
   .tgl{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
   .tgl input{appearance:none;width:38px;height:22px;border-radius:2px;background:#1a2338;position:relative;cursor:pointer;transition:.2s;border:1px solid var(--line)}
   .tgl input:checked{background:rgba(var(--glow),.4);border-color:rgba(var(--glow-c),.6)}
   .tgl input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#cfe9f2;transition:.2s}
-  .tgl input:checked::after{transform:translateX(16px);background:#eae6dc}
+  .tgl input:checked::after{transform:translateX(16px);background:#f2f5fb}
   .microdisc{font-family:var(--f-mono);font-size:.6rem;color:var(--text-faint);margin-left:auto;letter-spacing:.04em}
 
   /* ===== corner widget dock ===== */

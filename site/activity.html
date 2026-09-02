@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Activity & P&amp;L — Flux</title>
 <meta name="description" content="Your Flux paper-trading activity: full order history, realized and unrealized P&L, and your account value over time. Simulated; not investment advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
 <style>
   .ac-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
   @media(max-width:900px){.ac-cards{grid-template-columns:repeat(2,1fr)}}
@@ -27,7 +27,7 @@
   .ac-tabs{display:flex;gap:8px;margin:24px 0 10px;flex-wrap:wrap}
   .ac-tab{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
     padding:7px 14px;border-radius:2px;cursor:pointer;border:1px solid var(--line);background:var(--glass);color:var(--text-dim)}
-  .ac-tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(232,179,60,.45);background:rgba(232,179,60,.08)}
+  .ac-tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(245,185,60,.45);background:rgba(245,185,60,.08)}
   .ac-scroll{overflow-x:auto}
   table.ac-t{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
   table.ac-t th{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function(){
     function Y(v){ return pad + (h-2*pad)*(1-(v-mn)/rg); }
     // start-value baseline
     c.strokeStyle="rgba(255,255,255,.10)"; c.setLineDash([4,4]); c.beginPath(); c.moveTo(0,Y(base)); c.lineTo(w,Y(base)); c.stroke(); c.setLineDash([]);
-    var up = (data[data.length-1] >= base), col = up ? (F.EM||"#56b97f") : (F.CR||"#e8674a");
+    var up = (data[data.length-1] >= base), col = up ? (F.EM||"#3ddc97") : (F.CR||"#ff6f52");
     var g = c.createLinearGradient(0,0,0,h); g.addColorStop(0, col+"3a"); g.addColorStop(1, col+"00");
     c.beginPath(); c.moveTo(X(0),Y(data[0])); for(var i=1;i<n;i++) c.lineTo(X(i),Y(data[i]));
     c.lineTo(X(n-1),h); c.lineTo(X(0),h); c.closePath(); c.fillStyle=g; c.fill();

@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Account — Flux</title>
 <meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
 <style>
   /* page-only LAYOUT: account.html (acc- prefixed). Shared tokens/classes reused, never redefined. */
   .acc-stack{display:flex;flex-direction:column;gap:18px;margin-top:26px}
@@ -28,7 +28,7 @@
   .acc-prow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .acc-av{width:64px;height:64px;border-radius:4px;flex:none;display:grid;place-items:center;
     font-family:var(--f-mono);font-weight:700;font-size:1.5rem;letter-spacing:.02em;color:var(--text);
-    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(232,179,60,.2),rgba(111,154,214,.14))}
+    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(245,185,60,.2),rgba(122,167,255,.14))}
   .acc-pid{min-width:0}
   .acc-pid b{font-size:1rem;font-weight:700}
   .acc-pid span{display:block;color:var(--text-faint);font-family:var(--f-mono);font-size:13px;margin-top:3px;
@@ -41,7 +41,7 @@
   .acc-input{flex:1;min-width:160px;background:var(--well);border:1px solid var(--line);border-radius:4px;
     color:var(--text);padding:12px 14px;font-size:.9rem;font-family:var(--f-sans);outline:none;
     transition:border-color .2s}
-  .acc-input:focus{border-color:rgba(232,179,60,.45)}
+  .acc-input:focus{border-color:rgba(245,185,60,.45)}
   .acc-input[readonly]{color:var(--text-dim);cursor:default}
   .acc-saved{font-family:var(--f-mono);font-size:12px;color:var(--emerald);opacity:0;transition:opacity .25s}
   .acc-saved.show{opacity:1}
@@ -52,7 +52,7 @@
   .acc-plan{font-size:1.5rem;font-weight:750;letter-spacing:-.02em}
   .acc-plan-sub{color:var(--text-dim);font-size:.9rem;margin-top:6px}
   .acc-pill-ok{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
-    padding:5px 11px;border-radius:2px;border:1px solid rgba(86,185,127,.5);background:rgba(86,185,127,.1);color:var(--emerald)}
+    padding:5px 11px;border-radius:2px;border:1px solid rgba(61,220,151,.5);background:rgba(61,220,151,.1);color:var(--emerald)}
   .acc-sub-act{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
   /* paper account */
@@ -79,9 +79,9 @@
   .acc-del-note.show{display:block}
   /* your-stocks: watchlist + alerts */
   .star-add,.alert-add{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  .star-add input,.alert-add input,.alert-add select{background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
+  .star-add input,.alert-add input,.alert-add select{background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
   .star-add input,.alert-add input,.alert-add select{transition:border-color .15s}
-  .star-add input:focus,.alert-add input:focus,.alert-add select:focus{border-color:rgba(232,179,60,.5)}
+  .star-add input:focus,.alert-add input:focus,.alert-add select:focus{border-color:rgba(245,185,60,.5)}
   .star-add input{flex:1;min-width:150px;text-transform:uppercase}
   #alTicker{width:92px;text-transform:uppercase}
   #alPrice{width:112px}
@@ -94,8 +94,8 @@
   .star-chip button:hover,.alert-row button:hover{color:var(--crimson)}
   .acc-sub{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);margin-top:20px;border-top:1px solid var(--line-2);padding-top:16px}
   .byok-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  .byok-row input{flex:1;min-width:200px;background:#131211;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
-  .byok-row input:focus{border-color:rgba(232,179,60,.5)}
+  .byok-row input{flex:1;min-width:200px;background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);padding:10px 12px;font-family:var(--f-mono);font-size:.9rem;outline:none}
+  .byok-row input:focus{border-color:rgba(245,185,60,.5)}
   .alert-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
   .alert-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--well);border:1px solid var(--line);border-radius:4px;padding:9px 13px;font-family:var(--f-mono);font-size:13px}
 </style>

@@ -3,16 +3,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Download Flux — Desktop, iPhone, iPad &amp; Android</title>
 <meta name="description" content="Get Flux on every device. The full pro workstation on Mac and Windows, the autonomous desk in your pocket on iPhone and Android, and instant web access.">
-<meta name="theme-color" content="#1b1917">
+<meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=23">
-<link rel="stylesheet" href="./assets/flux.css?v=23">
-<script src="./assets/flux-supa.js?v=23" defer></script>
-<script src="./assets/flux-site.js?v=23" defer></script>
-<script src="./assets/flux-universe.js?v=23" defer></script>
-<script src="./assets/flux-feed.js?v=23" defer></script>
-<script src="./assets/flux-fund.js?v=23" defer></script>
-<script src="./assets/flux-kronos.js?v=23" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=24">
+<link rel="stylesheet" href="./assets/flux.css?v=24">
+<script src="./assets/flux-supa.js?v=24" defer></script>
+<script src="./assets/flux-site.js?v=24" defer></script>
+<script src="./assets/flux-universe.js?v=24" defer></script>
+<script src="./assets/flux-feed.js?v=24" defer></script>
+<script src="./assets/flux-fund.js?v=24" defer></script>
+<script src="./assets/flux-kronos.js?v=24" defer></script>
 <style>
   /* ==========================================================
      Page-only layout for download.html.
@@ -24,8 +24,8 @@
   .dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
   .dl-meta{margin-top:15px;font-size:12px;letter-spacing:.05em;color:var(--text-faint)}
   .dl-note{margin-top:18px;display:none;gap:12px;align-items:flex-start;max-width:54ch;
-    padding:13px 16px;border-radius:4px;border:1px solid rgba(232,179,60,.32);
-    background:rgba(232,179,60,.06);font-size:.9rem;color:var(--text-dim);line-height:1.5}
+    padding:13px 16px;border-radius:4px;border:1px solid rgba(245,185,60,.32);
+    background:rgba(245,185,60,.06);font-size:.9rem;color:var(--text-dim);line-height:1.5}
   .dl-note.show{display:flex;animation:pop .35s both}
   .dl-note .nk{font-family:var(--f-mono);color:var(--cyan);font-weight:700;flex:none;line-height:1.5}
   .dl-note b{color:var(--text)}
@@ -33,11 +33,11 @@
   /* ---- store badges (inline SVG, no external assets) ---- */
   .store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
   .store-badge{display:inline-block;line-height:0;border-radius:4px;overflow:hidden;
-    border:1px solid var(--line);background:#0e0d0c;
+    border:1px solid var(--line);background:#070a12;
     transition:border-color .2s,box-shadow .2s,transform .12s}
-  .store-badge:hover{border-color:rgba(232,179,60,.45)}
+  .store-badge:hover{border-color:rgba(245,185,60,.45)}
   .store-badge:active{transform:scale(.975)}
-  .store-badge.on{border-color:rgba(232,179,60,.6);box-shadow:var(--lift-1)}
+  .store-badge.on{border-color:rgba(245,185,60,.6);box-shadow:var(--lift-1)}
   .store-badge svg{display:block;width:172px;height:52px}
   .store-caption{margin-top:14px;font-size:12.5px;color:var(--text-faint);max-width:50ch;line-height:1.55}
 
@@ -72,9 +72,9 @@
   .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
     border-bottom:1px solid var(--line-2);background:var(--well)}
   .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:rgba(255,255,255,.14)}
-  .win-bar i:nth-child(1){background:rgba(232,103,74,.55)}
-  .win-bar i:nth-child(2){background:rgba(232,179,60,.55)}
-  .win-bar i:nth-child(3){background:rgba(86,185,127,.55)}
+  .win-bar i:nth-child(1){background:rgba(255,111,82,.55)}
+  .win-bar i:nth-child(2){background:rgba(245,185,60,.55)}
+  .win-bar i:nth-child(3){background:rgba(61,220,151,.55)}
   .win-title{font-family:var(--f-mono);font-size:12px;letter-spacing:.04em;
     color:var(--text-dim);margin-left:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .win-body{padding:14px}
@@ -93,14 +93,14 @@
   /* ---- QR ---- */
   .qr{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding:28px}
   @media(max-width:640px){.qr{grid-template-columns:1fr;gap:24px;justify-items:center;text-align:center}}
-  .qr-card{width:198px;max-width:100%;flex:none;background:#eae6dc;border-radius:4px;padding:13px;
-    box-shadow:0 24px 32px -28px rgba(232,179,60,.55), inset 0 0 0 1px rgba(27,25,23,.08)}
+  .qr-card{width:198px;max-width:100%;flex:none;background:#f2f5fb;border-radius:4px;padding:13px;
+    box-shadow:0 24px 32px -28px rgba(245,185,60,.55), inset 0 0 0 1px rgba(27,25,23,.08)}
   .qr-card svg{width:100%;height:auto;display:block}
   .qr-steps{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-direction:column;gap:11px;
     font-size:.9rem;color:var(--text-dim);counter-reset:qs}
   .qr-steps li{display:flex;gap:11px;align-items:flex-start;text-align:left}
   .qr-steps li::before{counter-increment:qs;content:counter(qs);flex:none;width:22px;height:22px;border-radius:4px;
-    background:rgba(232,179,60,.09);border:1px solid rgba(232,179,60,.28);color:var(--cyan);
+    background:rgba(245,185,60,.09);border:1px solid rgba(245,185,60,.28);color:var(--cyan);
     font-family:var(--f-mono);font-size:12px;font-weight:700;display:grid;place-items:center;line-height:1}
   @media(max-width:640px){.qr-steps li{text-align:left}}
 
@@ -113,7 +113,7 @@
   .cmp thead th:not(:first-child){color:var(--text-dim)}
   .cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:15%}
   .cmp tbody tr:last-child td{border-bottom:0}
-  .cmp tbody tr:hover{background:rgba(232,179,60,.035)}
+  .cmp tbody tr:hover{background:rgba(245,185,60,.035)}
   .cmp td:first-child{color:var(--text)}
   .mk{font-family:var(--f-mono);font-weight:700;font-size:1rem}
   .mk.y{color:var(--cyan)}
@@ -134,11 +134,11 @@
   .rel-line{position:relative;margin-top:38px;padding-left:28px;max-width:780px;
     display:flex;flex-direction:column;gap:24px}
   .rel-line::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;
-    background:linear-gradient(180deg,var(--cyan),rgba(111,154,214,.45),transparent)}
+    background:linear-gradient(180deg,var(--cyan),rgba(122,167,255,.45),transparent)}
   .rel-i{position:relative}
   .rel-i::before{content:"";position:absolute;left:-28px;top:6px;width:11px;height:11px;border-radius:50%;
     background:var(--bg);border:2px solid var(--cyan);box-shadow:var(--lift-1)}
-  .rel-i.past::before{border-color:rgba(111,154,214,.55);box-shadow:none}
+  .rel-i.past::before{border-color:rgba(122,167,255,.55);box-shadow:none}
   .rel-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .rel-v{font-family:var(--f-mono);font-size:1rem;font-weight:700;letter-spacing:-.01em}
   .rel-d{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--text-faint)}
@@ -204,26 +204,26 @@
       <div class="store-row">
         <a class="store-badge" href="#" id="badgeIOS" data-dl="ios" data-os="iOS" aria-label="Download on the App Store">
           <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#0e0d0c"/>
-            <g transform="translate(17,13) scale(1.08)" fill="#eae6dc">
+            <rect width="172" height="52" rx="12" fill="#070a12"/>
+            <g transform="translate(17,13) scale(1.08)" fill="#f2f5fb">
               <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.75-4.11z" transform="translate(-3,-4)"/>
               <path d="M14.6 4.5c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.3-.58 3.02-1.44z" transform="translate(-3,-4)"/>
             </g>
-            <text x="47" y="22" fill="#a9a396" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
-            <text x="46" y="39" fill="#eae6dc" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
+            <text x="47" y="22" fill="#a8b4cd" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
+            <text x="46" y="39" fill="#f2f5fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
           </svg>
         </a>
         <a class="store-badge" href="#" id="badgeAndroid" data-dl="android" data-os="Android" aria-label="Get it on Google Play">
           <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#0e0d0c"/>
+            <rect width="172" height="52" rx="12" fill="#070a12"/>
             <g transform="translate(15,15)">
               <polygon points="3,2 14,10 3,10" fill="#00d67f"/>
               <polygon points="3,18 14,10 3,10" fill="#00a0ff"/>
               <polygon points="3,2 19.4,10 14,10" fill="#ff3a44"/>
               <polygon points="3,18 19.4,10 14,10" fill="#ffce00"/>
             </g>
-            <text x="47" y="22" fill="#a9a396" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
-            <text x="46" y="39" fill="#eae6dc" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
+            <text x="47" y="22" fill="#a8b4cd" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
+            <text x="46" y="39" fill="#f2f5fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
           </svg>
         </a>
       </div>
@@ -767,7 +767,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     return '<svg viewBox="0 0 ' + size + ' ' + size + '" role="img" ' +
            'aria-label="Decorative QR code linking to the Flux mobile beta page">' +
-           '<rect width="' + size + '" height="' + size + '" fill="#eae6dc"/>' +
+           '<rect width="' + size + '" height="' + size + '" fill="#f2f5fb"/>' +
            '<g fill="#050b1c">' + rects + '</g></svg>';
   }
 
