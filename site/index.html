@@ -7,15 +7,15 @@
 <meta name="description" content="Flux is an AI trading desk: an assistant you can ask anything, an Autopilot that trades a live $10,000 paper account and shows its work, and a portfolio brain that connects to your brokerage. Not investment advice.">
 <meta name="theme-color" content="#1b1917">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=22">
-<link rel="stylesheet" href="./assets/flux.css?v=22">
-<script src="./assets/flux-supa.js?v=22" defer></script>
-<script src="./assets/flux-site.js?v=22" defer></script>
-<script src="./assets/flux-universe.js?v=22" defer></script>
-<script src="./assets/flux-feed.js?v=22" defer></script>
-<script src="./assets/flux-fund.js?v=22" defer></script>
-<script src="./assets/flux-kronos.js?v=22" defer></script>
-<script src="./assets/flux-desk.js?v=22" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=23">
+<link rel="stylesheet" href="./assets/flux.css?v=23">
+<script src="./assets/flux-supa.js?v=23" defer></script>
+<script src="./assets/flux-site.js?v=23" defer></script>
+<script src="./assets/flux-universe.js?v=23" defer></script>
+<script src="./assets/flux-feed.js?v=23" defer></script>
+<script src="./assets/flux-fund.js?v=23" defer></script>
+<script src="./assets/flux-kronos.js?v=23" defer></script>
+<script src="./assets/flux-desk.js?v=23" defer></script>
 <style>
   /* ---- page-only layout: index.html ---- */
 
@@ -237,6 +237,76 @@
   </div>
 </section>
 
+<!-- ============ THE FLOOR — the loop, live ============ -->
+<section class="floor" id="floor" aria-label="The desk, live">
+  <div class="wrap">
+    <div class="fl-head">
+      <h2>The floor, right now</h2>
+      <span class="fl-live" id="flLive"><span class="dot"></span><b id="flStage">reading the desk…</b></span>
+      <span class="fl-round" id="flRound">—</span>
+    </div>
+    <p class="fl-sub">Nothing on this board is a mock-up. It is the round the desk is working
+      through at this moment — the names it pulled, what the tape says about them, what it read
+      on the wire, and what each desk did with it.</p>
+
+    <ol class="fl-chain" id="flChain">
+      <li class="fl-st" data-st="analysts">
+        <span class="stamp stamp-pending">Filed</span>
+        <span class="role">Stage 1</span><h3>Three analysts</h3>
+        <span class="fl-n">—</span>
+        <p class="fl-what">Fundamentals, catalyst and tape each file a view, a conviction and the evidence behind it.</p>
+        <span class="fl-gate">The filings themselves are for members. <a href="./signin.html">Sign in to read them</a>.</span>
+      </li>
+      <li class="fl-st" data-st="director">
+        <span class="stamp stamp-pending">Passed</span>
+        <span class="role">Stage 2</span><h3>Director of Research</h3>
+        <span class="fl-n">—</span>
+        <p class="fl-what">Resolves where the analysts disagree and hands one package per name forward.</p>
+      </li>
+      <li class="fl-st" data-st="traders">
+        <span class="stamp stamp-pending">Priced</span>
+        <span class="role">Stage 3</span><h3>Kronos &amp; DSA</h3>
+        <span class="fl-n">—</span>
+        <p class="fl-what">One forecasts the next five candles, one scores momentum, range, drawdown and value.</p>
+      </li>
+      <li class="fl-st" data-st="executive">
+        <span class="stamp stamp-pending">Ruled</span>
+        <span class="role">Stage 4</span><h3>Executive</h3>
+        <span class="fl-n">—</span>
+        <p class="fl-what">Approves, cuts the size, or throws it out — and says which trader it sided with.</p>
+      </li>
+    </ol>
+
+    <div class="fl-grid">
+      <div class="fl-panel">
+        <div class="fl-panel-h">Names on the board <em id="flNamesCap">—</em></div>
+        <div class="fl-legend"><span>Name</span><span>Tape rating</span><span>Last</span><span>Change</span></div>
+        <ul class="fl-names" id="flNames">
+          <li><span class="n">—</span><span class="rate">reading</span><span class="px"></span><span class="ch"></span></li>
+        </ul>
+      </div>
+      <div class="fl-panel">
+        <div class="fl-panel-h">What the desk concluded <em id="flReadCap">—</em></div>
+        <div class="fl-read">
+          <div><span class="fl-who">Director of Research</span><p id="flView">Reading the round off the record.</p></div>
+          <div><span class="fl-who">Executive</span><p id="flNote">—</p></div>
+          <p class="fl-timing" id="flTiming"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fl-panel" style="margin-top:16px">
+      <div class="fl-panel-h">On the wire this round <em id="flWireCap">—</em></div>
+      <ul class="fl-wire" id="flWire"><li><span class="tk">—</span>Loading the headlines the desk read.</li></ul>
+    </div>
+
+    <div class="fl-foot">
+      <span class="fl-breadth" id="flBreadth">—</span>
+      <a class="btn btn-ghost btn-sm" href="./desk.html">Every round on the record<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+    </div>
+  </div>
+</section>
+
 <!-- ============ TICKER MARQUEE ============ -->
 <section class="section-sm">
   <div class="marquee"><div class="marquee-track" id="mq"></div></div>
@@ -278,7 +348,7 @@
       <p class="lede">Flux reads the filings, the earnings calls, the news wire and the options tape — then answers in plain English, with the sources attached. It knows your watchlist and your positions, so the answer is about <em>you</em>.</p>
       <ul class="flist">
         <li class="fi"><span>◇</span><div><b>Ask anything.</b> Risk, forecasts, flow, "should I trim?" — conversational, grounded, cited.</div></li>
-        <li class="fi"><span>◇</span><div><b>Runs all day.</b> Six engines and six models scan ~6,400 tickers so you don't have to.</div></li>
+        <li class="fi"><span>◇</span><div><b>Runs all day.</b> The desk works a 114-name universe every round and files whether or not it likes what it sees.</div></li>
         <li class="fi"><span>◇</span><div><b>Never advice, always honest.</b> Probabilities and evidence — not "buy this."</div></li>
       </ul>
       <div class="btn-row"><a class="btn btn-primary" href="./ai.html">Open Flux AI →</a></div>
@@ -402,14 +472,14 @@
 <section class="section-sm">
   <div class="wrap">
     <div class="daysheet">
-      <div class="ds-head"><span>Standing on the pad</span><span class="ds-when">continuously</span></div>
+      <div class="ds-head"><span>Standing on the pad</span><span class="ds-when" id="dsWhen">live</span></div>
       <dl class="ds-list">
-        <div class="ds-line"><dt>Tickers under watch</dt><span class="ds-rule"></span><dd>6,400<i>+</i></dd></div>
-        <div class="ds-line"><dt>Engines on the floor</dt><span class="ds-rule"></span><dd>6</dd></div>
+        <div class="ds-line"><dt>Names scanned each round</dt><span class="ds-rule"></span><dd id="dsScan">—</dd></div>
+        <div class="ds-line"><dt>Filings on the record</dt><span class="ds-rule"></span><dd id="dsFilings">—</dd></div>
+        <div class="ds-line"><dt>Rulings published</dt><span class="ds-rule"></span><dd id="dsRulings">—</dd></div>
         <div class="ds-line"><dt>Simulated fund on the book</dt><span class="ds-rule"></span><dd><i>$</i>10,000</dd></div>
-        <div class="ds-line"><dt>Desk hours</dt><span class="ds-rule"></span><dd>24<i>/7</i></dd></div>
       </dl>
-      <p class="ds-foot">Illustrative figures · simulated · not indicative of future results</p>
+      <p class="ds-foot">Counted from the desk record, not an estimate · simulated trading on virtual money · not indicative of future results</p>
     </div>
   </div>
 </section>
@@ -538,6 +608,181 @@ document.addEventListener("DOMContentLoaded", function(){
       /* no ruling readable: say so plainly, leave the ticket unstamped */
       var ago = $("tktAgo"); if(ago) ago.textContent = "next round shortly";
     }).catch(function(){});
+
+    /* ---------------------------------------------------------------
+       THE FLOOR — the live board.
+
+       Everything below is the round the desk is actually working, read
+       from desk_floor(): the stage, the names, the TradingView ratings,
+       the headlines, the Director's read and the Executive's note. The
+       analysts' filings are counted, never quoted -- those are members
+       only. Nothing here is illustrative, so when the read fails the
+       board says so rather than showing a plausible round.
+       --------------------------------------------------------------- */
+    var ST_ORDER = ["analysts","director","traders","executive"];
+    var lastSeq = null;
+
+    function stationEls(){
+      return ST_ORDER.map(function(k){
+        return document.querySelector('#flChain .fl-st[data-st="' + k + '"]');
+      });
+    }
+
+    function stampStation(el, i, state, label){
+      if(!el) return;
+      var st = el.querySelector(".stamp");
+      el.classList.toggle("on", state === "on");
+      if(!st) return;
+      if(state === "done"){
+        st.textContent = label || st.textContent;
+        st.className = "stamp stamp-ok";
+        if(!st.dataset.landed){
+          st.dataset.landed = "1";
+          setTimeout(function(){ st.classList.add("land"); }, reduce ? 0 : 160 + i * 170);
+        }
+      } else {
+        delete st.dataset.landed;
+        st.className = "stamp stamp-pending";
+      }
+    }
+
+    function tvClass(label){
+      var l = String(label || "").toLowerCase();
+      if(l.indexOf("buy") >= 0) return "buy";
+      if(l.indexOf("sell") >= 0) return "sell";
+      return "";
+    }
+
+    function paintFloor(){
+      return D.floor().then(function(f){
+        if(!f || !f.round) throw new Error("no floor");
+        var r = f.round, meta = r.meta || {}, tv = meta.tv || {}, news = meta.news || {};
+        var running = r.status === "running";
+        var idx = D.stageIndex(r.stage);
+
+        /* header */
+        var live = $("flLive");
+        if(live) live.classList.toggle("on", running);
+        $("flStage").textContent = running ? D.stageLabel(r.stage) : "Round " + r.seq + " filed";
+        $("flRound").textContent =
+          "Round " + r.seq + " · " + D.ago(r.finished_at || r.started_at) +
+          (f.rounds_today ? " · " + f.rounds_today + " rounds today" : "") +
+          (meta.market_open === false ? " · market closed" : "");
+
+        /* the four stations, from the real filing and ruling tallies */
+        var fil = f.filings || [], rul = f.rulings || {};
+        function nFor(pred){ return fil.reduce(function(a,x){ return a + (pred(x) ? x.n : 0); }, 0); }
+        var analysts = nFor(function(x){ return x.stage === "analyst"; });
+        var lenses   = fil.filter(function(x){ return x.stage === "analyst"; }).length;
+        var director = nFor(function(x){ return x.agent === "director"; });
+        var traders  = nFor(function(x){ return x.stage === "trader"; });
+        var ok = rul.approved || 0, cut = rul.reduced || 0, no = rul.rejected || 0;
+        var ruled = ok + cut + no;
+
+        var counts = [
+          [analysts, "filings", lenses ? lenses + " lenses over " + (r.tickers||[]).length + " names" : ""],
+          [director, "packages", "one per name, scored −100…100"],
+          [traders,  "prices",   "Kronos and DSA, each on the record"],
+          [ruled,    "rulings",  ok + " approved · " + cut + " reduced · " + no + " rejected"]
+        ];
+        var els = stationEls();
+        els.forEach(function(el, i){
+          if(!el) return;
+          var c = counts[i], n = el.querySelector(".fl-n");
+          if(n) n.innerHTML = c[0] ? (c[0] + ' <small>' + esc(c[1]) + '</small>') : '<small>not yet</small>';
+          if(c[2] && c[0]){
+            var w = el.querySelector(".fl-what");
+            if(w && !w.dataset.orig) w.dataset.orig = w.textContent;
+            if(w) w.textContent = c[2];
+          }
+          var state = c[0] ? "done" : (idx - 1 === i && running ? "on" : "pending");
+          stampStation(el, i, state);
+        });
+
+        /* names on the board, with the tape's own read on each */
+        var tickers = r.tickers || [];
+        $("flNamesCap").textContent = tickers.length + " this round";
+        $("flNames").innerHTML = tickers.map(function(t){
+          var q = tv[t] || {};
+          var ch = q.change;
+          var cls = ch == null ? "" : (ch >= 0 ? "up" : "down");
+          return '<li>' +
+            '<span class="n">' + esc(t) + '</span>' +
+            '<span class="rate ' + tvClass(q.label) + '">' + esc(q.label || "no rating") + '</span>' +
+            '<span class="px">' + (q.price != null ? "$" + esc(q.price) : "—") + '</span>' +
+            '<span class="ch ' + cls + '">' + (ch == null ? "—" : (ch >= 0 ? "+" : "") + esc(ch) + "%") + '</span>' +
+          '</li>';
+        }).join("") || '<li><span class="n">—</span><span class="rate">no names yet</span></li>';
+
+        /* the read — the Director's and the Executive's actual words */
+        $("flReadCap").textContent = "round " + r.seq;
+        $("flView").textContent = meta.desk_view || "This round's synthesis is not on the record yet.";
+        $("flNote").textContent = meta.desk_note || "The executive has not filed its note for this round yet.";
+
+        /* how long the round actually took */
+        var tm = $("flTiming");
+        if(tm){
+          var ta = r.started_at ? Date.parse(r.started_at) : null,
+              tz = r.finished_at ? Date.parse(r.finished_at) : null;
+          tm.textContent = (ta && tz)
+            ? "Round " + r.seq + " ran " + Math.round((tz - ta) / 1000) +
+              " seconds end to end, " + D.ago(r.finished_at) + ". Every filing above is stored and readable."
+            : "This round is still open.";
+        }
+
+        /* the wire the desk read */
+        var wire = [];
+        Object.keys(news).forEach(function(k){
+          (news[k] || []).forEach(function(h){
+            /* the desk stores these as: "Headline" (Source) */
+            var m = String(h).match(/^\s*"?(.*?)"?\s*\(([^()]*)\)\s*$/);
+            wire.push([k === "__GOV__" ? "GOV" : k,
+                       m ? m[1] : String(h).replace(/^"|"$/g, ""),
+                       m ? m[2] : ""]);
+          });
+        });
+        $("flWireCap").textContent = wire.length ? wire.length + " headlines" : "quiet";
+        $("flWire").innerHTML = wire.length
+          ? wire.slice(0, 7).map(function(w){
+              return '<li><span class="tk">' + esc(w[0]) + '</span><span class="hl">' + esc(w[1]) +
+                     (w[2] ? ' <em>&middot; ' + esc(w[2]) + '</em>' : "") + '</span></li>';
+            }).join("")
+          : '<li><span class="tk">—</span>Nothing crossed the wire on these names this round.</li>';
+
+        /* breadth */
+        var b = meta.breadth || {};
+        $("flBreadth").innerHTML = b.scanned
+          ? '<b>' + esc(b.scanned) + '</b> names scanned · <b>' + esc(b.up) + '</b> up · <b>' +
+            esc(b.down) + '</b> down · average ' + (b.avg >= 0 ? "+" : "") + esc(b.avg) + '%'
+          : "";
+
+        /* the day sheet counts the same record, so it states facts */
+        function sheet(id, v){ var el = $(id); if(el && v != null) el.textContent = Number(v).toLocaleString(); }
+        sheet("dsScan", f.scanned);
+        sheet("dsFilings", f.filings_total);
+        sheet("dsRulings", f.rulings_total);
+        var when = $("dsWhen");
+        if(when) when.textContent = f.rounds_total ? f.rounds_total + " rounds filed" : "live";
+
+        /* a new round re-lands every stamp, so the loop is visibly moving */
+        if(lastSeq !== null && lastSeq !== r.seq){
+          els.forEach(function(el){
+            var st = el && el.querySelector(".stamp");
+            if(st){ delete st.dataset.landed; st.classList.remove("land"); }
+          });
+        }
+        lastSeq = r.seq;
+      }).catch(function(){
+        var st = $("flStage"); if(st) st.textContent = "the desk record is unreachable";
+        var v = $("flView");
+        if(v) v.textContent = "Could not reach the desk right now. Nothing here is filled in with an example — reload to try again.";
+      });
+    }
+
+    if(document.getElementById("floor")){
+      paintFloor();
+      setInterval(paintFloor, 20000);
+    }
   }
   boot();
 });

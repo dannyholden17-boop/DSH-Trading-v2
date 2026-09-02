@@ -154,6 +154,28 @@ spacing:
   gutter: "clamp(20px, 5vw, 56px)"
   section: "clamp(56px, 7vw, 104px)"
 components:
+  floor-station:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    border: "1px solid rgba(21,16,10,.2)"
+    rounded: "{rounded.sm}"
+    padding: "14px 15px 16px"
+    shadow: "{shadows.lift-2}"
+    note: "One desk in the live loop, as a carbon copy that collects its stamp. Rotated a fraction off square; the running stage squares up and lifts."
+  floor-panel:
+    backgroundColor: "{colors.blotter-2}"
+    border: "1px solid {colors.line-2}"
+    shadow: "{shadows.lift-1}"
+    headerBackground: "{colors.blotter-3}"
+    headerTypography: "{typography.label}"
+    note: "A board panel on the floor: names, the desk's conclusion, or the wire."
+  floor-rating:
+    typography: "{typography.label}"
+    rounded: "{rounded.sm}"
+    padding: "2px 7px"
+    border: "1px solid {colors.line}"
+    variants: "buy uses {colors.clearing}, sell uses {colors.stamp}, unrated stays {colors.text-faint}"
+    note: "The tape's own read on a name, quoted not computed."
   button-primary:
     backgroundColor: "{colors.card-buy}"
     textColor: "{colors.ink}"
@@ -161,7 +183,7 @@ components:
     rounded: "{rounded.sm}"
     padding: "13px 24px"
   button-primary-hover:
-    backgroundColor: "#ecc069"
+    backgroundColor: "{colors.card-buy-lift}"
     textColor: "{colors.ink}"
   button-sell:
     backgroundColor: "{colors.card-sell}"
@@ -169,7 +191,7 @@ components:
     rounded: "{rounded.sm}"
     padding: "13px 24px"
   button-sell-hover:
-    backgroundColor: "#e87a61"
+    backgroundColor: "{colors.card-sell-lift}"
   button-ghost:
     backgroundColor: "transparent"
     textColor: "{colors.text}"

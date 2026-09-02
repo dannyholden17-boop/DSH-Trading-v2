@@ -85,6 +85,16 @@
       return rpc("desk_status").then(function(j){ return (Array.isArray(j) && j[0]) || null; });
     },
 
+    /** One snapshot of the current round for the public floor board.
+        The round and its meta are public already; the filing and ruling
+        tallies are counts only — the words stay behind sign-in. */
+    floor: function(){
+      return rpc("desk_floor").then(function(j){
+        if(!j) return null;
+        return (Array.isArray(j) ? j[0] : j) || null;
+      });
+    },
+
     /** Recent rounds, newest first. */
     rounds: function(limit){
       return q("desk_rounds", { select:"id,seq,stage,status,tickers,started_at,finished_at,meta",
