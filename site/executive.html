@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Executive — Flux</title>
+<meta name="description" content="Nothing leaves Flux's research desk without a ruling. The Executive approves, cuts the size, or refuses outright — and says why. Every refusal is on the record. Simulated, not investment advice.">
+<meta name="theme-color" content="#0d1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/fonts.css?v=25">
+<link rel="stylesheet" href="./assets/flux.css?v=25">
+<script src="./assets/flux-supa.js?v=25" defer></script>
+<script src="./assets/flux-site.js?v=25" defer></script>
+<script src="./assets/flux-universe.js?v=25" defer></script>
+<script src="./assets/flux-feed.js?v=25" defer></script>
+<script src="./assets/flux-desk.js?v=25" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./desk.html">Desk</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html" aria-current="page">Executive</a>
+      <a href="./fund.html">Fund</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main class="st-wrap" id="stBody">
+  <div class="st-top">
+    <h1>The Executive</h1>
+    <span class="st-live" id="stLive"><span class="dot"></span><b id="stStage">reading the desk…</b></span>
+    <span class="st-meta" id="stMeta">—</span>
+  </div>
+  <p class="st-sub">Nothing leaves the desk without a ruling. The Executive reads the Director's package and
+    both traders' prices, then approves the trade, cuts its size, or throws it out — and says why. It refuses
+    far more than it approves, and the refusals are on the record beside the approvals.</p>
+
+  <div class="st-cards stagger">
+    <article class="st-card" style="--accent:#3ddc97">
+      <span class="lens">Green light</span><h2>Approved</h2>
+      <div class="st-figs" style="grid-template-columns:1fr">
+        <div class="st-fig"><b id="xApproved">0</b><span>taken at full size</span></div>
+      </div>
+      <p class="st-note">The Director and both traders lined up and the book had room.</p>
+    </article>
+    <article class="st-card" style="--accent:#f5b93c">
+      <span class="lens">Cut</span><h2>Reduced</h2>
+      <div class="st-figs" style="grid-template-columns:1fr">
+        <div class="st-fig"><b id="xReduced">0</b><span>taken at less than asked</span></div>
+      </div>
+      <p class="st-note">The case held but the conviction, the crowding or the book said smaller.</p>
+    </article>
+    <article class="st-card" style="--accent:#ff6f52">
+      <span class="lens">Veto</span><h2>Rejected</h2>
+      <div class="st-figs" style="grid-template-columns:1fr">
+        <div class="st-fig"><b id="xRejected">0</b><span>refused outright</span></div>
+      </div>
+      <p class="st-note">Most of what reaches this desk does not get through it.</p>
+    </article>
+  </div>
+
+  <section class="st-panel">
+    <div class="st-panel-h">The refusal rate <em id="xRateCap">—</em></div>
+    <div style="padding:17px">
+      <div class="st-bar" id="xBar"></div>
+      <div class="st-key" id="xKey"></div>
+      <p class="st-note" style="border:0;padding:0;margin-top:14px" id="xRateNote">—</p>
+    </div>
+  </section>
+
+  <section class="st-panel">
+    <div class="st-panel-h">Its own reasoning <em id="xNoteCap">latest round</em></div>
+    <ul class="st-rows" id="xNotes"><li>Reading the record…</li></ul>
+  </section>
+
+  <section class="st-panel">
+    <div class="st-panel-h">The rulings <em id="xLedgerCap">—</em></div>
+    <ul class="st-rows" id="xLedger"><li>Reading the record…</li></ul>
+  </section>
+
+  <p class="st-disc">Simulated · virtual money · educational research, not investment advice. An approval here
+    is a hypothesis the desk was willing to put simulated size behind. Nothing on this page trades a real
+    account: connecting a brokerage still requires a human to place every order.</p>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 140); }
+    var D = F.Desk;
+    if(F.initNav) F.initNav();
+    if(F.initFX) F.initFX();
+    if(F.initReveal) F.initReveal();
+    if(F.initStagger) F.initStagger();
+    var $ = function(s){ return document.querySelector(s); };
+    var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); };
+    var num = function(el, v){ if(el) F.countTo(el, v); };
+    function fail(){ var s = $("#stStage"); if(s) s.textContent = "record unreachable"; }
+
+    D.agents().then(function(a){
+      if(!a) throw new Error("no agents");
+      var x = a.executive || {};
+      num($("#xApproved"), x.approved || 0);
+      num($("#xReduced"),  x.reduced  || 0);
+      num($("#xRejected"), x.rejected || 0);
+      var tot = x.total || 0;
+      var seg = [["approved", x.approved || 0, "#3ddc97"],
+                 ["reduced",  x.reduced  || 0, "#f5b93c"],
+                 ["rejected", x.rejected || 0, "#ff6f52"]];
+      var sum = tot || 1;
+      $("#xRateCap").textContent = tot + " rulings over " + (x.rounds || 0) + " rounds";
+      $("#xBar").innerHTML = seg.map(function(s){
+        return '<i style="width:' + (s[1] / sum * 100).toFixed(1) + '%;background:' + s[2] + '"></i>';
+      }).join("");
+      $("#xKey").innerHTML = seg.map(function(s){
+        return '<span><i style="background:' + s[2] + '"></i><b>' + s[1] + '</b> ' + esc(s[0]) +
+               ' <span style="color:var(--text-faint)">' + (s[1] / sum * 100).toFixed(0) + '%</span></span>';
+      }).join("");
+      var refused = (x.rejected || 0) + (x.reduced || 0);
+      $("#xRateNote").textContent = tot
+        ? "It has turned down or cut " + refused + " of " + tot + " packages — "
+          + Math.round(refused / tot * 100) + "% — and approved " + (x.approved || 0)
+          + " at full size. Average conviction on what it did take: " + (x.avg_conviction || 0) + "."
+        : "No rulings on the record yet.";
+    }).catch(fail);
+
+    /* the executive's own note, per round, straight from the record */
+    D.rounds(6).then(function(rs){
+      var host = $("#xNotes");
+      var withNotes = (rs || []).filter(function(r){ return r.meta && r.meta.desk_note; });
+      if(!withNotes.length){ host.innerHTML = '<li>No ruling note filed yet.</li>'; return; }
+      $("#xNoteCap").textContent = "last " + withNotes.length + " rounds";
+      host.innerHTML = withNotes.map(function(r){
+        return '<li><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">' +
+          '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;' +
+          'text-transform:uppercase;color:var(--gold)">Round ' + esc(r.seq) + '</span>' +
+          '<span style="margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' +
+          D.ago(r.finished_at || r.started_at) + '</span></div>' +
+          '<p style="margin:7px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)">' +
+          esc(r.meta.desk_note) + '</p></li>';
+      }).join("");
+      var r0 = rs && rs[0];
+      if(r0){
+        var live = r0.status === "running";
+        var el = $("#stLive"); if(el) el.classList.toggle("on", live);
+        $("#stStage").textContent = live ? D.stageLabel(r0.stage) : "round " + r0.seq + " filed";
+        $("#stMeta").textContent = "Round " + r0.seq + " · " + D.ago(r0.finished_at || r0.started_at);
+      }
+    }).catch(function(){});
+
+    D.decisions(20).then(function(list){
+      var host = $("#xLedger");
+      if(!list || !list.length){
+        host.innerHTML = '<li>No rulings readable yet. <a href="./signin.html" style="color:var(--gold);' +
+          'text-decoration:underline">Sign in</a> to read every ruling, not just the round teaser.</li>';
+        return;
+      }
+      $("#xLedgerCap").textContent = list.length + " readable";
+      host.innerHTML = list.map(function(d){
+        var v = String(d.verdict || "").toLowerCase();
+        var cls = v === "approved" ? "stamp-ok" : v === "reduced" ? "stamp-cut" : "stamp-no";
+        return '<li><div style="display:flex;gap:11px;align-items:baseline;flex-wrap:wrap">' +
+          '<b style="font-family:var(--f-display);font-size:1.02rem">' + esc(d.ticker) + '</b>' +
+          '<span class="stamp ' + cls + '" style="font-size:12px;padding:3px 8px">' + esc(d.verdict) + '</span>' +
+          (d.size_pct ? '<span style="font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' +
+            esc(d.size_pct) + '% size</span>' : "") +
+          '<span style="margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' +
+          D.ago(d.created_at) + '</span></div>' +
+          (d.reason ? '<p style="margin:6px 0 0;font-size:.9rem;line-height:1.55;color:var(--text-dim)">' +
+            esc(d.reason) + '</p>' : "") +
+          (d.risk_flags && d.risk_flags !== "none"
+            ? '<p style="margin:5px 0 0;font-family:var(--f-mono);font-size:12px;color:var(--gold)">flagged: ' +
+              esc(d.risk_flags) + '</p>' : "") + '</li>';
+      }).join("");
+    }).catch(function(){});
+
+  }
+  boot();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect Robinhood — Flux</title>
+<meta name="description" content="Flux supports one brokerage: Robinhood, through Claude's own Robinhood connector. Flux never holds your credentials and never places an order — you approve every trade yourself.">
+<meta name="theme-color" content="#0d1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/fonts.css?v=25">
+<link rel="stylesheet" href="./assets/flux.css?v=25">
+<script src="./assets/flux-supa.js?v=25" defer></script>
+<script src="./assets/flux-site.js?v=25" defer></script>
+<script src="./assets/flux-universe.js?v=25" defer></script>
+<script src="./assets/flux-feed.js?v=25" defer></script>
+<script src="./assets/flux-desk.js?v=25" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./desk.html">Desk</a>
+      <a href="./analysts.html">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
+      <a href="./fund.html">Fund</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main class="bk-hero">
+  <span class="bk-badge">One broker · Robinhood</span>
+  <h1>Connect Robinhood, and keep your hand on every order.</h1>
+  <p class="lede">Flux supports one brokerage, and it connects somewhere that may surprise you: not here.
+    The link is made inside Claude, using Claude's own Robinhood connector — the same connector the desk's
+    analysts and traders already run on. This site never sees your Robinhood login, and it never places a
+    trade.</p>
+
+  <ol class="bk-steps stagger">
+    <li class="bk-step">
+      <h2>Connect Robinhood to Claude</h2>
+      <p>In Claude, open Settings → Connectors and authorise Robinhood. The authorisation is between you and
+        Robinhood; Claude holds the session, not Flux.</p>
+      <span class="where">In Claude</span>
+    </li>
+    <li class="bk-step">
+      <h2>Read the desk's ruling</h2>
+      <p>The Executive publishes every green-lit call with its entry, stop, target and the reason it was taken
+        at that size — plus the ones it refused.</p>
+      <span class="where here">On Flux</span>
+    </li>
+    <li class="bk-step">
+      <h2>Ask Claude to work it</h2>
+      <p>Hand Claude the call and it can pull your real positions, check the name against your book, and
+        prepare the order through the Robinhood connector.</p>
+      <span class="where">In Claude</span>
+    </li>
+    <li class="bk-step">
+      <h2>You place it</h2>
+      <p>Claude asks before anything is submitted, and Robinhood asks again. Two confirmations, both yours.
+        Nothing is ever placed on your behalf while you are away.</p>
+      <span class="where">In Claude</span>
+    </li>
+  </ol>
+
+  <div class="bk-grid">
+    <section class="bk-can yes">
+      <h2>What this gets you</h2>
+      <ul>
+        <li>The desk's research applied to the positions you actually hold, not a hypothetical book.</li>
+        <li>Real balances, real positions and real order history, read straight from Robinhood.</li>
+        <li>Claude can price and stage an order, then wait for you.</li>
+        <li>Every ruling Flux publishes stays readable and checkable against what you did next.</li>
+      </ul>
+    </section>
+    <section class="bk-can no">
+      <h2>What it does not do</h2>
+      <ul>
+        <li>Flux never receives, stores or transmits your Robinhood credentials. There is nothing to type in
+          on this site.</li>
+        <li>Nothing on Flux places an order. The site has no path to your brokerage at all.</li>
+        <li>Autopilot and the desk never touch a real account. They trade a simulated book with virtual money,
+          and that does not change when you connect Robinhood.</li>
+        <li>Flux is not a broker-dealer and gives no investment advice.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="bk-warn">
+    <b>Why it works this way.</b>
+    <p>A website cannot drive a Claude connector — connectors run inside Claude, next to the model, which is
+      exactly where the safety check belongs. Routing through Claude means the thing that reasons about the
+      trade is the same thing that has to ask you before placing it. It also means Flux stays out of the
+      credential business entirely, which is the arrangement we would want as customers.</p>
+    <p>If you would rather keep everything simulated, you do not need any of this: the
+      <a href="./terminal.html" style="color:var(--gold);text-decoration:underline">paper terminal</a> runs on
+      real market data and virtual money, with no brokerage attached.</p>
+  </div>
+
+  <p class="st-disc">Trading involves risk of loss, including of principal. Results shown anywhere on Flux are
+    hypothetical and simulated. Robinhood is a registered broker-dealer; Flux is not affiliated with, endorsed
+    by, or acting on behalf of Robinhood. Connecting a brokerage does not make Flux your broker or your
+    adviser.</p>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var F = window.FLUX;
+  if(F && F.initNav) F.initNav();
+  if(F && F.initFX) F.initFX();
+  if(F && F.initStagger) F.initStagger();
+  if(F && F.initReveal) F.initReveal();
+});
+</script>
+</body>
+</html>

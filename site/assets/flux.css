@@ -57,7 +57,6 @@
   --lift-1:0 1px 0 rgba(255,255,255,.04) inset, 0 1px 2px rgba(0,0,0,.5), 0 4px 12px -6px rgba(0,0,0,.7);
   --lift-2:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -20px rgba(0,0,0,.95);
   --lift-3:0 1px 0 rgba(255,255,255,.06) inset, 0 4px 8px rgba(0,0,0,.5), 0 34px 60px -28px rgba(0,0,0,1);
-  --lift-gold:0 18px 40px -22px rgba(245,185,60,.55);
 
   /* --- motion: one scale, four speeds. Nothing animates at a random duration. --- */
   --ease:cubic-bezier(.22,1,.36,1);      /* power2.out — the house curve */
@@ -733,7 +732,7 @@ button,[role="button"],a.btn{min-height:24px}
   list-style:none;margin:26px 0 0;padding:0}
 @media(max-width:980px){.fl-chain{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.fl-chain{grid-template-columns:1fr}}
-.fl-st{position:relative;overflow:hidden;border-radius:3px;padding:15px 16px 17px;
+.fl-st{position:relative;overflow:hidden;border-radius:4px;padding:15px 16px 17px;
   background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
   border:1px solid var(--line-2);box-shadow:var(--lift-2);
   transition:transform var(--t-hover) var(--ease),box-shadow var(--t-hover) var(--ease),
@@ -742,9 +741,10 @@ button,[role="button"],a.btn{min-height:24px}
 .fl-st::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
   background:var(--chrome);transition:background var(--t-stage) var(--ease)}
 .fl-st.done::before{background:var(--clearing)}
-.fl-st.on::before{background:var(--gold);box-shadow:0 0 14px 1px rgba(245,185,60,.6)}
+.fl-st.on::before{background:linear-gradient(180deg,transparent,var(--gold) 40%,var(--gold) 60%,transparent);
+  background-size:100% 300%;animation:wire 1.7s linear infinite}
 .fl-st:hover{transform:translateY(-3px);box-shadow:var(--lift-3);border-color:var(--line)}
-.fl-st.on{border-color:rgba(245,185,60,.34);box-shadow:var(--lift-3),var(--lift-gold)}
+.fl-st.on{border-color:rgba(245,185,60,.34);box-shadow:var(--lift-3)}
 .fl-st .role{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--text-faint)}
 .fl-st h3{font-family:var(--f-display);font-size:1.12rem;font-weight:800;
@@ -844,7 +844,7 @@ body::before{
 .filing,.plan{transition:transform var(--t-hover) var(--ease),
   box-shadow var(--t-hover) var(--ease),border-color var(--t-hover) var(--ease)}
 .filing:hover,.plan:hover{transform:translateY(-4px)}
-.plan.pop:hover{box-shadow:0 0 0 1px rgba(245,185,60,.28),var(--lift-3),var(--lift-gold)}
+.plan.pop:hover{box-shadow:0 0 0 1px rgba(245,185,60,.28),var(--lift-3)}
 
 /* Buttons answer the press, not just the hover. */
 .btn{transition:transform var(--t-tap) var(--ease),background var(--t-hover) var(--ease),
@@ -852,7 +852,7 @@ body::before{
   border-color var(--t-hover) var(--ease)}
 .btn:hover{transform:translateY(-1px)}
 .btn:active{transform:translateY(1px) scale(.985)}
-.btn-primary:hover{box-shadow:var(--lift-2),var(--lift-gold)}
+.btn-primary:hover{box-shadow:var(--lift-2)}
 
 /* Focus is gold and always visible. */
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
@@ -887,3 +887,160 @@ body::before{
 }
 .fl-st .fl-n b{font-weight:700;font-variant-numeric:tabular-nums}
 .floor{position:relative;overflow:hidden}
+
+/* ---------------------------------------------------------- *
+   16. NAVIGATION — the chain of command, in order
+   Desk, then each station, then the fund and the terminal. Anything
+   that is not part of the loop lives under More.
+ * ---------------------------------------------------------- */
+.nav-links{gap:18px}
+.nav-more{position:relative}
+.nav-more-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:0;
+  padding:5px 0;cursor:pointer;color:var(--text-dim);font-family:inherit;font-size:.9rem;
+  font-weight:500;transition:color var(--t-hover) var(--ease)}
+.nav-more-btn:hover,.nav-more[data-has-current] .nav-more-btn{color:var(--text)}
+.nav-more-btn .ic-i{width:.7em;height:.7em;transition:transform var(--t-hover) var(--ease)}
+.nav-more-btn[aria-expanded="true"] .ic-i{transform:rotate(180deg)}
+.nav-menu{position:absolute;top:calc(100% + 12px);left:-14px;min-width:190px;padding:6px;
+  background:var(--blotter-2);border:1px solid var(--line);border-radius:4px;
+  box-shadow:var(--lift-3);display:flex;flex-direction:column;gap:1px;
+  opacity:0;visibility:hidden;transform:translateY(-6px);
+  transition:opacity var(--t-hover) var(--ease),transform var(--t-hover) var(--ease),
+    visibility var(--t-hover)}
+.nav-more.open .nav-menu{opacity:1;visibility:visible;transform:none}
+.nav-menu a{display:block;padding:9px 12px;border-radius:2px;font-size:.9rem;
+  color:var(--text-dim);transition:background var(--t-hover) var(--ease),color var(--t-hover) var(--ease)}
+.nav-menu a:hover{background:rgba(245,185,60,.08);color:var(--text)}
+.nav-menu a[aria-current]{color:var(--gold)}
+@media(max-width:1040px){
+  .nav-more{width:100%}
+  .nav-links.open .nav-more-btn{display:none}
+  .nav-links.open .nav-menu{position:static;opacity:1;visibility:visible;transform:none;
+    background:none;border:0;box-shadow:none;padding:0;min-width:0}
+  .nav-links.open .nav-menu a{padding:14px var(--gutter);width:100%;font-size:1rem;
+    border-top:1px solid var(--line-3);border-radius:0}
+}
+.i-chev{--i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 9l7 7 7-7'/%3E%3C/svg%3E")}
+
+/* ---------------------------------------------------------- *
+   17. THE STATIONS — analysts, traders, executive
+   Three pages, one shape: who they are, what they have actually
+   done, and what they are on right now.
+ * ---------------------------------------------------------- */
+.st-wrap{max-width:var(--maxw);margin-inline:auto;padding:34px var(--gutter) 70px}
+.st-top{display:flex;align-items:baseline;gap:10px 16px;flex-wrap:wrap}
+.st-top h1{font-family:var(--f-display);font-size:2.1rem;font-weight:800;
+  letter-spacing:-.03em;margin:0}
+.st-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);
+  font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.st-live .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);flex:none}
+.st-live.on .dot{background:var(--clearing);animation:recBlink 2.4s steps(1,end) infinite}
+.st-meta{margin-left:auto;font-family:var(--f-mono);font-size:13px;color:var(--text-faint);
+  font-variant-numeric:tabular-nums}
+.st-sub{margin:10px 0 0;color:var(--text-dim);font-size:1rem;line-height:1.62;max-width:76ch}
+
+.st-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.st-cards.two{grid-template-columns:repeat(2,1fr)}
+@media(max-width:960px){.st-cards,.st-cards.two{grid-template-columns:1fr}}
+.st-card{position:relative;overflow:hidden;border-radius:4px;padding:20px;
+  background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
+  border:1px solid var(--line-2);box-shadow:var(--lift-2);
+  transition:transform var(--t-hover) var(--ease),box-shadow var(--t-hover) var(--ease),
+    border-color var(--t-hover) var(--ease)}
+.st-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent,var(--chrome))}
+.st-card:hover{transform:translateY(-3px);box-shadow:var(--lift-3);border-color:var(--line)}
+.st-card .lens{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent,var(--text-faint))}
+.st-card h2{font-family:var(--f-display);font-size:1.5rem;font-weight:800;
+  letter-spacing:-.025em;margin:6px 0 0}
+.st-card .what{margin:8px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
+.st-figs{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;
+  background:var(--line-2);border:1px solid var(--line-2);border-radius:2px;overflow:hidden}
+.st-fig{background:var(--blotter-2);padding:11px 13px}
+.st-fig b{display:block;font-family:var(--f-mono);font-size:1.5rem;font-weight:700;
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--gold);line-height:1.1}
+.st-fig span{display:block;margin-top:3px;font-family:var(--f-mono);font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+.st-note{margin:14px 0 0;padding-top:13px;border-top:1px dashed var(--line);
+  font-size:12.5px;line-height:1.55;color:var(--text-dim)}
+.st-note a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
+
+.st-panel{margin-top:28px;background:var(--blotter-2);border:1px solid var(--line-2);
+  border-radius:4px;box-shadow:var(--lift-1);overflow:hidden}
+.st-panel-h{display:flex;align-items:baseline;gap:10px;padding:12px 17px;
+  background:var(--blotter-3);border-bottom:1px solid var(--line-2);font-family:var(--f-mono);
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+.st-panel-h em{margin-left:auto;font-style:normal;color:var(--text-faint);letter-spacing:.08em}
+.st-rows{list-style:none;margin:0;padding:0}
+.st-rows>li{padding:13px 17px;border-top:1px solid var(--line-2)}
+.st-rows>li:first-child{border-top:0}
+.st-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+@media(max-width:900px){.st-split{grid-template-columns:1fr}}
+
+/* a bar that compares two agents */
+.st-bar{display:flex;height:10px;border-radius:2px;overflow:hidden;margin-top:12px;
+  background:var(--well);border:1px solid var(--line-2)}
+.st-bar i{display:block;height:100%}
+.st-key{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font-family:var(--f-mono);
+  font-size:12.5px;color:var(--text-faint)}
+.st-key b{color:var(--text-dim);font-weight:600}
+.st-key i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.st-disc{font-family:var(--f-mono);font-size:12.5px;color:var(--text-faint);margin-top:28px;
+  line-height:1.7;max-width:80ch}
+
+/* ---------------------------------------------------------- *
+   18. BROKERAGE — the one connection, and its honest limits
+ * ---------------------------------------------------------- */
+.bk-hero{max-width:var(--maxw);margin-inline:auto;padding:44px var(--gutter) 0}
+.bk-hero h1{font-family:var(--f-display);font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);
+  font-weight:800;letter-spacing:-.03em;margin:0;max-width:20ch}
+.bk-hero .lede{margin:14px 0 0;font-size:1.12rem;line-height:1.6;color:var(--text-dim);max-width:66ch}
+.bk-badge{display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border-radius:2px;
+  border:1px solid rgba(61,220,151,.4);background:rgba(61,220,151,.08);color:var(--clearing);
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+
+.bk-steps{counter-reset:bk;list-style:none;margin:30px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:980px){.bk-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.bk-steps{grid-template-columns:1fr}}
+.bk-step{position:relative;padding:18px 17px 19px;border-radius:4px;
+  background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
+  border:1px solid var(--line-2);box-shadow:var(--lift-2)}
+.bk-step::before{counter-increment:bk;content:counter(bk);
+  display:block;font-family:var(--f-mono);font-size:1.5rem;font-weight:700;color:var(--gold);
+  line-height:1;margin-bottom:9px}
+.bk-step h2{font-family:var(--f-display);font-size:1.12rem;font-weight:800;margin:0;
+  letter-spacing:-.015em}
+.bk-step p{margin:7px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
+.bk-step .where{display:inline-block;margin-top:10px;font-family:var(--f-mono);font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;
+  border:1px solid var(--line);color:var(--text-faint)}
+.bk-step .where.here{color:var(--gold);border-color:rgba(245,185,60,.4)}
+
+.bk-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+@media(max-width:900px){.bk-grid{grid-template-columns:1fr}}
+.bk-can{border-radius:4px;border:1px solid var(--line-2);background:var(--blotter-2);
+  box-shadow:var(--lift-1);overflow:hidden}
+.bk-can h2{margin:0;padding:13px 17px;font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;border-bottom:1px solid var(--line-2);background:var(--blotter-3)}
+.bk-can.yes h2{color:var(--clearing)} .bk-can.no h2{color:var(--stamp)}
+.bk-can ul{list-style:none;margin:0;padding:0}
+.bk-can li{display:flex;gap:11px;padding:12px 17px;border-top:1px solid var(--line-2);
+  font-size:.9rem;line-height:1.55;color:var(--text-dim)}
+.bk-can li:first-child{border-top:0}
+.bk-can li::before{content:"";flex:none;width:16px;height:16px;margin-top:2px;border-radius:2px;
+  background:currentColor;-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat}
+.bk-can.yes li::before{color:var(--clearing);
+  --i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E")}
+.bk-can.no li::before{color:var(--stamp);
+  --i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E")}
+.bk-warn{margin-top:30px;padding:18px 20px;border-radius:4px;
+  border:1px solid rgba(245,185,60,.28);background:rgba(245,185,60,.06)}
+.bk-warn b{color:var(--gold)}
+.bk-warn p{margin:7px 0 0;font-size:.9rem;line-height:1.65;color:var(--text-dim)}
+
+/* the live wire: a stage that is running shows work moving down its edge */
+@keyframes wire{from{background-position:0 -150%}to{background-position:0 150%}}
+@media(prefers-reduced-motion:reduce){
+  .fl-st.on::before,.dk-node.on::before{animation:none;background:var(--gold)}
+}

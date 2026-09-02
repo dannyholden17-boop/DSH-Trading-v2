@@ -95,6 +95,15 @@
       });
     },
 
+    /** Per-agent standing: counts, rates and averages only, never text.
+        Backs the Analysts, Traders and Executive pages. */
+    agents: function(){
+      return rpc("desk_agents").then(function(j){
+        if(!j) return null;
+        return (Array.isArray(j) ? j[0] : j) || null;
+      });
+    },
+
     /** Recent rounds, newest first. */
     rounds: function(limit){
       return q("desk_rounds", { select:"id,seq,stage,status,tickers,started_at,finished_at,meta",

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Analysts — Flux</title>
+<meta name="description" content="Three analysts read every name Flux's research desk works: fundamentals, catalyst and tape. Each files a view, a conviction and its evidence. Simulated / educational, not investment advice.">
+<meta name="theme-color" content="#0d1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/fonts.css?v=25">
+<link rel="stylesheet" href="./assets/flux.css?v=25">
+<script src="./assets/flux-supa.js?v=25" defer></script>
+<script src="./assets/flux-site.js?v=25" defer></script>
+<script src="./assets/flux-universe.js?v=25" defer></script>
+<script src="./assets/flux-feed.js?v=25" defer></script>
+<script src="./assets/flux-desk.js?v=25" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./desk.html">Desk</a>
+      <a href="./analysts.html" aria-current="page">Analysts</a>
+      <a href="./traders.html">Traders</a>
+      <a href="./executive.html">Executive</a>
+      <a href="./fund.html">Fund</a>
+      <a href="./terminal.html">Terminal</a>
+      <div class="nav-more">
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" role="menu">
+          <a role="menuitem" href="./ai.html">Flux AI</a>
+          <a role="menuitem" href="./autopilot.html">Autopilot</a>
+          <a role="menuitem" href="./portfolio.html">Portfolio</a>
+          <a role="menuitem" href="./markets.html">Markets</a>
+          <a role="menuitem" href="./research.html">Research</a>
+          <a role="menuitem" href="./ideas.html">Ideas</a>
+          <a role="menuitem" href="./news.html">News</a>
+          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        </div>
+      </div>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main class="st-wrap" id="stBody">
+  <div class="st-top">
+    <h1>Three analysts, always reading</h1>
+    <span class="st-live" id="stLive"><span class="dot"></span><b id="stStage">reading the desk…</b></span>
+    <span class="st-meta" id="stMeta">—</span>
+  </div>
+  <p class="st-sub">Every name that reaches a trader has been through three lenses first. Each analyst works
+    one lens only and files a view, a conviction and the evidence behind it — even when the honest answer is
+    that there is nothing here. They do not see each other's filings.</p>
+
+  <div class="st-cards stagger" id="stCards">
+    <article class="st-card" style="--accent:#7aa7ff">
+      <span class="lens">Lens 1</span><h2>Fundamentals</h2>
+      <p class="what">Reads the business: growth, margin, balance sheet, what the multiple is paying for and
+        whether the last print supports it.</p>
+      <div class="st-figs">
+        <div class="st-fig"><b id="aFundFil">0</b><span>filings</span></div>
+        <div class="st-fig"><b id="aFundNames">0</b><span>names read</span></div>
+      </div>
+      <p class="st-note" id="aFundLast">—</p>
+    </article>
+    <article class="st-card" style="--accent:#f5b93c">
+      <span class="lens">Lens 2</span><h2>Catalyst</h2>
+      <p class="what">Reads what is about to happen: filings, earnings, the wire and government sources — and
+        estimates the drift that historically followed.</p>
+      <div class="st-figs">
+        <div class="st-fig"><b id="aCatFil">0</b><span>filings</span></div>
+        <div class="st-fig"><b id="aCatNames">0</b><span>names read</span></div>
+      </div>
+      <p class="st-note" id="aCatLast">—</p>
+    </article>
+    <article class="st-card" style="--accent:#3ddc97">
+      <span class="lens">Lens 3</span><h2>Tape</h2>
+      <p class="what">Reads price itself: trend, range, where the volume went, and what the technical rating
+        says without any story attached.</p>
+      <div class="st-figs">
+        <div class="st-fig"><b id="aTapeFil">0</b><span>filings</span></div>
+        <div class="st-fig"><b id="aTapeNames">0</b><span>names read</span></div>
+      </div>
+      <p class="st-note" id="aTapeLast">—</p>
+    </article>
+  </div>
+
+  <div class="st-split">
+    <section class="st-panel">
+      <div class="st-panel-h">On the desk right now <em id="aNamesCap">—</em></div>
+      <ul class="st-rows" id="aNames"><li>Reading the round…</li></ul>
+    </section>
+    <section class="st-panel">
+      <div class="st-panel-h">On the wire <em id="aWireCap">—</em></div>
+      <ul class="st-rows" id="aWire"><li>Loading the wire…</li></ul>
+    </section>
+  </div>
+
+  <section class="st-panel">
+    <div class="st-panel-h">The filings <em id="aGateCap">members only</em></div>
+    <ul class="st-rows" id="aFilings"><li>Checking your access…</li></ul>
+  </section>
+
+  <p class="st-disc">Research output, not investment advice. The desk trades a simulated book with virtual
+    money. Model output can be wrong; every filing is a hypothesis, not a recommendation.</p>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 140); }
+    var D = F.Desk;
+    if(F.initNav) F.initNav();
+    if(F.initFX) F.initFX();
+    if(F.initReveal) F.initReveal();
+    if(F.initStagger) F.initStagger();
+    var $ = function(s){ return document.querySelector(s); };
+    var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); };
+    var num = function(el, v){ if(el) F.countTo(el, v); };
+    function fail(msg){
+      var s = $("#stStage"); if(s) s.textContent = "record unreachable";
+      var b = $("#stBody");
+      if(b) b.insertAdjacentHTML("afterbegin",
+        '<p class="st-disc">' + msg + '</p>');
+    }
+
+    D.agents().then(function(a){
+      if(!a) throw new Error("no agents");
+      var by = {};
+      (a.analysts || []).forEach(function(x){ by[x.agent] = x; });
+      var map = [["fundamentals","aFund"],["catalyst","aCat"],["tape","aTape"]];
+      map.forEach(function(m){
+        var x = by[m[0]] || {};
+        num($("#" + m[1] + "Fil"), x.filings || 0);
+        num($("#" + m[1] + "Names"), x.names || 0);
+        var el = $("#" + m[1] + "Last");
+        if(el) el.textContent = x.last_at
+          ? "Last filed " + D.ago(x.last_at) + " · " + (x.rounds || 0) + " rounds worked."
+          : "Has not filed yet.";
+      });
+    }).catch(function(){ fail("Could not reach the desk record. Nothing on this page is filled in with an example."); });
+
+    D.floor().then(function(f){
+      if(!f || !f.round) throw new Error("no floor");
+      var r = f.round, meta = r.meta || {}, tv = meta.tv || {}, news = meta.news || {};
+      var live = r.status === "running";
+      var el = $("#stLive"); if(el) el.classList.toggle("on", live);
+      $("#stStage").textContent = live ? D.stageLabel(r.stage) : "round " + r.seq + " filed";
+      $("#stMeta").textContent = "Round " + r.seq + " · " + D.ago(r.finished_at || r.started_at)
+        + (f.rounds_today ? " · " + f.rounds_today + " rounds today" : "");
+
+      var ts = r.tickers || [];
+      $("#aNamesCap").textContent = ts.length + " names";
+      $("#aNames").innerHTML = ts.map(function(t){
+        var q = tv[t] || {}, ch = q.change;
+        return '<li style="display:flex;gap:12px;align-items:baseline">' +
+          '<b style="font-family:var(--f-display);min-width:5.5ch">' + esc(t) + '</b>' +
+          '<span style="color:var(--text-faint);font-family:var(--f-mono);font-size:12px;' +
+          'letter-spacing:.08em;text-transform:uppercase">' + esc(q.label || "no rating") + '</span>' +
+          '<span style="margin-left:auto;font-family:var(--f-mono);font-size:13px;color:' +
+          (ch == null ? "var(--text-faint)" : ch >= 0 ? "var(--clearing)" : "var(--stamp)") + '">' +
+          (ch == null ? "—" : (ch >= 0 ? "+" : "") + esc(ch) + "%") + '</span></li>';
+      }).join("") || '<li>No names on the desk this round.</li>';
+
+      var wire = [];
+      Object.keys(news).forEach(function(k){
+        (news[k] || []).forEach(function(h){
+          var m = String(h).match(/^\s*"?(.*?)"?\s*\(([^()]*)\)\s*$/);
+          wire.push([k === "__GOV__" ? "GOV" : k, m ? m[1] : String(h), m ? m[2] : ""]);
+        });
+      });
+      $("#aWireCap").textContent = wire.length ? wire.length + " headlines" : "quiet";
+      $("#aWire").innerHTML = wire.length ? wire.slice(0,8).map(function(w){
+        return '<li style="display:flex;gap:12px;font-size:13px;line-height:1.5;color:var(--text-dim)">' +
+          '<b style="color:var(--gold);font-family:var(--f-mono);font-size:12px;min-width:5.5ch">' +
+          esc(w[0]) + '</b><span>' + esc(w[1]) +
+          (w[2] ? ' <em style="font-style:normal;color:var(--text-faint)">&middot; ' + esc(w[2]) + '</em>' : "") +
+          '</span></li>';
+      }).join("") : '<li>Nothing crossed the wire on these names this round.</li>';
+      return r;
+    }).then(function(){
+      return D.rounds(1).then(function(rs){
+        var rid = rs && rs[0] && rs[0].id;
+        if(!rid) return;
+        return D.notes(rid).then(function(ns){
+          var an = (ns || []).filter(function(n){ return n.stage === "analyst"; });
+          var host = $("#aFilings");
+          if(!an.length){
+            $("#aGateCap").textContent = "members only";
+            host.innerHTML = '<li>The analysts\' filings are part of a Flux membership. ' +
+              '<a href="./signin.html" style="color:var(--gold);text-decoration:underline">Sign in</a> ' +
+              'to read what each lens actually wrote on every name this round.</li>';
+            return;
+          }
+          $("#aGateCap").textContent = an.length + " this round";
+          host.innerHTML = an.map(function(n){
+            var p = n.payload || {};
+            return '<li><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">' +
+              '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;' +
+              'text-transform:uppercase;color:var(--floor)">' + esc(n.agent) + '</span>' +
+              '<b style="font-family:var(--f-display)">' + esc(n.ticker) + '</b>' +
+              (p.view ? '<span style="font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' +
+                esc(p.view) + '</span>' : "") +
+              (p.conviction != null ? '<span style="margin-left:auto;font-family:var(--f-mono);' +
+                'font-size:12px;color:var(--text-faint)">conviction ' + esc(p.conviction) + '</span>' : "") +
+              '</div>' +
+              (p.rationale ? '<p style="margin:6px 0 0;font-size:.9rem;line-height:1.55;color:var(--text-dim)">' +
+                esc(p.rationale) + '</p>' : "") + '</li>';
+          }).join("");
+        });
+      });
+    }).catch(function(){});
+
+  }
+  boot();
+});
+</script>
+</body>
+</html>

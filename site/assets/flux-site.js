@@ -67,6 +67,34 @@
       var href=(a.getAttribute("href")||"").split("/").pop().toLowerCase();
       if(href&&href===path)a.classList.add("on");
     });
+
+    /* the More menu: click, Escape, click-away, and arrow keys */
+    var more=$(".nav-more"),btn=$(".nav-more-btn",more||document);
+    if(more&&btn){
+      if($$(".nav-menu a.on",more).length)more.setAttribute("data-has-current","1");
+      var setOpen=function(v){
+        more.classList.toggle("open",v);
+        btn.setAttribute("aria-expanded",v?"true":"false");
+      };
+      btn.addEventListener("click",function(e){
+        e.stopPropagation();setOpen(!more.classList.contains("open"));
+      });
+      document.addEventListener("click",function(e){
+        if(!more.contains(e.target))setOpen(false);
+      });
+      document.addEventListener("keydown",function(e){
+        if(e.key==="Escape"&&more.classList.contains("open")){setOpen(false);btn.focus();}
+      });
+      more.addEventListener("keydown",function(e){
+        if(e.key!=="ArrowDown"&&e.key!=="ArrowUp")return;
+        var items=$$(".nav-menu a",more);
+        if(!items.length)return;
+        e.preventDefault();
+        if(!more.classList.contains("open")){setOpen(true);items[0].focus();return;}
+        var i=items.indexOf(document.activeElement);
+        items[(i+(e.key==="ArrowDown"?1:items.length-1)+items.length)%items.length].focus();
+      });
+    }
   };
 
   /* ---- reveal ---- */
