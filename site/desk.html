@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Desk — Flux</title>
+<meta name="description" content="Flux's research desk runs continuously: three analysts file on the tape, a Director of Research synthesises, Kronos and the DSA engine price the trade, and an Executive gives — or refuses — the green light. Simulated / educational, not investment advice.">
+<meta name="theme-color" content="#020617">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/flux.css?v=19">
+<script src="./assets/flux-supa.js?v=19" defer></script>
+<script src="./assets/flux-site.js?v=19" defer></script>
+<script src="./assets/flux-universe.js?v=19" defer></script>
+<script src="./assets/flux-feed.js?v=19" defer></script>
+<script src="./assets/flux-desk.js?v=19" defer></script>
+<style>
+  .dk-wrap{max-width:1240px;margin-inline:auto;padding:22px var(--gutter) 60px}
+
+  /* ---- live header ---- */
+  .dk-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .dk-top h1{font-size:clamp(1.4rem,1.1rem + 1.4vw,2rem);letter-spacing:-.02em;margin:0}
+  .dk-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:700;color:var(--emerald);border:1px solid rgba(16,185,129,.4);
+    background:rgba(16,185,129,.08);padding:4px 11px;border-radius:100px}
+  .dk-live .dot{width:7px;height:7px;border-radius:50%;background:var(--emerald);animation:dkp 1.6s infinite}
+  @keyframes dkp{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  .dk-sub{color:var(--text-dim);font-size:.95rem;margin-top:8px;max-width:70ch;line-height:1.6}
+  .dk-meta{margin-left:auto;font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint);text-align:right;line-height:1.7}
+
+  /* ---- the chain of command ---- */
+  .dk-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 26px}
+  @media(max-width:900px){.dk-chain{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.dk-chain{grid-template-columns:1fr}}
+  .dk-node{border:1px solid var(--line);border-radius:14px;background:var(--glass);padding:15px 16px;position:relative;
+    transition:border-color .25s,box-shadow .25s}
+  .dk-node .role{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
+  .dk-node h3{font-size:1rem;margin:6px 0 4px;letter-spacing:-.01em}
+  .dk-node p{font-size:.82rem;color:var(--text-dim);line-height:1.5;margin:0}
+  .dk-node .who{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+  .dk-node .who span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:100px;padding:3px 8px;color:var(--text-faint)}
+  .dk-node.on{border-color:rgba(0,242,255,.55);box-shadow:0 0 0 1px rgba(0,242,255,.18),0 10px 40px -22px rgba(0,242,255,.7)}
+  .dk-node.on .role{color:var(--cyan)}
+  .dk-node.done{border-color:rgba(16,185,129,.32)}
+  .dk-node .tick{position:absolute;top:13px;right:14px;font-size:12px;color:var(--emerald);opacity:0}
+  .dk-node.done .tick{opacity:1}
+
+  /* ---- progress ---- */
+  .dk-bar{height:4px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden;margin:0 0 26px}
+  .dk-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),#8b5cf6);transition:width .6s ease}
+
+  /* ---- decisions ---- */
+  .dk-h2{display:flex;align-items:baseline;gap:12px;margin:34px 0 14px}
+  .dk-h2 h2{font-size:1.15rem;letter-spacing:-.01em;margin:0}
+  .dk-h2 .cap{font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto}
+  .dk-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+  .dk-card{border:1px solid var(--line);border-radius:15px;background:var(--glass);padding:16px 17px}
+  .dk-card .row1{display:flex;align-items:center;gap:10px}
+  .dk-card .tk{font-family:var(--f-mono);font-weight:800;font-size:1.05rem;letter-spacing:.02em}
+  .dk-card .px{font-family:var(--f-mono);font-size:.8rem;color:var(--text-dim)}
+  .dk-verdict{margin-left:auto;font-family:var(--f-mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;padding:4px 9px;border-radius:100px;border:1px solid currentColor}
+  .dk-card .head{margin-top:9px;font-size:.92rem;font-weight:600;line-height:1.45}
+  .dk-card .reason{margin-top:7px;font-size:.83rem;color:var(--text-dim);line-height:1.55}
+  .dk-lvls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+  .dk-lvls div{border:1px solid var(--line-2);border-radius:9px;padding:7px 8px;text-align:center}
+  .dk-lvls .k{display:block;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .dk-lvls .v{display:block;font-family:var(--f-mono);font-size:.78rem;font-weight:700;margin-top:3px}
+  .dk-votes{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+  .dk-vote{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:100px;padding:4px 9px;color:var(--text-dim)}
+  .dk-vote b{color:var(--text)}
+  .dk-flags{margin-top:10px;font-family:var(--f-mono);font-size:.68rem;color:#f6c453;line-height:1.5}
+  .dk-empty{border:1px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--text-dim);font-size:.9rem}
+
+  /* ---- filings (members) ---- */
+  .dk-filings{border:1px solid var(--line);border-radius:15px;background:var(--glass);overflow:hidden}
+  .dk-fbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+  .dk-fbar select{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;color:var(--text);
+    font-family:var(--f-mono);font-size:.76rem;padding:6px 9px}
+  .dk-note{padding:13px 15px;border-bottom:1px solid var(--line-2)}
+  .dk-note:last-child{border-bottom:0}
+  .dk-note .nh{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .dk-agent{font-family:var(--f-mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 8px;border-radius:100px;border:1px solid var(--line)}
+  .dk-agent.fundamentals{color:#6ab8ff;border-color:rgba(106,184,255,.4)}
+  .dk-agent.catalyst{color:#f6c453;border-color:rgba(246,196,83,.4)}
+  .dk-agent.tape{color:#8b5cf6;border-color:rgba(139,92,246,.4)}
+  .dk-agent.director{color:var(--cyan);border-color:rgba(0,242,255,.45)}
+  .dk-agent.kronos,.dk-agent.dsa{color:var(--emerald);border-color:rgba(16,185,129,.4)}
+  .dk-note .ntk{font-family:var(--f-mono);font-weight:700;font-size:.82rem}
+  .dk-note .nv{font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto}
+  .dk-note p{margin:7px 0 0;font-size:.85rem;color:var(--text-dim);line-height:1.55}
+  .dk-note .ev{margin-top:6px;font-size:.76rem;color:var(--text-faint);line-height:1.5}
+  .dk-gate{padding:26px;text-align:center;color:var(--text-dim);font-size:.9rem}
+  .dk-disc{font-family:var(--f-mono);font-size:.66rem;color:var(--text-faint);margin-top:24px;letter-spacing:.03em;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="./terminal.html">Trade</a>
+      <a href="./ai.html">Flux AI</a>
+      <a href="./desk.html" aria-current="page">Desk</a>
+      <a href="./autopilot.html">Autopilot</a>
+      <a href="./fund.html">Fund</a>
+      <a href="./research.html">Research</a>
+      <a href="./ideas.html">Ideas</a>
+      <a href="./markets.html">Markets</a>
+      <a href="./pricing.html">Pricing</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./terminal.html">Paper trade</a>
+      <a class="btn btn-primary btn-sm" href="./signin.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main class="dk-wrap">
+
+  <div class="dk-top">
+    <h1>The Desk</h1>
+    <span class="dk-live" id="dkLive"><span class="dot"></span><span id="dkStage">connecting…</span></span>
+    <div class="dk-meta" id="dkMeta">—</div>
+  </div>
+  <p class="dk-sub">A research loop that never stops. Three analysts work the tape, a Director of Research
+    synthesises their filings, Kronos and the DSA engine each price the trade, and an Executive gives —
+    or refuses — the green light. Every round is on the record below.</p>
+
+  <div class="dk-bar" style="margin-top:18px"><i id="dkProgress" style="width:0"></i></div>
+
+  <div class="dk-chain">
+    <div class="dk-node" id="dkN1"><span class="tick">●</span>
+      <span class="role">Stage 1</span><h3>Three analysts</h3>
+      <p>Each works one lens over the round's names and files a view, a conviction and the evidence behind it.</p>
+      <div class="who"><span>Fundamentals</span><span>Catalyst</span><span>Tape</span></div>
+    </div>
+    <div class="dk-node" id="dkN2"><span class="tick">●</span>
+      <span class="role">Stage 2</span><h3>Director of Research</h3>
+      <p>Resolves where the analysts disagree, drops what isn't worth the traders' time, and hands down one package per name.</p>
+      <div class="who"><span>Synthesis</span><span>Scores −100…100</span></div>
+    </div>
+    <div class="dk-node" id="dkN3"><span class="tick">●</span>
+      <span class="role">Stage 3</span><h3>Two traders</h3>
+      <p>Kronos forecasts the next candles; the DSA engine scores value, momentum, range and drawdown. Each proposes entry, stop and target.</p>
+      <div class="who"><span>Kronos</span><span>DSA</span></div>
+    </div>
+    <div class="dk-node" id="dkN4"><span class="tick">●</span>
+      <span class="role">Stage 4</span><h3>Executive</h3>
+      <p>Nothing trades without the green light. Approves, cuts the size, or rejects — and says which trader it sided with.</p>
+      <div class="who"><span>Approve</span><span>Reduce</span><span>Reject</span></div>
+    </div>
+  </div>
+
+  <div class="dk-h2">
+    <h2>Green-lit calls</h2>
+    <span class="cap" id="dkDecCap">latest rulings</span>
+  </div>
+  <div class="dk-cards" id="dkDecisions"></div>
+
+  <div class="dk-h2">
+    <h2>The filings</h2>
+    <span class="cap">what each agent actually wrote</span>
+  </div>
+  <div class="dk-filings">
+    <div class="dk-fbar">
+      <span style="font-family:var(--f-mono);font-size:.72rem;color:var(--text-faint)">Round</span>
+      <select id="dkRound" aria-label="Choose a round"></select>
+      <span class="cap" id="dkRoundCap" style="font-family:var(--f-mono);font-size:.7rem;color:var(--text-faint);margin-left:auto"></span>
+    </div>
+    <div id="dkNotes"><div class="dk-gate">Loading…</div></div>
+  </div>
+
+  <p class="dk-disc">Simulated · virtual money · educational research, not investment advice · the desk does not trade a real account.
+    Model output can be wrong; every call is a hypothesis, not a recommendation.</p>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 140); }
+    var D = F.Desk;
+    if(F.initNav) F.initNav();
+    if(F.initFX) F.initFX();
+
+    var $ = function(s){ return document.querySelector(s); };
+    var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); };
+    function signedIn(){
+      if(window.__fluxUser) return true;
+      var S = window.FluxSupa; return !!(S && S.user && S.user());
+    }
+
+    /* ---------- live header + the chain lighting up ---------- */
+    var NODES = ["#dkN1","#dkN2","#dkN3","#dkN4"];
+    var STAGE_NODE = { analysts:0, director:1, traders:2, executive:3 };
+    function paintStatus(){
+      return D.status().then(function(s){
+        if(!s){ $("#dkStage").textContent = "starting up"; return; }
+        var live = s.status === "running";
+        $("#dkStage").textContent = live ? D.stageLabel(s.stage) : ("round " + s.seq + " filed");
+        $("#dkLive").style.opacity = live ? "1" : ".72";
+        $("#dkProgress").style.width = Math.round(D.stageIndex(s.stage) / (D.STAGES.length - 1) * 100) + "%";
+        $("#dkMeta").innerHTML =
+          "round #" + s.seq + " · " + D.ago(s.finished_at || s.started_at) + "<br>" +
+          (s.rounds_today || 0) + " rounds in 24h · " + (s.approved || 0) + " green-lit this round";
+
+        var active = live ? STAGE_NODE[s.stage] : -1;
+        NODES.forEach(function(sel, i){
+          var el = $(sel); if(!el) return;
+          el.classList.toggle("on", i === active);
+          el.classList.toggle("done", live ? (active > i) : true);
+        });
+        // the round's names, shown on the analyst node
+        var who = $("#dkN1").querySelector(".who");
+        if(who && s.tickers && s.tickers.length){
+          who.innerHTML = '<span>Fundamentals</span><span>Catalyst</span><span>Tape</span>' +
+            '<span style="color:var(--cyan);border-color:rgba(0,242,255,.4)">' + esc(s.tickers.slice(0,4).join(" ")) + '</span>';
+        }
+      });
+    }
+
+    /* ---------- the executive's rulings ---------- */
+    function levels(d){
+      return '<div class="dk-lvls">' +
+        '<div><span class="k">Price</span><span class="v">' + D.money(d.price) + '</span></div>' +
+        '<div><span class="k">Entry</span><span class="v">' + D.money(d.entry) + '</span></div>' +
+        '<div><span class="k">Stop</span><span class="v" style="color:var(--crimson)">' + D.money(d.stop) + '</span></div>' +
+        '<div><span class="k">Target</span><span class="v" style="color:var(--emerald)">' + D.money(d.target) + '</span></div>' +
+      '</div>';
+    }
+    function votes(d){
+      var k = d.kronos || {}, s = d.dsa || {};
+      var bits = [];
+      if(k.action) bits.push('<span class="dk-vote">Kronos <b>' + esc(k.action) + '</b> ' +
+        (k.pred_return_pct != null ? ((k.pred_return_pct >= 0 ? "+" : "") + k.pred_return_pct + "%") : "") + '</span>');
+      if(s.score != null) bits.push('<span class="dk-vote">DSA <b>' + esc(s.side || "") + '</b> ' + (s.score >= 0 ? "+" : "") + s.score + '</span>');
+      if(d.director_score != null) bits.push('<span class="dk-vote">Director <b>' + (d.director_score >= 0 ? "+" : "") + d.director_score + '</b></span>');
+      if(d.size_pct) bits.push('<span class="dk-vote">Size <b>' + d.size_pct + '%</b></span>');
+      if(d.conviction != null) bits.push('<span class="dk-vote">Conviction <b>' + d.conviction + '</b></span>');
+      return '<div class="dk-votes">' + bits.join("") + '</div>';
+    }
+    function card(d){
+      return '<article class="dk-card">' +
+        '<div class="row1">' +
+          '<span class="tk">' + esc(d.ticker) + '</span>' +
+          '<span class="px">' + esc(d.name || "") + '</span>' +
+          '<span class="dk-verdict" style="color:' + D.verdictColor(d.verdict) + '">' + esc(d.verdict) + '</span>' +
+        '</div>' +
+        '<div class="head">' + esc(d.headline) + '</div>' +
+        '<div class="reason">' + esc(d.reason) + '</div>' +
+        levels(d) + votes(d) +
+        (d.risk_flags && d.risk_flags !== "none" ? '<div class="dk-flags">⚠ ' + esc(d.risk_flags) + '</div>' : "") +
+        '<div class="px" style="margin-top:9px;font-size:.68rem;color:var(--text-faint)">' +
+          esc(d.side) + ' · ' + esc(d.horizon) + ' · ' + D.ago(d.created_at) + '</div>' +
+      '</article>';
+    }
+    function paintDecisions(){
+      return D.decisions(24).then(function(list){
+        var host = $("#dkDecisions");
+        if(!list.length){
+          host.innerHTML = '<div class="dk-empty">No rulings filed yet — the desk is on its first round. This page updates itself.</div>';
+          return;
+        }
+        host.innerHTML = list.map(card).join("");
+        $("#dkDecCap").textContent = signedIn()
+          ? (list.length + " latest rulings")
+          : "one call per round shown — sign in for all of them";
+      });
+    }
+
+    /* ---------- the filings, by round ---------- */
+    var AGENT_ORDER = { fundamentals:1, catalyst:2, tape:3, director:4, kronos:5, dsa:6 };
+    function noteHTML(n){
+      var p = n.payload || {};
+      var right = "";
+      if(n.stage === "analyst") right = esc(p.view || "") + " · " + (p.conviction != null ? p.conviction : "");
+      else if(n.agent === "director") right = esc(p.stance || "") + " · " + (p.score >= 0 ? "+" : "") + p.score;
+      else if(n.agent === "kronos") right = esc(p.action || "") + " · conf " + (p.confidence != null ? p.confidence : "");
+      else if(n.agent === "dsa") right = esc(p.side || "") + " · " + (p.score >= 0 ? "+" : "") + p.score;
+      var body = p.note || p.summary || p.rationale || p.error || "";
+      var extra = "";
+      if(Array.isArray(p.evidence) && p.evidence.length) extra = "evidence · " + p.evidence.map(esc).join(" · ");
+      if(Array.isArray(p.key_points) && p.key_points.length) extra = p.key_points.map(esc).join(" · ");
+      if(p.watch) extra += (extra ? " — " : "") + "watch: " + esc(p.watch);
+      if(p.risk) extra += (extra ? " — " : "") + "risk: " + esc(p.risk);
+      return '<div class="dk-note">' +
+        '<div class="nh">' +
+          '<span class="dk-agent ' + esc(n.agent) + '">' + esc(n.agent) + '</span>' +
+          '<span class="ntk">' + esc(n.ticker || "—") + '</span>' +
+          '<span class="nv">' + right + '</span>' +
+        '</div>' +
+        (body ? '<p>' + esc(body) + '</p>' : "") +
+        (extra ? '<div class="ev">' + extra + '</div>' : "") +
+      '</div>';
+    }
+    function paintNotes(roundId){
+      var host = $("#dkNotes");
+      if(!signedIn()){
+        host.innerHTML = '<div class="dk-gate">The analysts’ filings — every note, score and disagreement — are for members.' +
+          '<div style="margin-top:14px"><a class="btn btn-primary btn-sm" href="./signin.html?next=desk.html">Sign in to read the desk</a></div></div>';
+        return Promise.resolve();
+      }
+      host.innerHTML = '<div class="dk-gate">Loading the round…</div>';
+      return D.notes(roundId).then(function(list){
+        if(!list.length){ host.innerHTML = '<div class="dk-gate">Nothing filed on this round yet.</div>'; return; }
+        list.sort(function(a, b){
+          var t = String(a.ticker || "").localeCompare(String(b.ticker || ""));
+          return t || ((AGENT_ORDER[a.agent] || 9) - (AGENT_ORDER[b.agent] || 9));
+        });
+        host.innerHTML = list.map(noteHTML).join("");
+      });
+    }
+    function paintRounds(){
+      return D.rounds(10).then(function(rs){
+        var sel = $("#dkRound");
+        if(!rs.length){
+          sel.innerHTML = '<option>—</option>';
+          $("#dkNotes").innerHTML = '<div class="dk-gate">No rounds on the record yet — the desk files its first one shortly.</div>';
+          return;
+        }
+        var cur = sel.value;
+        sel.innerHTML = rs.map(function(r){
+          return '<option value="' + r.id + '">#' + r.seq + ' · ' + (r.tickers || []).slice(0,4).join(" ") +
+            ' · ' + D.ago(r.finished_at || r.started_at) + '</option>';
+        }).join("");
+        if(cur && rs.some(function(r){ return String(r.id) === cur; })) sel.value = cur;
+        var chosen = rs.filter(function(r){ return String(r.id) === sel.value; })[0] || rs[0];
+        var view = chosen && chosen.meta && (chosen.meta.desk_note || chosen.meta.desk_view);
+        $("#dkRoundCap").textContent = view ? String(view).slice(0, 150) : "";
+        if(!cur || !$("#dkNotes").dataset.filled){ $("#dkNotes").dataset.filled = "1"; paintNotes(sel.value); }
+      });
+    }
+    $("#dkRound").addEventListener("change", function(){ paintNotes(this.value); paintRounds(); });
+
+    function paintAll(){
+      if(!signedIn()) paintNotes(null);          // the gate, not a spinner
+      paintStatus(); paintDecisions(); paintRounds();
+    }
+    paintAll();
+    setInterval(paintStatus, 15000);
+    setInterval(function(){ paintDecisions(); paintRounds(); }, 60000);
+    if(window.FluxSupa && FluxSupa.ready) FluxSupa.ready.then(paintAll);
+    window.addEventListener("flux-auth", paintAll);
+  }
+  boot();
+});
+</script>
+</body>
+</html>
