@@ -3,7 +3,7 @@
 
    Reads the persistent research loop out of Supabase:
 
-     3 analysts → Director of Research → Kronos + DSA → Executive
+     3 analysts → 2 traders (their boss) → Executive
 
    Rounds and the executive's green-lit calls are public; the
    analysts' actual filings are for signed-in members (row-level
@@ -65,12 +65,11 @@
     });
   }
 
-  var STAGES = ["open", "analysts", "director", "traders", "executive", "done"];
+  var STAGES = ["open", "analysts", "traders", "executive", "done"];
   var STAGE_LABEL = {
     open: "Scanning the tape",
     analysts: "Analysts researching",
-    director: "Director synthesising",
-    traders: "Kronos + DSA pricing the trade",
+    traders: "Traders sifting the filings",
     executive: "Executive ruling",
     done: "Round filed"
   };

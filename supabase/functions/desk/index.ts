@@ -27,7 +27,7 @@ const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANTHROPIC = Deno.env.get("ANTHROPIC_API_KEY") || "";
 
 const M_ANALYST = Deno.env.get("FLUX_DESK_ANALYST_MODEL") || "claude-haiku-4-5-20251001";
-const M_DIRECTOR = Deno.env.get("FLUX_DESK_DIRECTOR_MODEL") || "claude-haiku-4-5-20251001";
+const M_TRADER = Deno.env.get("FLUX_DESK_TRADER_MODEL") || "claude-haiku-4-5-20251001";
 const M_EXEC = Deno.env.get("FLUX_DESK_EXEC_MODEL") || "claude-opus-5";
 
 const NAMES_PER_ROUND = Math.max(2, Math.min(10, parseInt(Deno.env.get("FLUX_DESK_NAMES") || "6", 10)));
@@ -104,6 +104,86 @@ async function askJSON(model: string, prompt: string, maxTokens = 4000) {
   } catch (e) {
     return { ok: false, error: "parse: " + String(e).slice(0, 120), data: null as any, raw: txt.slice(0, 300) };
   }
+}
+
+/* ------------------------------------------------- memory and scoreboard */
+// Every agent is shown its own playbook and its own scored record before it
+// files. "Learning" here means the agent revises a text strategy in light of
+// results it can be held to -- it is NOT weight training, and nothing in this
+// codebase should imply that it is.
+async function agentBrief(agent: string): Promise<any> {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/desk_agent_brief`, {
+      method: "POST",
+      headers: { "content-type": "application/json", apikey: SERVICE_KEY, authorization: `Bearer ${SERVICE_KEY}` },
+      body: JSON.stringify({ p_agent: agent }),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+function briefBlock(b: any): string {
+  if (!b) return "";
+  const pb = b.playbook || {};
+  const rec: any[] = Array.isArray(b.record) ? b.record : [];
+  const recent: any[] = Array.isArray(b.recent) ? b.recent : [];
+  const lines = rec.map((r: any) =>
+    `  ${r.horizon}: ${r.hits ?? 0}/${r.resolved ?? 0} correct` +
+    (r.hit_rate != null ? ` (${r.hit_rate}%)` : "") +
+    (r.avg_score != null ? `, avg credit ${r.avg_score}` : "")).join("\n");
+  const last = recent.slice(0, 8).map((r: any) =>
+    `  ${r.ticker} ${r.direction} ${r.horizon} @${r.confidence} -> ${r.correct ? "HIT" : "MISS"} (${r.realized_pct}%)`).join("\n");
+  return `
+YOUR OWN PLAYBOOK (v${pb.version ?? 1}${pb.method_name ? `, "${pb.method_name}"` : ""}):
+${pb.playbook || "(none yet -- write one)"}
+
+YOUR SCORED RECORD:
+${lines || "  no resolved calls yet"}
+
+YOUR LAST RESOLVED CALLS:
+${last || "  none yet"}
+
+Use your record honestly. If a horizon is going badly, change the approach or stand aside more often; do not repeat a method that is not working just because it is yours.`;
+}
+
+const HORIZON_MS: Record<string, number> = {
+  intraday: 6 * 3600 * 1000,
+  days: 3 * 86400 * 1000,
+  weeks: 14 * 86400 * 1000,
+};
+function resolveAt(h: string): string {
+  return new Date(Date.now() + (HORIZON_MS[h] ?? HORIZON_MS.days)).toISOString();
+}
+function normHorizon(h: any): string {
+  const v = String(h || "days").toLowerCase();
+  return v === "intraday" || v === "weeks" ? v : "days";
+}
+function normDirection(d: any): string {
+  const v = String(d || "flat").toLowerCase();
+  if (v === "up" || v === "long" || v === "buy") return "up";
+  if (v === "down" || v === "short" || v === "sell" || v === "avoid") return "down";
+  return "flat";
+}
+
+// An agent may hand back a revised playbook. Store it as a new version so the
+// evolution of a strategy stays inspectable.
+async function savePlaybook(agent: string, tier: string, revision: any) {
+  if (!revision) return;
+  const text = String(revision.playbook || "").trim();
+  if (text.length < 40) return;                 // ignore empty or throwaway edits
+  const cur = await sel(`desk_playbooks?agent=eq.${agent}&select=version,playbook`);
+  const prev = cur[0];
+  if (prev && String(prev.playbook || "").trim() === text) return;   // unchanged
+  const body = {
+    agent, tier,
+    method_name: String(revision.method_name || "").slice(0, 80) || null,
+    playbook: text.slice(0, 4000),
+    version: (prev?.version ?? 0) + 1,
+    updated_at: new Date().toISOString(),
+  };
+  if (prev) await patch(`desk_playbooks?agent=eq.${agent}`, body);
+  else await ins("desk_playbooks", [body]);
 }
 
 /* ------------------------------------------------------------ market data */
@@ -231,9 +311,10 @@ function kronosCall(f: Feat, real: any) {
 
 /* ------------------------------------------------------------ trader: DSA */
 // The daily-stock-analysis engine: a transparent composite score over value,
-// momentum, range position and drawdown, tilted by the director's read, turned
-// into an entry / stop / target ladder and a position size.
-function dsaCall(f: Feat, directorScore: number) {
+// momentum, range position and drawdown, turned into an entry / stop / target
+// ladder and a position size. It stands on its own components -- there is no
+// director tilt any more, because there is no director.
+function dsaCall(f: Feat, _legacy = 0) {
   const parts: Record<string, number> = {};
   parts.momentum = Math.max(-25, Math.min(25, f.chgpct * 4));
   parts.range = (f.rangePos - 0.5) * 40;                              // high in range = trend
@@ -242,7 +323,6 @@ function dsaCall(f: Feat, directorScore: number) {
     ? (f.pe < 20 ? 15 : f.pe < 35 ? 5 : f.pe > 60 ? -18 : -5)
     : 0;
   parts.stretch = f.rangePos > 0.9 && (f.pe ?? 0) > 55 ? -15 : 0;      // extended AND expensive
-  parts.director = Math.max(-30, Math.min(30, directorScore * 0.3));
   const score = Math.round(Object.values(parts).reduce((a, b) => a + b, 0));
   const side = score >= 18 ? "long" : score <= -18 ? "avoid" : "flat";
   const atrish = Math.max(f.last * 0.03, (f.hi - f.lo) * 0.04);        // a crude volatility unit
@@ -255,7 +335,7 @@ function dsaCall(f: Feat, directorScore: number) {
     stop: side === "long" ? r2(f.last - atrish * 2) : side === "avoid" ? r2(f.last * 1.08) : null,
     target: side === "long" ? r2(f.last + atrish * 3.5) : side === "avoid" ? r2(f.last * 0.9) : null,
     size_pct: side === "flat" ? 0 : Math.max(1, Math.min(8, Math.round(Math.abs(score) / 10))),
-    rationale: `DSA composite ${score >= 0 ? "+" : ""}${score} (momentum ${r2(parts.momentum)}, range ${r2(parts.range)}, value ${r2(parts.value)}, drawdown ${r2(parts.drawdown)}, director ${r2(parts.director)}) → ${side}.`,
+    rationale: `DSA composite ${score >= 0 ? "+" : ""}${score} (momentum ${r2(parts.momentum)}, range ${r2(parts.range)}, value ${r2(parts.value)}, drawdown ${r2(parts.drawdown)}) → ${side}.`,
   };
 }
 
@@ -320,14 +400,39 @@ async function stageAnalysts(round: any) {
       (x ? `, TradingView rating ${x.label} (${x.score != null ? r2(x.score) : "n/a"})` : "");
   }).join("\n");
 
-  const shape = `{"notes":[{"ticker":"NVDA","view":"bullish|bearish|neutral","conviction":0-100,"note":"2-3 sentences","evidence":["short fact","short fact"],"risk":"one line"}]}`;
-  const rules = `You are one analyst on a simulated paper-trading research desk. Use ONLY the figures given — never invent a number, a headline or an event. Be willing to say neutral; most convictions should sit between 35 and 70. This is educational research on virtual money, never financial advice. Respond with STRICT JSON only, shape:\n${shape}`;
+  // The JSON shape is specified once, in `ask` below. Do not restate it here --
+  // two shape specs in one prompt and the model silently drops half of them.
+  const rules = `You are one analyst on a simulated paper-trading research desk. You report to the traders: they read your filings and decide what reaches the executive, so your job is to be right and to be checkable, not to be loud.
 
-  const prompts: Record<string, string> = {
-    fundamentals: `${rules}\n\nYou are the FUNDAMENTALS analyst. Judge each name on valuation, growth and quality — is the price paying for something real?\n\nLIVE NUMBERS:\n${numbers}${fundExtra}`,
-    catalyst: `${rules}\n\nYou are the CATALYST analyst. Judge each name on what is actually happening right now — company news, sector news, and policy/government announcements that move it. If a name has no matched headline, say so and mark it neutral rather than inventing a story.\n\nHEADLINES:\n${newsBlock}\n\nPRICE CONTEXT:\n${numbers}`,
-    tape: `${rules}\n\nYou are the TAPE analyst. Judge each name on price action alone — trend, momentum, where it sits in its range, whether it is extended or basing, and what the technical rating says.\n\nTAPE:\n${tapeBlock}`,
+Use ONLY the figures given — never invent a number, a headline or an event. Be willing to say neutral; most convictions should sit between 35 and 70. This is educational research on virtual money, never financial advice.`;
+
+  const AGENTS = ["fundamentals", "catalyst", "tape"];
+  const briefs: Record<string, any> = {};
+  await Promise.all(AGENTS.map(async (a) => { briefs[a] = await agentBrief(a); }));
+
+  const ask =
+`Respond with STRICT JSON only, shape:
+{"notes":[{"ticker":"NVDA","view":"bullish|bearish|neutral","conviction":62,
+  "note":"2-3 sentences a trader can act on","evidence":["..."],"risk":"the one thing that breaks this",
+  "prediction":{"direction":"up|down|flat","horizon":"intraday|days|weeks","target":134.0,"stop":109.5,"confidence":62}}],
+ "playbook_revision":{"method_name":"short name for your approach","playbook":"your revised strategy, or repeat the current one unchanged"}}
+
+Rules on the prediction:
+- It is scored later against the real price. A wrong high-confidence call costs you more than a wrong low-confidence one, so stake conviction honestly.
+- "flat" is a real answer and scores as a hit if the name goes nowhere. Use it rather than guessing a direction.
+- Pick the horizon you actually mean: intraday (hours), days (about three sessions), weeks (about two weeks).
+- target and stop are optional; direction, horizon and confidence are not.`;
+
+  const lens: Record<string, string> = {
+    fundamentals: `You are the FUNDAMENTALS analyst. Judge each name on valuation, growth and quality -- is the price paying for something real?\n\nLIVE NUMBERS:\n${numbers}${fundExtra}`,
+    catalyst: `You are the CATALYST analyst. Judge each name on what is actually happening right now -- company news, sector news, and policy announcements that move it. If a name has no matched headline, say so and mark it flat rather than inventing a story.\n\nHEADLINES:\n${newsBlock}\n\nPRICE CONTEXT:\n${numbers}`,
+    tape: `You are the TAPE analyst. Judge each name on price action alone -- trend, momentum, where it sits in its range, whether it is extended or basing, and what the technical rating says.\n\nTAPE:\n${tapeBlock}`,
   };
+
+  const prompts: Record<string, string> = {};
+  for (const a of AGENTS) {
+    prompts[a] = `${rules}\n\n${lens[a]}\n${briefBlock(briefs[a])}\n\n${ask}`;
+  }
 
   const results = await Promise.all(Object.keys(prompts).map(async (agent) => {
     const r = await askJSON(M_ANALYST, prompts[agent], 3000);
@@ -335,11 +440,16 @@ async function stageAnalysts(round: any) {
   }));
 
   const rows: any[] = [];
+  const preds: any[] = [];
+  const featBy: Record<string, Feat> = {}; for (const f of feats) featBy[f.t] = f;
+
   for (const { agent, r } of results) {
     const list: any[] = (r.data && r.data.notes) || [];
+    const method = (r.data && r.data.playbook_revision && r.data.playbook_revision.method_name) || null;
     for (const n of list) {
       const tk = String(n.ticker || "").toUpperCase();
       if (!tk || !syms.includes(tk)) continue;
+      const pr = n.prediction || {};
       rows.push({
         round_id: round.id, stage: "analyst", agent, ticker: tk,
         payload: {
@@ -348,115 +458,221 @@ async function stageAnalysts(round: any) {
           note: String(n.note || "").slice(0, 1200),
           evidence: Array.isArray(n.evidence) ? n.evidence.slice(0, 4).map((e: any) => String(e).slice(0, 240)) : [],
           risk: String(n.risk || "").slice(0, 400),
+          prediction: {
+            direction: normDirection(pr.direction),
+            horizon: normHorizon(pr.horizon),
+            confidence: Math.max(0, Math.min(100, Math.round(nz(pr.confidence, nz(n.conviction, 50))))),
+            target: pr.target != null ? r2(nz(pr.target)) : null,
+            stop: pr.stop != null ? r2(nz(pr.stop)) : null,
+          },
         },
       });
+      // the same call, in scoreable form
+      const f = featBy[tk];
+      if (f && f.last > 0) {
+        const h = normHorizon(pr.horizon);
+        preds.push({
+          round_id: round.id, tier: "analyst", agent, ticker: tk,
+          horizon: h, resolve_at: resolveAt(h),
+          direction: normDirection(pr.direction),
+          price_at_call: r2(f.last),
+          target: pr.target != null ? r2(nz(pr.target)) : null,
+          stop: pr.stop != null ? r2(nz(pr.stop)) : null,
+          confidence: Math.max(0, Math.min(100, Math.round(nz(pr.confidence, nz(n.conviction, 50))))),
+          method, rationale: String(n.note || "").slice(0, 600),
+        });
+      }
     }
     if (!r.ok) {
       rows.push({ round_id: round.id, stage: "analyst", agent, ticker: null, payload: { error: r.error } });
     }
+    // let the analyst revise its own approach
+    if (r.ok) await savePlaybook(agent, "analyst", r.data && r.data.playbook_revision);
   }
   if (rows.length) await ins("desk_notes", rows);
+  if (preds.length) await ins("desk_predictions", preds);
   // carry the round's context forward so later stages don't refetch
   await patch(`desk_rounds?id=eq.${round.id}`, {
     meta: { ...(round.meta || {}), news, tv, obb_count: Object.keys(obb).length },
   });
-  return { ok: true, stage: "analysts", notes: rows.length, agents: results.map((x) => ({ a: x.agent, ok: x.r.ok, err: x.r.error })) };
+  return { ok: results.some((x) => x.r.ok), stage: "analysts", notes: rows.length, predictions: preds.length,
+    agents: results.map((x) => ({ a: x.agent, ok: x.r.ok, err: x.r.error })) };
 }
 
-async function stageDirector(round: any) {
+// The traders are the analysts' boss. They read every analyst filing AND each
+// analyst's scored record, run Kronos (the desk's primary algorithm) and the DSA
+// composite as inputs, apply their own playbook, then decide what is worth the
+// executive's time. Selection is the job: a short list is a good list.
+async function stageTraders(round: any) {
   const feats: Feat[] = (round.meta && round.meta.feats) || [];
+  const featBy: Record<string, Feat> = {}; for (const f of feats) featBy[f.t] = f;
+  const syms = feats.map((f) => f.t);
+
   const notes = await sel(`desk_notes?round_id=eq.${round.id}&stage=eq.analyst&select=agent,ticker,payload`);
   const byTicker: Record<string, any[]> = {};
   for (const n of notes) { if (!n.ticker) continue; (byTicker[n.ticker] ||= []).push(n); }
 
-  const desk = feats.map((f) => {
-    const list = byTicker[f.t] || [];
-    const lines = list.map((n) =>
-      `  - ${n.agent}: ${n.payload.view} (${n.payload.conviction}) — ${n.payload.note}${n.payload.risk ? ` RISK: ${n.payload.risk}` : ""}`).join("\n");
-    return `${f.t} — $${r2(f.last)}, ${f.chgpct >= 0 ? "+" : ""}${r2(f.chgpct)}% today\n${lines || "  - (no analyst covered this name)"}`;
-  }).join("\n\n");
+  // how the analysts have actually been doing, so a trader can weight them
+  const record = await sel("desk_agent_record?tier=eq.analyst&select=agent,horizon,resolved,hits,hit_rate,avg_score");
+  const recBy: Record<string, string[]> = {};
+  for (const r of record) {
+    (recBy[r.agent] ||= []).push(
+      `${r.horizon} ${r.hits ?? 0}/${r.resolved ?? 0}${r.hit_rate != null ? ` (${r.hit_rate}%)` : ""}`);
+  }
+  const recordBlock = Object.keys(recBy).length
+    ? Object.keys(recBy).map((a) => `  ${a}: ${recBy[a].join(", ")}`).join("\n")
+    : "  no resolved analyst calls yet -- weight them equally for now";
 
-  const prompt =
-`You are the DIRECTOR OF RESEARCH on a simulated paper-trading desk. Three analysts — fundamentals, catalyst and tape — have filed on the names below. Your job is to synthesise, not to repeat: resolve where they disagree, say which view carries more weight and why, and hand the traders one clear package per name.
-
-Drop any name that is not worth the traders' time — passing is a real answer and a short list is a good list. But a strong NEGATIVE read is a call, not a pass: if the analysts are lined up against a name, hand it forward as "avoid" with a negative score rather than dropping it.
-
-For each name you keep, return:
-- stance: "long" | "short" | "avoid" | "pass"
-- score: -100..100 (conviction with direction; be honest, most between -60 and 60)
-- summary: 2-3 sentences a trader can act on
-- key_points: up to 3 short bullets, each grounded in what an analyst actually said
-- disagreement: where the analysts differ, or "none"
-- watch: the ONE thing that would change this call
-
-ANALYST FILINGS:
-${desk}
-
-Respond with STRICT JSON only, shape:
-{"package":[{"ticker":"NVDA","stance":"long","score":45,"summary":"...","key_points":["..."],"disagreement":"...","watch":"..."}],"desk_view":"one sentence on the overall tone across these names"}`;
-
-  const r = await askJSON(M_DIRECTOR, prompt, 4000);
-  const pkg: any[] = (r.data && r.data.package) || [];
-  const rows = pkg.filter((p) => p && p.ticker).map((p) => ({
-    round_id: round.id, stage: "director", agent: "director", ticker: String(p.ticker).toUpperCase(),
-    payload: {
-      stance: String(p.stance || "pass").toLowerCase(),
-      score: Math.max(-100, Math.min(100, Math.round(nz(p.score)))),
-      summary: String(p.summary || "").slice(0, 1200),
-      key_points: Array.isArray(p.key_points) ? p.key_points.slice(0, 3).map((x: any) => String(x).slice(0, 240)) : [],
-      disagreement: String(p.disagreement || "none").slice(0, 400),
-      watch: String(p.watch || "").slice(0, 300),
-    },
-  }));
-  if (rows.length) await ins("desk_notes", rows);
-  await patch(`desk_rounds?id=eq.${round.id}`, {
-    meta: { ...(round.meta || {}), desk_view: (r.data && r.data.desk_view) || null, director_ok: r.ok, director_err: r.error },
-  });
-  return { ok: true, stage: "director", kept: rows.length, err: r.error };
-}
-
-async function stageTraders(round: any) {
-  const feats: Feat[] = (round.meta && round.meta.feats) || [];
-  const dir = await sel(`desk_notes?round_id=eq.${round.id}&stage=eq.director&select=ticker,payload`);
-  const dirBy: Record<string, any> = {};
-  for (const d of dir) if (d.ticker) dirBy[d.ticker] = d.payload;
-
-  // real Kronos forecasts, when the Python bridge has published any
-  const syms = feats.map((f) => f.t);
+  // real Kronos forecasts when the Python bridge has published any
   let fc: Record<string, any> = {};
   try {
     const list = await sel(`forecasts?ticker=in.(${syms.join(",")})&select=ticker,pred_close,pred_return,confidence,model,updated_at`);
     for (const f of list) fc[f.ticker] = f;
   } catch { /* table may not exist yet */ }
 
-  const rows: any[] = [];
+  // the two algorithmic inputs, computed before the traders reason over them
+  const algo: Record<string, any> = {};
   for (const f of feats) {
-    const d = dirBy[f.t];
-    if (!d || d.stance === "pass") continue;                 // the director already dropped it
-    const k = kronosCall(f, fc[f.t]);
-    const s = dsaCall(f, nz(d.score));
-    rows.push({ round_id: round.id, stage: "trader", agent: "kronos", ticker: f.t, payload: k });
-    rows.push({ round_id: round.id, stage: "trader", agent: "dsa", ticker: f.t, payload: s });
+    algo[f.t] = { kronos: kronosCall(f, fc[f.t]), dsa: dsaCall(f, 0) };
   }
+
+  const desk = feats.map((f) => {
+    const list = byTicker[f.t] || [];
+    const lines = list.map((n) => {
+      const pr = n.payload.prediction || {};
+      return `  - ${n.agent}: ${n.payload.view} (${n.payload.conviction}) calls ${pr.direction ?? "?"} over ${pr.horizon ?? "?"} at confidence ${pr.confidence ?? "?"} — ${n.payload.note}${n.payload.risk ? ` RISK: ${n.payload.risk}` : ""}`;
+    }).join("\n");
+    const a = algo[f.t];
+    return `${f.t} (${f.name}) — $${r2(f.last)}, ${f.chgpct >= 0 ? "+" : ""}${r2(f.chgpct)}% today, ${Math.round(f.rangePos * 100)}% of range
+${lines || "  - (no analyst covered this name)"}
+  KRONOS: ${a.kronos.action} (${a.kronos.model}${a.kronos.real ? ", real forecast" : ", approximation"}) ${a.kronos.pred_return_pct >= 0 ? "+" : ""}${a.kronos.pred_return_pct}% over 5 candles, confidence ${a.kronos.confidence}
+  DSA:    ${a.dsa.side} composite ${a.dsa.score >= 0 ? "+" : ""}${a.dsa.score} (${a.dsa.rationale})`;
+  }).join("\n\n");
+
+  const TRADERS = ["kronos", "dsa"];
+  const briefs: Record<string, any> = {};
+  await Promise.all(TRADERS.map(async (t) => { briefs[t] = await agentBrief(t); }));
+
+  const shared =
+`You are a TRADER on a simulated paper-trading desk, and the three analysts report to you. They research; you decide what is worth the executive's time.
+
+Your job is selection, not repetition:
+- Read every filing and weight each analyst by the record below, not by how confident they sound.
+- Kronos is the desk's primary algorithm and DSA is a transparent composite. They are inputs you may overrule -- say so when you do.
+- Pass forward only what you would actually stake size on. Dropping a name is a real answer and a short list is a good list.
+- A strong negative read is a call, not a pass: hand it up as a short/avoid rather than dropping it.
+- You also file your own scored prediction on each name you pass up.
+
+ANALYST TRACK RECORDS (hits/resolved):
+${recordBlock}
+
+THE DESK:
+${desk}`;
+
+  const ask =
+`Respond with STRICT JSON only, shape:
+{"selections":[{"ticker":"NVDA","pass_up":true,"stance":"long|short|avoid","score":45,
+  "summary":"2-3 sentences the executive can rule on","leaned_on":["which analysts or algorithms you weighted, and why"],
+  "overruled":"what you disagreed with, or 'nothing'","watch":"the one thing that would change this",
+  "prediction":{"direction":"up|down|flat","horizon":"intraday|days|weeks","target":134.0,"stop":109.5,"confidence":62}}],
+ "playbook_revision":{"method_name":"short name for your approach","playbook":"your revised strategy, or repeat the current one unchanged"}}
+
+Set pass_up false for names you are dropping, and still say why in summary.
+Your prediction is scored against the real price later, so stake confidence honestly.`;
+
+  const results = await Promise.all(TRADERS.map(async (agent) => {
+    const r = await askJSON(M_TRADER, `${shared}\n${briefBlock(briefs[agent])}\n\n${ask}`, 4000);
+    return { agent, r };
+  }));
+
+  const rows: any[] = [];
+  const preds: any[] = [];
+  const passed = new Set<string>();
+
+  for (const { agent, r } of results) {
+    const list: any[] = (r.data && r.data.selections) || [];
+    const method = (r.data && r.data.playbook_revision && r.data.playbook_revision.method_name) || null;
+    for (const x of list) {
+      const tk = String(x.ticker || "").toUpperCase();
+      const f = featBy[tk];
+      if (!f) continue;
+      const up = x.pass_up !== false;
+      if (up) passed.add(tk);
+      const pr = x.prediction || {};
+      rows.push({
+        round_id: round.id, stage: "trader", agent, ticker: tk,
+        payload: {
+          pass_up: up,
+          stance: String(x.stance || "flat").toLowerCase(),
+          score: Math.max(-100, Math.min(100, Math.round(nz(x.score)))),
+          summary: String(x.summary || "").slice(0, 1200),
+          leaned_on: Array.isArray(x.leaned_on) ? x.leaned_on.slice(0, 3).map((v: any) => String(v).slice(0, 240)) : [],
+          overruled: String(x.overruled || "nothing").slice(0, 400),
+          watch: String(x.watch || "").slice(0, 300),
+          method,
+          algo: algo[tk],
+          prediction: {
+            direction: normDirection(pr.direction),
+            horizon: normHorizon(pr.horizon),
+            confidence: Math.max(0, Math.min(100, Math.round(nz(pr.confidence, 50)))),
+            target: pr.target != null ? r2(nz(pr.target)) : null,
+            stop: pr.stop != null ? r2(nz(pr.stop)) : null,
+          },
+        },
+      });
+      if (up && f.last > 0) {
+        const h = normHorizon(pr.horizon);
+        preds.push({
+          round_id: round.id, tier: "trader", agent, ticker: tk,
+          horizon: h, resolve_at: resolveAt(h),
+          direction: normDirection(pr.direction),
+          price_at_call: r2(f.last),
+          target: pr.target != null ? r2(nz(pr.target)) : null,
+          stop: pr.stop != null ? r2(nz(pr.stop)) : null,
+          confidence: Math.max(0, Math.min(100, Math.round(nz(pr.confidence, 50)))),
+          method, rationale: String(x.summary || "").slice(0, 600),
+        });
+      }
+    }
+    if (!r.ok) {
+      rows.push({ round_id: round.id, stage: "trader", agent, ticker: null, payload: { error: r.error } });
+    }
+    if (r.ok) await savePlaybook(agent, "trader", r.data && r.data.playbook_revision);
+  }
+
   if (rows.length) await ins("desk_notes", rows);
-  return { ok: true, stage: "traders", proposals: rows.length, kronos_real: Object.keys(fc).length };
+  if (preds.length) await ins("desk_predictions", preds);
+  await patch(`desk_rounds?id=eq.${round.id}`, {
+    meta: {
+      ...(round.meta || {}),
+      passed_up: Array.from(passed),
+      traders_ok: results.some((x) => x.r.ok),
+      traders_err: results.map((x) => x.r.error).filter(Boolean).join(" | ") || null,
+    },
+  });
+  return {
+    ok: results.some((x) => x.r.ok), stage: "traders",
+    selections: rows.length, predictions: preds.length, passed_up: passed.size,
+    kronos_real: Object.keys(fc).length,
+    agents: results.map((x) => ({ a: x.agent, ok: x.r.ok, err: x.r.error })),
+  };
 }
 
 async function stageExecutive(round: any) {
   const feats: Feat[] = (round.meta && round.meta.feats) || [];
   const featBy: Record<string, Feat> = {}; for (const f of feats) featBy[f.t] = f;
   const notes = await sel(`desk_notes?round_id=eq.${round.id}&select=stage,agent,ticker,payload`);
-  const dirBy: Record<string, any> = {}, kBy: Record<string, any> = {}, sBy: Record<string, any> = {};
+  // only what a trader actually passed up reaches this desk
+  const tBy: Record<string, Record<string, any>> = {};
   for (const n of notes) {
-    if (!n.ticker) continue;
-    if (n.agent === "director") dirBy[n.ticker] = n.payload;
-    if (n.agent === "kronos") kBy[n.ticker] = n.payload;
-    if (n.agent === "dsa") sBy[n.ticker] = n.payload;
+    if (!n.ticker || n.stage !== "trader") continue;
+    (tBy[n.ticker] ||= {})[n.agent] = n.payload;
   }
-  const live = Object.keys(kBy);
+  const live = Object.keys(tBy).filter((t) =>
+    Object.values(tBy[t]).some((p: any) => p && p.pass_up));
   if (!live.length) {
     await patch(`desk_rounds?id=eq.${round.id}`, { stage: "done", status: "done", finished_at: new Date().toISOString() });
-    return { ok: true, stage: "executive", decisions: 0, note: "nothing reached the traders" };
+    return { ok: true, stage: "executive", decisions: 0, note: "the traders passed nothing up this round" };
   }
 
   // what the desk has already green-lit today, so the executive can manage concentration
@@ -466,19 +682,27 @@ async function stageExecutive(round: any) {
     : "nothing open";
 
   const body = live.map((t) => {
-    const f = featBy[t], d = dirBy[t] || {}, k = kBy[t], s = sBy[t];
+    const f = featBy[t], picks = tBy[t] || {};
+    const lines = Object.keys(picks).map((agent) => {
+      const p = picks[agent];
+      const a = p.algo || {};
+      const pr = p.prediction || {};
+      return `  ${agent.toUpperCase()} (${p.pass_up ? "passed up" : "dropped"}): ${p.stance} score ${p.score} — ${p.summary}
+    calls ${pr.direction} over ${pr.horizon} at confidence ${pr.confidence}${pr.target != null ? `, target ${pr.target}` : ""}${pr.stop != null ? `, stop ${pr.stop}` : ""}
+    leaned on: ${(p.leaned_on || []).join("; ") || "—"}
+    overruled: ${p.overruled || "nothing"}    watch: ${p.watch || "—"}${a.kronos ? `
+    (Kronos said ${a.kronos.action} ${a.kronos.pred_return_pct >= 0 ? "+" : ""}${a.kronos.pred_return_pct}% conf ${a.kronos.confidence}; DSA composite ${a.dsa?.score})` : ""}`;
+    }).join("\n");
     return `${t} (${f?.name || t}) — $${r2(f?.last || 0)}, ${(f?.chgpct ?? 0) >= 0 ? "+" : ""}${r2(f?.chgpct || 0)}% today
-  DIRECTOR: ${d.stance} score ${d.score} — ${d.summary} WATCH: ${d.watch}${d.disagreement && d.disagreement !== "none" ? ` DISAGREEMENT: ${d.disagreement}` : ""}
-  KRONOS:   ${k.action} (${k.model}${k.real ? ", real forecast" : ", approximation"}) predicted ${k.pred_return_pct >= 0 ? "+" : ""}${k.pred_return_pct}% over 5 candles, confidence ${k.confidence}. entry ${k.entry ?? "—"} stop ${k.stop ?? "—"} target ${k.target ?? "—"}
-  DSA:      ${s.side} score ${s.score}, size ${s.size_pct}%. entry ${s.entry ?? "—"} stop ${s.stop ?? "—"} target ${s.target ?? "—"} (${s.rationale})`;
+${lines}`;
   }).join("\n\n");
 
   const prompt =
-`You are the EXECUTIVE of a simulated paper-trading desk. Nothing trades without your green light. The Director of Research has filed a package on each name and two traders — KRONOS (a candle-forecast model) and DSA (a composite scoring engine) — have each proposed a trade.
+`You are the EXECUTIVE of a simulated paper-trading desk. Nothing trades without your green light. Two traders — KRONOS (built on the desk's candle-forecast algorithm) and DSA (a transparent composite) — manage the three analysts and have already filtered the round. What reaches you is what they were willing to stake size on, with the reasoning and the analysts they leaned on.
 
 Rule the desk, don't rubber-stamp it:
-- Where the two traders agree AND the director agrees, you can approve at a normal size.
-- Where they disagree, either pick a side and say why, or cut the size, or reject. Say which.
+- Where both traders passed the same name up and agree on direction, you can approve at a normal size.
+- Where they disagree, or where only one passed it up, either pick a side and say why, or cut the size, or reject. Say which.
 - Reject anything where the case is thin, the risk is unclear, or it just repeats exposure the desk already has.
 - Position size is 1-8% of the book. Total newly approved risk this round should stay sensible; concentration in one theme is a reason to reduce.
 - Never invent a number that was not given. Keep entry/stop/target consistent with the direction: for a long, stop below entry and target above; for an avoid/short, the reverse.
@@ -498,7 +722,7 @@ For every name above return a ruling. Respond with STRICT JSON only, shape:
 
   const rows = list.filter((x) => x && x.ticker && featBy[String(x.ticker).toUpperCase()]).map((x) => {
     const t = String(x.ticker).toUpperCase();
-    const f = featBy[t], d = dirBy[t] || {};
+    const f = featBy[t];
     const verdict = ["approved", "reduced", "rejected"].includes(String(x.verdict)) ? String(x.verdict) : "rejected";
     const side = String(x.side || "flat").toLowerCase();
     return {
@@ -513,10 +737,10 @@ For every name above return a ruling. Respond with STRICT JSON only, shape:
       headline: String(x.headline || "").slice(0, 300),
       reason: String(x.reason || "").slice(0, 1200),
       risk_flags: String(x.risk_flags || "none").slice(0, 300),
-      director_score: nz(d.score),
+      director_score: nz(Object.values(tBy[t] || {}).map((p: any) => nz(p.score))[0]),
       teaser: false,
-      kronos: kBy[t] || null,
-      dsa: sBy[t] || null,
+      kronos: (tBy[t] || {}).kronos || null,
+      dsa: (tBy[t] || {}).dsa || null,
     };
   });
 
@@ -555,10 +779,28 @@ async function tick(force: boolean) {
 
   try {
     let out: any;
-    if (round.stage === "analysts") { out = await stageAnalysts(round); await patch(`desk_rounds?id=eq.${round.id}`, { stage: "director", claimed_at: null }); }
-    else if (round.stage === "director") { out = await stageDirector(round); await patch(`desk_rounds?id=eq.${round.id}`, { stage: "traders", claimed_at: null }); }
-    else if (round.stage === "traders") { out = await stageTraders(round); await patch(`desk_rounds?id=eq.${round.id}`, { stage: "executive", claimed_at: null }); }
-    else if (round.stage === "executive") { out = await stageExecutive(round); }
+    // A stage whose model calls all failed must NOT advance the round. Marking a
+    // starved round "done" is how an out-of-credit desk went on looking alive
+    // while filing nothing -- fail loudly instead.
+    const halt = async (why: string) => {
+      await patch(`desk_rounds?id=eq.${round.id}`, {
+        status: "failed", stage: round.stage, claimed_at: null,
+        error: why.slice(0, 500), finished_at: new Date().toISOString(),
+      });
+    };
+
+    if (round.stage === "analysts") {
+      out = await stageAnalysts(round);
+      if (!out.ok) { await halt(`analysts: ${(out.agents || []).map((a: any) => a.err).filter(Boolean).join(" | ") || "no filings"}`); return { ...out, seq: round.seq, round: round.id, halted: true }; }
+      await patch(`desk_rounds?id=eq.${round.id}`, { stage: "traders", claimed_at: null });
+    } else if (round.stage === "traders") {
+      out = await stageTraders(round);
+      if (!out.ok) { await halt(`traders: ${(out.agents || []).map((a: any) => a.err).filter(Boolean).join(" | ") || "no selections"}`); return { ...out, seq: round.seq, round: round.id, halted: true }; }
+      await patch(`desk_rounds?id=eq.${round.id}`, { stage: "executive", claimed_at: null });
+    } else if (round.stage === "executive") {
+      out = await stageExecutive(round);
+      if (out.err) { await halt(`executive: ${out.err}`); return { ...out, seq: round.seq, round: round.id, halted: true }; }
+    }
     else {
       await patch(`desk_rounds?id=eq.${round.id}`, { status: "done", stage: "done", finished_at: new Date().toISOString(), claimed_at: null });
       out = { ok: true, stage: round.stage, note: "closed" };
