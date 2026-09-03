@@ -10,3 +10,7 @@ node_modules/
 .impeccable/build/
 .impeccable/mocks/
 .impeccable/hook.cache.json
+
+# python bytecode from the vendored skills
+__pycache__/
+*.pyc
