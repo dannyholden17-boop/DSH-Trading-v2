@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-surface="market">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Terms of Service — Flux</title>
 <meta name="description" content="The terms for using Flux (DSH Trading) — a research and paper-trading platform. Not investment advice.">
-<meta name="theme-color" content="#0d1220">
+<meta name="theme-color" content="#f4f2ed">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=27">
-<link rel="stylesheet" href="./assets/flux.css?v=27">
-<script src="./assets/flux-supa.js?v=27" defer></script>
-<script src="./assets/flux-site.js?v=27" defer></script>
-<script src="./assets/flux-universe.js?v=27" defer></script>
-<script src="./assets/flux-feed.js?v=27" defer></script>
-<script src="./assets/flux-fund.js?v=27" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=28">
+<link rel="stylesheet" href="./assets/flux.css?v=28">
+<script src="./assets/flux-supa.js?v=28" defer></script>
+<script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-universe.js?v=28" defer></script>
+<script src="./assets/flux-feed.js?v=28" defer></script>
+<script src="./assets/flux-fund.js?v=28" defer></script>
 <style>
   .legal{max-width:760px;margin-inline:auto;padding-top:20px}
   .legal h1{font-size:clamp(2rem,1.15rem + 3.1vw,3.4rem);letter-spacing:-.02em}
@@ -52,7 +52,10 @@
       <a href="./pricing.html">Pricing</a>
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
-    <div class="nav-cta"><a class="btn btn-primary btn-sm" href="./signin.html">Sign in</a></div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="./brokerage.html">Connect Robinhood</a>
+      <a class="btn btn-primary btn-sm" href="./desk.html">Open the desk</a>
+    </div>
   </div>
 </header>
 
@@ -98,7 +101,18 @@
 </main>
 
 <footer class="footer"><div class="wrap">
-  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono"><a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
+    </div>
+    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+  </div>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
+  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
 </div></footer>
 </body>
 </html>

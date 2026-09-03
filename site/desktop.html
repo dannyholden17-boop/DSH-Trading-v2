@@ -7,10 +7,10 @@
 <meta name="description" content="Flux Desktop — a pro multi-panel trading workstation: advanced charts with MACD/RSI, order ladder, time & sales, screener, alerts, news, and a full paper order engine.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<script src="./assets/dsh-store.js?v=27"></script>
-<script src="./assets/dsh-feed.js?v=27"></script>
-<script src="./assets/dsh.js?v=27" defer></script>
-<link rel="stylesheet" href="./assets/fonts.css?v=27">
+<script src="./assets/dsh-store.js?v=28"></script>
+<script src="./assets/dsh-feed.js?v=28"></script>
+<script src="./assets/dsh.js?v=28" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=28">
 <style>
   :root{
     color-scheme:dark;
@@ -62,7 +62,7 @@
 
   /* ===== main grid ===== */
   .main{flex:1;display:grid;grid-template-columns:250px 1fr 280px;min-height:0}
-  .col{min-height:0;display:flex;flex-direction:column;border-right:1px solid var(--line-2)}
+  .col{min-height:0;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line-2)}
   .col:last-child{border-right:none;border-left:1px solid var(--line-2)}
 
   .tabs{display:flex;border-bottom:1px solid var(--line-2);background:var(--panel)}
@@ -204,10 +204,10 @@
   .replist .newsrow{cursor:pointer}
   .replist .newsrow:hover{background:rgba(245,185,60,.04)}
 
-  .repview{position:fixed;top:0;right:0;bottom:0;width:min(600px,92vw);z-index:70;background:#141b2d;
+  .repview{position:fixed;top:0;right:0;bottom:0;width:min(600px,92vw);z-index:70;background:#141b2d;visibility:hidden;
     border-left:1px solid var(--line);box-shadow:-30px 0 80px -30px #000;transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.7,.2,1);
     display:flex;flex-direction:column}
-  .repview.on{transform:none}
+  .repview.on{transform:none;visibility:visible}
   .repview .rhead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2)}
   .repview .rhead b{font-size:.9rem}
   .repview .rhead .x{margin-left:auto;width:30px;height:30px;border-radius:4px;border:1px solid var(--line);background:var(--well);color:var(--dim);cursor:pointer}
@@ -243,7 +243,11 @@
   @media(max-width:620px){
     .top{height:auto;flex-wrap:wrap;row-gap:8px;padding:8px 12px}
     .top .acct,.top .pill{margin-left:0}
+    /* the workstation toolbar scrolls sideways on a phone rather than
+       widening the shell behind it */
+    .col.center>.tabs,.col.center>.bar,.col.center>.toolbar{overflow-x:auto;flex-wrap:nowrap}
   }
+  html,body{overflow-x:clip}
 </style>
 </head>
 <body>

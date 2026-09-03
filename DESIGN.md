@@ -259,11 +259,30 @@ instead of glows, gradients or glass. It refuses the glowing-chart hero the cate
 ships: the aurora, orb, shader, sheen and gradient-text devices that preceded this world
 are retired to explicit no-ops (`site/assets/flux.css:565-571`) rather than left alive.
 
-Dark is binding, not stylistic. Flux is a trading product looked at for hours; there is no
-light theme and `color-scheme:dark` is declared at the root (`site/assets/flux.css:18`).
-The grounds are warm — red channel above green above blue on every ground token — so the
-ochre and vermillion card stock reads as paper on a desk rather than as a neon panel on
-black glass.
+**The desk has two rooms, and they are lit from the use scene, not from category habit.**
+
+The *back room* is the pit: near-black, dense, mint on the bid, every pixel carrying a
+number. It is where the work happens and where a member sits for hours, so it stays dark —
+warm grounds, red channel above green above blue on every ground token, so the ochre and
+vermillion card stock reads as paper on a desk rather than as a neon panel on black glass.
+This is the default: `:root` is the pit, and `color-scheme:dark` is declared there
+(`site/assets/flux.css:18`).
+
+The *front room* is daylight: warm paper, ink, air, and one black action. It is where
+somebody who has never heard of Flux decides whether to trust it — a two-minute read in an
+office, not an eight-hour shift — and a dark marketing page reads as a costume rather than
+as a workplace. Marketing surfaces declare `data-surface="market"` on `<html>`
+(`flux.css` §20) and every token re-resolves.
+
+Both rooms speak the same token names, so a room is one attribute and everything inside it
+re-lights. That is what lets a full-bleed workstation band drop into a daylight page
+without a second stylesheet: `<section data-surface="app">` inside a market page is the
+pit, and it is how the product shows itself on the home page.
+
+Which room a page belongs to is decided by what the visitor is doing, never by the page's
+topic. Persuade → front room. Operate → back room. `download.html` is in the back room
+because the page *is* a product shot; `brokerage.html` is in the front room because it is a
+decision.
 
 **Key Characteristics:**
 - Warm graphite grounds, never blue-black
@@ -314,6 +333,25 @@ signal system of gold, blue and green against a vermillion refusal.
   (`flux.css:41-43`).
 - **Line / Line 2 / Line 3** — hairlines at 14%, 7% and 4% of paper white. Structure is
   drawn with these, not with fills.
+
+### The front room's palette
+
+Same names, daylight values (`flux.css` §20, `[data-surface="market"]`). Every one is
+measured against the ground it actually sits on, composited, not against a nominal white.
+
+- **Paper** `#f4f2ed` — the ground. Warm, not office white. Panels are `#ffffff`, wells
+  `#ece9e2`, the nav rail `#fbfaf7`.
+- **Ink** `#0b0d10` — text at 17.6:1, and **the action**. `--act` is ink and `--act-ink` is
+  white, so a primary button is a black pill. This is the resolution of the brand-amber vs
+  semantic-green collision: in daylight the amber stays *data* and never becomes a button.
+- **Text dim** `#4c5460` (6.8:1) and **text faint** `#5f6773` (5.1:1 on paper, 4.6:1 in a
+  well). Faint is the floor in this room too.
+- **Label Amber** `#8a5b00` (5.2:1) is the only amber allowed to be *text*.
+  `--gold-soft` `#f5b93c` is the same amber as a *field* and never carries type except ink.
+- **Clearing** `#07734e` (5.3:1), **Stamp** `#b32d10` (5.7:1), **Floor** `#2748b8` (6.9:1).
+- Radii open up — `--radius:10px`, `--radius-lg:22px`, buttons are pills — because card
+  stock is cut but a marketing surface is printed. Shadows lose the inset highlight and
+  gain a real offset with a soft blur; there is no glow in daylight.
 
 ### Named Rules
 
@@ -564,6 +602,21 @@ information moving, not decoration: the tape and marquee scrolls, the recording 
 up/down price flash, and toast entry/exit. A new animation must either be one of those or
 be the stamp.
 
+**The One-Container Rule.** Where several facts belong together, they share **one** ruled
+container divided by internal hairlines — never N separate cards. The wrapper carries the
+border, the background and the radius and has zero padding; the *cells* carry the padding.
+The fact strip, the three-desk roll, the chain stations, the scoreboard and the connector
+steps are all this one shape. This is how the references avoid a deck of cards, and it is
+the rule that replaced the card grid.
+
+Its cells must be padded, not the wrapper — measured, the tightest inset from any of these
+containers' border box to its nearest text is 26px. The design detector reads the
+*wrapper's* `padding:0` and reports `cramped-padding` on every one of them; that is a false
+positive against this pattern and is not a licence to add padding to the wrapper, which
+would double-inset every cell. The rule stays enabled project-wide because a genuinely
+cramped container elsewhere should still be caught — verify by measuring the gap to the
+nearest text, not by reading the wrapper's own padding.
+
 **The Reduced-Motion Rule.** Under `prefers-reduced-motion`, the stamp still lands — it just
 lands instantly. Animations collapse to 0.01ms, transitions to 60ms, reveals are forced to
 their resting state, and the tape and marquee stop. State changes stay legible; only the
@@ -588,8 +641,11 @@ theatre is removed (`flux.css:87-93`).
 - **Do** keep every interactive target at or above 24px and form fields at 16px on mobile.
 
 ### Don't:
-- **Don't** add a light theme or a light surface for a whole page. Dark is a product
-  constraint (PRODUCT.md, Brand Commitments), and `color-scheme:dark` is declared at the root.
+- **Don't** invent a third room, and don't mix them inside one purpose. A page belongs to
+  the pit or to daylight; the only nesting allowed is a `data-surface="app"` band inside a
+  market page, and that band is a product shot, never a decorative dark stripe.
+- **Don't** put a light surface behind work. An Operate page — desk, terminal, portfolio,
+  analysts, traders, executive — stays in the pit. It is looked at for hours.
 - **Don't** write a kicker, eyebrow or label hat above a heading. `.eyebrow` is disabled
   outright and must stay disabled.
 - **Don't** use gradient text, glows, auroras, orbs, shaders, sheens or float/tilt
@@ -598,7 +654,9 @@ theatre is removed (`flux.css:87-93`).
 - **Don't** give a shadow a color, a centred spread or a halo.
 - **Don't** set caps or 11px type on anything longer than a short label.
 - **Don't** put dim grey type on ochre, vermillion, gold or paper — ink only.
-- **Don't** round a surface into a pill. Card stock is cut.
+- **Don't** round a surface into a pill *in the pit*. Card stock is cut. In daylight the
+  radii open up and buttons are pills — that is the front room's own rule, set on the
+  surface, not a licence to soften the workstation.
 - **Don't** use emoji or an icon font where a drawn mask icon belongs.
 - **Don't** reach for `{colors.gold}` as a general highlight on a surface that already has
   a card-stock field; one voice points per region.

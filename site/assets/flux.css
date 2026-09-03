@@ -283,7 +283,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
     box-shadow:var(--lift-3);transform:rotate(-.5deg);
     display:grid;grid-template-columns:1fr 168px;grid-template-areas:"head head" "main chain" "foot chain"}
   @media(max-width:620px){.ticket{grid-template-columns:1fr;grid-template-areas:"head" "main" "chain" "foot"}}
-  .ticket .field-k{color:rgba(21,16,10,.62)}
+  .ticket .field-k{color:rgba(21,16,10,.74)}   /* 5.5:1 on ochre */
   .ticket.punched::before{background:var(--blotter);box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
 
   .tkt-head{grid-area:head;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
@@ -338,7 +338,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .ticker:hover .tk-track{animation-play-state:paused}
 .tk-item{display:inline-flex;align-items:center;gap:8px;padding:0 17px;font-family:var(--f-mono);
   font-size:12px;line-height:1;border-right:1px solid var(--line-3);font-variant-numeric:tabular-nums}
-.tk-sym{color:var(--paper);font-weight:700;letter-spacing:.02em}
+.tk-sym{color:var(--text);font-weight:700;letter-spacing:.02em}
 .tk-px{color:var(--text-dim)}
 .tk-chg{font-weight:600}
 .tk-chg.tk-up{color:var(--clearing)}
@@ -390,6 +390,8 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .footer a:hover{color:var(--gold)}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
   margin-top:36px;padding-top:20px;border-top:1px solid var(--line-2);color:var(--text-faint);font-size:13px}
+/* the column links are blocks; these two sit in a sentence and must stay in it */
+.footer-bottom a{display:inline;padding:0}
 .disclaimer{color:var(--text-dim);font-size:13px;line-height:1.65;max-width:74ch}
 
 /* ---------------------------------------------------------- *
@@ -941,30 +943,44 @@ body::before{
   font-variant-numeric:tabular-nums}
 .st-sub{margin:10px 0 0;color:var(--text-dim);font-size:1rem;line-height:1.62;max-width:76ch}
 
-.st-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+/* The desks. One ruled container, N columns, hairlines between — never a
+   row of cards, and never a boxed figure block nested inside one of them.
+   Shared by analysts.html, traders.html and executive.html, so the shape
+   is decided once. See DESIGN.md, "The One-Container Rule". */
+.st-cards{display:grid;grid-template-columns:repeat(3,1fr);margin-top:28px;
+  border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+  box-shadow:var(--lift-1)}
 .st-cards.two{grid-template-columns:repeat(2,1fr)}
-@media(max-width:960px){.st-cards,.st-cards.two{grid-template-columns:1fr}}
-.st-card{position:relative;overflow:hidden;border-radius:4px;padding:20px;
-  background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
-  border:1px solid var(--line-2);box-shadow:var(--lift-2);
-  transition:transform var(--t-hover) var(--ease),box-shadow var(--t-hover) var(--ease),
-    border-color var(--t-hover) var(--ease)}
-.st-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent,var(--chrome))}
-.st-card:hover{transform:translateY(-3px);box-shadow:var(--lift-3);border-color:var(--line)}
-.st-card .lens{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--accent,var(--text-faint))}
-.st-card h2{font-family:var(--f-display);font-size:1.5rem;font-weight:800;
-  letter-spacing:-.025em;margin:6px 0 0}
-.st-card .what{margin:8px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
-.st-figs{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;
-  background:var(--line-2);border:1px solid var(--line-2);border-radius:2px;overflow:hidden}
-.st-fig{background:var(--blotter-2);padding:11px 13px}
-.st-fig b{display:block;font-family:var(--f-mono);font-size:1.5rem;font-weight:700;
-  letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--gold);line-height:1.1}
-.st-fig span{display:block;margin-top:3px;font-family:var(--f-mono);font-size:12px;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-.st-note{margin:14px 0 0;padding-top:13px;border-top:1px dashed var(--line);
-  font-size:12.5px;line-height:1.55;color:var(--text-dim)}
+@media(max-width:960px){
+  .st-cards,.st-cards.two{grid-template-columns:1fr}
+  .st-card{border-left:0!important;border-top:1px solid var(--line-2)}
+  .st-card:first-child{border-top:0}
+}
+.st-card{display:flex;flex-direction:column;padding:clamp(20px,2.2vw,28px);
+  border-left:1px solid var(--line-2);min-width:0;
+  transition:background var(--t-hover) var(--ease)}
+.st-card:first-child{border-left:0}
+.st-card:hover{background:var(--blotter-3)}
+.st-card .lens{display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-faint)}
+.st-card .lens::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--accent,var(--chrome))}
+.st-card h2{font-family:var(--f-display);font-size:1.4rem;font-weight:800;
+  letter-spacing:-.028em;margin:9px 0 0}
+.st-card .what{margin:10px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
+/* the figures are ruled off, not boxed: a card inside a card is the thing
+   this whole system exists to avoid */
+.st-figs{display:grid;grid-template-columns:1fr 1fr;margin-top:auto;padding-top:16px}
+.st-fig{padding:2px 16px 2px 0;border-left:1px solid var(--line-3)}
+.st-fig:first-child{border-left:0;padding-left:0}
+.st-fig:last-child{padding-left:16px}
+.st-fig b{display:block;font-family:var(--f-display);font-size:1.6rem;font-weight:700;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums;color:var(--text);line-height:1}
+.st-fig span{display:block;margin-top:6px;font-family:var(--f-mono);font-size:12px;
+  font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+.st-note{margin:16px 0 0;padding-top:13px;border-top:1px solid var(--line-3);
+  font-size:12.5px;line-height:1.55;color:var(--text-faint)}
 .st-note a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 
 .st-panel{margin-top:28px;background:var(--blotter-2);border:1px solid var(--line-2);
@@ -976,7 +992,7 @@ body::before{
 .st-rows{list-style:none;margin:0;padding:0}
 .st-rows>li{padding:13px 17px;border-top:1px solid var(--line-2)}
 .st-rows>li:first-child{border-top:0}
-.st-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+.st-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;align-items:start}
 @media(max-width:900px){.st-split{grid-template-columns:1fr}}
 
 /* a bar that compares two agents */
@@ -1157,3 +1173,108 @@ body::before{
   .loop-doc .marks i{opacity:1;background:#1c5233;border-color:#1c5233}
   .loop-st .pin{background:var(--clearing)}
 }
+
+/* ---------------------------------------------------------- *
+   20. TWO ROOMS
+
+   The desk has two rooms and they are lit differently.
+
+   The front room is daylight: warm paper, ink, air, and one
+   black action. It is where somebody decides whether to trust
+   this. The back room is the pit: near-black, dense, mint on
+   the bid, every pixel carrying a number. It is where the work
+   happens.
+
+   Both rooms speak the same token names, so a room is one
+   attribute — [data-surface] — and everything inside it
+   re-lights. That is what lets a full-bleed workstation band
+   drop into a daylight page without a second stylesheet.
+ * ---------------------------------------------------------- */
+
+/* the action pair, so a button is not tied to card stock */
+:root{--act:var(--card-buy);--act-ink:var(--ink)}
+.btn-primary{background:var(--act);color:var(--act-ink)}
+.btn-primary:hover{background:var(--act)}
+
+/* ---- the front room ---- */
+[data-surface="market"]{
+  color-scheme:light;
+
+  --blotter:#f4f2ed;          /* warm paper, not office white */
+  --blotter-2:#ffffff;
+  --blotter-3:#faf8f4;
+  --well:#ece9e2;
+  --rail:#fbfaf7;
+  --veil:rgba(251,250,247,.88);
+
+  --paper:#ffffff;
+  --ink:#0b0d10;
+
+  --text:#0b0d10;             /* 17.6:1 on paper */
+  --text-dim:#4c5460;         /*  6.8:1 */
+  --text-faint:#5f6773;       /*  5.1:1 on paper, 4.6:1 in a well — the floor, not below */
+
+  --line:rgba(11,13,16,.15);
+  --line-2:rgba(11,13,16,.085);
+  --line-3:rgba(11,13,16,.045);
+
+  --gold:#8a5b00;             /* label amber, safe as text: 5.2:1 */
+  --gold-soft:#f5b93c;        /* the same amber as a field, never as text */
+  --clearing:#07734e;         /* 5.3:1 */
+  --stamp:#b32d10;            /* 5.7:1 */
+  --floor:#2748b8;            /* 6.9:1 */
+  --chrome:#c7c2b8;
+  --chrome-hi:#a9a49a;
+
+  --act:#0b0d10;              /* the action is ink, so the amber stays data */
+  --act-ink:#ffffff;
+
+  --radius:10px;
+  --radius-lg:22px;
+
+  /* daylight: a real offset, a soft blur, no glow */
+  --lift-1:0 1px 1px rgba(11,13,16,.05), 0 2px 6px -3px rgba(11,13,16,.10);
+  --lift-2:0 1px 2px rgba(11,13,16,.05), 0 16px 32px -18px rgba(11,13,16,.22);
+  --lift-3:0 2px 4px rgba(11,13,16,.05), 0 34px 64px -26px rgba(11,13,16,.30);
+}
+[data-surface="market"] .btn{border-radius:999px}
+[data-surface="market"] ::selection{background:#0b0d10;color:#fff}
+[data-surface="market"] *{scrollbar-color:var(--chrome) var(--well)}
+[data-surface="market"] .fl-panel,[data-surface="market"] .daysheet,
+[data-surface="market"] .roster,[data-surface="market"] .glass,
+[data-surface="market"] .card,[data-surface="market"] .plan{background-image:none}
+[data-surface="market"] .glass::after{display:none}
+[data-surface="market"] .btn-ghost:hover{border-color:var(--ink);color:var(--ink);background:rgba(11,13,16,.05)}
+[data-surface="market"] .nav{border-bottom:1px solid var(--line-2);box-shadow:none}
+[data-surface="market"] .glyph{background:var(--ink)}
+[data-surface="market"] .ticker{background:var(--well);border-bottom-color:var(--line-2)}
+/* the scroll bar is the action colour in daylight; label amber is too dark to read as motion */
+[data-surface="market"] .fx-progress{background:var(--ink)}
+[data-surface="market"]:focus-visible,[data-surface="market"] :focus-visible{outline-color:var(--ink)}
+
+/* daylight comes from one window, not three coloured lamps */
+html[data-surface="market"] body::before{
+  background:
+    radial-gradient(1400px 700px at 72% -18%, rgba(255,255,255,.9), transparent 64%),
+    radial-gradient(900px 620px at 8% 6%, rgba(245,185,60,.10), transparent 62%);
+}
+
+/* ---- the back room, nameable so it can sit inside the front one ---- */
+[data-surface="app"]{
+  color-scheme:dark;
+  --blotter:#0a0e18; --blotter-2:#111726; --blotter-3:#1a2136;
+  --well:#060911; --rail:#05080f; --veil:rgba(10,14,24,.74);
+  --paper:#f2eee4; --ink:#120d05;
+  --text:#f2f5fb; --text-dim:#a8b4cd; --text-faint:#8d9ab6;
+  --line:rgba(160,180,220,.16); --line-2:rgba(160,180,220,.09); --line-3:rgba(160,180,220,.05);
+  --gold:#f5b93c; --gold-soft:#ffd479;
+  --clearing:#3ddc97; --stamp:#ff6f52; --floor:#7aa7ff;
+  --chrome:#2b3550; --chrome-hi:#3b486b;
+  --act:#3ddc97; --act-ink:#04150d;
+  --radius:6px; --radius-lg:10px;
+  --lift-1:0 1px 0 rgba(255,255,255,.04) inset, 0 1px 2px rgba(0,0,0,.5), 0 4px 12px -6px rgba(0,0,0,.7);
+  --lift-2:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -20px rgba(0,0,0,.95);
+  --lift-3:0 1px 0 rgba(255,255,255,.06) inset, 0 4px 8px rgba(0,0,0,.5), 0 34px 60px -28px rgba(0,0,0,1);
+  color:var(--text);
+}
+[data-surface="app"] ::selection{background:var(--clearing);color:#04150d}

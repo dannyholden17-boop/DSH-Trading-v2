@@ -91,9 +91,13 @@ disagreements and the refusals.
 
 - Name: **Flux**, by **DSH Trading**. Domain dsh-trading.com.
 - The candlestick glyph mark (three bars, cyan / blue / violet) used as logo and favicon.
-- **Dark is binding.** The user confirmed the redesign replaces the visual world but keeps
-  a dark interface — it is a trading product looked at for hours. Recorded as a
-  constraint on the new world, not as an endorsement of the current palette.
+- **Dark is binding where the work happens.** Originally recorded as "dark, everywhere":
+  it is a trading product looked at for hours. The user's Dribbble references (Sept 3)
+  narrowed it — two of the four they sent are light marketing surfaces, and one of those
+  states the intent outright: *"Dark, focused, and information-dense without the clutter."*
+  The rule now reads: **Operate surfaces are dark; Persuade surfaces are daylight.** The
+  workstation appears inside a marketing page as a dark band, which is the product shot.
+  See DESIGN.md, "The desk has two rooms".
 - All legal and disclosure copy survives any redesign unchanged in meaning.
 
 ## Evidence on Hand

@@ -665,7 +665,7 @@
           '<a class="btn btn-primary btn-sm" href="./account.html" title="'+nm.replace(/"/g,"")+'">'+nm.slice(0,14)+'</a>';
       }else{
         cta.innerHTML='<a class="btn btn-ghost btn-sm" href="./signin.html">Sign in</a>'+
-          '<a class="btn btn-primary btn-sm" href="./dashboard.html">Launch app</a>';
+          '<a class="btn btn-primary btn-sm" href="./desk.html">Open the desk</a>';
       }
     }
     $$("[data-auth-name]").forEach(function(e){e.textContent=u?(u.name||"Trader"):""});
