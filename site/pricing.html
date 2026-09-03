@@ -4,7 +4,7 @@
 <title>Pricing — Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
 <meta name="theme-color" content="#f4f2ed">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -14,58 +14,139 @@
 <script src="./assets/flux-fund.js?v=28" defer></script>
 <script src="./assets/flux-kronos.js?v=28" defer></script>
 <style>
-  /* ---- page-specific layout only ---- */
-  .seg{display:inline-flex;gap:4px;padding:4px;border-radius:2px;border:1px solid var(--line);background:var(--well)}
-  .seg button{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
-    padding:9px 18px;border-radius:2px;border:1px solid transparent;background:transparent;color:var(--text-dim);
-    cursor:pointer;transition:color .2s,background .2s,border-color .2s;white-space:nowrap}
-  .seg button:hover{color:var(--text)}
-  .seg button[aria-pressed="true"]{color:var(--cyan);background:rgba(245,185,60,.09);border-color:rgba(245,185,60,.4)}
+/* ============================================================
+   pricing.html — the front room.
 
-  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
-  @media(max-width:920px){.plans{grid-template-columns:1fr;max-width:440px;margin-inline:auto}}
-  .plan{display:flex;flex-direction:column;padding:28px}
-  .plan.pop{border-color:rgba(245,185,60,.5);
-    box-shadow:0 0 0 1px rgba(245,185,60,.15), inset 0 1px 0 rgba(160,180,220,.07)}
-  .plan .nm{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
-  .plan .amt{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:2.7rem;font-weight:700;
-    letter-spacing:-.03em;margin:14px 0 2px;line-height:1.05}
-  .plan .amt small{font-size:1rem;color:var(--text-faint);font-weight:500;letter-spacing:0}
-  .plan .bill{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);min-height:18px}
-  .plan .desc{color:var(--text-dim);font-size:.9rem;margin-top:14px;min-height:46px}
-  .plan ul{list-style:none;padding:0;margin:20px 0 26px;display:flex;flex-direction:column;gap:11px}
-  .plan li{display:flex;gap:10px;font-size:.9rem;color:var(--text-dim);line-height:1.45}
-  .plan li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;flex:none}
-  .plan .btn{margin-top:auto;width:100%}
-  /* the amber field, never amber text: legible ink on card stock in either room */
-  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold-soft);color:#120d05;
-    font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:2px;white-space:nowrap}
+   Same discipline as the home page: left edge, one ruled
+   container per group of facts, hairlines instead of card gaps.
+   The three plans are the one place a comparison genuinely wants
+   parallel columns, so they get columns — inside a single frame,
+   divided by rules, not three floating cards.
+   ============================================================ */
 
-  .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table.cmp{width:100%;min-width:600px;border-collapse:collapse;font-size:.9rem}
-  table.cmp th,table.cmp td{padding:12px 14px;text-align:center;border-top:1px solid var(--line-2)}
-  table.cmp thead th{border-top:0;border-bottom:1px solid var(--line);padding-top:0;vertical-align:bottom}
-  table.cmp th:first-child,table.cmp td:first-child{text-align:left;width:38%;min-width:210px;color:var(--text-dim)}
-  table.cmp thead .pn{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
-  table.cmp thead .pp{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);font-weight:400;display:block;margin-top:4px}
-  table.cmp tbody tr:hover{background:rgba(245,185,60,.035)}
-  table.cmp .grp td{background:var(--well);border-top:1px solid var(--line);
-    font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);
-    padding-block:9px;font-weight:700}
-  table.cmp .grp:hover td{background:var(--well)}
-  .yes{color:var(--cyan);font-weight:800}
-  .no{color:var(--text-faint)}
-  .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-dim)}
-  .cmp-hint{display:none}
-  @media(max-width:640px){.cmp-hint{display:block}}
+/* ---------- the opening ---------- */
+.pr-open{padding:clamp(44px,6vw,92px) 0 clamp(24px,3vw,40px)}
+.pr-open h1{font-size:clamp(2.4rem,1.1rem + 5vw,4.6rem);font-weight:700;letter-spacing:-.045em;
+  line-height:1;max-width:17ch}
+.pr-open h1 .q{color:var(--text-faint);font-weight:400}
+.pr-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+  gap:clamp(18px,3vw,56px);align-items:end}
+.pr-head p{color:var(--text-dim);font-size:clamp(1rem,.96rem + .3vw,1.14rem);line-height:1.6;max-width:46ch}
+@media(max-width:860px){.pr-head{grid-template-columns:1fr;align-items:start}.pr-head p{margin-top:14px}}
 
-  .addon{padding:22px;display:flex;flex-direction:column}
-  .addon .pr{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:700;margin-top:14px}
-  .addon .pr small{font-size:13px;color:var(--text-faint);font-weight:500}
-  .addon p{color:var(--text-dim);font-size:.9rem;margin-top:8px}
+.seg{display:inline-flex;gap:4px;padding:4px;border-radius:999px;border:1px solid var(--line);
+  background:var(--well);margin-top:clamp(24px,3vw,36px)}
+.seg button{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  padding:9px 18px;border-radius:999px;border:1px solid transparent;background:transparent;color:var(--text-dim);
+  cursor:pointer;transition:color var(--t-hover) var(--ease),background var(--t-hover) var(--ease);white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"]{color:var(--act-ink);background:var(--act);border-color:var(--act)}
+.seg-note{margin-left:14px;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
 
-  .panel{padding:22px}
-  @media(max-width:520px){.plan,.panel{padding:20px}.plan .amt{font-size:2.1rem}}
+/* ---------- the plans: one frame, three columns, hairlines between ---------- */
+.plans{margin-top:clamp(26px,3vw,40px);border:1px solid var(--line);border-radius:var(--radius-lg);
+  background:var(--paper);box-shadow:var(--lift-1);
+  display:grid;grid-template-columns:repeat(3,1fr)}
+.plan{display:flex;flex-direction:column;padding:clamp(24px,2.6vw,34px);
+  border-left:1px solid var(--line-2);position:relative}
+.plan:first-child{border-left:0}
+.plan.pop{background:var(--blotter-3)}
+.plan .nm{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-faint);display:flex;align-items:center;gap:10px}
+.plan .badge{font-family:var(--f-sans);font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;background:var(--gold-soft);color:#120d05;padding:3px 9px;border-radius:999px}
+.plan .amt{font-family:var(--f-display);font-variant-numeric:tabular-nums;
+  font-size:clamp(2.2rem,1.5rem + 2vw,3.1rem);font-weight:700;letter-spacing:-.04em;
+  margin:16px 0 3px;line-height:1}
+.plan .bill{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);min-height:18px}
+.plan .desc{color:var(--text-dim);font-size:.92rem;line-height:1.55;margin-top:16px;min-height:52px}
+.plan ul{list-style:none;padding:0;margin:20px 0 26px;border-top:1px solid var(--line-3)}
+.plan li{display:flex;gap:10px;font-size:.9rem;color:var(--text-dim);line-height:1.45;
+  padding:9px 0;border-bottom:1px solid var(--line-3)}
+.plan li::before{content:"";width:.8em;height:.8em;margin-top:.28em;flex:none;
+  background-color:var(--clearing);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat}
+.plan .btn{margin-top:auto;width:100%}
+@media(max-width:920px){
+  .plans{grid-template-columns:1fr}
+  .plan{border-left:0;border-top:1px solid var(--line-2)}
+  .plan:first-child{border-top:0}
+  .plan .desc{min-height:0}
+}
+
+/* ---------- the table ---------- */
+.pr-sec{padding-block:clamp(40px,5vw,76px)}
+.pr-sec h2{font-size:clamp(1.75rem,1.2rem + 1.7vw,2.5rem);font-weight:700;letter-spacing:-.035em;max-width:18ch}
+.cmp-wrap{margin-top:clamp(24px,2.8vw,38px);border:1px solid var(--line);border-radius:var(--radius-lg);
+  background:var(--paper);box-shadow:var(--lift-1);overflow:hidden}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.cmp{width:100%;min-width:640px;border-collapse:collapse;font-size:.92rem}
+table.cmp th,table.cmp td{padding:12px 16px;text-align:center;border-top:1px solid var(--line-3)}
+table.cmp thead th{border-top:0;border-bottom:1px solid var(--line-2);padding:18px 16px;vertical-align:bottom}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left;width:40%;min-width:220px;color:var(--text-dim)}
+table.cmp thead .pn{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+table.cmp thead .pp{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);font-weight:400;display:block;margin-top:5px}
+table.cmp tbody tr{transition:background var(--t-hover) var(--ease)}
+table.cmp tbody tr:hover{background:var(--blotter-3)}
+table.cmp .grp td{background:var(--well);border-top:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);
+  padding-block:10px;font-weight:700}
+table.cmp .grp:hover td{background:var(--well)}
+.yes{color:var(--clearing);font-weight:800}
+.no{color:var(--text-faint)}
+table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-dim)}
+.cmp-hint{display:none;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);
+  padding:12px 16px;border-bottom:1px solid var(--line-3)}
+@media(max-width:640px){.cmp-hint{display:block}}
+
+/* ---------- the promises: one strip, internal rules ---------- */
+.vows{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);
+  border-radius:var(--radius-lg);background:var(--paper);overflow:hidden;box-shadow:var(--lift-1)}
+.vows div{padding:clamp(18px,2vw,26px);border-left:1px solid var(--line-2)}
+.vows div:first-child{border-left:0}
+.vows b{display:block;font-family:var(--f-display);font-size:.98rem;font-weight:700;letter-spacing:-.02em}
+.vows span{display:block;margin-top:7px;font-size:12.5px;color:var(--text-faint);line-height:1.5}
+@media(max-width:820px){
+  .vows{grid-template-columns:1fr 1fr}
+  .vows div:nth-child(3){border-left:0}
+  .vows div:nth-child(n+3){border-top:1px solid var(--line-2)}
+}
+
+/* ---------- the questions ---------- */
+.qs{margin-top:clamp(22px,2.6vw,34px);border:1px solid var(--line);border-radius:var(--radius-lg);
+  background:var(--paper);overflow:hidden;box-shadow:var(--lift-1)}
+.qs details{border-top:1px solid var(--line-2)}
+.qs details:first-child{border-top:0}
+.qs summary{display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;
+  padding:clamp(17px,1.9vw,23px) clamp(18px,2.1vw,28px);list-style:none;
+  font-family:var(--f-display);font-weight:700;font-size:1.02rem;letter-spacing:-.02em;
+  transition:background var(--t-hover) var(--ease)}
+.qs summary::-webkit-details-marker{display:none}
+.qs summary:hover{background:var(--blotter-3)}
+.qs summary::after{content:"";flex:none;width:13px;height:13px;background-color:var(--text-faint);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:transform var(--t-hover) var(--ease)}
+.qs details[open] summary::after{transform:rotate(45deg)}
+.qs details p{margin:0;padding:0 clamp(18px,2.1vw,28px) clamp(19px,2.1vw,25px);
+  color:var(--text-dim);font-size:.94rem;line-height:1.68;max-width:74ch}
+
+/* ---------- the close ---------- */
+.pr-close{padding-block:clamp(20px,2.4vw,34px) clamp(48px,6vw,88px)}
+.pr-close .in{border-radius:var(--radius-lg);background:var(--ink);color:#fff;
+  padding:clamp(34px,4.6vw,68px) clamp(26px,4vw,58px);box-shadow:var(--lift-3)}
+.pr-close h2{font-size:clamp(1.9rem,1.2rem + 2.2vw,2.9rem);font-weight:700;letter-spacing:-.04em;
+  max-width:24ch;color:#fff}
+.pr-close p{margin-top:16px;max-width:56ch;color:rgba(255,255,255,.72);font-size:1.02rem;line-height:1.62}
+.pr-close .btn-row{margin-top:clamp(22px,2.6vw,32px)}
+.pr-close .btn-primary{background:#fff;color:var(--ink)}
+.pr-close .btn-primary:hover{background:#fff}
+.pr-close .btn-ghost{border-color:rgba(255,255,255,.34);color:#fff}
+.pr-close .btn-ghost:hover{border-color:#fff;color:#fff;background:rgba(255,255,255,.08)}
+.pr-close .fine{margin-top:clamp(26px,3vw,36px);padding-top:22px;
+  border-top:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.62);
+  font-size:12.5px;line-height:1.7;max-width:82ch}
 </style>
 </head>
 <body>
@@ -97,136 +178,131 @@
     </nav>
     <button class="nav-toggle" aria-label="Menu"><i class="ic-i i-menu" aria-hidden="true"></i></button>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="./portfolio.html">Connect brokerage</a>
-      <a class="btn btn-primary btn-sm" href="./download.html">Download</a>
+      <a class="btn btn-ghost btn-sm" href="./brokerage.html">Connect Robinhood</a>
+      <a class="btn btn-primary btn-sm" href="./desk.html">Open the desk</a>
     </div>
   </div>
 </header>
 
 <main>
 
-<!-- ============ HERO ============ -->
-<section class="section phero" style="padding-bottom:0">
-  <div class="wrap center reveal">
-<h1 class="h1" style="margin-top:18px">Start free.<br><span class="">Upgrade when it earns its keep.</span></h1>
-    <p class="lede" style="margin-inline:auto">Every plan runs all six engines and paper trades from day one.
-      No card to start, no contract, no cut of your trades — ever.</p>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:30px">
-      <div class="seg" id="cycle" role="group" aria-label="Billing cycle">
-        <button type="button" data-cycle="m" aria-pressed="true">Monthly</button>
-        <button type="button" data-cycle="y" aria-pressed="false">Annual</button>
-      </div>
-      <span class="pill pill-violet" id="saveNote"><i></i> Annual saves two months</span>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PLANS ============ -->
-<section class="section" style="padding-top:clamp(34px,4vw,54px)">
+<!-- ============ THE OPENING ============ -->
+<section class="pr-open">
   <div class="wrap">
+    <div class="pr-head">
+      <h1>Start free.<br><span class="q">Upgrade when it earns it.</span></h1>
+      <p>Every plan reads the same desk and trades the same paper account from day one. No card to start,
+        no contract, and no cut of your trades — ever.</p>
+    </div>
+
+    <div class="seg" id="cycle" role="group" aria-label="Billing cycle">
+      <button type="button" data-cycle="m" aria-pressed="true">Monthly</button>
+      <button type="button" data-cycle="y" aria-pressed="false">Annual</button>
+    </div>
+    <span class="seg-note" id="saveNote">Annual saves two months</span>
+
     <div class="plans reveal">
 
-      <div class="glass plan">
+      <div class="plan">
         <div class="nm">Scout</div>
         <div class="amt" data-m="$0" data-y="$0">$0</div>
         <div class="bill" data-bill-m="forever free" data-bill-y="forever free">forever free</div>
-        <p class="desc">See the desk work. Everything you need to judge whether Flux earns a seat.</p>
+        <p class="desc">Read the desk. Everything you need to judge whether it is worth paying for, before
+          you pay for it.</p>
         <ul>
-          <li>All six engines, live feed</li>
-          <li>Paper trading + full terminal</li>
-          <li>25 signals per day</li>
-          <li>1 watchlist</li>
+          <li>Every executive ruling, with its reason</li>
+          <li>Per-analyst hit rates and playbooks</li>
+          <li>The paper terminal, in full</li>
+          <li>The round record, end to end</li>
         </ul>
         <a class="btn btn-ghost" href="./signin.html?next=pricing.html">Start free</a>
       </div>
 
-      <div class="glass plan pop">
-        <span class="badge">Most popular</span>
-        <div class="nm">Trader</div>
+      <div class="plan pop">
+        <div class="nm">Trader <span class="badge">Most popular</span></div>
         <div class="amt" data-m="$49" data-y="$490">$49</div>
         <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year — $41/mo equivalent">per month, billed monthly</div>
-        <p class="desc">The full autonomous desk for an active, self-directed trader.</p>
+        <p class="desc">The analysts' actual filings, not just what survived them — and the desk as a
+          connector inside your own Claude.</p>
         <ul>
-          <li>Unlimited signals and alerts</li>
-          <li>Flux AI chat — ask the desk anything</li>
-          <li>AI agents and scheduled reports</li>
-          <li>Backtest any setup, unlimited runs</li>
-          <li>Live trading through your own broker</li>
-          <li>Phone and email alerts</li>
+          <li>Everything in Scout</li>
+          <li>Every analyst filing, in full</li>
+          <li>What the traders cut, and why</li>
+          <li>Flux as a Claude connector</li>
+          <li>Ask the desk about any ruling</li>
+          <li>Alerts when a name you follow is ruled on</li>
         </ul>
         <a class="btn btn-primary" href="./signin.html?next=pricing.html" data-plan="trader">Start 14-day trial</a>
       </div>
 
-      <div class="glass plan">
+      <div class="plan">
         <div class="nm">Desk</div>
         <div class="amt" data-m="$149" data-y="$1,490">$149</div>
         <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year — $124/mo equivalent">per month, billed monthly</div>
-        <p class="desc">For power users who run size and want the desk tuned to their book.</p>
+        <p class="desc">For someone running real size who wants the desk pointed at their own names and
+          their own risk.</p>
         <ul>
           <li>Everything in Trader</li>
-          <li>Custom engines and scans</li>
-          <li>Personalized position sizing</li>
-          <li>Priority data lanes</li>
+          <li>Your names in the desk's universe</li>
+          <li>Position sizing against your own book</li>
+          <li>Full prediction history, exportable</li>
           <li>API access</li>
-          <li>Dedicated support</li>
+          <li>Direct support</li>
         </ul>
         <a class="btn btn-ghost" href="./signin.html?next=pricing.html" data-plan="desk">Get Desk</a>
       </div>
 
     </div>
-    <p class="disclaimer center" style="margin:22px auto 0">Prices shown are illustrative for this product demo.
-      Market data displayed anywhere on this site is simulated.</p>
+    <p class="disclaimer" style="margin-top:20px">Prices are illustrative for this product demo and billing
+      is not live yet. Everything the desk trades is simulated.</p>
   </div>
 </section>
 
-<!-- ============ COMPARISON ============ -->
-<section class="section" style="padding-top:0">
+<!-- ============ LINE BY LINE ============ -->
+<section class="pr-sec">
   <div class="wrap">
-    <div class="reveal center" style="max-width:60ch;margin-inline:auto">
-<h2 class="h2" style="margin-top:16px">Line by line.</h2>
-      <p class="lede" style="margin-inline:auto;margin-top:14px">No asterisks, no "contact sales" to find out what you get.</p>
+    <div class="pr-head">
+      <h2>Line by line.</h2>
+      <p>No asterisks, and nothing hidden behind "contact sales". If a row is empty on your plan, it is
+        empty.</p>
     </div>
 
-    <div class="glass panel reveal" style="margin-top:34px">
-      <p class="mono cmp-hint" style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Scroll the table sideways →</p>
+    <div class="cmp-wrap reveal">
+      <p class="cmp-hint">Scroll the table sideways →</p>
       <div class="tscroll">
         <table class="cmp">
           <thead>
             <tr>
-              <th scope="col"><span class="mono" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)">Feature</span></th>
+              <th scope="col"><span class="pn">What you get</span></th>
               <th scope="col"><span class="pn">Scout</span><span class="pp" data-hd="0">$0</span></th>
-              <th scope="col"><span class="pn" style="color:var(--cyan)">Trader</span><span class="pp" data-hd="1">$49/mo</span></th>
+              <th scope="col"><span class="pn">Trader</span><span class="pp" data-hd="1">$49/mo</span></th>
               <th scope="col"><span class="pn">Desk</span><span class="pp" data-hd="2">$149/mo</span></th>
             </tr>
           </thead>
           <tbody>
-            <tr class="grp"><td colspan="4">Data &amp; charting</td></tr>
-            <tr><td>Live market feed</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Watchlists</td><td class="v">1</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
-            <tr><td>Chart timeframes</td><td class="v">6</td><td class="v">12</td><td class="v">12 + custom</td></tr>
-            <tr><td>Historical depth</td><td class="v">1 year</td><td class="v">10 years</td><td class="v">20 years</td></tr>
-            <tr><td>Level 2 depth</td><td class="no">—</td><td class="v">Add-on</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr class="grp"><td colspan="4">The record</td></tr>
+            <tr><td>Executive rulings, with the reason</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Round history, end to end</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Analyst filings, in full</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>What the traders cut, and why</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Prediction history</td><td class="v">Rates only</td><td class="v">Every call</td><td class="v">Every call, exportable</td></tr>
+
+            <tr class="grp"><td colspan="4">The scoreboard</td></tr>
+            <tr><td>Per-analyst hit rates</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Named playbooks and versions</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Breakdown by horizon</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
 
             <tr class="grp"><td colspan="4">Trading</td></tr>
-            <tr><td>Paper trading</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Live trading via your broker</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Risk-engine order guardrails</td><td class="v">Basic</td><td class="v">Full</td><td class="v">Full + custom</td></tr>
-            <tr><td>Automations &amp; scheduled orders</td><td class="no">—</td><td class="v">10</td><td class="v">Unlimited</td></tr>
-            <tr><td>Personalized position sizing</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Paper account, real market data</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Robinhood, through your own Claude</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Position sizing against your book</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Names you add to the universe</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
 
-            <tr class="grp"><td colspan="4">Intelligence</td></tr>
-            <tr><td>All six engines</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Signals per day</td><td class="v">25</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
-            <tr><td>Flux AI chat</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>AI agents &amp; scheduled reports</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Backtesting</td><td class="no">—</td><td class="v">Unlimited</td><td class="v">Unlimited</td></tr>
-            <tr><td>Custom engines &amp; scans</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-
-            <tr class="grp"><td colspan="4">Support &amp; access</td></tr>
-            <tr><td>Community</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Phone + email alerts</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
-            <tr><td>Support</td><td class="v">Community</td><td class="v">Email</td><td class="v">Dedicated</td></tr>
+            <tr class="grp"><td colspan="4">Access</td></tr>
+            <tr><td>Ask the desk about a ruling</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Alerts on names you follow</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
             <tr><td>API access</td><td class="no">—</td><td class="no">—</td><td class="yes"><i class="ic-i i-check" aria-hidden="true"></i></td></tr>
+            <tr><td>Support</td><td class="v">Email</td><td class="v">Email</td><td class="v">Direct</td></tr>
           </tbody>
         </table>
       </div>
@@ -234,92 +310,78 @@
   </div>
 </section>
 
-<!-- ============ ADD-ONS ============ -->
-<section class="section" style="padding-top:0">
+<!-- ============ WHAT NEVER CHANGES ============ -->
+<section class="pr-sec" style="padding-top:0">
   <div class="wrap">
-    <div class="reveal" style="max-width:60ch">
-<h2 class="h2" style="margin-top:16px">Bolt on only what you use.</h2>
-      <p class="lede" style="margin-top:14px">Available on Trader and Desk. Add or drop them any month.</p>
+    <div class="pr-head">
+      <h2>What no plan changes.</h2>
+      <p>These are not features. They are the shape of the thing, and money does not move them.</p>
     </div>
-    <div class="grid g-3 reveal" style="margin-top:30px">
-      <div class="glass glass-hover addon">
-        <span class="tag">market data</span>
-        <div class="pr">$12<small> / mo</small></div>
-        <h3 class="h3" style="margin-top:10px">Level 2 data</h3>
-        <p>Full order-book depth and a live ladder on every symbol, plus imbalance alerts. Included on Desk.</p>
-      </div>
-      <div class="glass glass-hover addon">
-        <span class="tag">derivatives</span>
-        <div class="pr">$19<small> / mo</small></div>
-        <h3 class="h3" style="margin-top:10px">Options analytics</h3>
-        <p>Greeks, skew surfaces, gamma exposure and a sweep tape wired into the Options engine.</p>
-      </div>
-      <div class="glass glass-hover addon">
-        <span class="tag">developers</span>
-        <div class="pr">$29<small> / mo</small></div>
-        <h3 class="h3" style="margin-top:10px">Extra API quota</h3>
-        <p>An additional 1M calls per month on top of the Desk allowance, with a higher burst ceiling.</p>
-      </div>
+    <div class="vows reveal" style="margin-top:clamp(24px,2.8vw,38px)">
+      <div><b>Your hand on every order</b><span>Flux has no path to a brokerage. It cannot place, cancel or modify an order on any plan.</span></div>
+      <div><b>A paper account, always</b><span>Simulated money and real market data, on the free plan and every plan above it.</span></div>
+      <div><b>No cut of your trades</b><span>No commission, no payment for order flow, no performance fee. You pay the subscription and nothing else.</span></div>
+      <div><b>Cancel in one click</b><span>No phone call and no retention maze. You drop to Scout rather than losing your account.</span></div>
     </div>
   </div>
 </section>
 
-<!-- ============ EVERYONE GETS ============ -->
-<section class="band">
+<!-- ============ THE QUESTIONS ============ -->
+<section class="pr-sec" id="faq" style="padding-top:0">
   <div class="wrap">
-    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Paper trading on every plan</span><span>·</span>
-    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> No card to start</span><span>·</span>
-    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Cancel anytime, one click</span><span>·</span>
-    <span><b><i class="ic-i i-check" aria-hidden="true"></i></b> Your keys, your broker, your funds</span>
-  </div>
-</section>
-
-<!-- ============ FAQ ============ -->
-<section class="section" id="faq">
-  <div class="wrap">
-    <div class="reveal center" style="max-width:60ch;margin-inline:auto">
-<h2 class="h2" style="margin-top:16px">The things everyone asks about billing.</h2>
+    <div class="pr-head">
+      <h2>The things everyone asks.</h2>
+      <p>Billing, brokers, and what happens to your data.</p>
     </div>
-    <div class="faq reveal" style="margin-top:36px">
+
+    <div class="qs reveal">
       <details open><summary>Can I cancel anytime?</summary>
-        <p>Yes — one click in settings, no phone call and no retention maze. You keep access through the end of
-          the period you already paid for, then drop to the free Scout plan rather than losing your account.</p></details>
+        <p>Yes — one click in settings, no phone call and no retention maze. You keep access through the end
+          of the period you already paid for, then drop to the free Scout plan rather than losing your
+          account.</p></details>
       <details><summary>Do I need a broker?</summary>
-        <p>Only for live trading. Paper trading, the terminal, the engines and every signal work without one.
-          When you're ready to go live you connect your own brokerage account with your own keys — Flux never
-          takes custody of your funds and is not a broker-dealer.</p></details>
-      <details><summary>What counts as a signal?</summary>
-        <p>One scored, delivered idea from one engine — a breakout, a sweep, a catalyst, a level reclaim.
-          Refreshing a chart, running a scan, opening the terminal or asking a follow-up question does not
-          count. Scout is capped at 25 delivered signals a day; Trader and Desk are uncapped.</p></details>
-      <details><summary>Is there a student discount?</summary>
-        <p>Yes — 50% off Trader for students and full-time educators with a valid academic email address.
-          Verification takes a minute and the discount renews each year while you're still enrolled.</p></details>
+        <p>No. The desk, the record, the scoreboard and the paper terminal all work without one. A broker
+          only matters when you want to act on something yourself — and even then Flux is not in that
+          conversation. You connect Robinhood to your own Claude, and Robinhood makes you confirm every
+          order. Flux never takes custody of anything and is not a broker-dealer.</p></details>
+      <details><summary>What am I actually paying for?</summary>
+        <p>The record. Anything can produce a confident-sounding call; what is worth money is a stored,
+          dated, gradeable history of which calls landed — including the ones that did not. Scout shows you
+          the rulings and the hit rates. Trader shows you the argument underneath them: what each analyst
+          filed, what their boss threw out, and why.</p></details>
+      <details><summary>Does the desk trade my money?</summary>
+        <p>No, on any plan. Everything the desk trades is a simulated account with virtual money. Autopilot
+          does not trade a connected account, and connecting Robinhood does not change that — it gives your
+          Claude a broker to talk to, not the desk.</p></details>
+      <details><summary>Is the performance real?</summary>
+        <p>The market data is real and the desk's decisions are real and timestamped. The money is not:
+          results are hypothetical and do not represent real trading. There is no verified track record,
+          because there is no real trading to have a record of. When a prediction reaches its resolve date
+          it is scored against the tape whether it worked or not, and that score is what you see.</p></details>
       <details><summary>What happens to my data if I cancel?</summary>
-        <p>Your watchlists, notes, paper history and backtests stay in your account on the free plan.
-          If you delete the account outright, everything is erased within 30 days and you can export it as
-          CSV and JSON first.</p></details>
-      <details><summary>Do you take a cut of my trades?</summary>
-        <p>No. No commissions, no payment for order flow, no performance fee, no percentage of profits.
-          You pay the subscription and nothing else — your broker's own fees are between you and them.</p></details>
+        <p>Your watchlists, notes and paper history stay in your account on the free plan. If you delete the
+          account outright, everything is erased within 30 days, and you can export it as CSV and JSON
+          first.</p></details>
     </div>
   </div>
 </section>
 
-<!-- ============ CTA ============ -->
-<section class="section" style="padding-top:0">
+<!-- ============ THE CLOSE ============ -->
+<section class="pr-close">
   <div class="wrap">
-    <div class="cta reveal">
-<h2 class="h2" style="margin-top:14px">Try the whole desk for nothing.</h2>
-      <p class="lede" style="margin:18px auto 28px;text-align:center">Scout is free forever and runs all six
-        engines. Upgrade the day it pays for itself — not before.</p>
-      <div class="btn-row" style="justify-content:center">
-        <a class="btn btn-primary btn-lg" href="./terminal.html">Open the desk — free</a>
-        <a class="btn btn-ghost btn-lg" href="./markets.html">See it on the markets</a>
+    <div class="in">
+      <h2>Read a round before you pay for one.</h2>
+      <p>Scout is free forever and shows you the whole record — every ruling, every reason, and the hit
+        rates behind them. Upgrade the day it earns it, not before.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk — free<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+        <a class="btn btn-ghost btn-lg" href="./analysts.html">See the scoreboard</a>
       </div>
-      <p class="disclaimer" style="margin:24px auto 0">Flux is research and automation software, not investment
-        advice. Plan pricing and all market data shown across this site are illustrative and simulated for
-        demonstration purposes.</p>
+      <p class="fine">Flux is research and automation software. It is not investment advice and DSH Trading
+        is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money;
+        results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Plan
+        pricing shown here is illustrative and billing is not live. Trading involves risk of loss, including
+        loss of principal.</p>
     </div>
   </div>
 </section>
@@ -330,15 +392,14 @@
   <div class="footer-grid">
     <div>
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
-      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">The autonomous trading desk. Six engines that never sleep.</p>
+      <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a>
-      <a href="./desk.html">Desk</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./terminal.html">Trade terminal</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Intelligence</h2><a href="./research.html">AI Research</a><a href="./ideas.html">Ideas</a><a href="./news.html">AI News</a><a href="./ai.html#brain">Flux Brain</a></div>
-    <div><h2>Get Flux</h2><a href="./download.html">Download</a><a href="./download.html">iOS · App Store</a><a href="./download.html">Android</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./index.html#faq">FAQ</a><a href="./index.html">About</a><a href="./index.html">Contact</a></div>
+    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
-  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. Trading involves risk of loss, including loss of principal. Backtested and simulated results are hypothetical, do not represent actual trading, and do not guarantee future outcomes. Market data shown may be delayed or simulated.</p>
+  <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
 </div></footer>
 
@@ -365,7 +426,7 @@ document.addEventListener("DOMContentLoaded", function(){
       el.textContent = HEAD[c][parseInt(el.dataset.hd, 10)];
     });
     var note = $("#saveNote");
-    if(note) note.innerHTML = '<i></i> ' + (c === "y" ? "Two months free applied" : "Annual saves two months");
+    if(note) note.textContent = (c === "y" ? "Two months free applied" : "Annual saves two months");
     $$("#cycle button").forEach(function(b){
       b.setAttribute("aria-pressed", String(b.dataset.cycle === c));
     });

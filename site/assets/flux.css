@@ -1234,6 +1234,8 @@ body::before{
 [data-surface="market"] .nav{border-bottom:1px solid var(--line-2);box-shadow:none}
 [data-surface="market"] .glyph{background:var(--ink)}
 [data-surface="market"] .ticker{background:var(--well);border-bottom-color:var(--line-2)}
+/* the scroll bar is the action colour in daylight; label amber is too dark to read as motion */
+[data-surface="market"] .fx-progress{background:var(--ink)}
 [data-surface="market"]:focus-visible,[data-surface="market"] :focus-visible{outline-color:var(--ink)}
 
 /* daylight comes from one window, not three coloured lamps */
