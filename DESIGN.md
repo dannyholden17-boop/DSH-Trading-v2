@@ -36,6 +36,39 @@ colors:
   line: "rgba(160,180,220,.16)"
   line-2: "rgba(160,180,220,.09)"
   line-3: "rgba(160,180,220,.05)"
+  # --- the front room (daylight). Same names, [data-surface="market"] values.
+  # Kept under market-* keys so the two rooms can be told apart mechanically.
+  market-blotter: "#f1f3f8"
+  market-blotter-2: "#ffffff"
+  market-blotter-3: "#f7f8fc"
+  market-well: "#e6eaf2"
+  market-rail: "#f8f9fc"
+  market-veil: "rgba(248,249,252,.88)"
+  market-paper: "#ffffff"
+  market-ink: "#0b0d12"
+  market-text: "#0b0d12"
+  market-text-dim: "#4b5361"
+  market-text-faint: "#5e6775"
+  market-line: "rgba(11,13,18,.15)"
+  market-line-2: "rgba(11,13,18,.085)"
+  market-line-3: "rgba(11,13,18,.045)"
+  market-gold: "#8a5a05"
+  market-clearing: "#07734e"
+  market-stamp: "#b32d10"
+  market-floor: "#2748b8"
+  market-chrome: "#bcc3d0"
+  market-chrome-hi: "#9ea7b8"
+  # the action pair. Ink pill in daylight, mint in the pit.
+  act: "#0b0d12"
+  act-ink: "#ffffff"
+  act-pit: "#3ddc97"
+  act-ink-pit: "#04150d"
+  # white as a literal: the close band's type, and the daylight window wash
+  on-ink: "#ffffff"
+  on-ink-dim: "rgba(255,255,255,.72)"
+  on-ink-faint: "rgba(255,255,255,.62)"
+  on-ink-rule: "rgba(255,255,255,.14)"
+  daylight-wash: "rgba(255,255,255,.92)"
 typography:
   claim:
     fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
@@ -142,10 +175,20 @@ typography:
     fontWeight: 900
     lineHeight: 0.92
     letterSpacing: "-0.045em"
+  stationTitle:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "1.45rem"
+    fontWeight: 800
+    lineHeight: 1.1
+    letterSpacing: "-0.028em"
 rounded:
+  # the pit cuts its corners; daylight prints and rounds them
   cut: "2px"
   sm: "4px"
   lg: "6px"
+  market-sm: "10px"
+  market-lg: "22px"
+  full: "999px"
 spacing:
   hair: "9px"
   xs: "10px"
@@ -268,7 +311,7 @@ vermillion card stock reads as paper on a desk rather than as a neon panel on bl
 This is the default: `:root` is the pit, and `color-scheme:dark` is declared there
 (`site/assets/flux.css:18`).
 
-The *front room* is daylight: warm paper, ink, air, and one black action. It is where
+The *front room* is daylight: cool paper, ink, air, and one black action. It is where
 somebody who has never heard of Flux decides whether to trust it — a two-minute read in an
 office, not an eight-hour shift — and a dark marketing page reads as a costume rather than
 as a workplace. Marketing surfaces declare `data-surface="market"` on `<html>`
@@ -339,16 +382,23 @@ signal system of gold, blue and green against a vermillion refusal.
 Same names, daylight values (`flux.css` §20, `[data-surface="market"]`). Every one is
 measured against the ground it actually sits on, composited, not against a nominal white.
 
-- **Paper** `#f4f2ed` — the ground. Warm, not office white. Panels are `#ffffff`, wells
-  `#ece9e2`, the nav rail `#fbfaf7`.
-- **Ink** `#0b0d10` — text at 17.6:1, and **the action**. `--act` is ink and `--act-ink` is
+- **Paper** `#f1f3f8` — the ground, and it is *derived*, not picked. The pit's type colour
+  is `#f2f5fb`; dim it a shade and it becomes the front room's paper. **One room's ink is
+  the other room's paper.** That is why this ground is cool: a warm cream would belong to a
+  different world than the slate pit, and warm off-white is the reflex surface every
+  generated "tasteful" page reaches for. Panels are `#ffffff`, wells `#e6eaf2`, the nav
+  rail `#f8f9fc`.
+- **Ink** `#0b0d12` — text at 17.9:1, and **the action**. `--act` is ink and `--act-ink` is
   white, so a primary button is a black pill. This is the resolution of the brand-amber vs
   semantic-green collision: in daylight the amber stays *data* and never becomes a button.
-- **Text dim** `#4c5460` (6.8:1) and **text faint** `#5f6773` (5.1:1 on paper, 4.6:1 in a
+- **Text dim** `#4b5361` (6.9:1) and **text faint** `#5e6775` (5.1:1 on paper, 4.6:1 in a
   well). Faint is the floor in this room too.
-- **Label Amber** `#8a5b00` (5.2:1) is the only amber allowed to be *text*.
+- **Label Amber** `#8a5a05` (5.3:1) is the only amber allowed to be *text*.
   `--gold-soft` `#f5b93c` is the same amber as a *field* and never carries type except ink.
 - **Clearing** `#07734e` (5.3:1), **Stamp** `#b32d10` (5.7:1), **Floor** `#2748b8` (6.9:1).
+- **Never a warm cream ground.** `#f4f2ed` was the first answer here and it was wrong for
+  exactly the reason the detector names it: it is the safe warm off-white, reached for by
+  reflex rather than derived from this product's own palette.
 - Radii open up — `--radius:10px`, `--radius-lg:22px`, buttons are pills — because card
   stock is cut but a marketing surface is printed. Shadows lose the inset highlight and
   gain a real offset with a soft blur; there is no glow in daylight.
@@ -604,7 +654,10 @@ be the stamp.
 
 **The One-Container Rule.** Where several facts belong together, they share **one** ruled
 container divided by internal hairlines — never N separate cards. The wrapper carries the
-border, the background and the radius and has zero padding; the *cells* carry the padding.
+border, the background and the radius and has zero padding; the *cells* carry the padding,
+and the divisions are **real 1px borders on the cells**, never a `gap:1px` over a
+line-coloured parent. The gap trick looks identical and reads to any structural check — and
+to a person squinting — as N boxes on a tinted sheet, which is the thing being avoided.
 The fact strip, the three-desk roll, the chain stations, the scoreboard and the connector
 steps are all this one shape. This is how the references avoid a deck of cards, and it is
 the rule that replaced the card grid.
@@ -647,7 +700,10 @@ theatre is removed (`flux.css:87-93`).
 - **Don't** put a light surface behind work. An Operate page — desk, terminal, portfolio,
   analysts, traders, executive — stays in the pit. It is looked at for hours.
 - **Don't** write a kicker, eyebrow or label hat above a heading. `.eyebrow` is disabled
-  outright and must stay disabled.
+  outright and must stay disabled. When a sequence genuinely matters, fold it into the
+  heading — "First, three analysts" — rather than stacking "Stage 1" above "Three analysts".
+  A live state indicator (a stamp, a status chip) is not a kicker, but it belongs *after*
+  the heading in DOM order so it neither reads nor announces as one.
 - **Don't** use gradient text, glows, auroras, orbs, shaders, sheens or float/tilt
   decoration. They are retired to no-ops on purpose; do not revive them and do not write
   new equivalents.
