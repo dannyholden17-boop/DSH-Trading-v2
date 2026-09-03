@@ -7,15 +7,15 @@
 <meta name="description" content="Flux is an AI trading desk: an assistant you can ask anything, an Autopilot that trades a live $10,000 paper account and shows its work, and a portfolio brain that connects to your brokerage. Not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=26">
-<link rel="stylesheet" href="./assets/flux.css?v=26">
-<script src="./assets/flux-supa.js?v=26" defer></script>
-<script src="./assets/flux-site.js?v=26" defer></script>
-<script src="./assets/flux-universe.js?v=26" defer></script>
-<script src="./assets/flux-feed.js?v=26" defer></script>
-<script src="./assets/flux-fund.js?v=26" defer></script>
-<script src="./assets/flux-kronos.js?v=26" defer></script>
-<script src="./assets/flux-desk.js?v=26" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=27">
+<link rel="stylesheet" href="./assets/flux.css?v=27">
+<script src="./assets/flux-supa.js?v=27" defer></script>
+<script src="./assets/flux-site.js?v=27" defer></script>
+<script src="./assets/flux-universe.js?v=27" defer></script>
+<script src="./assets/flux-feed.js?v=27" defer></script>
+<script src="./assets/flux-fund.js?v=27" defer></script>
+<script src="./assets/flux-kronos.js?v=27" defer></script>
+<script src="./assets/flux-desk.js?v=27" defer></script>
 <style>
   /* ---- page-only layout: index.html ---- */
 
@@ -247,6 +247,58 @@
   </div>
 </section>
 
+<!-- ============ THE LOOP — a call crossing the desk ============ -->
+<section class="loop" id="loop" aria-labelledby="loopH">
+  <div class="wrap">
+    <div class="loop-head">
+      <h2 id="loopH">Watch a call cross the desk</h2>
+    </div>
+    <p class="loop-sub">One name, four desks, in the order it actually happens. Nothing skips a station and
+      nothing reaches you until the last one has signed it — including the calls that get thrown out there.</p>
+
+    <div class="loop-stage">
+      <div class="loop-rail" aria-hidden="true"></div>
+      <article class="loop-doc" aria-hidden="true">
+        <span class="sym">AFRM</span>
+        <span class="meta">ticket</span>
+        <span class="marks"><i></i><i></i><i></i><i></i></span>
+      </article>
+
+      <ol class="loop-stations">
+        <li class="loop-st" style="--i:0" data-stage="analysts">
+          <span class="pin" aria-hidden="true"></span>
+          <b>Analysts</b>
+          <span>Fundamentals, catalyst and tape each file a view and the evidence for it.</span>
+          <span class="did">filed</span>
+        </li>
+        <li class="loop-st" style="--i:1" data-stage="director">
+          <span class="pin" aria-hidden="true"></span>
+          <b>Director</b>
+          <span>Resolves where they disagree and passes one package per name forward.</span>
+          <span class="did">passed</span>
+        </li>
+        <li class="loop-st" style="--i:2" data-stage="traders">
+          <span class="pin" aria-hidden="true"></span>
+          <b>Traders</b>
+          <span>Kronos forecasts the candles, DSA scores the components. Neither sees the other.</span>
+          <span class="did">priced</span>
+        </li>
+        <li class="loop-st" style="--i:3" data-stage="executive">
+          <span class="pin" aria-hidden="true"></span>
+          <b>Executive</b>
+          <span>Approves, cuts the size, or refuses — and says which trader it sided with.</span>
+          <span class="did">ruled</span>
+        </li>
+      </ol>
+
+      <div class="loop-foot">
+        <span class="cap" id="loopCap">The desk files a round every fifteen minutes while the market is open.</span>
+        <a class="btn btn-ghost btn-sm" href="./desk.html">Open the desk<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ THE FLOOR — the loop, live ============ -->
 <section class="floor" id="floor" aria-label="The desk, live">
   <div class="wrap">
@@ -357,9 +409,9 @@
 <h2 class="h2">An analyst that actually answers.</h2>
       <p class="lede">Flux reads the filings, the earnings calls, the news wire and the options tape — then answers in plain English, with the sources attached. It knows your watchlist and your positions, so the answer is about <em>you</em>.</p>
       <ul class="flist">
-        <li class="fi"><span>◇</span><div><b>Ask anything.</b> Risk, forecasts, flow, "should I trim?" — conversational, grounded, cited.</div></li>
-        <li class="fi"><span>◇</span><div><b>Runs all day.</b> The desk works a 114-name universe every round and files whether or not it likes what it sees.</div></li>
-        <li class="fi"><span>◇</span><div><b>Never advice, always honest.</b> Probabilities and evidence — not "buy this."</div></li>
+        <li class="fi"><span class="ic-i i-check" aria-hidden="true"></span><div><b>Ask anything.</b> Risk, forecasts, flow, "should I trim?" — conversational, grounded, cited.</div></li>
+        <li class="fi"><span class="ic-i i-check" aria-hidden="true"></span><div><b>Runs all day.</b> The desk works a 114-name universe every round and files whether or not it likes what it sees.</div></li>
+        <li class="fi"><span class="ic-i i-check" aria-hidden="true"></span><div><b>Never advice, always honest.</b> Probabilities and evidence — not "buy this."</div></li>
       </ul>
       <div class="btn-row"><a class="btn btn-primary" href="./ai.html">Open Flux AI →</a></div>
     </div>
@@ -389,9 +441,9 @@
 <h2 class="h2">An AI that trades — and shows its work.</h2>
       <p class="lede">Flux runs its own live $10,000 paper account. It scans, scores, risk-gates and executes — then writes an <b>hourly pulse</b> and a <b>daily wrap</b> explaining every move. Watch it for as long as you like before you let it near a cent of yours.</p>
       <ul class="flist">
-        <li class="fi"><span>⟁</span><div><b>Its own money.</b> $10,000 simulated, traded live so the track record is out in the open.</div></li>
-        <li class="fi"><span>◷</span><div><b>Hourly &amp; daily reports.</b> What it did, why, and where the risk sits — automatically.</div></li>
-        <li class="fi"><span>⊘</span><div><b>Hard guardrails.</b> Position caps, loss limits and a kill-switch. It never trades your account without your rules.</div></li>
+        <li class="fi"><span class="ic-i i-doc" aria-hidden="true"></span><div><b>Its own money.</b> $10,000 simulated, traded live so the track record is out in the open.</div></li>
+        <li class="fi"><span class="ic-i i-bell" aria-hidden="true"></span><div><b>Hourly &amp; daily reports.</b> What it did, why, and where the risk sits — automatically.</div></li>
+        <li class="fi"><span class="ic-i i-lock" aria-hidden="true"></span><div><b>Hard guardrails.</b> Position caps, loss limits and a kill-switch. It never trades your account without your rules.</div></li>
       </ul>
       <div class="btn-row"><a class="btn btn-primary" href="./autopilot.html">See the live fund →</a></div>
     </div>
@@ -403,11 +455,11 @@
   <div class="wrap split">
     <div class="reveal rl">
 <h2 class="h2">Connect your brokerage. Keep control.</h2>
-      <p class="lede">Link Robinhood, Fidelity, Schwab, Webull and more in seconds — read-only by default. Flux syncs your positions, watches your risk in real time, and sends a daily portfolio brief. Turn on Autopilot only when you set the rules.</p>
+      <p class="lede">Flux supports one brokerage — Robinhood — and it connects inside Claude rather than here, through Claude's own Robinhood connector. This site never receives your credentials and never places an order. What it does is read the desk's work against the positions you actually hold.</p>
       <ul class="flist">
-        <li class="fi"><span>◎</span><div><b>Read-only by default.</b> Nothing trades until you explicitly allow it.</div></li>
-        <li class="fi"><span>◈</span><div><b>Risk radar.</b> Concentration, correlation and drawdown, watched live.</div></li>
-        <li class="fi"><span>◇</span><div><b>Your daily brief.</b> The AI reports on <em>your</em> names every morning.</div></li>
+        <li class="fi"><span class="ic-i i-refresh" aria-hidden="true"></span><div><b>Read-only by default.</b> Nothing trades until you explicitly allow it.</div></li>
+        <li class="fi"><span class="ic-i i-star" aria-hidden="true"></span><div><b>Risk radar.</b> Concentration, correlation and drawdown, watched live.</div></li>
+        <li class="fi"><span class="ic-i i-check" aria-hidden="true"></span><div><b>Your daily brief.</b> The AI reports on <em>your</em> names every morning.</div></li>
       </ul>
       <div class="btn-row"><a class="btn btn-primary" href="./portfolio.html">Connect your brokerage →</a></div>
     </div>
@@ -423,58 +475,12 @@
   </div>
 </section>
 
-<!-- ============ BRAIN / OBSIDIAN ============ -->
-<section class="section" id="brain">
-  <div class="wrap split wide-l">
-    <div class="glass sheen reveal rl" style="padding:24px">
-      <div class="cap" style="margin-bottom:12px">Your vault → Flux Brain</div>
-      <div class="vault">
-        <div class="n"><b>#thesis</b>Long semis into GTC — AI capex still accelerating.</div>
-        <div class="n"><b>#rules</b>Max 8% per name. No adds into earnings.</div>
-        <div class="n"><b>#journal</b>Trimmed AMD too early. Let winners run.</div>
-        <div class="n"><b>#watch</b>SMCI — audit overhang, size small.</div>
-        <div class="n"><b>#mistakes</b>Chased TSLA. Wait for the retest.</div>
-        <div class="n"><b>#macro</b>CPI Thu. Trim risk into the print.</div>
-      </div>
-      <p class="cap" style="margin-top:12px">Illustrative notes · synced from your Obsidian vault</p>
-    </div>
-    <div class="reveal rr">
-<h2 class="h2">Give the AI a memory. <span class="">Yours.</span></h2>
-      <p class="lede">Connect your Obsidian vault and Flux reads your theses, rules and trade journal as long-term memory. Now its answers sound like <em>you</em> — it remembers your playbook, flags when you're about to repeat a mistake, and cites your own notes back to you.</p>
-      <ul class="flist">
-        <li class="fi"><span>❖</span><div><b>Bring your notes.</b> Obsidian vault, trade journal and watchlists become the AI's context.</div></li>
-        <li class="fi"><span>◇</span><div><b>It remembers your rules.</b> "You said max 8% per name — this order is 11%."</div></li>
-        <li class="fi"><span>⊘</span><div><b>Private by design.</b> Your vault stays yours; live sync runs through the desktop app.</div></li>
-      </ul>
-      <div class="btn-row"><a class="btn btn-ghost" href="./ai.html">How Flux AI works →</a></div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ ENGINES ============ -->
 <section class="section">
   <div class="wrap">
 <h2 class="h2 reveal">Six engines that never sleep.</h2>
     <p class="lede reveal">While you're offline, Flux is scanning, parsing and stress-testing — so the moment something matters, it's already on your screen.</p>
     <ol class="roster stagger" id="engines"></ol>
-  </div>
-</section>
-
-<!-- ============ SIGNALS SHOWCASE ============ -->
-<section class="section">
-  <div class="wrap split">
-    <div class="reveal rl">
-<h2 class="h2">Every idea comes with its homework.</h2>
-      <p class="lede">Flux doesn't just say "NVDA looks good." It shows the thesis, the confidence, the entry, the stop and the backtest — then you decide. Research writes the brief; Trade Ideas ranks the setups.</p>
-      <div class="btn-row">
-        <a class="btn btn-primary" href="./research.html">AI Research →</a>
-        <a class="btn btn-ghost" href="./trade-ideas.html">Trade Ideas →</a>
-      </div>
-    </div>
-    <div class="glass reveal rr" style="padding:18px">
-      <div class="p-sig" id="feed"></div>
-      <p class="cap" style="margin-top:12px">Illustrative signals · not advice</p>
-    </div>
   </div>
 </section>
 
@@ -772,6 +778,17 @@ document.addEventListener("DOMContentLoaded", function(){
           ? '<b>' + esc(b.scanned) + '</b> names scanned · <b>' + esc(b.up) + '</b> up · <b>' +
             esc(b.down) + '</b> down · average ' + (b.avg >= 0 ? "+" : "") + esc(b.avg) + '%'
           : "";
+
+        /* the loop diagram marks the desk's real stage, if there is one */
+        var stName = running ? r.stage : null;
+        document.querySelectorAll(".loop-st").forEach(function(el){
+          el.classList.toggle("live-now", !!stName && el.dataset.stage === stName);
+        });
+        var lc = $("loopCap");
+        if(lc) lc.textContent = running
+          ? "Right now: " + D.stageLabel(r.stage).toLowerCase() + ", round " + r.seq + "."
+          : "Round " + r.seq + " filed " + D.ago(r.finished_at || r.started_at) +
+            ". The desk files a round every fifteen minutes while the market is open.";
 
         /* the day sheet counts the same record, so it states facts */
         function sheet(id, v){ var el = $(id); if(el && v != null) F.countTo(el, v); }

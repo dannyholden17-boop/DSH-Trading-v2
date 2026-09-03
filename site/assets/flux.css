@@ -167,8 +167,8 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
   color:var(--text);filter:none;animation:none}
 
 .wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gutter)}
-.section{padding-block:clamp(56px,7vw,104px)}
-.section-sm{padding-block:clamp(36px,5vw,64px)}
+.section{padding-block:clamp(40px,4.2vw,64px)}
+.section-sm{padding-block:clamp(26px,3vw,40px)}
 
 /* ---------------------------------------------------------- *
    4. THE CARD — a document lying on the blotter
@@ -422,6 +422,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .fi .k{width:30px;height:30px;flex:none;border-radius:2px;background:var(--rail);
   border:1px solid var(--line);color:var(--gold);display:grid;place-items:center;font-weight:700;
   font-family:var(--f-mono);font-size:12px}
+.fi > .ic-i{width:17px;height:17px;flex:none;margin-top:2px;color:var(--gold)}
 .fi b{display:block;margin-bottom:3px;font-family:var(--f-display);font-weight:700}
 .fi p{color:var(--text-dim);font-size:.9rem;line-height:1.55}
 
@@ -714,7 +715,8 @@ button,[role="button"],a.btn{min-height:24px}
    Executive's note. The analysts' filings are counted, never
    quoted — those words are members-only and stay that way.
  * ---------------------------------------------------------- */
-.floor{background:var(--rail);border-block:1px solid var(--line-2);padding-block:54px 58px}
+.floor{background:var(--rail);border-block:1px solid var(--line-2);
+  padding-block:clamp(40px,4.2vw,64px)}
 .fl-head{display:flex;align-items:baseline;gap:8px 16px;flex-wrap:wrap}
 .fl-head h2{font-family:var(--f-display);font-size:1.7rem;font-weight:800;
   letter-spacing:-.025em;margin:0}
@@ -1043,4 +1045,115 @@ body::before{
 @keyframes wire{from{background-position:0 -150%}to{background-position:0 150%}}
 @media(prefers-reduced-motion:reduce){
   .fl-st.on::before,.dk-node.on::before{animation:none;background:var(--gold)}
+}
+
+/* ---------------------------------------------------------- *
+   19. THE LOOP — a call crossing the desk, on a 16s cycle
+
+   Four stations, one document. It enters from the tape, stops at
+   each desk long enough to be worked, collects that desk's stamp,
+   and leaves with a ruling. The cycle is the product argument, so
+   it runs whether or not the network is up; when the live desk
+   reports a stage, that station is marked as the one in flight.
+ * ---------------------------------------------------------- */
+.loop{padding-block:clamp(40px,4.2vw,64px)}
+.loop-head{display:flex;align-items:baseline;gap:10px 16px;flex-wrap:wrap}
+.loop-head h2{font-family:var(--f-display);font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);
+  font-weight:800;letter-spacing:-.03em;margin:0}
+.loop-sub{margin:10px 0 0;color:var(--text-dim);font-size:1rem;line-height:1.62;max-width:70ch}
+
+.loop-stage{position:relative;margin-top:34px;padding:34px 0 0;
+  border-radius:4px;overflow:hidden;background:var(--well);
+  box-shadow:inset 0 1px 0 rgba(0,0,0,.6), inset 0 -1px 0 rgba(160,180,220,.06)}
+
+/* the belt the document rides */
+.loop-rail{position:absolute;left:0;right:0;top:118px;height:2px;background:var(--line)}
+.loop-rail::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  background-size:22% 100%;background-repeat:no-repeat;
+  animation:railRun 16s linear infinite}
+@keyframes railRun{0%{background-position:-25% 0}100%{background-position:125% 0}}
+
+/* the document itself */
+.loop-doc{position:absolute;top:40px;left:0;width:104px;margin-left:-52px;z-index:2;
+  border-radius:2px;background:var(--card-buy);color:var(--ink);
+  box-shadow:var(--lift-3);padding:8px 9px 9px;
+  animation:docRun 16s cubic-bezier(.6,0,.35,1) infinite}
+.loop-doc .sym{display:block;font-family:var(--f-display);font-weight:900;font-size:1rem;
+  letter-spacing:-.02em;line-height:1}
+.loop-doc .meta{display:block;margin-top:2px;font-family:var(--f-mono);font-size:12px;
+  color:rgba(18,13,5,.66);letter-spacing:.02em}
+.loop-doc .marks{display:flex;gap:3px;margin-top:7px}
+.loop-doc .marks i{width:9px;height:9px;border-radius:2px;border:1px solid rgba(18,13,5,.35);
+  opacity:.18}
+.loop-doc .marks i:nth-child(1){animation:markOn 16s linear infinite;animation-delay:1.6s}
+.loop-doc .marks i:nth-child(2){animation:markOn 16s linear infinite;animation-delay:5.6s}
+.loop-doc .marks i:nth-child(3){animation:markOn 16s linear infinite;animation-delay:9.6s}
+.loop-doc .marks i:nth-child(4){animation:markOn 16s linear infinite;animation-delay:13.6s}
+@keyframes markOn{0%,.5%{opacity:.18;background:transparent}
+  2%,86%{opacity:1;background:#1c5233;border-color:#1c5233}
+  92%,100%{opacity:.18;background:transparent;border-color:rgba(18,13,5,.35)}}
+
+/* four hops, with a working pause at each desk */
+@keyframes docRun{
+  0%    {left:-4%;  opacity:0}
+  3%    {left:2%;   opacity:1}
+  8%    {left:12.5%}
+  22%   {left:12.5%}
+  27%   {left:37.5%}
+  41%   {left:37.5%}
+  46%   {left:62.5%}
+  60%   {left:62.5%}
+  65%   {left:87.5%}
+  82%   {left:87.5%; opacity:1}
+  90%   {left:104%;  opacity:0}
+  100%  {left:104%;  opacity:0}
+}
+
+.loop-stations{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);
+  margin:112px 0 0;padding:0}
+.loop-st{position:relative;padding:26px 18px 26px;text-align:center;
+  border-left:1px solid var(--line-2)}
+.loop-st:first-child{border-left:0}
+.loop-st .pin{position:absolute;top:-32px;left:50%;width:11px;height:11px;margin-left:-5.5px;
+  border-radius:50%;background:var(--chrome);border:2px solid var(--blotter);
+  transition:background var(--t-hover) var(--ease)}
+.loop-st b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:800;
+  letter-spacing:-.015em}
+.loop-st span{display:block;margin-top:5px;font-size:13px;line-height:1.5;color:var(--text-dim)}
+.loop-st .did{display:block;margin-top:9px;font-family:var(--f-mono);font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+  transition:color var(--t-hover) var(--ease)}
+/* each station is worked in turn, 4s apart on the 16s cycle */
+.loop-st{animation:stWork 16s linear infinite;animation-delay:calc(var(--i) * 4s - 1.2s)}
+.loop-st .pin{animation:pinWork 16s linear infinite;animation-delay:calc(var(--i) * 4s - 1.2s)}
+.loop-st .did{animation:didWork 16s linear infinite;animation-delay:calc(var(--i) * 4s - 1.2s)}
+@keyframes stWork{0%,.4%{background:transparent}
+  2%,20%{background:rgba(245,185,60,.07)} 22%,100%{background:transparent}}
+@keyframes pinWork{0%,.4%{background:var(--chrome)}
+  2%,20%{background:var(--gold)} 22%,86%{background:var(--clearing)}
+  88%,100%{background:var(--chrome)}}
+@keyframes didWork{0%,.4%{color:var(--text-faint)}
+  2%,20%{color:var(--gold)} 22%,86%{color:var(--clearing)} 88%,100%{color:var(--text-faint)}}
+
+/* the desk's real stage, when the record is reachable */
+.loop-st.live-now{box-shadow:inset 0 -2px 0 var(--gold)}
+.loop-foot{display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap;
+  padding:15px 18px;border-top:1px solid var(--line-2);background:rgba(7,10,18,.6)}
+.loop-foot .cap{font-family:var(--f-mono);font-size:12.5px;color:var(--text-faint)}
+.loop-foot .btn{margin-left:auto}
+
+@media(max-width:820px){
+  .loop-stations{grid-template-columns:1fr 1fr}
+  .loop-st:nth-child(3){border-left:0}
+  .loop-st:nth-child(n+3){border-top:1px solid var(--line-2)}
+  .loop-st .pin{display:none}
+  .loop-rail,.loop-doc{display:none}
+  .loop-stage{padding-top:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .loop-doc,.loop-rail::after,.loop-st,.loop-st .pin,.loop-st .did,.loop-doc .marks i{animation:none}
+  .loop-doc{left:87.5%;opacity:1}
+  .loop-doc .marks i{opacity:1;background:#1c5233;border-color:#1c5233}
+  .loop-st .pin{background:var(--clearing)}
 }

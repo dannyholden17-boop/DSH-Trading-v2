@@ -35,7 +35,7 @@
   ];
 
   F.ENGINES=[
-    {ic:"⌖",id:"Scanner",d:"Sweeps ~6,400 tickers for breakouts, volume spikes, gaps and squeeze conditions.",c:"15s",o:"breakouts"},
+    {ic:"⌖",id:"Scanner",d:"Sweeps the desk's 114-name universe for breakouts, volume spikes, gaps and squeeze conditions.",c:"15s",o:"breakouts"},
     {ic:"◈",id:"Catalyst",d:"Parses filings, earnings and the news wire, and estimates the historical drift.",c:"30s",o:"events"},
     {ic:"⟁",id:"Options",d:"Tracks unusual options activity — sweeps, open-interest shifts, skew and gamma.",c:"10s",o:"flow"},
     {ic:"△",id:"Technicals",d:"Computes indicators across timeframes: crosses, divergences, VWAP and key levels.",c:"20s",o:"levels"},
