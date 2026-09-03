@@ -602,6 +602,21 @@ information moving, not decoration: the tape and marquee scrolls, the recording 
 up/down price flash, and toast entry/exit. A new animation must either be one of those or
 be the stamp.
 
+**The One-Container Rule.** Where several facts belong together, they share **one** ruled
+container divided by internal hairlines — never N separate cards. The wrapper carries the
+border, the background and the radius and has zero padding; the *cells* carry the padding.
+The fact strip, the three-desk roll, the chain stations, the scoreboard and the connector
+steps are all this one shape. This is how the references avoid a deck of cards, and it is
+the rule that replaced the card grid.
+
+Its cells must be padded, not the wrapper — measured, the tightest inset from any of these
+containers' border box to its nearest text is 26px. The design detector reads the
+*wrapper's* `padding:0` and reports `cramped-padding` on every one of them; that is a false
+positive against this pattern and is not a licence to add padding to the wrapper, which
+would double-inset every cell. The rule stays enabled project-wide because a genuinely
+cramped container elsewhere should still be caught — verify by measuring the gap to the
+nearest text, not by reading the wrapper's own padding.
+
 **The Reduced-Motion Rule.** Under `prefers-reduced-motion`, the stamp still lands — it just
 lands instantly. Animations collapse to 0.01ms, transitions to 60ms, reveals are forced to
 their resting state, and the tape and marquee stop. State changes stay legible; only the
