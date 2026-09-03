@@ -961,13 +961,13 @@ body::before{
   transition:background var(--t-hover) var(--ease)}
 .st-card:first-child{border-left:0}
 .st-card:hover{background:var(--blotter-3)}
-.st-card .lens{display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--text-faint)}
-.st-card .lens::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;
+.st-card h2{display:flex;align-items:center;gap:10px;
+  font-family:var(--f-display);font-size:1.45rem;font-weight:800;
+  letter-spacing:-.028em;margin:0}
+/* the accent marks the desk; it is a marker on the heading, not a label
+   above it — the craft floor bans the kicker outright */
+.st-card h2::before{content:"";width:7px;height:7px;border-radius:50%;flex:none;
   background:var(--accent,var(--chrome))}
-.st-card h2{font-family:var(--f-display);font-size:1.4rem;font-weight:800;
-  letter-spacing:-.028em;margin:9px 0 0}
 .st-card .what{margin:10px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
 /* the figures are ruled off, not boxed: a card inside a card is the thing
    this whole system exists to avoid */
@@ -975,7 +975,7 @@ body::before{
 .st-fig{padding:2px 16px 2px 0;border-left:1px solid var(--line-3)}
 .st-fig:first-child{border-left:0;padding-left:0}
 .st-fig:last-child{padding-left:16px}
-.st-fig b{display:block;font-family:var(--f-display);font-size:1.6rem;font-weight:700;
+.st-fig b{display:block;font-family:var(--f-display);font-size:1.5rem;font-weight:700;
   letter-spacing:-.035em;font-variant-numeric:tabular-nums;color:var(--text);line-height:1}
 .st-fig span{display:block;margin-top:6px;font-family:var(--f-mono);font-size:12px;
   font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
@@ -1200,45 +1200,49 @@ body::before{
 [data-surface="market"]{
   color-scheme:light;
 
-  --blotter:#f4f2ed;          /* warm paper, not office white */
+  /* The ground is the pit's own type colour, dimmed: --text in the back room
+     is #f2f5fb, so daylight here is #f1f3f8. One room's ink is the other
+     room's paper, which is why this is cool and not the warm cream that
+     every generated "tasteful" page reaches for. */
+  --blotter:#f1f3f8;
   --blotter-2:#ffffff;
-  --blotter-3:#faf8f4;
-  --well:#ece9e2;
-  --rail:#fbfaf7;
-  --veil:rgba(251,250,247,.88);
+  --blotter-3:#f7f8fc;
+  --well:#e6eaf2;
+  --rail:#f8f9fc;
+  --veil:rgba(248,249,252,.88);
 
   --paper:#ffffff;
-  --ink:#0b0d10;
+  --ink:#0b0d12;
 
-  --text:#0b0d10;             /* 17.6:1 on paper */
-  --text-dim:#4c5460;         /*  6.8:1 */
-  --text-faint:#5f6773;       /*  5.1:1 on paper, 4.6:1 in a well — the floor, not below */
+  --text:#0b0d12;             /* 17.9:1 on paper */
+  --text-dim:#4b5361;         /*  6.9:1 */
+  --text-faint:#5e6775;       /*  5.1:1 on paper, 4.6:1 in a well — the floor, not below */
 
-  --line:rgba(11,13,16,.15);
-  --line-2:rgba(11,13,16,.085);
-  --line-3:rgba(11,13,16,.045);
+  --line:rgba(11,13,18,.15);
+  --line-2:rgba(11,13,18,.085);
+  --line-3:rgba(11,13,18,.045);
 
-  --gold:#8a5b00;             /* label amber, safe as text: 5.2:1 */
+  --gold:#8a5a05;             /* label amber, safe as text: 5.3:1 */
   --gold-soft:#f5b93c;        /* the same amber as a field, never as text */
   --clearing:#07734e;         /* 5.3:1 */
   --stamp:#b32d10;            /* 5.7:1 */
   --floor:#2748b8;            /* 6.9:1 */
-  --chrome:#c7c2b8;
-  --chrome-hi:#a9a49a;
+  --chrome:#bcc3d0;
+  --chrome-hi:#9ea7b8;
 
-  --act:#0b0d10;              /* the action is ink, so the amber stays data */
+  --act:#0b0d12;              /* the action is ink, so the amber stays data */
   --act-ink:#ffffff;
 
   --radius:10px;
   --radius-lg:22px;
 
   /* daylight: a real offset, a soft blur, no glow */
-  --lift-1:0 1px 1px rgba(11,13,16,.05), 0 2px 6px -3px rgba(11,13,16,.10);
-  --lift-2:0 1px 2px rgba(11,13,16,.05), 0 16px 32px -18px rgba(11,13,16,.22);
-  --lift-3:0 2px 4px rgba(11,13,16,.05), 0 34px 64px -26px rgba(11,13,16,.30);
+  --lift-1:0 1px 1px rgba(11,13,18,.05), 0 2px 6px -3px rgba(11,13,18,.10);
+  --lift-2:0 1px 2px rgba(11,13,18,.05), 0 16px 32px -18px rgba(11,13,18,.22);
+  --lift-3:0 2px 4px rgba(11,13,18,.05), 0 34px 64px -26px rgba(11,13,18,.30);
 }
 [data-surface="market"] .btn{border-radius:999px}
-[data-surface="market"] ::selection{background:#0b0d10;color:#fff}
+[data-surface="market"] ::selection{background:#0b0d12;color:#fff}
 [data-surface="market"] *{scrollbar-color:var(--chrome) var(--well)}
 [data-surface="market"] .fl-panel,[data-surface="market"] .daysheet,
 [data-surface="market"] .roster,[data-surface="market"] .glass,
@@ -1255,8 +1259,8 @@ body::before{
 /* daylight comes from one window, not three coloured lamps */
 html[data-surface="market"] body::before{
   background:
-    radial-gradient(1400px 700px at 72% -18%, rgba(255,255,255,.9), transparent 64%),
-    radial-gradient(900px 620px at 8% 6%, rgba(245,185,60,.10), transparent 62%);
+    radial-gradient(1400px 700px at 72% -18%, rgba(255,255,255,.92), transparent 64%),
+    radial-gradient(900px 620px at 8% 6%, rgba(245,185,60,.09), transparent 62%);
 }
 
 /* ---- the back room, nameable so it can sit inside the front one ---- */

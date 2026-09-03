@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux — the research desk that shows its work</title>
 <meta name="description" content="Three analysts research a name and file dated, scoreable predictions. Their trading boss throws out most of it. One executive rules on what survives. Every filing is stored and graded against the tape. Simulated money, real market data, not investment advice.">
-<meta name="theme-color" content="#f4f2ed">
+<meta name="theme-color" content="#f1f3f8">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
@@ -238,9 +238,7 @@
   border-left:1px solid var(--line-2);min-width:0}
 .ch-st:first-child{border-left:0;border-radius:var(--radius-lg) 0 0 var(--radius-lg)}
 .ch-st:last-child{border-radius:0 var(--radius-lg) var(--radius-lg) 0}
-.ch-st .who{display:block;font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--text-faint)}
-.ch-st h3{margin:9px 0 0;font-size:1.28rem;font-weight:700;letter-spacing:-.028em}
+.ch-st h3{margin:0;font-size:1.45rem;font-weight:700;letter-spacing:-.028em}
 .ch-st p{margin-top:10px;color:var(--text-dim);font-size:.92rem;line-height:1.6}
 .ch-st .did{display:inline-flex;align-items:center;gap:7px;margin-top:14px;
   font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
@@ -287,15 +285,14 @@
 .roll-row:first-child{border-top:0}
 .roll-row:hover{background:var(--blotter-3)}
 .roll-who{min-width:0}
-.roll-who .n{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--text-faint)}
-.roll-who h3{margin:8px 0 0;font-size:1.35rem;font-weight:700;letter-spacing:-.03em}
+.roll-who h3{margin:0;font-size:1.45rem;font-weight:700;letter-spacing:-.03em}
 .roll-who .sub{margin-top:7px;font-size:12.5px;color:var(--text-faint)}
 .roll-what{color:var(--text-dim);font-size:.96rem;line-height:1.65;max-width:62ch}
 .roll-what b{color:var(--text);font-weight:600}
-.roll-num{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-2);
+.roll-num{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);
   border:1px solid var(--line-2);border-radius:var(--radius);overflow:hidden}
-.roll-num>div{background:var(--paper);padding:11px 13px}
+.roll-num>div{padding:11px 13px;border-left:1px solid var(--line-2)}
+.roll-num>div:first-child{border-left:0}
 .roll-num dt{margin:0;font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.11em;
   text-transform:uppercase;color:var(--text-faint)}
 .roll-num dd{margin:6px 0 0;font-family:var(--f-display);font-weight:700;font-size:1.32rem;
@@ -306,9 +303,12 @@
 }
 
 /* ---------- 5. the scoreboard (dark) ---------- */
-.sb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-2);
+/* real hairline borders, not a 1px gap over a tinted parent — the same
+   construction as every other ruled container on the page */
+.sb-grid{display:grid;grid-template-columns:repeat(4,1fr);background:var(--blotter-2);
   border:1px solid var(--line-2);border-radius:var(--radius-lg);overflow:hidden}
-.sb-grid>div{background:var(--blotter-2);padding:clamp(18px,2vw,26px)}
+.sb-grid>div{padding:clamp(18px,2vw,26px);border-left:1px solid var(--line-2)}
+.sb-grid>div:first-child{border-left:0}
 .sb-grid dt{margin:0;font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.12em;
   text-transform:uppercase;color:var(--text-faint)}
 .sb-grid dd{margin:10px 0 0;font-family:var(--f-display);font-weight:700;letter-spacing:-.035em;
@@ -318,6 +318,8 @@
 .sb-note{margin-top:18px;color:var(--text-faint);font-size:13px;line-height:1.65;max-width:78ch}
 @media(max-width:820px){
   .sb-grid{grid-template-columns:1fr 1fr}
+  .sb-grid>div:nth-child(3){border-left:0}
+  .sb-grid>div:nth-child(n+3){border-top:1px solid var(--line-2)}
 }
 
 /* ---------- 6. how it plugs in ---------- */
@@ -512,21 +514,18 @@
 
       <ol class="ch-sts">
         <li class="ch-st" data-stage="analysts">
-          <span class="who">Stage one</span>
           <h3>Analysts</h3>
           <p>Three of them, each with their own lens — fundamentals, catalysts, the tape. They farm the data,
             build a model, and file a prediction with a direction, a horizon and a date it can be graded on.</p>
           <span class="did">filed</span>
         </li>
         <li class="ch-st" data-stage="traders">
-          <span class="who">Stage two</span>
           <h3>Traders</h3>
           <p>The analysts' boss. They read every filing, check it against that analyst's own track record,
             and pass forward only what they would put size on — day trade or swing.</p>
           <span class="did">sifted</span>
         </li>
         <li class="ch-st" data-stage="executive">
-          <span class="who">Stage three</span>
           <h3>Executive</h3>
           <p>Approves, cuts the size, or refuses outright — and puts the reason on the record next to the
             trade, where you can hold it to it later.</p>
@@ -554,8 +553,7 @@
     <div class="roll reveal" id="roll">
       <div class="roll-row">
         <div class="roll-who">
-          <span class="n">Stage one</span>
-          <h3>The analysts</h3>
+          <h3>First: the analysts</h3>
           <p class="sub" id="rlAnSub">three lenses, one name at a time</p>
         </div>
         <p class="roll-what">They do the digging: filings, the wire, the tape, breadth. Each one writes its
@@ -570,8 +568,7 @@
 
       <div class="roll-row">
         <div class="roll-who">
-          <span class="n">Stage two</span>
-          <h3>The traders</h3>
+          <h3>Then: the traders</h3>
           <p class="sub" id="rlTrSub">the analysts' boss</p>
         </div>
         <p class="roll-what">They are not a scoring function — they are the people the analysts report to.
@@ -586,8 +583,7 @@
 
       <div class="roll-row">
         <div class="roll-who">
-          <span class="n">Stage three</span>
-          <h3>The executive</h3>
+          <h3>Last: the executive</h3>
           <p class="sub" id="rlExSub">the last signature</p>
         </div>
         <p class="roll-what">One ruling per name: approve, reduce, or refuse. It has the whole chain in front

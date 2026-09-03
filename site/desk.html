@@ -51,13 +51,11 @@
   .dk-node.done::before{background:var(--clearing)}
   .dk-node.on::before{background:linear-gradient(90deg,transparent,var(--gold) 40%,var(--gold) 60%,transparent);
     background-size:300% 100%;animation:wire 1.7s linear infinite}
-  .dk-node .role{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--text-faint)}
-  .dk-node h2{font-size:1.3rem;margin:9px 0 0;letter-spacing:-.028em;color:var(--text);
+  .dk-node h2{font-size:1.45rem;margin:0;letter-spacing:-.028em;color:var(--text);
     font-family:var(--f-display);font-weight:800;max-width:15ch}
   .dk-node p{font-size:13px;color:var(--text-dim);line-height:1.55;margin:10px 0 0}
   .dk-node .who{margin-top:13px;display:flex;gap:6px;flex-wrap:wrap}
-  .dk-node .who span{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;
+  .dk-node .who span{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;
     text-transform:uppercase;border:1px solid var(--line-2);border-radius:999px;padding:3px 9px;
     color:var(--text-faint)}
   .dk-node.on{background:var(--blotter-3)}
@@ -192,18 +190,15 @@
   <div class="dk-bar" style="margin-top:18px"><i id="dkProgress" style="width:0"></i></div>
 
   <div class="dk-chain stagger">
-    <div class="dk-node" id="dkN1"><span class="stamp stamp-pending dk-stamp">Filed</span>
-      <span class="role">Stage 1</span><h2>Three analysts</h2>
+    <div class="dk-node" id="dkN1"><h2>First, three analysts</h2><span class="stamp stamp-pending dk-stamp">Filed</span>
       <p>Each works one lens over the round's names and files a view, a conviction and the evidence behind it.</p>
       <div class="who"><span>Fundamentals</span><span>Catalyst</span><span>Tape</span></div>
     </div>
-    <div class="dk-node" id="dkN2"><span class="stamp stamp-pending dk-stamp">Sifted</span>
-      <span class="role">Stage 2</span><h2>Two traders</h2>
+    <div class="dk-node" id="dkN2"><h2>Then, two traders</h2><span class="stamp stamp-pending dk-stamp">Sifted</span>
       <p>The analysts' boss. They read every filing, weigh it against that analyst's own hit rate, and pass on only what they would actually take — sized, and marked day trade or swing.</p>
       <div class="who"><span>Kronos</span><span>DSA</span></div>
     </div>
-    <div class="dk-node" id="dkN3"><span class="stamp stamp-pending dk-stamp">Ruled</span>
-      <span class="role">Stage 3</span><h2>Executive</h2>
+    <div class="dk-node" id="dkN3"><h2>Last, the executive</h2><span class="stamp stamp-pending dk-stamp">Ruled</span>
       <p>Nothing trades without the green light. Approves, cuts the size, or refuses — and says which trader it sided with, with the reason on the record.</p>
       <div class="who"><span>Approve</span><span>Reduce</span><span>Refuse</span></div>
     </div>
