@@ -1,18 +1,18 @@
-<!doctype html><html lang="en"><head>
+<!doctype html><html lang="en" data-surface="market"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pricing — Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
-<meta name="theme-color" content="#0d1220">
+<meta name="theme-color" content="#f4f2ed">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=27">
-<link rel="stylesheet" href="./assets/flux.css?v=27">
-<script src="./assets/flux-supa.js?v=27" defer></script>
-<script src="./assets/flux-site.js?v=27" defer></script>
-<script src="./assets/flux-universe.js?v=27" defer></script>
-<script src="./assets/flux-feed.js?v=27" defer></script>
-<script src="./assets/flux-fund.js?v=27" defer></script>
-<script src="./assets/flux-kronos.js?v=27" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=28">
+<link rel="stylesheet" href="./assets/flux.css?v=28">
+<script src="./assets/flux-supa.js?v=28" defer></script>
+<script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-universe.js?v=28" defer></script>
+<script src="./assets/flux-feed.js?v=28" defer></script>
+<script src="./assets/flux-fund.js?v=28" defer></script>
+<script src="./assets/flux-kronos.js?v=28" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
   .seg{display:inline-flex;gap:4px;padding:4px;border-radius:2px;border:1px solid var(--line);background:var(--well)}
@@ -37,7 +37,8 @@
   .plan li{display:flex;gap:10px;font-size:.9rem;color:var(--text-dim);line-height:1.45}
   .plan li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;flex:none}
   .plan .btn{margin-top:auto;width:100%}
-  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#120d05;
+  /* the amber field, never amber text: legible ink on card stock in either room */
+  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold-soft);color:#120d05;
     font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:2px;white-space:nowrap}
 
   .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
