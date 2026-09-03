@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Desk — Flux</title>
-<meta name="description" content="Flux's research desk runs continuously: three analysts file on the tape, a Director of Research synthesises, Kronos and the DSA engine price the trade, and an Executive gives — or refuses — the green light. Simulated / educational, not investment advice.">
+<meta name="description" content="Flux's research desk runs continuously: three analysts file dated predictions on the tape, their trading boss sifts the filings and passes on only what it would take, and an Executive approves, cuts or refuses. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
@@ -29,33 +29,38 @@
   .dk-meta{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);text-align:right;line-height:1.7}
 
   /* ---- the chain of command ---- */
-  .dk-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 26px}
-  @media(max-width:900px){.dk-chain{grid-template-columns:1fr 1fr}}
-  @media(max-width:520px){.dk-chain{grid-template-columns:1fr}}
-  /* Each desk is a station on the floor. The stage in flight lights its
-     leading edge gold; a finished stage goes green and keeps its stamp. */
-  .dk-node{position:relative;overflow:hidden;border-radius:4px;padding:15px 16px 17px;
-    background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
-    border:1px solid var(--line-2);box-shadow:var(--lift-2);
-    transition:transform var(--t-hover) var(--ease),box-shadow var(--t-hover) var(--ease),
-      border-color var(--t-hover) var(--ease)}
-  .dk-node::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
-    background:var(--chrome);transition:background var(--t-stage) var(--ease)}
+  /* ---- the chain of command ----
+     One ruled container, three stations, hairlines between. The stage in
+     flight lights its own top edge; a finished stage goes green and keeps
+     its stamp. See DESIGN.md, "The One-Container Rule". */
+  .dk-chain{display:grid;grid-template-columns:repeat(3,1fr);margin:22px 0 26px;
+    border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+    box-shadow:var(--lift-1)}
+  @media(max-width:900px){
+    .dk-chain{grid-template-columns:1fr}
+    .dk-node{border-left:0!important;border-top:1px solid var(--line-2)}
+    .dk-node:first-child{border-top:0}
+  }
+  .dk-node{position:relative;padding:clamp(18px,2vw,26px);min-width:0;
+    border-left:1px solid var(--line-2);
+    transition:background var(--t-hover) var(--ease)}
+  .dk-node:first-child{border-left:0}
+  .dk-node:hover{background:var(--blotter-3)}
+  .dk-node::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;
+    background:transparent;transition:background var(--t-stage) var(--ease)}
   .dk-node.done::before{background:var(--clearing)}
-  .dk-node.on::before{background:linear-gradient(180deg,transparent,var(--gold) 40%,var(--gold) 60%,transparent);
-    background-size:100% 300%;animation:wire 1.7s linear infinite}
-  .dk-node:hover{transform:translateY(-3px);box-shadow:var(--lift-3);border-color:var(--line)}
-  .dk-node .role{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
+  .dk-node.on::before{background:linear-gradient(90deg,transparent,var(--gold) 40%,var(--gold) 60%,transparent);
+    background-size:300% 100%;animation:wire 1.7s linear infinite}
+  .dk-node .role{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
     text-transform:uppercase;color:var(--text-faint)}
-  .dk-node h2{font-size:1.12rem;margin:6px 0 5px;letter-spacing:-.02em;color:var(--text);
+  .dk-node h2{font-size:1.3rem;margin:9px 0 0;letter-spacing:-.028em;color:var(--text);
     font-family:var(--f-display);font-weight:800;max-width:15ch}
-  .dk-node p{font-size:13px;color:var(--text-dim);line-height:1.5;margin:0}
-  .dk-node .who{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}
+  .dk-node p{font-size:13px;color:var(--text-dim);line-height:1.55;margin:10px 0 0}
+  .dk-node .who{margin-top:13px;display:flex;gap:6px;flex-wrap:wrap}
   .dk-node .who span{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;
-    text-transform:uppercase;border:1px solid var(--line);border-radius:2px;padding:3px 8px;
+    text-transform:uppercase;border:1px solid var(--line-2);border-radius:999px;padding:3px 9px;
     color:var(--text-faint)}
-  .dk-node.on{border-color:rgba(245,185,60,.34);box-shadow:var(--lift-3),var(--lift-gold)}
-  .dk-node.done{border-color:rgba(61,220,151,.28)}
+  .dk-node.on{background:var(--blotter-3)}
   .dk-node .tick{display:none}
 
   /* ---- progress ---- */
@@ -179,9 +184,10 @@
     <span class="dk-live" id="dkLive"><span class="dot"></span><span id="dkStage">connecting…</span></span>
     <div class="dk-meta" id="dkMeta">—</div>
   </div>
-  <p class="dk-sub">A research loop that never stops. Three analysts work the tape, a Director of Research
-    synthesises their filings, Kronos and the DSA engine each price the trade, and an Executive gives —
-    or refuses — the green light. Every round is on the record below.</p>
+  <p class="dk-sub">A research loop that never stops. Three analysts work the tape and file dated
+    predictions; the traders — their boss — read every filing against that analyst's own record and pass on
+    only what they would put size behind; an Executive approves, cuts the size, or refuses. Every round is
+    on the record below.</p>
 
   <div class="dk-bar" style="margin-top:18px"><i id="dkProgress" style="width:0"></i></div>
 
@@ -191,20 +197,15 @@
       <p>Each works one lens over the round's names and files a view, a conviction and the evidence behind it.</p>
       <div class="who"><span>Fundamentals</span><span>Catalyst</span><span>Tape</span></div>
     </div>
-    <div class="dk-node" id="dkN2"><span class="stamp stamp-pending dk-stamp">Passed</span>
-      <span class="role">Stage 2</span><h2>Director of Research</h2>
-      <p>Resolves where the analysts disagree, drops what isn't worth the traders' time, and hands down one package per name.</p>
-      <div class="who"><span>Synthesis</span><span>Scores −100…100</span></div>
-    </div>
-    <div class="dk-node" id="dkN3"><span class="stamp stamp-pending dk-stamp">Priced</span>
-      <span class="role">Stage 3</span><h2>Two traders</h2>
-      <p>Kronos forecasts the next candles; the DSA engine scores value, momentum, range and drawdown. Each proposes entry, stop and target.</p>
+    <div class="dk-node" id="dkN2"><span class="stamp stamp-pending dk-stamp">Sifted</span>
+      <span class="role">Stage 2</span><h2>Two traders</h2>
+      <p>The analysts' boss. They read every filing, weigh it against that analyst's own hit rate, and pass on only what they would actually take — sized, and marked day trade or swing.</p>
       <div class="who"><span>Kronos</span><span>DSA</span></div>
     </div>
-    <div class="dk-node" id="dkN4"><span class="stamp stamp-pending dk-stamp">Ruled</span>
-      <span class="role">Stage 4</span><h2>Executive</h2>
-      <p>Nothing trades without the green light. Approves, cuts the size, or rejects — and says which trader it sided with.</p>
-      <div class="who"><span>Approve</span><span>Reduce</span><span>Reject</span></div>
+    <div class="dk-node" id="dkN3"><span class="stamp stamp-pending dk-stamp">Ruled</span>
+      <span class="role">Stage 3</span><h2>Executive</h2>
+      <p>Nothing trades without the green light. Approves, cuts the size, or refuses — and says which trader it sided with, with the reason on the record.</p>
+      <div class="who"><span>Approve</span><span>Reduce</span><span>Refuse</span></div>
     </div>
   </div>
 
@@ -227,7 +228,6 @@
       </div>
       <div class="tkt-chain">
         <div class="tkt-stage"><span class="field-k">Analysts</span><span class="stamp stamp-pending">—</span></div>
-        <div class="tkt-stage"><span class="field-k">Director</span><span class="stamp stamp-pending">—</span></div>
         <div class="tkt-stage"><span class="field-k">Traders</span><span class="stamp stamp-pending">—</span></div>
         <div class="tkt-stage"><span class="field-k">Executive</span><span class="stamp stamp-pending">—</span></div>
       </div>
@@ -286,8 +286,8 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     /* ---------- live header + the chain lighting up ---------- */
-    var NODES = ["#dkN1","#dkN2","#dkN3","#dkN4"];
-    var STAGE_NODE = { analysts:0, director:1, traders:2, executive:3 };
+    var NODES = ["#dkN1","#dkN2","#dkN3"];
+    var STAGE_NODE = { analysts:0, traders:1, executive:2 };
     function paintStatus(){
       return D.status().then(function(s){
         if(!s){ $("#dkStage").textContent = "starting up"; return; }
@@ -340,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function(){
           (d.reason ? '<p style="margin-top:9px;font-size:.9rem;line-height:1.5;color:rgba(21,16,10,.78);max-width:62ch">' + esc(d.reason) + '</p>' : "") +
         '</div>' +
         '<aside class="tkt-chain">' +
-          stage("Analysts", "Filed", "stamp-ok") + stage("Director", (d.director_score >= 0 ? "+" : "") + (d.director_score == null ? "—" : d.director_score), "stamp-ok") +
+          stage("Analysts", "Filed", "stamp-ok") +
           stage("Kronos", esc(k.action || "—"), k.action === "BUY" ? "stamp-ok" : "stamp-no") +
           stage("DSA", (sc.score == null ? "—" : (sc.score >= 0 ? "+" : "") + sc.score), (sc.score >= 0 ? "stamp-ok" : "stamp-no")) +
           stage("Executive", esc(d.verdict), stampCls) +

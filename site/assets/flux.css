@@ -283,7 +283,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
     box-shadow:var(--lift-3);transform:rotate(-.5deg);
     display:grid;grid-template-columns:1fr 168px;grid-template-areas:"head head" "main chain" "foot chain"}
   @media(max-width:620px){.ticket{grid-template-columns:1fr;grid-template-areas:"head" "main" "chain" "foot"}}
-  .ticket .field-k{color:rgba(21,16,10,.62)}
+  .ticket .field-k{color:rgba(21,16,10,.74)}   /* 5.5:1 on ochre */
   .ticket.punched::before{background:var(--blotter);box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
 
   .tkt-head{grid-area:head;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
@@ -943,30 +943,44 @@ body::before{
   font-variant-numeric:tabular-nums}
 .st-sub{margin:10px 0 0;color:var(--text-dim);font-size:1rem;line-height:1.62;max-width:76ch}
 
-.st-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+/* The desks. One ruled container, N columns, hairlines between — never a
+   row of cards, and never a boxed figure block nested inside one of them.
+   Shared by analysts.html, traders.html and executive.html, so the shape
+   is decided once. See DESIGN.md, "The One-Container Rule". */
+.st-cards{display:grid;grid-template-columns:repeat(3,1fr);margin-top:28px;
+  border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+  box-shadow:var(--lift-1)}
 .st-cards.two{grid-template-columns:repeat(2,1fr)}
-@media(max-width:960px){.st-cards,.st-cards.two{grid-template-columns:1fr}}
-.st-card{position:relative;overflow:hidden;border-radius:4px;padding:20px;
-  background:linear-gradient(180deg,var(--blotter-3),var(--blotter-2) 58%);
-  border:1px solid var(--line-2);box-shadow:var(--lift-2);
-  transition:transform var(--t-hover) var(--ease),box-shadow var(--t-hover) var(--ease),
-    border-color var(--t-hover) var(--ease)}
-.st-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent,var(--chrome))}
-.st-card:hover{transform:translateY(-3px);box-shadow:var(--lift-3);border-color:var(--line)}
-.st-card .lens{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--accent,var(--text-faint))}
-.st-card h2{font-family:var(--f-display);font-size:1.5rem;font-weight:800;
-  letter-spacing:-.025em;margin:6px 0 0}
-.st-card .what{margin:8px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
-.st-figs{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;
-  background:var(--line-2);border:1px solid var(--line-2);border-radius:2px;overflow:hidden}
-.st-fig{background:var(--blotter-2);padding:11px 13px}
-.st-fig b{display:block;font-family:var(--f-mono);font-size:1.5rem;font-weight:700;
-  letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--gold);line-height:1.1}
-.st-fig span{display:block;margin-top:3px;font-family:var(--f-mono);font-size:12px;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
-.st-note{margin:14px 0 0;padding-top:13px;border-top:1px dashed var(--line);
-  font-size:12.5px;line-height:1.55;color:var(--text-dim)}
+@media(max-width:960px){
+  .st-cards,.st-cards.two{grid-template-columns:1fr}
+  .st-card{border-left:0!important;border-top:1px solid var(--line-2)}
+  .st-card:first-child{border-top:0}
+}
+.st-card{display:flex;flex-direction:column;padding:clamp(20px,2.2vw,28px);
+  border-left:1px solid var(--line-2);min-width:0;
+  transition:background var(--t-hover) var(--ease)}
+.st-card:first-child{border-left:0}
+.st-card:hover{background:var(--blotter-3)}
+.st-card .lens{display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-faint)}
+.st-card .lens::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--accent,var(--chrome))}
+.st-card h2{font-family:var(--f-display);font-size:1.4rem;font-weight:800;
+  letter-spacing:-.028em;margin:9px 0 0}
+.st-card .what{margin:10px 0 0;font-size:.9rem;line-height:1.6;color:var(--text-dim)}
+/* the figures are ruled off, not boxed: a card inside a card is the thing
+   this whole system exists to avoid */
+.st-figs{display:grid;grid-template-columns:1fr 1fr;margin-top:auto;padding-top:16px}
+.st-fig{padding:2px 16px 2px 0;border-left:1px solid var(--line-3)}
+.st-fig:first-child{border-left:0;padding-left:0}
+.st-fig:last-child{padding-left:16px}
+.st-fig b{display:block;font-family:var(--f-display);font-size:1.6rem;font-weight:700;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums;color:var(--text);line-height:1}
+.st-fig span{display:block;margin-top:6px;font-family:var(--f-mono);font-size:12px;
+  font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+.st-note{margin:16px 0 0;padding-top:13px;border-top:1px solid var(--line-3);
+  font-size:12.5px;line-height:1.55;color:var(--text-faint)}
 .st-note a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 
 .st-panel{margin-top:28px;background:var(--blotter-2);border:1px solid var(--line-2);
@@ -978,7 +992,7 @@ body::before{
 .st-rows{list-style:none;margin:0;padding:0}
 .st-rows>li{padding:13px 17px;border-top:1px solid var(--line-2)}
 .st-rows>li:first-child{border-top:0}
-.st-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+.st-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;align-items:start}
 @media(max-width:900px){.st-split{grid-template-columns:1fr}}
 
 /* a bar that compares two agents */

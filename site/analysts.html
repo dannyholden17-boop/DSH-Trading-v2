@@ -105,6 +105,11 @@
   </div>
 
   <section class="st-panel">
+    <div class="st-panel-h">The record <em id="aScoreCap">—</em></div>
+    <ul class="st-rows" id="aScore"><li>Reading the scoreboard…</li></ul>
+  </section>
+
+  <section class="st-panel">
     <div class="st-panel-h">The filings <em id="aGateCap">members only</em></div>
     <ul class="st-rows" id="aFilings"><li>Checking your access…</li></ul>
   </section>
@@ -159,10 +164,52 @@ document.addEventListener("DOMContentLoaded", function(){
         num($("#" + m[1] + "Fil"), x.filings || 0);
         num($("#" + m[1] + "Names"), x.names || 0);
         var el = $("#" + m[1] + "Last");
-        if(el) el.textContent = x.last_at
-          ? "Last filed " + D.ago(x.last_at) + " · " + (x.rounds || 0) + " rounds worked."
-          : "Has not filed yet.";
+        if(el){
+          var pb = (a.playbooks || []).filter(function(b){ return b.agent === m[0]; })[0];
+          var line = x.last_at
+            ? "Last filed " + D.ago(x.last_at) + " · " + (x.rounds || 0) + " rounds worked."
+            : "Has not filed yet.";
+          el.innerHTML = (pb && pb.method_name
+              ? '<b style="color:var(--text);font-weight:600">' + esc(pb.method_name) +
+                '</b> <span style="color:var(--text-faint)">v' + esc(pb.version) + '</span><br>'
+              : "") + esc(line);
+        }
       });
+      /* The scoreboard. A prediction is graded on its own resolve date, so
+         until one comes due this panel has nothing to report — and says so
+         rather than showing a rate computed from nothing. */
+      var board = a.scoreboard || [];
+      var host = $("#aScore");
+      var resolved = a.predictions_resolved || 0, open_ = a.predictions_open || 0;
+      if(host){
+        if(board.length){
+          $("#aScoreCap").textContent = resolved + " resolved";
+          host.innerHTML = board.map(function(r){
+            var rate = r.hit_rate != null ? Math.round(r.hit_rate * 100) + "%" : "—";
+            return '<li style="display:flex;gap:14px;align-items:baseline;flex-wrap:wrap">' +
+              '<b style="font-family:var(--f-display);min-width:11ch">' + esc(r.agent) + '</b>' +
+              '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;' +
+              'text-transform:uppercase;color:var(--text-faint);min-width:9ch">' + esc(r.horizon || "all") + '</span>' +
+              '<span style="font-family:var(--f-mono);font-size:13px;color:var(--text-dim)">' +
+              esc(r.resolved || 0) + ' resolved</span>' +
+              '<span style="margin-left:auto;font-family:var(--f-mono);font-size:15px;font-weight:600;color:' +
+              (r.hit_rate == null ? "var(--text-faint)" : r.hit_rate >= 0.5 ? "var(--clearing)" : "var(--stamp)") +
+              '">' + rate + '</span></li>';
+          }).join("");
+        } else {
+          $("#aScoreCap").textContent = open_ ? open_ + " open" : "nothing due yet";
+          host.innerHTML = '<li style="color:var(--text-dim);font-size:.94rem;line-height:1.65">' +
+            (open_
+              ? 'No prediction has reached its resolve date yet, so there is no hit rate to show. ' +
+                (open_ === 1 ? 'One call is' : '<b style="color:var(--text)">' + open_ + '</b> calls are') +
+                ' open and waiting to be graded.'
+              : 'The analysts have not filed a dated prediction yet, so there is nothing to grade. ' +
+                'Filings above are research notes; a prediction is the stricter thing — a direction, a ' +
+                'target and a date it can be scored on.') +
+            ' When one comes due it is scored against the tape whether it worked or not, and the result ' +
+            'appears here, including the misses.</li>';
+        }
+      }
     }).catch(function(){ fail("Could not reach the desk record. Nothing on this page is filled in with an example."); });
 
     D.floor().then(function(f){
