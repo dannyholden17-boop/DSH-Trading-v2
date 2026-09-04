@@ -771,5 +771,3 @@ theatre is removed (`flux.css:87-93`).
   vocabulary. New work uses `{colors.gold}`, `{colors.floor}`, `{colors.clearing}`,
   `{colors.stamp}`, `{colors.blotter-2}` and friends, and any page touched should migrate
   its remaining alias uses as it goes.
-- **Don't** treat `site/app-classic.html` as a reference. It is an unlinked legacy page
-  still on the old light theme and is outside this system.

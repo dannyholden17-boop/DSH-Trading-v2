@@ -23,11 +23,9 @@ A cohesive, production-quality front end built on one design system.
 |------|-----------|
 | **`site/index.html`** | The marketing / landing page — hero with a live demo, the six-engine story, how it works, features, pricing, FAQ, CTA. This is the page you sell. |
 | **`site/app.html`** | The product — the Flux app: neural AI core, alpha signals, ask-Flux bar, watchlist, live portfolio (P&L, allocation), alerts, and a pro terminal (candlesticks, DOM ladder, time & sales) on every symbol. |
-| **`site/assets/dsh.css`** | Legacy design system used by `app-classic.html`. The Flux pages carry their own liquid-glass styles. |
 | **`site/assets/dsh.js`** | Shared signal/engine data and helpers. |
 | **`site/assets/dsh-store.js`** | Persistent state: flags, paper positions, watchlist, activity, price engine. |
 | **`site/assets/dsh-feed.js`** | Live market data adapter (Finnhub REST + WebSocket) with simulation fallback. |
-| **`site/app-classic.html`** | The previous desktop cockpit, kept for reference. |
 
 **To view:** open `site/index.html` in any browser. No build step, no
 dependencies, works offline. Click **Open app** to reach the cockpit; both
