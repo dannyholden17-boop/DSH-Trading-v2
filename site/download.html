@@ -348,7 +348,7 @@
               <div class="wave"><i></i><i></i><i></i><i></i><i></i></div>
             </div>
           </div>
-          <div class="ph-status" id="phStatus">neural scan active</div>
+          <div class="ph-status" id="phStatus">reading the desk&hellip;</div>
           <div class="ph-label">Alpha signals</div>
           <div class="ph-feed" id="phFeed"></div>
         </div>
@@ -708,9 +708,22 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   var status = $("#phStatus");
   if(status){
-    var STATES = ["neural scan active","correlating options flow","ranking fresh setups","reading the tape","syncing to desktop"];
+    /* the phone mock shows the real stage rather than a rotating fiction */
+    var STATES = ["reading the desk\u2026"];
     var si = 0;
-    setInterval(function(){ si++; status.textContent = STATES[si % STATES.length]; }, 3000);
+    (function(){
+      function tick(){
+        var F = window.FLUX;
+        if(!F || !F.Desk) return;
+        F.Desk.status().then(function(st){
+          if(!status || !st) return;
+          status.textContent = st.status === "running"
+            ? F.Desk.stageLabel(st.stage).toLowerCase()
+            : "round " + st.seq + " filed";
+        }).catch(function(){});
+      }
+      tick(); setInterval(tick, 20000);
+    })();
   }
 
   /* ---------- desktop window mock: candles ---------- */

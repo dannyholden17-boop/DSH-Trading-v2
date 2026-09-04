@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Flux, DSH Sentinel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Flux: an autonomous AI trading desk. Liquid-glass HUD: neural core, alpha signals, live portfolio.">
+<meta name="description" content="Flux: the research desk as a workstation. The live round, the executive's rulings, and a simulated paper book.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <script src="./assets/dsh-store.js?v=28"></script>
@@ -305,21 +305,21 @@
           <div class="wave"><i></i><i></i><i></i><i></i><i></i></div>
         </div>
         <h2>Flux AI</h2>
-        <div class="sub" id="coreStatus">neural scan active</div>
+        <div class="sub" id="coreStatus">reading the desk record</div>
       </div>
 
       <div class="glass" style="margin-top:6px">
         <div class="mod-h">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
-          <h2>Signal Optimization</h2>
-          <span class="tag" id="roiTag">+14.2% edge</span>
+          <h2>The desk record</h2>
+          <span class="tag" id="roiTag">live</span>
         </div>
         <canvas class="grow-chart" id="optChart"></canvas>
         <div class="sumrow" style="margin-top:14px;margin-bottom:0">
           <div class="sumcell" style="border:1px solid var(--line-2);border-radius:4px;background:var(--well)">
-            <div class="k">Signals today</div><div class="v mono" id="sigCount">127</div></div>
+            <div class="k">Filings on record</div><div class="v mono" id="sigCount">&mdash;</div></div>
           <div class="sumcell" style="border:1px solid var(--line-2);border-radius:4px;background:var(--well)">
-            <div class="k">Hit rate</div><div class="v mono up">71%</div></div>
+            <div class="k">Refused or cut</div><div class="v mono" id="sigRef">&mdash;</div></div>
         </div>
       </div>
 
@@ -508,8 +508,23 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(pushSignal,5200);
   sigWrap.addEventListener("click",function(e){var s=e.target.closest(".sig");if(!s)return;var f=cardData[s.dataset.fid];if(f)openTerminal(f.t,f);});
 
-  var CORE=["neural scan active","correlating options flow","ranking fresh setups","reading the tape","stress-testing a thesis","hunting anomalies","validating a breakout"];
-  setInterval(function(){$("#coreStatus").textContent=rnd(CORE);},3200);
+  /* This used to rotate a random line from a list of seven ("neural scan
+     active", "hunting anomalies") every 3.2 seconds, narrating work that
+     was not happening. It reports the stage the desk is genuinely on. */
+  (function(){
+    var el = $("#coreStatus");
+    function tick(){
+      var F = window.FLUX;
+      if(!F || !F.Desk) return;
+      F.Desk.status().then(function(st){
+        if(!el) return;
+        el.textContent = !st ? "the desk is starting up"
+          : st.status === "running" ? F.Desk.stageLabel(st.stage).toLowerCase()
+          : "round " + st.seq + " filed";
+      }).catch(function(){ if(el) el.textContent = "desk record unreachable"; });
+    }
+    tick(); setInterval(tick, 20000);
+  })();
 
   /* ---------- detail sheet ---------- */
   function openDetail(f){var col=sigColor(f),px=S.price(f.t);
@@ -772,6 +787,29 @@ document.addEventListener("DOMContentLoaded", function(){
   /* boot */
   drawOpt();
   window.addEventListener("resize",function(){if(cur==="flux")drawOpt();if(cur==="portfolio")renderPortfolio();});
+});
+</script>
+<script>
+/* The two figures beside the chart are the desk's own counts. They were
+   "127 signals today" and a "71% hit rate", with a "+14.2% edge" tag, none
+   of which measured anything. */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 160); }
+    var $ = function(i){ return document.getElementById(i); };
+    Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
+      var f = r[0] || {}, a = r[1] || {}, ex = a.executive || {};
+      var c = $("sigCount");
+      if(c && f.filings_total != null) c.textContent = f.filings_total.toLocaleString();
+      var tot = ex.total != null ? ex.total : f.rulings_total, ok = ex.approved;
+      var q = $("sigRef");
+      if(q) q.textContent = (tot && ok != null) ? Math.round((tot - ok) / tot * 100) + "%" : "\u2014";
+      var st = $("coreStatus");
+      if(st && f.round) st.textContent = "round " + f.round.seq + " on the record";
+    }).catch(function(){});
+  }
+  boot();
 });
 </script>
 </body>
