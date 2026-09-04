@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Research — Flux</title>
-<meta name="description" content="Flux AI Research reads filings, earnings calls, the news wire and the options tape, then writes you the answer — with model forecasts, catalysts and risk, on a schedule.">
+<title>AI Research; Flux</title>
+<meta name="description" content="Flux AI Research reads filings, earnings calls, the news wire and the options tape, then writes you the answer, with model forecasts, catalysts and risk, on a schedule.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -147,7 +147,7 @@
     <div class="reveal">
 <h1 class="h1">Research that reads everything.<br><span class="">So you don't have to.</span></h1>
       <p class="lede">Flux pulls the 8-K at 4:02, the transcript at 5:30, every headline that crosses
-        the wire and every unusual print on the options tape — then writes it up in plain English,
+        the wire and every unusual print on the options tape, then writes it up in plain English,
         with the model forecasts, the catalysts and the risks in one page.</p>
       <div class="btn-row">
         <a class="btn btn-primary btn-lg" href="./dashboard.html">Read today's brief</a>
@@ -171,12 +171,12 @@
         <span class="ts" id="repTs">live</span>
       </div>
       <div class="rtool">
-        <input id="rTicker" type="text" placeholder="Type a ticker — e.g. NVDA" aria-label="Ticker to research" maxlength="6" autocomplete="off">
+        <input id="rTicker" type="text" placeholder="Type a ticker, e.g. NVDA" aria-label="Ticker to research" maxlength="6" autocomplete="off">
         <button class="btn btn-primary btn-sm" id="rGo">Generate report</button>
       </div>
       <div class="rchips" id="rChips"></div>
       <div class="rep-body">
-        <div class="rout" id="rOut">Type a ticker and I'll pull a real report — valuation, the model's target, where it sits in its 52-week range, and my read.</div>
+        <div class="rout" id="rOut">Type a ticker and I'll pull a real report, valuation, the model's target, where it sits in its 52-week range, and my read.</div>
       </div>
       <div class="rep-foot">
         <span id="repStat">Powered by the Kronos model · real fundamentals</span>
@@ -197,14 +197,14 @@ document.addEventListener("DOMContentLoaded", function(){
       t = (t || inp.value || lastT || "").trim().toUpperCase(); if(!t) return;
       inp.value = t; lastT = t;
       if(!pro()){
-        out.innerHTML = '🔒 <b>Full Kronos research is a Flux Pro feature.</b>\n\nThe complete report on ' + t +
-          ' — the model\'s forecast path, price target, conviction, valuation read and risk — unlocks with a Pro plan.\n\n' +
+        out.innerHTML = '<i class="ic-i i-lock" aria-hidden="true"></i> <b>Full Kronos research is a Flux Pro feature.</b>\n\nThe complete report on ' + t +
+          ': the model\'s forecast path, price target, conviction, valuation read and risk, unlocks with a Pro plan.\n\n' +
           '<a class="btn btn-primary btn-sm" href="./pricing.html" style="margin-top:6px">See plans →</a>';
         if(typeof tvLine === "function" && window.FLUX && FLUX.TV) tvLine(t);   // TV teaser stays visible
         return;
       }
       var brief = J.research(t);
-      out.textContent = brief || ("I don't cover " + t + " yet — try NVDA, TSLA, COIN, AMD, MSFT or another large-cap.");
+      out.textContent = brief || ("I don't cover " + t + " yet, try NVDA, TSLA, COIN, AMD, MSFT or another large-cap.");
       tvLine(t);
     }
     window.addEventListener("flux-sub", function(){ if(lastT) run(lastT); });
@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Six streams, read in full, every session.</h2>
       <p class="lede" style="margin-top:16px">A person can read one 10-Q properly in an afternoon.
-        Flux reads the filing, the call, the wire and the tape around it — and tells you which of the
+        Flux reads the filing, the call, the wire and the tape around it, and tells you which of the
         four actually changed the picture.</p>
     </div>
 
@@ -318,13 +318,13 @@ document.addEventListener("DOMContentLoaded", function(){
       <div class="glass glass-hover feat reveal">
         <div class="ic">§</div><h3>SEC filings &amp; 8-Ks</h3>
         <p>10-K, 10-Q, 8-K, S-1 and insider Form 4s, parsed the moment they hit EDGAR. Flux diffs each
-          filing against the last one and reports what changed — not what was restated.</p>
+          filing against the last one and reports what changed, not what was restated.</p>
         <div class="meta"><span>latency <b>&lt; 60s</b></span><span>diffed <b>vs. prior</b></span></div>
       </div>
       <div class="glass glass-hover feat reveal">
         <div class="ic">◉</div><h3>Earnings calls &amp; transcripts</h3>
         <p>Full transcripts summarized down to guidance changes, margin commentary and the questions
-          management dodged — with the exact quote kept alongside the summary.</p>
+          management dodged, with the exact quote kept alongside the summary.</p>
         <div class="meta"><span>coverage <b>call + Q&amp;A</b></span><span>keeps <b>quotes</b></span></div>
       </div>
       <div class="glass glass-hover feat reveal">
@@ -341,14 +341,14 @@ document.addEventListener("DOMContentLoaded", function(){
       </div>
       <div class="glass glass-hover feat reveal">
         <div class="ic">◔</div><h3>Price &amp; volume history</h3>
-        <p>Years of daily and intraday history behind every claim — so "unusual volume" means a number
+        <p>Years of daily and intraday history behind every claim, so "unusual volume" means a number
           against a base, and a level is one the tape has actually respected.</p>
         <div class="meta"><span>history <b>multi-year</b></span><span>frames <b>1m–1D</b></span></div>
       </div>
       <div class="glass glass-hover feat reveal">
         <div class="ic">⊘</div><h3>Your own portfolio</h3>
         <p>The part generic research can't do. Flux reads your positions, sizing, stops and correlation,
-          and writes the section that's about <em>your</em> book — not the market's.</p>
+          and writes the section that's about <em>your</em> book, not the market's.</p>
         <div class="meta"><span>scope <b>your book</b></span><span>engine <b>Risk</b></span></div>
       </div>
     </div>
@@ -376,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function(){
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">The desk files before you ask.</h2>
-      <p class="lede" style="margin-top:16px">Four standing reports land on their own schedule — in the app,
+      <p class="lede" style="margin-top:16px">Four standing reports land on their own schedule, in the app,
         by push, or by email. Every time is configurable, and you can trigger any of them on demand.</p>
     </div>
 
@@ -416,14 +416,14 @@ document.addEventListener("DOMContentLoaded", function(){
 <h2 class="h2" style="margin-top:16px">Every claim gets replayed against history.</h2>
       <p class="lede" style="margin-top:16px">Research that can't be checked is just prose. When the Catalyst
         engine says a filing type preceded a drift, the Backtest engine has already replayed that setup across
-        years of sessions — and the report shows you the sample size, not just the headline number.</p>
+        years of sessions, and the report shows you the sample size, not just the headline number.</p>
       <div class="flist">
         <div class="fi"><span class="k">⧗</span><div><b>Walk-forward, not curve-fit</b>
           <p>Setups are tested on data the model never saw, in the order it actually happened.</p></div></div>
         <div class="fi"><span class="k">n</span><div><b>Sample size shown</b>
           <p>Fourteen comparable events is not four hundred. The report says which it is.</p></div></div>
         <div class="fi"><span class="k">⊘</span><div><b>Costs included</b>
-          <p>Simulated fills assume slippage and commission — not perfect prints at the close.</p></div></div>
+          <p>Simulated fills assume slippage and commission, not perfect prints at the close.</p></div></div>
       </div>
     </div>
 
@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <p class="disclaimer reveal" style="margin:24px auto 0;text-align:center">
       Counts read from the desk's own record. There is deliberately no win rate, Sharpe or drawdown here:
       the desk trades a simulated book, so any such figure would be hypothetical, and a prediction is only
-      graded once it reaches its resolve date. Grades — including the misses — appear on the
+      graded once it reaches its resolve date. Grades, including the misses, appear on the
       <a href="./analysts.html">scoreboard</a> as they come due.</p>
   </div>
 </section>
@@ -457,13 +457,13 @@ document.addEventListener("DOMContentLoaded", function(){
 <section class="section band" id="faq">
   <div class="wrap">
     <div class="reveal center" style="max-width:62ch;margin-inline:auto">
-<h2 class="h2" style="margin-top:16px">What the research is — and isn't.</h2>
+<h2 class="h2" style="margin-top:16px">What the research is, and isn't.</h2>
     </div>
     <div class="faq reveal" style="margin-top:40px">
       <details open><summary>Is this investment advice?</summary>
         <p>No. Flux is research and automation software, not a broker-dealer and not an adviser. Reports
           summarise public information, model output and your own portfolio data. Nothing in them is a
-          recommendation, and every decision — with its outcome — is yours.</p></details>
+          recommendation, and every decision, with its outcome, is yours.</p></details>
       <details><summary>Where does the underlying information come from?</summary>
         <p>Public filings, earnings transcripts, licensed market data and news feeds, plus the portfolio data
           you connect. Each claim in a report carries its source, so you can open the filing or the print
@@ -471,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function(){
       <details><summary>Can the AI get it wrong?</summary>
         <p>Yes. Language models misread things, data feeds lag, and history is not a promise. That's exactly
           why every quantitative claim is tied to a backtest with a visible sample size, and why sources stay
-          attached — so you can check the work instead of trusting the tone.</p></details>
+          attached, so you can check the work instead of trusting the tone.</p></details>
       <details><summary>Can I ask for a report on something specific?</summary>
         <p>Any time. Ask for a name, a sector, a theme or your own book in plain English and the Reporter
           assembles it on demand, using the same inputs as the scheduled briefs.</p></details>
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function(){
           was generated and the cutoff of the data behind it.</p></details>
       <details><summary>Do the backtest numbers mean I'll make money?</summary>
         <p>No. Backtested and simulated results are hypothetical. They show whether a pattern existed in
-          historical data — not whether it will repeat, and not what your own fills, timing or risk tolerance
+          historical data, not whether it will repeat, and not what your own fills, timing or risk tolerance
           would have produced. Trading involves risk of loss, including loss of principal.</p></details>
     </div>
   </div>

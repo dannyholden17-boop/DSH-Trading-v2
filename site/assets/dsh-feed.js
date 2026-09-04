@@ -74,7 +74,7 @@
     attempts++;
     if(attempts > 3){ // give up quietly and run on simulation
       S.setLive(false);
-      setStatus("sim", "Live feed unavailable — using simulation");
+      setStatus("sim", "Live feed unavailable, using simulation");
       return;
     }
     reconnectT = setTimeout(function(){ if(key) openSocket(); }, 3000);

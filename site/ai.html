@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fluxi — your AI trading desk</title>
-<meta name="description" content="Talk to Flux — an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
+<title>Fluxi, your AI trading desk</title>
+<meta name="description" content="Talk to Flux: an always-on AI trading desk. Ask it anything, get real answers grounded in live signals, see under/overvalued models, and let it run your desk. Voice control built in. Not investment advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -188,7 +188,7 @@
       <div class="chips" id="chips"></div>
       <div class="cinput">
         <input id="cin" type="text" autocomplete="off" placeholder="Ask about a stock, a valuation, the fund…" aria-label="Ask Flux">
-        <button class="iconbtn mic" id="mic" title="Talk to Flux" aria-label="Voice">🎙</button>
+        <button class="iconbtn mic" id="mic" title="Talk to Flux" aria-label="Voice"><i class="ic-i mic" aria-hidden="true"></i></button>
         <button class="iconbtn send" id="send" title="Send" aria-label="Send">➤</button>
       </div>
       <div class="voicerow">
@@ -247,7 +247,7 @@
       <h3><span class="glyph2">❖</span> Fluxi's memory</h3>
       <div class="subh" id="memStat">learning…</div>
       <div id="mem" style="margin-top:8px"></div>
-      <div class="flux-note">Teach me: type “remember …” · rate answers 👍/👎</div>
+      <div class="flux-note">Teach me: type “remember …” · rate answers <i class="ic-i thumb-up" aria-hidden="true"></i>/<i class="ic-i thumb-down" aria-hidden="true"></i></div>
     </div>
   </aside>
 </main>
@@ -284,10 +284,10 @@
       log.appendChild(d);
       if(who === "a" && window.JARVIS && JARVIS.feedback){
         var fb = document.createElement("div"); fb.className = "fbrow";
-        fb.innerHTML = '<button class="fb" title="Good answer">👍</button><button class="fb" title="Off — I\'ll learn">👎</button>';
+        fb.innerHTML = '<button class="fb" title="Good answer"></button><button class="fb" title="Off, I\'ll learn"></button>';
         var btns = fb.querySelectorAll(".fb");
-        btns[0].onclick = function(){ JARVIS.feedback(true, text); fb.innerHTML = '<span class="fbok">Thanks — noted</span>'; };
-        btns[1].onclick = function(){ JARVIS.feedback(false, text); fb.innerHTML = '<span class="fbok">Got it — I\'ll weight that read more carefully</span>'; };
+        btns[0].onclick = function(){ JARVIS.feedback(true, text); fb.innerHTML = '<span class="fbok">Thanks, noted</span>'; };
+        btns[1].onclick = function(){ JARVIS.feedback(false, text); fb.innerHTML = '<span class="fbok">Got it, I\'ll weight that read more carefully</span>'; };
         d.appendChild(fb);
       }
       log.scrollTop = log.scrollHeight; return d;
@@ -317,10 +317,10 @@
           bs[0].onclick = function(){
             var r = J.executeTrade(res.action);
             tc.remove();
-            bubble(r.ok ? ("✅ "+r.msg+" — logged to your paper book.") : ("⚠️ "+r.msg), "a");
+            bubble(r.ok ? (""+r.msg+", logged to your paper book.") : (""+r.msg), "a");
             if(r.ok){ orb.pulse(1); refreshFund(); }
           };
-          bs[1].onclick = function(){ tc.remove(); bubble("Cancelled — nothing placed.","a"); };
+          bs[1].onclick = function(){ tc.remove(); bubble("Cancelled; nothing placed.","a"); };
           b.appendChild(tc);
         }
         busy = false;
@@ -334,7 +334,7 @@
             if(handsFree && res.kind !== "trade"){ startListening(); }
           }, dur);
         }
-      }).catch(function(){ tp.remove(); bubble("Something glitched — try again.","a"); busy=false; setStatus("FLUXI ONLINE"); });
+      }).catch(function(){ tp.remove(); bubble("Something glitched, try again.","a"); busy=false; setStatus("FLUXI ONLINE"); });
     }
     document.getElementById("send").onclick = function(){ send(); };
     input.addEventListener("keydown", function(e){ if(e.key==="Enter") send(); });
@@ -372,11 +372,11 @@
       }, function(state){
         if(state==="start"){ mic.classList.add("on"); setStatus(handsFree?"CONVERSING…":"LISTENING…","voice in"); orb.pulse(0.9); }
         else if(state==="end"){ mic.classList.remove("on"); if(!busy) setStatus("FLUXI ONLINE","scanning 250+ names"); }
-        else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked — allow microphone access."; setStatus("FLUXI ONLINE"); }
+        else if(state==="error"){ mic.classList.remove("on"); hint.textContent="Mic blocked, allow microphone access."; setStatus("FLUXI ONLINE"); }
       });
     }
     if(!J.voiceSupported){ mic.disabled = true; hint.textContent = "Voice needs Chrome or Safari."; }
-    else { hint.textContent = "Tap 🎙, or turn on Hands-free."; }
+    else { hint.textContent = "Tap , or turn on Hands-free."; }
     mic.onclick = function(){
       if(J.isListening()){ J.stopListen(); return; }
       if(J.ttsSupported) speak.checked = true;
@@ -385,7 +385,7 @@
 
     /* ---- greeting ---- */
     setTimeout(function(){
-      bubble("Fluxi online. I continuously scan "+ (F.PRICES?Object.keys(F.PRICES).length:"250+")+" names — momentum, undervalued & overvalued, breakouts, rebounds — and I learn as we go. Ask me for a brief or a valuation, say \"what is Kronos?\", tell me to \"remember\" something, or \"research NVDA.\" Type it or tap the mic.", "a");
+      bubble("Fluxi online. I continuously scan "+ (F.PRICES?Object.keys(F.PRICES).length:"250+")+" names, momentum, undervalued & overvalued, breakouts, rebounds, and I learn as we go. Ask me for a brief or a valuation, say \"what is Kronos?\", tell me to \"remember\" something, or \"research NVDA.\" Type it or tap the mic.", "a");
     }, 700);
 
     /* ---- live intel panels (always refreshing) ---- */
@@ -464,7 +464,7 @@
         var s = FL.Fund.snapshot();
         el.innerHTML = "Equity <b>"+money(s.aum)+"</b> · "+(s.dayPL>=0?"+":"−")+money(Math.abs(s.dayPL))+
           " today · "+(s.retPct>=0?"+":"")+s.retPct+"% since launch · "+s.nOpen+" positions. Live simulated desk.";
-      } else { el.textContent = "A simulated AI fund trading a paper account live on Kronos signals — watch it on the Fund page."; }
+      } else { el.textContent = "A simulated AI fund trading a paper account live on Kronos signals, watch it on the Fund page."; }
     }
     /* ---- TradingView rating: live second opinion next to Kronos ---- */
     function tvRender(sym){

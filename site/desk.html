@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Desk — Flux</title>
+<title>The Desk; Flux</title>
 <meta name="description" content="Flux's research desk runs continuously: three analysts file dated predictions on the tape, their trading boss sifts the filings and passes on only what it would take, and an Executive approves, cuts or refuses. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -56,7 +56,7 @@
   .dk-node p{font-size:13px;color:var(--text-dim);line-height:1.55;margin:10px 0 0}
   .dk-node .who{margin-top:13px;display:flex;gap:6px;flex-wrap:wrap}
   .dk-node .who span{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;
-    text-transform:uppercase;border:1px solid var(--line-2);border-radius:999px;padding:3px 9px;
+    text-transform:uppercase;border:1px solid var(--line-2);border-radius:3px;padding:3px 9px;
     color:var(--text-faint)}
   .dk-node.on{background:var(--blotter-3)}
   .dk-node .tick{display:none}
@@ -183,7 +183,7 @@
     <div class="dk-meta" id="dkMeta">—</div>
   </div>
   <p class="dk-sub">A research loop that never stops. Three analysts work the tape and file dated
-    predictions; the traders — their boss — read every filing against that analyst's own record and pass on
+    predictions; the traders, their boss, read every filing against that analyst's own record and pass on
     only what they would put size behind; an Executive approves, cuts the size, or refuses. Every round is
     on the record below.</p>
 
@@ -195,11 +195,11 @@
       <div class="who"><span>Fundamentals</span><span>Catalyst</span><span>Tape</span></div>
     </div>
     <div class="dk-node" id="dkN2"><h2>Then, two traders</h2><span class="stamp stamp-pending dk-stamp">Sifted</span>
-      <p>The analysts' boss. They read every filing, weigh it against that analyst's own hit rate, and pass on only what they would actually take — sized, and marked day trade or swing.</p>
+      <p>The analysts' boss. They read every filing, weigh it against that analyst's own hit rate, and pass on only what they would actually take, sized, and marked day trade or swing.</p>
       <div class="who"><span>Kronos</span><span>DSA</span></div>
     </div>
     <div class="dk-node" id="dkN3"><h2>Last, the executive</h2><span class="stamp stamp-pending dk-stamp">Ruled</span>
-      <p>Nothing trades without the green light. Approves, cuts the size, or refuses — and says which trader it sided with, with the reason on the record.</p>
+      <p>Nothing trades without the green light. Approves, cuts the size, or refuses, and says which trader it sided with, with the reason on the record.</p>
       <div class="who"><span>Approve</span><span>Reduce</span><span>Refuse</span></div>
     </div>
   </div>
@@ -217,7 +217,7 @@
       <div class="tkt-main">
         <div class="tkt-instrument">
           <span class="field-k">Instrument</span>
-          <span class="tkt-sym">— — — —</span>
+          <span class="tkt-sym">—,, —</span>
         </div>
         <p class="tkt-headline">Reading the last ruling off the record.</p>
       </div>
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function(){
         '</aside>' +
         '<footer class="tkt-foot"><span class="tkt-sim">Simulated · virtual money · not investment advice</span>' +
         (d.risk_flags && d.risk_flags !== "none"
-          ? '<span class="tkt-sim" style="margin-left:auto;max-width:46ch;text-transform:none;letter-spacing:0">⚠ ' + esc(d.risk_flags) + '</span>' : "") +
+          ? '<span class="tkt-sim" style="margin-left:auto;max-width:46ch;text-transform:none;letter-spacing:0"><i class="ic-i i-warn" aria-hidden="true"></i> ' + esc(d.risk_flags) + '</span>' : "") +
         '</footer></article>';
     }
     function fld(k, v){ return '<div><dt class="field-k">' + k + '</dt><dd>' + v + '</dd></div>'; }
@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function(){
       return D.decisions(24).then(function(list){
         var slot = $("#dkTicketSlot"), host = $("#dkDecisions");
         if(!list.length){
-          restTicket(slot, "No rulings filed yet — the desk is on its first round.");
+          restTicket(slot, "No rulings filed yet; the desk is on its first round.");
           host.innerHTML = '<div class="dk-empty" style="border:0">Nothing on the record yet. This page updates itself.</div>';
           return;
         }
@@ -390,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function(){
           : '<div class="dk-empty" style="border:0">This round filed one ruling. The next is along shortly.</div>';
         $("#dkDecCap").textContent = signedIn()
           ? (list.length + " latest rulings")
-          : "one call per round shown — sign in for all of them";
+          : "one call per round shown, sign in for all of them";
       }).catch(function(){
         restTicket($("#dkTicketSlot"), "The record is unreachable right now. Reload to try again.");
         $("#dkDecisions").innerHTML = '<div class="dk-empty" style="border:0">Could not reach the desk record.</div>';
@@ -410,8 +410,8 @@ document.addEventListener("DOMContentLoaded", function(){
       var extra = "";
       if(Array.isArray(p.evidence) && p.evidence.length) extra = "evidence · " + p.evidence.map(esc).join(" · ");
       if(Array.isArray(p.key_points) && p.key_points.length) extra = p.key_points.map(esc).join(" · ");
-      if(p.watch) extra += (extra ? " — " : "") + "watch: " + esc(p.watch);
-      if(p.risk) extra += (extra ? " — " : "") + "risk: " + esc(p.risk);
+      if(p.watch) extra += (extra ? "; " : "") + "watch: " + esc(p.watch);
+      if(p.risk) extra += (extra ? "; " : "") + "risk: " + esc(p.risk);
       return '<div class="dk-note">' +
         '<div class="nh">' +
           '<span class="dk-agent ' + esc(n.agent) + '">' + esc(n.agent) + '</span>' +
@@ -425,7 +425,7 @@ document.addEventListener("DOMContentLoaded", function(){
     function paintNotes(roundId){
       var host = $("#dkNotes");
       if(!signedIn()){
-        host.innerHTML = '<div class="dk-gate">The analysts’ filings — every note, score and disagreement — are for members.' +
+        host.innerHTML = '<div class="dk-gate">The analysts’ filings, every note, score and disagreement, are for members.' +
           '<div style="margin-top:14px"><a class="btn btn-primary btn-sm" href="./signin.html?next=desk.html">Sign in to read the desk</a></div></div>';
         return Promise.resolve();
       }
@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", function(){
         var sel = $("#dkRound");
         if(!rs.length){
           sel.innerHTML = '<option>—</option>';
-          $("#dkNotes").innerHTML = '<div class="dk-gate">No rounds on the record yet — the desk files its first one shortly.</div>';
+          $("#dkNotes").innerHTML = '<div class="dk-gate">No rounds on the record yet; the desk files its first one shortly.</div>';
           return;
         }
         var cur = sel.value;

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Today's Ideas — Flux</title>
-<meta name="description" content="Today's AI trade ideas from Flux — momentum leaders and beaten-down rebound names, each with a full brief. First idea free; sign in to see them all. Simulated / educational, not investment advice.">
+<title>Today's Ideas; Flux</title>
+<meta name="description" content="Today's AI trade ideas from Flux, momentum leaders and beaten-down rebound names, each with a full brief. First idea free; sign in to see them all. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -191,8 +191,8 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   function lockedRow(n){
     var el = document.createElement("div"); el.className = "glass irow locked reveal";
-    el.innerHTML = '<div class="lk"><span class="em">🔒</span><b>'+n+' more idea'+(n===1?"":"s")+' today</b>'+
-      '<span>Full briefs, targets & conviction — free with an account.</span>'+
+    el.innerHTML = '<div class="lk"><span class="em"></span><b>'+n+' more idea'+(n===1?"":"s")+' today</b>'+
+      '<span>Full briefs, targets & conviction, free with an account.</span>'+
       '<a class="btn btn-primary btn-sm" href="./signin.html?next=ideas.html">Sign in to unlock</a></div>';
     return el;
   }
@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   function renderKronos(){
     var K = F.Kronos, picks = K ? K.rank(F.PRICES?Object.keys(F.PRICES):[]).slice(0,6) : [];
-    if(!picks.length){ list.innerHTML='<div class="glass irow" style="justify-content:center;grid-template-columns:1fr"><span style="text-align:center;color:var(--text-faint)">Today’s ideas are being prepared — check back shortly, or <a href="./signin.html" style="color:var(--cyan)">sign in</a>.</span></div>'; fit(); return; }
+    if(!picks.length){ list.innerHTML='<div class="glass irow" style="justify-content:center;grid-template-columns:1fr"><span style="text-align:center;color:var(--text-faint)">Today’s ideas are being prepared, check back shortly, or <a href="./signin.html" style="color:var(--cyan)">sign in</a>.</span></div>'; fit(); return; }
     render({ day:null, total:picks.length, signedIn:true, ideas: picks.map(function(r){ var t=r.ticker,f=K.forecast(t),px=F.priceOf(t),long=r.predReturn>=0;
       return {ticker:t,name:(F.NAMES&&F.NAMES[t])||t,kind:long?"momentum":"rebound",price:px,target:f?f.predClose:px*(1+r.predReturn),conviction:Math.round(r.confidence),horizon:"weeks",
         headline:(long?"Kronos sees upside in ":"Kronos flags risk in ")+t,thesis:"Model estimate from the ensemble.",catalyst:"Model signal.",risk:"Model estimate; markets can move against it."}; }) });
@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function(){
   /* brief: build / view / download */
   var KIND_NAMES = { momentum:"Momentum", breakout:"Breakout", undervalued:"Undervalued", rebound:"Rebound", overvalued:"Overvalued · caution" };
   function briefLines(s){ if(!s) return []; var mv=liveMv(s.ticker);
-    var rows = [["Idea",s.ticker+" — "+(s.name||s.ticker)],["Setup",(KIND_NAMES[s.kind]||"Idea")+" · "+(s.horizon||"")+" horizon"],
+    var rows = [["Idea",s.ticker+" · "+(s.name||s.ticker)],["Setup",(KIND_NAMES[s.kind]||"Idea")+" · "+(s.horizon||"")+" horizon"],
       ["Conviction",(s.conviction||0)+"%"],["Price now","$"+(+s.price).toFixed(2)+(mv?(" ("+mv+" today)"):"")]];
     if(s.entry!=null) rows.push(["Entry zone","$"+(+s.entry).toFixed(2)]);
     rows.push(["Directional target","$"+(+s.target).toFixed(2)]);
@@ -242,15 +242,15 @@ document.addEventListener("DOMContentLoaded", function(){
     if(s.watch) rows.push(["What to watch",s.watch]);
     if(s.news) rows.push(["News used",s.news]);
     return rows; }
-  function briefPlain(s){ var out="FLUX — TRADE IDEA BRIEF\n"+(s.headline||"")+"\n"+"=".repeat(44)+"\n\n";
+  function briefPlain(s){ var out="FLUX, TRADE IDEA BRIEF\n"+(s.headline||"")+"\n"+"=".repeat(44)+"\n\n";
     briefLines(s).forEach(function(r){ out+=r[0].toUpperCase()+":\n"+r[1]+"\n\n"; });
     return out+"-".repeat(44)+"\nSimulated / educational idea on a paper account. Not investment advice; no promise of return or timing. Generated by Fluxi (Flux AI desk).\ndsh-trading.com\n"; }
   function downloadBrief(s){ if(!s) return; try{ var blob=new Blob([briefPlain(s)],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
     a.href=url; a.download="flux-brief-"+s.ticker+".txt"; document.body.appendChild(a); a.click();
-    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },100); if(F.toast) F.toast("⬇️ Downloaded the "+s.ticker+" brief."); }catch(e){} }
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },100); if(F.toast) F.toast("Downloaded the "+s.ticker+" brief."); }catch(e){} }
   var CURRENT = null;
   function openBrief(s){ if(!s) return; CURRENT = s; var m=$("#briefModal"), body=$("#briefBody"), ttl=$("#briefTitle"); if(!m) return;
-    ttl.textContent=s.ticker+" — "+(s.name||s.ticker);
+    ttl.textContent=s.ticker+" · "+(s.name||s.ticker);
     body.innerHTML='<p class="bm-headline">'+esc(s.headline||"")+'</p>'+briefLines(s).map(function(r){ return '<div class="bm-row"><div class="bm-k">'+esc(r[0])+'</div><div class="bm-v">'+esc(r[1])+'</div></div>'; }).join("")+
       '<p class="bm-disc">Simulated / educational idea on a paper account. Not investment advice; no promise of return or timing.</p>';
     m.classList.add("show"); }

@@ -207,8 +207,8 @@
     var top = v.under[0], wk = v.over[0];
     var lines = [];
     lines.push("Market read: " + tone + ". The model sees " + bull + " names with upside and " + bear + " stretched.");
-    if (top) lines.push("Most undervalued: " + top.ticker + " (" + top.name + ") — model fair value " + money(top.fair) + " vs " + money(top.price) + ", " + pct(top.upside) + " edge.");
-    if (wk) lines.push("Most overvalued: " + wk.ticker + " — model sees " + pct(wk.upside) + " downside from " + money(wk.price) + ".");
+    if (top) lines.push("Most undervalued: " + top.ticker + " (" + top.name + "), model fair value " + money(top.fair) + " vs " + money(top.price) + ", " + pct(top.upside) + " edge.");
+    if (wk) lines.push("Most overvalued: " + wk.ticker + ", model sees " + pct(wk.upside) + " downside from " + money(wk.price) + ".");
     lines.push("This is a simulated model estimate, not advice.");
     return { tone: tone, text: lines.join(" "), bullets: lines, val: v };
   };
@@ -216,7 +216,7 @@
   /* ------------------------------------------------------------
      3.5) MEMORY & LEARNING — Fluxi learns two ways:
         • from humans: facts you teach it ("remember I hold NVDA",
-          "my rule is max 8% per name") + 👍/👎 feedback on answers.
+          "my rule is max 8% per name") + up/down feedback on answers.
         • from itself: it journals every signal it gives, later scores
           those calls against real price moves, tracks its hit-rate,
           and distills "lessons" it can cite. It can also research a
@@ -268,7 +268,7 @@
   J.feedback = function (good, aboutText) {
     if (good) Mem.stats.up++; else Mem.stats.down++;
     // a thumbs-down becomes a lesson to be more careful on that topic
-    if (!good && aboutText) J.addLesson("A user pushed back on: \"" + aboutText.slice(0, 80) + "\" — weight that read more cautiously.", "human");
+    if (!good && aboutText) J.addLesson("A user pushed back on: \"" + aboutText.slice(0, 80) + "\", weight that read more cautiously.", "human");
     memSave(); if (J.onLearn) J.onLearn();
   };
   J.addLesson = function (text, src) {
@@ -296,8 +296,8 @@
     if (changed) {
       var acc = Mem.stats.scored ? Math.round(Mem.stats.hits / Mem.stats.scored * 100) : null;
       if (acc != null && Mem.stats.scored >= 5) {
-        if (acc >= 60) J.addLesson("My directional calls are running " + acc + "% so far — the momentum read is holding; keep sizing to conviction.", "self");
-        else if (acc <= 40) J.addLesson("My directional calls are only " + acc + "% lately — chop is high; widen the confidence bar before calling BUY/SELL.", "self");
+        if (acc >= 60) J.addLesson("My directional calls are running " + acc + "% so far: the momentum read is holding; keep sizing to conviction.", "self");
+        else if (acc <= 40) J.addLesson("My directional calls are only " + acc + "% lately, chop is high; widen the confidence bar before calling BUY/SELL.", "self");
       }
       memSave();
     }
@@ -312,7 +312,7 @@
     var name = (F.NAMES && F.NAMES[t]) || t, fu = fundOf(t), rp = rangePos(t);
     var price = (F.priceOf && F.priceOf(t)) || f.last;
     var L = [];
-    L.push("📋 " + t + " — " + name + (fu && fu.sec ? " · " + fu.sec : ""));
+    L.push("<i class='ic-i i-doc' aria-hidden='true'></i> " + t + " — " + name + (fu && fu.sec ? " · " + fu.sec : ""));
     L.push("Price " + money(price) + (fu && capStr(fu.mc) ? " · " + capStr(fu.mc) + " market cap" : ""));
     var val = [];
     if (fu && fu.pe != null) val.push("P/E " + fu.pe + (fu.pe > 60 ? " (rich, growth-priced)" : fu.pe < 20 ? " (reasonable)" : " (fair)"));
@@ -320,12 +320,12 @@
     if (val.length) L.push("Valuation: " + val.join(" · "));
     L.push("Model view: " + s.action + ", targeting " + money(f.predClose) + " (" + pct(f.predReturn) + ", " + Math.round(f.confidence) + "% conviction).");
     var take = s.action === "BUY"
-      ? "The forecast leans higher" + (rp != null && rp <= 30 ? " and it's still low in its range — that's the kind of asymmetry I like" : "") + "."
+      ? "The forecast leans higher" + (rp != null && rp <= 30 ? " and it's still low in its range; that's the kind of asymmetry I like" : "") + "."
       : s.action === "SELL"
-        ? "The forecast leans lower" + (rp != null && rp >= 75 ? " and it's extended near highs — I'd tread carefully" : "") + "."
-        : "It's balanced here — I'd wait for a cleaner setup.";
+        ? "The forecast leans lower" + (rp != null && rp >= 75 ? " and it's extended near highs, I'd tread carefully" : "") + "."
+        : "It's balanced here, I'd wait for a cleaner setup.";
     L.push("My take: " + take);
-    L.push("(Model estimate on simulated data — not advice.)");
+    L.push("(Model estimate on simulated data, not advice.)");
     var brief = L.join("\n");
     J.addLesson(t + " researched " + new Date().toLocaleDateString() + ": " + s.action + " @ " + money(price) + " → " + money(f.predClose), "research");
     journalSignal(t, f.predReturn, f.last);
@@ -340,8 +340,8 @@
       ", and I've logged " + st.calls + " of my own calls" + (acc != null ? " (running " + acc + "% directional so far)" : "") + ".");
     if (Mem.facts.length) lines.push("What you told me: " + Mem.facts.slice(0, 5).map(function (f) { return "“" + f.text + "”"; }).join("; ") + ".");
     if (Mem.lessons.length) lines.push("Lessons I've drawn: " + Mem.lessons.slice(0, 3).map(function (l) { return l.text; }).join(" "));
-    if (Mem.facts.length + Mem.lessons.length === 0) lines.push("Nothing yet — teach me with “remember …”, ask me to “research NVDA”, or thumbs-rate my answers and I'll adapt.");
-    lines.push("(Pattern memory + self-scoring — not a promise of profit.)");
+    if (Mem.facts.length + Mem.lessons.length === 0) lines.push("Nothing yet, teach me with “remember …”, ask me to “research NVDA”, or thumbs-rate my answers and I'll adapt.");
+    lines.push("(Pattern memory + self-scoring, not a promise of profit.)");
     return lines.join("\n");
   };
 
@@ -440,11 +440,11 @@
       " over the next few sessions to a target around " + money(f ? f.predClose : 0) + " (" + Math.round(s.confidence) + "% conviction).";
     // fundamental colour a broker would add
     var notes = [];
-    if (rp != null) notes.push(rp <= 25 ? "It's near the low end of its 52-week range — value territory if the story holds" :
+    if (rp != null) notes.push(rp <= 25 ? "It's near the low end of its 52-week range, value territory if the story holds" :
       rp >= 80 ? "It's stretched near 52-week highs, so I'd respect the risk" : "It's mid-range, room either way");
-    if (f2 && f2.pe != null) notes.push(f2.pe > 60 ? "P/E of " + f2.pe + " is rich — priced for growth" : f2.pe < 20 ? "P/E of " + f2.pe + " is reasonable" : "P/E of " + f2.pe + " is fair");
+    if (f2 && f2.pe != null) notes.push(f2.pe > 60 ? "P/E of " + f2.pe + " is rich, priced for growth" : f2.pe < 20 ? "P/E of " + f2.pe + " is reasonable" : "P/E of " + f2.pe + " is fair");
     if (notes.length) out += " " + notes.join("; ") + ".";
-    out += " Model estimate, not advice — you call it. Want me to place a paper trade?";
+    out += " Model estimate, not advice; you call it. Want me to place a paper trade?";
     return out;
   }
 
@@ -456,7 +456,7 @@
     var body = rows.map(function (r, i) {
       return (i + 1) + ". " + r.ticker + " — " + money(r.price) + " → fair " + money(r.fair) + " (" + pct(r.upside) + ", " + Math.round(r.conf) + "% conf)";
     }).join("\n");
-    return label + "\n" + body + "\nModel estimates on a simulated feed — not advice.";
+    return label + "\n" + body + "\nModel estimates on a simulated feed, not advice.";
   }
 
   function fundAnswer() {
@@ -466,9 +466,9 @@
       var top = s.positions.slice(0, 3).map(function (p) { return p.t; }).join(", ");
       return Promise.resolve(
         "The Flux Fund is at " + money(s.aum) + " — " + (s.retPct >= 0 ? "+" : "") + s.retPct + "% since launch, " +
-        (s.dayPL >= 0 ? "+" : "−") + money(Math.abs(s.dayPL)) + " today — across " + s.nOpen + " positions" +
+        (s.dayPL >= 0 ? "+" : "−") + money(Math.abs(s.dayPL)) + " today, across " + s.nOpen + " positions" +
         (top ? " (top: " + top + ")" : "") + ". It's placed " + s.nTrades.toLocaleString() +
-        " paper fills; watch it live on the Fund page. Simulated, virtual money — not advice.");
+        " paper fills; watch it live on the Fund page. Simulated, virtual money, not advice.");
     }
     // best-effort live fund; resolves async
     return new Promise(function (resolve) {
@@ -481,14 +481,14 @@
             var pos = (fund.positions && fund.positions.length) || 0;
             resolve("The Flux Autopilot fund is at " + money(eq) +
               (pnl != null ? " (" + (pnl >= 0 ? "+" : "") + money(pnl) + " P&L)" : "") +
-              " across " + pos + " positions. It trades a live $10k simulated account and posts its reasoning. Simulated — not real money.");
+              " across " + pos + " positions. It trades a live $10k simulated account and posts its reasoning. Simulated, not real money.");
           } else { resolve(fundStatic()); }
         }).catch(function () { resolve(fundStatic()); });
       } else { resolve(fundStatic()); }
     });
   }
   function fundStatic() {
-    return "The Flux Autopilot runs a live $10,000 simulated paper fund, scanning and trading on Kronos signals and posting hourly/daily reports. Open the Autopilot page to watch it. Simulated — not real money.";
+    return "The Flux Autopilot runs a live $10,000 simulated paper fund, scanning and trading on Kronos signals and posting hourly/daily reports. Open the Autopilot page to watch it. Simulated, not real money.";
   }
 
   function riskAnswer() {
@@ -498,9 +498,9 @@
     if (B && B.positions && Object.keys(B.positions).length) {
       var syms = Object.keys(B.positions);
       return pre + "Your paper book holds " + syms.length + " names: " + syms.join(", ") +
-        ". Watch concentration — if they move together, one bad print hits them all. Want a Kronos read on any of them?";
+        ". Watch concentration, if they move together, one bad print hits them all. Want a Kronos read on any of them?";
     }
-    return pre + "Concentration and correlation are the usual risks — too much in names that move together. Load up a paper book on the terminal and I'll watch it in real time.";
+    return pre + "Concentration and correlation are the usual risks, too much in names that move together. Load up a paper book on the terminal and I'll watch it in real time.";
   }
 
   function moversAnswer() {
@@ -514,7 +514,7 @@
     return "Top movers (simulated): ▲ " + up.join(", ") + "  ▼ " + dn.join(", ") + ".";
   }
 
-  var CAP = "I'm Fluxi — I scan 250+ US stocks across momentum, valuation (undervalued & overvalued), breakouts, rebounds and catalysts, and I learn as we go. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Any momentum names right now?\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\nTeach me anything: \"remember I hold NVDA\" or \"my rule is max 8% per name.\" Ask me to \"research TSLA\" and I'll save what I find.\nEverything I show is simulated / a model estimate — never investment advice.";
+  var CAP = "I'm Fluxi, I scan 250+ US stocks across momentum, valuation (undervalued & overvalued), breakouts, rebounds and catalysts, and I learn as we go. Ask me things like:\n• \"What's NVDA at?\"\n• \"Is AMD undervalued?\"\n• \"Show me the most overvalued stocks\"\n• \"Any momentum names right now?\"\n• \"Give me a market brief\"\n• \"How's the fund doing?\"\nTeach me anything: \"remember I hold NVDA\" or \"my rule is max 8% per name.\" Ask me to \"research TSLA\" and I'll save what I find.\nEverything I show is simulated / a model estimate, never investment advice.";
 
   // Rich live context so every LLM answer is grounded in real data.
   function buildContext(q) {
@@ -620,20 +620,20 @@
     // very short greetings get an instant, varied hello (longer/there's-a-question -> LLM converses)
     if (/^(hi|hey|hello|yo|sup|fluxi|heya|hiya|howdy|good (morning|afternoon|evening))\b[!. ]*$/.test(ql) && ql.length < 22) {
       var hellos = [
-        "Hey — Fluxi here. What are we looking at?",
-        "Fluxi online. Markets, the fund, or just talking shop — what's up?",
+        "Hey, Fluxi here. What are we looking at?",
+        "Fluxi online. Markets, the fund, or just talking shop, what's up?",
         "Hey there. Want a market brief, a name to dig into, or something else on your mind?",
-        "Fluxi, ready. Ask me anything — a stock, the fund, or whatever you're thinking."
+        "Fluxi, ready. Ask me anything: a stock, the fund, or whatever you're thinking."
       ];
       return Promise.resolve({ text: hellos[Math.floor((Date.now() / 1000) % hellos.length)], kind: "greet" });
     }
     if (has(ql, ["your name", "who are you", "what are you", "what's your name", "whats your name"]))
-      return Promise.resolve({ text: "I'm Fluxi — your AI trading desk. I continuously scan 250+ US stocks, ranking momentum, undervalued and overvalued names, breakouts and rebounds — anything that moves a stock — write daily trade ideas with full briefs, run the paper fund, and learn from you and from how my own calls play out. Not a financial advisor — a research desk.", kind: "id" });
+      return Promise.resolve({ text: "I'm Fluxi, your AI trading desk. I continuously scan 250+ US stocks, ranking momentum, undervalued and overvalued names, breakouts and rebounds, anything that moves a stock, write daily trade ideas with full briefs, run the paper fund, and learn from you and from how my own calls play out. Not a financial advisor: a research desk.", kind: "id" });
     if (has(ql, ["what can you", "help", "commands", "what do you do"]))
       return Promise.resolve({ text: CAP, kind: "help" });
     // "what is Kronos?" — explain the forecasting engine (not when a ticker is named, so "kronos read on NVDA" still routes to the signal).
     if (/\bkronos\b/i.test(ql) && has(ql, ["what", "how", "explain", "tell me", "who", "about", "mean", "?"]) && !findTicker(q))
-      return Promise.resolve({ text: "Kronos is my forecasting engine — a deep-learning model (a transformer trained on candlestick/OHLCV data) that predicts a name's next few candles, then turns that into a predicted return and a signal: over +2% reads BUY, under −2% SELL, otherwise HOLD. It's an open model on GitHub (dannyholden17-boop/Kronos); a Python bridge runs the real model and feeds live forecasts to the desk, and when that bridge is idle an in-browser Monte-Carlo version stands in so signals always work. My rankings, the daily ideas and the Flux Fund all trade off Kronos. Forecasts are simulated/paper — not a guarantee. Want a Kronos read on a name?", kind: "id" });
+      return Promise.resolve({ text: "Kronos is my forecasting engine: a deep-learning model (a transformer trained on candlestick/OHLCV data) that predicts a name's next few candles, then turns that into a predicted return and a signal: over +2% reads BUY, under −2% SELL, otherwise HOLD. It's an open model on GitHub (dannyholden17-boop/Kronos); a Python bridge runs the real model and feeds live forecasts to the desk, and when that bridge is idle an in-browser Monte-Carlo version stands in so signals always work. My rankings, the daily ideas and the Flux Fund all trade off Kronos. Forecasts are simulated/paper, not a guarantee. Want a Kronos read on a name?", kind: "id" });
 
     // ---- LEARNING: teach me / forget / what have you learned / research ----
     var teach = q.match(/^\s*(?:remember|note|keep in mind|don'?t forget|fyi|my rule is|my rules are|i hold|i own|i'm holding|im holding)\b[:,]?\s*(.*)$/i);
@@ -642,11 +642,11 @@
       // if they said "I hold NVDA" keep the whole phrase
       if (/^(i hold|i own|i'm holding|im holding|my rule)/i.test(q)) fact = q.trim();
       var ok = J.remember(fact);
-      return Promise.resolve({ text: ok ? "Got it — I'll remember that: “" + fact + "”. It'll shape how I read your book." : "I already had that noted.", kind: "learn" });
+      return Promise.resolve({ text: ok ? "Got it, I'll remember that: “" + fact + "”. It'll shape how I read your book." : "I already had that noted.", kind: "learn" });
     }
     if (has(ql, ["forget "])) {
       var n = J.forget(q.replace(/.*forget/i, "").trim());
-      return Promise.resolve({ text: n ? "Done — dropped " + n + " note" + (n === 1 ? "" : "s") + "." : "I didn't have anything matching that.", kind: "learn" });
+      return Promise.resolve({ text: n ? "Done, dropped " + n + " note" + (n === 1 ? "" : "s") + "." : "I didn't have anything matching that.", kind: "learn" });
     }
     if (has(ql, ["what have you learned", "what did you learn", "what do you know", "your memory", "what did i teach", "show your memory", "what you know about me"]))
       return Promise.resolve({ text: J.learnedSummary(), kind: "learned" });
@@ -654,7 +654,7 @@
     if (res) {
       var rt = findTicker(res[1]) || res[1].toUpperCase();
       var note = J.research(rt);
-      return Promise.resolve({ text: note ? note + "\n\n(Saved to memory — I'll grade this call against what price actually does.)" : "I couldn't model " + rt + " — is it in my universe? Try a name like NVDA, TSLA or COIN.", kind: "research", ticker: rt });
+      return Promise.resolve({ text: note ? note + "\n\n(Saved to memory, I'll grade this call against what price actually does.)" : "I couldn't model " + rt + ", is it in my universe? Try a name like NVDA, TSLA or COIN.", kind: "research", ticker: rt });
     }
 
     // ---- COMPARE two names: "NVDA vs AMD", "compare TSLA and COIN" ----
@@ -673,7 +673,7 @@
         var fa = K2 && K2.forecast(a), fb = K2 && K2.forecast(b);
         var winner = (fa && fb) ? (fa.predReturn >= fb.predReturn ? a : b) : a;
         return Promise.resolve({ text: a + " vs " + b + ":\n• " + line(a) + "\n• " + line(b) +
-          "\nMy model leans " + winner + " here on forward return — but they're different animals; size to your own view. Model estimate, not advice.", kind: "compare" });
+          "\nMy model leans " + winner + " here on forward return, but they're different animals; size to your own view. Model estimate, not advice.", kind: "compare" });
       }
     }
 
@@ -681,15 +681,15 @@
     var actT = findTicker(q);
     if (actT && /\b(unwatch|unfollow|stop watching|remove .*watch|take .*off .*watch)\b/i.test(ql)) {
       if (F.Watch) F.Watch.remove(actT);
-      return Promise.resolve({ text: "Done — took " + actT + " off your watchlist.", kind: "action" });
+      return Promise.resolve({ text: "Done, took " + actT + " off your watchlist.", kind: "action" });
     }
     if (actT && /\b(watch|watchlist|watch list|follow|track|keep an eye)\b/i.test(ql)) {
       if (F.Watch) F.Watch.add(actT);
-      return Promise.resolve({ text: "Added " + actT + " to your watchlist — I'll keep an eye on it. Want a price alert on it too?", kind: "action" });
+      return Promise.resolve({ text: "Added " + actT + " to your watchlist, I'll keep an eye on it. Want a price alert on it too?", kind: "action" });
     }
     if (/\b(watch ?list)\b/i.test(ql) && /\b(show|what|my|see|list|on my|whats)\b/i.test(ql)) {
       var wl = F.Watch ? F.Watch.get() : [];
-      return Promise.resolve({ text: wl.length ? "Your watchlist: " + wl.join(", ") + "." : "Your watchlist is empty — say \"watch NVDA\" and I'll add it.", kind: "action" });
+      return Promise.resolve({ text: wl.length ? "Your watchlist: " + wl.join(", ") + "." : "Your watchlist is empty, say \"watch NVDA\" and I'll add it.", kind: "action" });
     }
     // ---- ACTIONS: price alerts ----
     var wantAlert = /\b(alert|notify me|ping me|remind me|watch for)\b/i.test(ql) ||
@@ -704,8 +704,8 @@
             : (price >= cur ? "above" : "below");
         var a = (F.Alerts && F.Alerts.add) ? F.Alerts.add(actT, op, price) : null;
         return Promise.resolve({ text: a === null
-          ? "I couldn't set that — double-check the symbol and a valid price."
-          : "Alert armed 🔔 — I'll flag " + actT + " when it goes " + op + " " + money(price) + " (it's " + money(cur) + " now).", kind: "action" });
+          ? "I couldn't set that, double-check the symbol and a valid price."
+          : "Alert armed <i class='ic-i i-bell' aria-hidden='true'></i>, I'll flag " + actT + " when it goes " + op + " " + money(price) + " (it's " + money(cur) + " now).", kind: "action" });
       }
       return Promise.resolve({ text: "What level for " + actT + "? Try \"alert me when " + actT + " hits " + money(Math.round(cur * 1.05)) + "\" or \"...drops below " + money(Math.round(cur * 0.95)) + "\".", kind: "action" });
     }
@@ -715,7 +715,7 @@
     var tr = parseTrade(q);
     if (tr) {
       if (tr.need === "ticker") return Promise.resolve({ text: "Which name do you want to " + tr.side + "? e.g. \"" + tr.side + " 10 NVDA\".", kind: "chat" });
-      if (tr.need === "qty") return Promise.resolve({ text: "How many shares of " + tr.ticker + " (at " + money(tr.price) + ")? Say a number or a dollar amount — e.g. \"" + tr.side + " 10 " + tr.ticker + "\" or \"" + tr.side + " $2000 " + tr.ticker + "\".", kind: "chat" });
+      if (tr.need === "qty") return Promise.resolve({ text: "How many shares of " + tr.ticker + " (at " + money(tr.price) + ")? Say a number or a dollar amount, e.g. \"" + tr.side + " 10 " + tr.ticker + "\" or \"" + tr.side + " $2000 " + tr.ticker + "\".", kind: "chat" });
       var verb = tr.side === "buy" ? "Buy" : "Sell";
       return Promise.resolve({
         text: verb + " " + tr.qty + " " + tr.ticker + " @ ~" + money(tr.price) + " ≈ " + money(tr.cost) +

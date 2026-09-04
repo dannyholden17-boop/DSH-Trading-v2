@@ -1,10 +1,10 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Markets — Flux</title>
+<title>Markets; Flux</title>
 <meta name="description" content="The whole tape in one view: indices, movers, sector rotation, live signals and the week's catalysts. A simulated market demo of the Flux desk.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -170,7 +170,7 @@
     </div>
     <div class="idx-strip" id="idxStrip"></div>
     <p class="disclaimer" style="margin-top:16px">Prices and daily changes are a real market snapshot; relative-volume and
-      the mini-sparklines are estimates. Trading on Flux is simulated (paper) — model estimates, not investment advice.</p>
+      the mini-sparklines are estimates. Trading on Flux is simulated (paper), model estimates, not investment advice.</p>
   </div>
 </section>
 
@@ -180,7 +180,7 @@
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Who's actually moving.</h2>
       <p class="lede" style="margin-top:14px">The Scanner engine re-ranks the universe every few seconds.
-        Relative volume is the tell — a 5% move on 0.4× volume is noise, on 3.8× it's a story.</p>
+        Relative volume is the tell: a 5% move on 0.4× volume is noise, on 3.8× it's a story.</p>
     </div>
 
     <div class="glass panel reveal" style="margin-top:32px">
@@ -221,7 +221,7 @@
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Filter the whole universe.</h2>
       <p class="lede" style="margin-top:14px">Every name the desk tracks, with live price, change and fundamentals.
-        Filter by sector or search, sort any column, star what you want to watch — then trade it.</p>
+        Filter by sector or search, sort any column, star what you want to watch, then trade it.</p>
     </div>
 
     <div class="glass panel reveal" style="margin-top:32px">
@@ -262,7 +262,7 @@
           <tbody id="scrBody"></tbody>
         </table>
       </div>
-      <p class="disclaimer" style="margin-top:14px">Prices are a simulated (paper) feed, delayed sample data — not real
+      <p class="disclaimer" style="margin-top:14px">Prices are a simulated (paper) feed, delayed sample data, not real
         quotes. Fundamentals are illustrative. Nothing here is investment advice.</p>
     </div>
   </div>
@@ -274,7 +274,7 @@
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Where the money went today.</h2>
       <p class="lede" style="margin-top:14px">Sector strength, sized by conviction. When semis lead and
-        utilities lag, the tape is risk-on — and the engines weight their signals accordingly.</p>
+        utilities lag, the tape is risk-on, and the engines weight their signals accordingly.</p>
     </div>
     <div class="heat reveal" id="heat" style="margin-top:32px"></div>
   </div>
@@ -310,13 +310,13 @@
             <tr><th scope="col">When</th><th scope="col">Event</th><th scope="col">Impact</th></tr>
           </thead>
           <tbody>
-            <tr><td class="mono faint">08:30</td><td>CPI — core, m/m</td><td><span class="imp imp-h">High</span></td></tr>
+            <tr><td class="mono faint">08:30</td><td>CPI, core, m/m</td><td><span class="imp imp-h">High</span></td></tr>
             <tr><td class="mono faint">08:30</td><td>Jobless claims</td><td><span class="imp imp-m">Med</span></td></tr>
             <tr><td class="mono faint">10:00</td><td>Retail sales</td><td><span class="imp imp-m">Med</span></td></tr>
             <tr><td class="mono faint">14:00</td><td>FOMC minutes</td><td><span class="imp imp-h">High</span></td></tr>
             <tr><td class="mono faint">16:20</td><td>Earnings: NVDA (after close)</td><td><span class="imp imp-h">High</span></td></tr>
             <tr><td class="mono faint">Thu</td><td>Crude inventories</td><td><span class="imp imp-l">Low</span></td></tr>
-            <tr><td class="mono faint">Fri</td><td>Options expiry — monthly</td><td><span class="imp imp-m">Med</span></td></tr>
+            <tr><td class="mono faint">Fri</td><td>Options expiry, monthly</td><td><span class="imp imp-m">Med</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -331,8 +331,8 @@
   <div class="wrap">
     <div class="cta reveal">
 <h2 class="h2" style="margin-top:14px">Stop reading the tape. Let it read itself.</h2>
-      <p class="lede" style="margin:18px auto 28px;text-align:center">Flux watches all of it — indices,
-        movers, rotation, catalysts — and only interrupts you when something crosses your bar.</p>
+      <p class="lede" style="margin:18px auto 28px;text-align:center">Flux watches all of it, indices,
+        movers, rotation, catalysts, and only interrupts you when something crosses your bar.</p>
       <div class="btn-row" style="justify-content:center">
         <a class="btn btn-primary btn-lg" href="./terminal.html">Open the desk</a>
         <a class="btn btn-ghost btn-lg" href="./terminal.html">Open the app</a>
@@ -484,7 +484,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var S = window.FluxSupa;
     if(!(S && S.entitled && S.entitled())){
       body.querySelectorAll(".tvcell").forEach(function(td){
-        td.innerHTML = '<a href="./pricing.html" style="color:var(--text-faint);text-decoration:none" title="TradingView ratings are a Pro feature">🔒</a>';
+        td.innerHTML = '<a href="./pricing.html" style="color:var(--text-faint);text-decoration:none" title="TradingView ratings are a Pro feature"><i class="ic-i i-lock" aria-hidden="true"></i></a>';
       });
       return;
     }

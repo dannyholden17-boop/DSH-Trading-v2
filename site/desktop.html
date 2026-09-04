@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Flux Desktop — Pro Workstation</title>
+<title>Flux Desktop, Pro Workstation</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Flux Desktop — a pro multi-panel trading workstation: advanced charts with MACD/RSI, order ladder, time & sales, screener, alerts, news, and a full paper order engine.">
+<meta name="description" content="Flux Desktop: a pro multi-panel trading workstation: advanced charts with MACD/RSI, order ladder, time & sales, screener, alerts, news, and a full paper order engine.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <script src="./assets/dsh-store.js?v=28"></script>
 <script src="./assets/dsh-feed.js?v=28"></script>
 <script src="./assets/dsh.js?v=28" defer></script>
@@ -40,7 +40,7 @@
     background:linear-gradient(180deg,#071021,#040a17)}
   .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.9rem;letter-spacing:-.01em}
   .glyph{width:24px;height:24px;border-radius:4px;border:1px solid var(--line);
-    background:#0d1220 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E") center/cover}
+    background:#0d1220 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E") center/cover}
   .search{display:flex;align-items:center;gap:7px;background:var(--well);border:1px solid var(--line);border-radius:4px;
     padding:5px 10px;width:190px}
   .search:focus-within{border-color:rgba(245,185,60,.5)}
@@ -647,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(dockTab==="agents"){renderAgents(true);return;}
     if(dockTab==="reports"){renderReports();return;}
     if(dockTab==="positions"){
-      if(!pf.open.length){host.innerHTML='<div class="empty">No open positions — place an order above.</div>';return;}
+      if(!pf.open.length){host.innerHTML='<div class="empty">No open positions, place an order above.</div>';return;}
       host.innerHTML='<table><thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Last</th><th>P&amp;L $</th><th>P&amp;L %</th><th></th></tr></thead><tbody>'+
         pf.open.map(function(p){var m=S.positionPnl(p);
           return '<tr class="row" data-sym="'+p.sym+'"><td>'+p.sym+'</td><td class="'+(p.side==="buy"?"up":"down")+'">'+p.side+'</td>'+
@@ -683,7 +683,7 @@ document.addEventListener("DOMContentLoaded", function(){
             '<td style="color:'+(a.triggered?"var(--am)":"var(--em)")+'">'+(a.triggered?"● triggered":"● armed")+'</td>'+
             '<td style="font-weight:400;color:var(--faint)">'+d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+'</td>'+
             '<td><button class="btn-sm danger" data-rmal="'+a.id+'">Remove</button></td></tr>'}).join("")+'</tbody></table>'
-          :'<div class="empty">No alerts. Create one — it fires the moment price crosses.</div>');
+          :'<div class="empty">No alerts. Create one; it fires the moment price crosses.</div>');
       var add=$("#alAdd");if(add)add.addEventListener("click",function(){
         var sym=$("#alSym").value.trim().toUpperCase()||SYM,dir=$("#alDir").value,p=+$("#alPx").value;
         if(!(p>0))return;S.addAlert(sym,dir,p);toast("Alert armed: "+sym+" "+dir+" $"+p.toFixed(2));});
@@ -725,13 +725,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ============ news ============ */
   var NEWS=[
-    ["NVDA","Call sweep: 14,200 contracts at the $185 strike hit the tape — all at ask",1],
+    ["NVDA","Call sweep: 14,200 contracts at the $185 strike hit the tape; all at ask",1],
     ["AMD","Breaks out of six-week base on 2.7× average volume",0],
     ["TSLA","8-K filing: delivery guidance cut; historical 5-day drift −2.3%",1],
-    ["SPY","Breadth improves — 63% of S&P constituents above the 50-DMA",0],
+    ["SPY","Breadth improves, 63% of S&P constituents above the 50-DMA",0],
     ["SMCI","Top 1% of universe for unusual volume; short float 18% and rising",1],
     ["AAPL","Reclaims VWAP after morning flush; MACD crosses bullish on the 15m",0],
-    ["COIN","BTC clears $72k — high-beta proxies re-rating",0],
+    ["COIN","BTC clears $72k, high-beta proxies re-rating",0],
     ["MSFT","Put/call skew flips bullish ahead of cloud segment update",0],
     ["GOOG","Unusual 4.8:1 call ratio as antitrust headline fades",0],
     ["META","Position risk: drawdown −4.2%, correlation to SPX at 0.81",1],
@@ -764,7 +764,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function feedUI(s){var pill=$("#feedPill");pill.className="pill "+s;
     $("#feedLbl").textContent={sim:"Sim",connecting:"···",live:"Live"}[s]||s;}
   $("#feedPill").addEventListener("click",function(){
-    var k=prompt("Finnhub API key (free at finnhub.io) — leave empty to use simulation:");
+    var k=prompt("Finnhub API key (free at finnhub.io), leave empty to use simulation:");
     if(k===null)return;
     if(k.trim()){F.setKey(k.trim());toast("Connecting live data…");}else{F.clearKey();toast("Simulation mode");}
   });
@@ -781,7 +781,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(evt==="positions"||evt==="orders"){renderDock();syncTicket();}
     if(evt==="alerts"&&dockTab==="alerts")renderDock();
     if(evt==="alert-fired"){var a=S.state().alerts.find(function(x){return x.triggered&&!x.seen});
-      if(a){a.seen=true;toast("⚠ Alert: "+a.sym+" crossed "+(a.dir==="above"?"above":"below")+" $"+a.px.toFixed(2),"alert");}}
+      if(a){a.seen=true;toast("Alert: "+a.sym+" crossed "+(a.dir==="above"?"above":"below")+" $"+a.px.toFixed(2),"alert");}}
     if(evt==="watchlist")renderLeft();
   });
 
@@ -802,7 +802,7 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---- agents ---- */
   var AGENTS=[
     {id:"kronos",name:"Kronos",mdl:"in-browser approximation",desc:"A short-horizon price shape. Approximate, not a trained model.",int:22,
-      run:function(){var wl=S.state().watchlist;if(!wl.length)return "idle — watchlist empty";
+      run:function(){var wl=S.state().watchlist;if(!wl.length)return "idle, watchlist empty";
         var s=wl[ri(0,wl.length-1)],f=forecast(s);
         return s+" next-session "+(f.pct>=0?"+":"")+f.pct.toFixed(2)+"% · conf "+f.conf+"%";}},
     {id:"tape",name:"Tape analyst",mdl:"Claude Haiku 4.5",desc:"Reads trend, range and where the volume went.",int:31,
@@ -810,8 +810,8 @@ document.addEventListener("DOMContentLoaded", function(){
     {id:"catalyst",name:"Catalyst analyst",mdl:"Claude Haiku 4.5",desc:"Reads filings, earnings and what crossed the wire.",int:16,
       run:function(){var n=newsLog[0];if(!n)return "no headlines yet";
         var sc=(n.hot? -0.2:0.3)+((seedOf(n.txt)%60)-20)/100;
-        return n.sym+" sentiment "+(sc>=0?"+":"")+sc.toFixed(2)+" — "+(sc>0.15?"bullish":sc<-0.1?"bearish":"neutral");}},
-    {id:"montecarlo",name:"MonteCarlo",mdl:"10k paths",desc:"Portfolio simulation — daily VaR and drawdown odds.",int:38,
+        return n.sym+" sentiment "+(sc>=0?"+":"")+sc.toFixed(2)+" · "+(sc>0.15?"bullish":sc<-0.1?"bearish":"neutral");}},
+    {id:"montecarlo",name:"MonteCarlo",mdl:"10k paths",desc:"Portfolio simulation, daily VaR and drawdown odds.",int:38,
       run:function(){var v=varCalc();return "1-day VaR(95): "+S.fmt$(v)+" · P(dd>5%) "+(4+ri(0,9))+"%";}},
     {id:"traders",name:"The traders",mdl:"Claude Haiku 4.5",desc:"Weigh each analyst filing against that analyst own record.",int:26,
       run:function(){var fs=(D&&D.FINDINGS)||[];var f=fs[ri(0,fs.length-1)];if(!f)return "no signals";
@@ -859,16 +859,16 @@ document.addEventListener("DOMContentLoaded", function(){
           '<td class="'+(m.pnl>=0?'up':'down')+'">'+S.fmtSigned(m.pnl)+'</td></tr>'}).join("")+'</tbody></table>';
       var worst=pf.open.map(function(p){return{p:p,m:S.positionPnl(p)}}).sort(function(a,b){return a.m.pnl-b.m.pnl})[0];
       html+='<p>Largest drag: <b>'+worst.p.sym+'</b> at '+S.fmtSigned(worst.m.pnl)+' ('+worst.m.pct.toFixed(1)+'%). 1-day VaR(95) est. <b>'+S.fmt$(varCalc())+'</b>.</p>';
-    } else html+='<p>No open positions — the book is flat. Buying power '+S.fmt$(pf.cash)+'.</p>';
+    } else html+='<p>No open positions: the book is flat. Buying power '+S.fmt$(pf.cash)+'.</p>';
     html+='<h3>Model forecasts</h3>'+wl.map(function(s){var f=forecast(s);
-      return '<div class="sig-line">'+s+' — Kronos '+(f.pct>=0?"+":"")+f.pct.toFixed(2)+'% next session · RSI '+f.rsi.toFixed(0)+' · conf '+f.conf+'%</div>'}).join("");
+      return '<div class="sig-line">'+s+', Kronos '+(f.pct>=0?"+":"")+f.pct.toFixed(2)+'% next session · RSI '+f.rsi.toFixed(0)+' · conf '+f.conf+'%</div>'}).join("");
     html+='<h3>Top movers</h3>'+movers.map(function(x){
       return '<div class="sig-line">'+x.s+' $'+x.c.p.toFixed(2)+' <span class="'+(x.c.pct>=0?'up':'down')+'">'+fmtChg(x.c.pct)+'</span></div>'}).join("");
     html+='<h3>Live signals</h3>'+fs.map(function(f){
-      return '<div class="sig-line">'+f.t+' · '+f.e+' · conf '+(f.c||'—')+'% — '+f.i.replace(/<[^>]+>/g,'').slice(0,70)+'…</div>'}).join("");
+      return '<div class="sig-line">'+f.t+' · '+f.e+' · conf '+(f.c||'—')+'% · '+f.i.replace(/<[^>]+>/g,'').slice(0,70)+'…</div>'}).join("");
     html+='<h3>Agent activity</h3>'+agentOutputs.slice(0,5).map(function(o){
       return '<div class="sig-line">'+o.agent+' ('+o.mdl+'): '+o.txt+'</div>'}).join("")||'<p>Agents warming up.</p>';
-    html+='<p style="margin-top:16px;font-size:12px;color:var(--faint)">Generated by Flux AI on your desk state. Simulated research — not investment advice.</p>';
+    html+='<p style="margin-top:16px;font-size:12px;color:var(--faint)">Generated by Flux AI on your desk state. Simulated research, not investment advice.</p>';
     var rep={id:Date.now()+""+ri(100,999),ts:new Date(),title:title,html:html};
     reports.unshift(rep);if(reports.length>20)reports.length=20;
     $("#cRep").textContent=reports.length;
@@ -876,7 +876,7 @@ document.addEventListener("DOMContentLoaded", function(){
     return rep;
   }
   function openReport(rep){
-    $("#repTitle").textContent=rep.title+" — "+rep.ts.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+    $("#repTitle").textContent=rep.title+" · "+rep.ts.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
     $("#repBody").innerHTML=rep.html;
     $("#repview").classList.add("on");
   }
@@ -886,13 +886,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function renderReports(){
     var host=$("#dockBody");
-    host.innerHTML='<div class="toolrow"><span style="font-size:12px;color:var(--faint)">The Reporter agent publishes on schedule — or on demand.</span>'+
+    host.innerHTML='<div class="toolrow"><span style="font-size:12px;color:var(--faint)">The Reporter agent publishes on schedule, or on demand.</span>'+
       '<span style="flex:1"></span><button class="btn-sm" id="repNow">◈ Generate report now</button></div>'+
       '<div class="replist">'+(reports.length?reports.map(function(r){
         return '<div class="newsrow" data-rep="'+r.id+'"><span class="t">'+r.ts.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+'</span>'+
         '<span class="tag">REPORT</span><span style="flex:1;font-weight:600">'+r.title+'</span>'+
         '<span class="mono" style="color:var(--faint);font-size:12px">Flux-LM</span></div>'}).join("")
-      :'<div class="empty">No reports yet — the Reporter runs on schedule, or generate one now.</div>')+'</div>';
+      :'<div class="empty">No reports yet: the Reporter runs on schedule, or generate one now.</div>')+'</div>';
     var b=$("#repNow");if(b)b.addEventListener("click",function(){openReport(makeReport())});
     $$(".replist [data-rep]").forEach(function(r){r.addEventListener("click",function(){
       var rep=reports.find(function(x){return x.id===r.dataset.rep});if(rep)openReport(rep);})});
@@ -928,7 +928,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!host.querySelector(".chatwrap")){
       host.innerHTML='<div class="chatwrap"><div style="flex:1;display:flex;flex-direction:column;min-width:0">'+
         '<div class="chatlog" id="chatlog"></div>'+
-        '<form class="chatbar" id="chatform"><input id="chatin" placeholder="Ask Flux — portfolio, forecasts, screens, reports…" autocomplete="off"><button>Ask</button></form></div>'+
+        '<form class="chatbar" id="chatform"><input id="chatin" placeholder="Ask Flux, portfolio, forecasts, screens, reports…" autocomplete="off"><button>Ask</button></form></div>'+
         '<div class="chatside"><div class="h">Quick asks</div>'+
         ['What’s my biggest risk?','Forecast NVDA','Top movers right now','Run a portfolio report','Is TSLA oversold?','How are my positions?'].map(function(q){
           return '<button class="qq">'+q+'</button>'}).join("")+'</div></div>';
@@ -962,16 +962,16 @@ document.addEventListener("DOMContentLoaded", function(){
       var ql=q.toLowerCase(),pf=S.portfolio(),ans,acts;
       if(/risk|drawdown|exposure|var\b/.test(ql)){
         if(pf.open.length){var w=pf.open.map(function(p){return{p:p,m:S.positionPnl(p)}}).sort(function(a,b){return a.m.pnl-b.m.pnl})[0];
-          ans="Biggest risk is <b>"+w.p.sym+"</b> — "+w.p.side+" "+w.p.qty+" at "+S.fmtSigned(w.m.pnl)+" ("+w.m.pct.toFixed(1)+"%). MonteCarlo puts 1-day VaR(95) at <b>"+S.fmt$(varCalc())+"</b>. Consider a stop or trimming size.";
+          ans="Biggest risk is <b>"+w.p.sym+"</b>. "+w.p.side+" "+w.p.qty+" at "+S.fmtSigned(w.m.pnl)+" ("+w.m.pct.toFixed(1)+"%). MonteCarlo puts 1-day VaR(95) at <b>"+S.fmt$(varCalc())+"</b>. Consider a stop or trimming size.";
           acts=[["chart",w.p.sym,"Load "+w.p.sym],["report","", "Open risk report"]];
-        } else ans="Book is flat — no position risk. Buying power "+S.fmt$(pf.cash)+". The tape analyst reads the tape as "+(AGENTS[1].last||"normal")+".";
+        } else ans="Book is flat: no position risk. Buying power "+S.fmt$(pf.cash)+". The tape analyst reads the tape as "+(AGENTS[1].last||"normal")+".";
       }
-      else if(/report|brief|summary|wrap/.test(ql)){var rep=makeReport();ans="Done — <b>"+rep.title+"</b> is published with your live positions, model forecasts and movers.";acts=[["report","","Open it"]];}
+      else if(/report|brief|summary|wrap/.test(ql)){var rep=makeReport();ans="Done. <b>"+rep.title+"</b> is published with your live positions, model forecasts and movers.";acts=[["report","","Open it"]];}
       else if(/forecast|predict|model|target/.test(ql)&&symIn(q)){var s1=symIn(q),f1=forecast(s1);
-        ans="<b>Kronos</b> (approximation) on <b>"+s1+"</b>: next session "+(f1.pct>=0?"<b class='up'>+":"<b class='down'>")+f1.pct.toFixed(2)+"%</b> · RSI "+f1.rsi.toFixed(0)+" · confidence "+f1.conf+"%. Not advice — validate with a backtest.";
+        ans="<b>Kronos</b> (approximation) on <b>"+s1+"</b>: next session "+(f1.pct>=0?"<b class='up'>+":"<b class='down'>")+f1.pct.toFixed(2)+"%</b> · RSI "+f1.rsi.toFixed(0)+" · confidence "+f1.conf+"%. Not advice, validate with a backtest.";
         acts=[["chart",s1,"Load chart"],["buy",s1,"Trade "+s1]];}
       else if(/oversold|overbought|rsi|macd|technical/.test(ql)&&symIn(q)){var s2=symIn(q),cs2=candles(s2,"1D"),r2=rsiCalc(cs2.map(function(k){return k.c})),lr=r2[r2.length-1];
-        ans="<b>"+s2+"</b> daily RSI is <b>"+lr.toFixed(0)+"</b> — "+(lr<30?"<b class='up'>oversold</b>; mean-reversion setups historically favor longs here":lr>70?"<b class='down'>overbought</b>; chasing here has negative expectancy":"neutral territory; no edge from RSI alone")+".";
+        ans="<b>"+s2+"</b> daily RSI is <b>"+lr.toFixed(0)+"</b>. "+(lr<30?"<b class='up'>oversold</b>; mean-reversion setups historically favor longs here":lr>70?"<b class='down'>overbought</b>; chasing here has negative expectancy":"neutral territory; no edge from RSI alone")+".";
         acts=[["chart",s2,"Load chart"]];}
       else if(/gainer|loser|mover|screen|volume/.test(ql)){
         var mv=S.knownSymbols().map(function(s){return{s:s,c:chg(s)}}).sort(function(a,b){return Math.abs(b.c.pct)-Math.abs(a.c.pct)}).slice(0,3);
@@ -981,10 +981,10 @@ document.addEventListener("DOMContentLoaded", function(){
         ans="Equity <b>"+S.fmt$(pf.equity)+"</b> · total P&L "+(pf.totalPnl>=0?"<b class='up'>":"<b class='down'>")+S.fmtSigned(pf.totalPnl)+"</b> · "+pf.open.length+" open, "+S.state().orders.length+" resting. Open P&L "+S.fmtSigned(pf.openPnl)+", realized "+S.fmtSigned(pf.realized)+".";
         acts=[["report","","Full report"]];}
       else if(/should i buy|should i sell|buy\?|good buy/.test(ql)){var s3=symIn(q);
-        ans="I don't give advice — but I'll stack the evidence"+(s3?" on <b>"+s3+"</b>":"")+": model forecast, RSI, live signal and a 5-year backtest, then you decide."+(s3?"":" Name a symbol.");
+        ans="I don't give advice, but I'll stack the evidence"+(s3?" on <b>"+s3+"</b>":"")+": model forecast, RSI, live signal and a 5-year backtest, then you decide."+(s3?"":" Name a symbol.");
         if(s3)acts=[["chart",s3,"Load "+s3]];}
       else if(symIn(q)){var s4=symIn(q),c4=chg(s4),f4=forecast(s4),sg=sigOf(s4);
-        ans="<b>"+s4+"</b> $"+c4.p.toFixed(2)+" ("+fmtChg(c4.pct)+"). Kronos approximates "+(f4.pct>=0?"+":"")+f4.pct.toFixed(2)+"% next session ("+f4.conf+"% conf)."+(sg?" Live signal: "+sg.e+" — "+sg.i.replace(/<[^>]+>/g,'').slice(0,60)+"… ("+(sg.c||"—")+"%).":"");
+        ans="<b>"+s4+"</b> $"+c4.p.toFixed(2)+" ("+fmtChg(c4.pct)+"). Kronos approximates "+(f4.pct>=0?"+":"")+f4.pct.toFixed(2)+"% next session ("+f4.conf+"% conf)."+(sg?" Live signal: "+sg.e+" · "+sg.i.replace(/<[^>]+>/g,'').slice(0,60)+"… ("+(sg.c||"—")+"%).":"");
         acts=[["chart",s4,"Load chart"],["flag",s4,"☆ Flag"],["buy",s4,"Trade"]];}
       else ans="Desk status: <b>"+AGENTS.filter(function(a){return a.on}).length+" agents</b> running, "+reports.length+" reports published, "+(D&&D.FINDINGS?D.FINDINGS.length:0)+" live signals. Ask about a symbol, your risk, or say <i>run a report</i>.";
       chatPush("ai",ans,acts);

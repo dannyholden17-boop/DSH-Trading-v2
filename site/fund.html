@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flux Fund — Flux</title>
+<title>Flux Fund; Flux</title>
 <meta name="description" content="The Flux Fund is a scripted demonstration: a paper book filled on a timer and marked to live quotes, so you can see what positions and fills look like in Flux. Not a model, not a strategy, not a track record.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -176,7 +176,7 @@
         <span class="fd-ret" id="hRet">—</span>
         <span class="mono" style="font-size:13px;color:var(--text-faint)">since launch · <span id="hDay">—</span> today</span>
       </div>
-      <canvas id="hCurve" style="width:100%;height:120px;display:block;margin-top:12px" aria-label="Scripted equity curve — a demonstration, not a result"></canvas>
+      <canvas id="hCurve" style="width:100%;height:120px;display:block;margin-top:12px" aria-label="Scripted equity curve: a demonstration, not a result"></canvas>
       <div class="fd-heromini">
         <div class="fd-mini"><div class="k">Cash</div><div class="v" id="hCash">$—</div></div>
         <div class="fd-mini"><div class="k">Invested</div><div class="v" id="hInv">$—</div></div>
@@ -200,7 +200,7 @@
     <div><b>This book is generated, not decided.</b> Which name it buys comes from a hash of the ticker and
       the clock; buy or sell is a coin flip; the label on each row names the scripted rule that produced it.
       Only the prices are real. Nothing here ranked, scored or reasoned about anything, and none of it is a
-      result — if you want decisions with reasons attached, read
+      result, if you want decisions with reasons attached, read
       <a href="./desk.html">the desk</a> and <a href="./analysts.html">the scoreboard</a>.</div>
   </div>
 
@@ -225,7 +225,7 @@
   <section class="glass fd-alloc reveal">
     <div class="fd-ph" style="border:none;padding:0 0 8px">
       <span class="pill live">Allocation</span>
-      <h2 style="margin:0;font-size:1rem">Where the money is — invested per name</h2>
+      <h2 style="margin:0;font-size:1rem">Where the money is, invested per name</h2>
       <span class="k allocsum" id="allocSum">—</span>
     </div>
     <div id="allocBody"></div>
@@ -254,8 +254,8 @@
 
   <!-- DISCLAIMER -->
   <div class="fd-strip">
-    <span class="ic">⚠</span>
-    <p>The Flux Fund is a <b>simulated paper account using virtual money</b> — a transparency demo of how the AI thinks and trades, not a real portfolio, not a track record you can invest in, and not an offer of any security or advisory service. Prices are live or delayed market data; fills and P/L are hypothetical. <b>Simulated results have inherent limitations and are not indicative of future results.</b> Flux never promises returns, is not a broker-dealer, and never trades your real account unless you explicitly opt in with your own rules. Nothing here is investment advice.</p>
+    <span class="ic"><i class="ic-i i-warn" aria-hidden="true"></i></span>
+    <p>The Flux Fund is a <b>simulated paper account using virtual money</b>: a transparency demo of how the AI thinks and trades, not a real portfolio, not a track record you can invest in, and not an offer of any security or advisory service. Prices are live or delayed market data; fills and P/L are hypothetical. <b>Simulated results have inherent limitations and are not indicative of future results.</b> Flux never promises returns, is not a broker-dealer, and never trades your real account unless you explicitly opt in with your own rules. Nothing here is investment advice.</p>
   </div>
 
   <div class="fd-cta">
@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function renderHoldings(s) {
     var tb = $("#holdBody"); if (!tb) return;
-    if (!s.positions.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:22px">Flat — no open positions right now.</td></tr>'; return; }
+    if (!s.positions.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-faint);padding:22px">Flat: no open positions right now.</td></tr>'; return; }
     tb.innerHTML = s.positions.map(function (p) {
       var cls = p.pl >= 0 ? "up" : "down";
       return '<tr><td class="tk"><b>' + p.t + '</b><span>' + p.sec + '</span></td>' +

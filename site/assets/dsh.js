@@ -87,7 +87,7 @@
     {id:"Backtest",  ic:"⧗", tasks:["replaying 5y history","validating setup","edge-decay check","walk-forward test"]},
   ];
   DSH.FINDINGS = [
-    {t:"NVDA",e:"Options",s:"high",u:1,mv:"+2.1%",i:"Massive <b>call sweep</b> — 14,200 contracts at $185, 3DTE, all at ask (~$4.6M premium).",st:[["IV","62%"],["OI Δ","+38%"],["Vol","4.1×"]],c:88},
+    {t:"NVDA",e:"Options",s:"high",u:1,mv:"+2.1%",i:"Massive <b>call sweep</b>, 14,200 contracts at $185, 3DTE, all at ask (~$4.6M premium).",st:[["IV","62%"],["OI Δ","+38%"],["Vol","4.1×"]],c:88},
     {t:"AMD", e:"Scanner",s:"med",u:1,mv:"+3.4%",i:"Breaking out of a 6-week base on <b>2.7× volume</b>. Cleared $172, room to $186.",st:[["RelVol","2.7×"],["ATR","4.8"],["Base","41d"]],c:74},
     {t:"TSLA",e:"Catalyst",s:"high",u:0,mv:"-1.8%",i:"New 8-K: guidance cut on <b>delivery outlook</b>. Historically a −2.3% 5-day drift.",st:[["Drift","−2.3%"],["n","17"],["Conf","0.71"]],c:69},
     {t:"AAPL",e:"Technicals",s:"info",u:1,mv:"+0.6%",i:"<b>VWAP reclaim</b> after morning flush + MACD bull cross on the 15m. Setup hits 68%.",st:[["Hit","68%"],["R:R","1:2.4"],["Stop","$226"]],c:66},
@@ -109,7 +109,7 @@
     ["think","cross-checking AAPL VWAP setup vs options skew"],
     ["scan","volume anomaly · SMCI top 1% of universe"],
     ["idea","assembling 3 trade ideas for your review"],
-    ["think","SPX breadth improving — tilting the book risk-on"],
+    ["think","SPX breadth improving, tilting the book risk-on"],
     ["catalyst","BTC through $72k · re-scoring COIN & MARA"],
     ["backtest","edge on reclaim setup holds · 68% over 5y"],
     ["think","dismissing 4 low-confidence signals · noise"],
