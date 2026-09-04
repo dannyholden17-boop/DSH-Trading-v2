@@ -102,8 +102,9 @@
   .nw-trow .m{margin-left:auto;font-family:var(--f-mono);font-size:13px;font-weight:700}
 
   /* ---- sector sentiment strip ---- */
-  .nw-sect{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-  .nw-sec{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:14px 15px;min-width:0}
+  .nw-sect{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
+  .nw-sec{padding:14px 16px;min-width:0;border-left:1px solid var(--line-2)}
   .nw-sec .nm{font-size:.9rem;font-weight:600;line-height:1.25}
   .nw-sec .lb{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
   .nw-sec .track{height:5px;border-radius:2px;background:rgba(160,180,220,.10);overflow:hidden;margin-top:9px}
@@ -226,7 +227,7 @@
 </section>
 
 <!-- ============ SECTOR SENTIMENT ============ -->
-<section class="section band" style="padding-block:clamp(48px,6vw,80px)">
+<section class="section tint" style="padding-block:clamp(48px,6vw,80px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">How the wire is leaning, by sector.</h2>

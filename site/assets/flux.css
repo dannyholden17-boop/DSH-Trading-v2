@@ -433,6 +433,11 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
  * ---------------------------------------------------------- */
 .band{border-block:1px solid var(--line-2);background:var(--rail)}
 .band .wrap{display:flex;align-items:center;gap:14px;padding-block:18px;flex-wrap:wrap;justify-content:center}
+/* `.band` is the thin one-line strip and centres its wrap as a flex row. A
+   full content section that only wants the recessed ground takes `.tint`
+   instead: same surface, ordinary block flow, headings left where the rest
+   of the site keeps them. */
+.tint{border-block:1px solid var(--line-2);background:var(--rail)}
 .band span{font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
 .band b{color:var(--text-dim);font-weight:600}
 /* the day sheet — what is standing on the pad, read as a ruled docket,
@@ -495,10 +500,12 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 /* ---------------------------------------------------------- *
    14. SEQUENCE — the chain of desks
  * ---------------------------------------------------------- */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line-2)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0;
+  border:1px solid var(--line-2);background:var(--blotter-2);
+  border-radius:var(--radius-lg);overflow:hidden}
 @media(max-width:880px){.steps{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.steps{grid-template-columns:1fr}}
-.step{position:relative;padding:20px;background:var(--blotter-2);border-right:1px solid var(--line-2);
+.step{position:relative;padding:20px;border-right:1px solid var(--line-2);min-width:0;
   border-bottom:1px solid var(--line-2)}
 .step:last-child{border-right:0}
 .step .n{font-family:var(--f-mono);font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.1em}
@@ -1319,3 +1326,42 @@ html[data-surface="market"] body::before{
   mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E") center/contain no-repeat}
 .scripted b{color:var(--text);font-weight:700}
 .scripted a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
+
+
+/* ---------------------------------------------------------- *
+   22. THE RULED ROW
+
+   The shared answer to "several related facts side by side".
+   One container, N columns, real hairline borders between the
+   cells. It replaces `.grid.g-N` + `.glass` children wherever
+   those were standing in for structure rather than for
+   elevation. Adding `.ruled` is enough: it strips the card
+   chrome off `.glass` cells, so the markup converts by class.
+   See DESIGN.md, "The One-Container Rule".
+ * ---------------------------------------------------------- */
+.ruled{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--radius-lg);
+  background:var(--blotter-2);box-shadow:var(--lift-1);overflow:hidden}
+.ruled>*{padding:clamp(20px,2.2vw,28px);border-left:1px solid var(--line-2);min-width:0}
+.ruled>*:first-child{border-left:0}
+.ruled>.glass,.ruled>.card{background:none;border:0;border-left:1px solid var(--line-2);
+  box-shadow:none;border-radius:0}
+.ruled>.glass:first-child,.ruled>.card:first-child{border-left:0}
+.ruled>.glass::after{display:none}
+.ruled>.glass:hover,.ruled>.card:hover{transform:none;box-shadow:none;
+  background:var(--blotter-3)}
+.ruled.r-2{grid-template-columns:repeat(2,1fr)}
+.ruled.r-3{grid-template-columns:repeat(3,1fr)}
+.ruled.r-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){
+  .ruled.r-3{grid-template-columns:1fr}
+  .ruled.r-4{grid-template-columns:1fr 1fr}
+  .ruled.r-3>*,.ruled.r-3>.glass{border-left:0;border-top:1px solid var(--line-2)}
+  .ruled.r-3>*:first-child,.ruled.r-3>.glass:first-child{border-top:0}
+  .ruled.r-4>*:nth-child(3),.ruled.r-4>.glass:nth-child(3){border-left:0}
+  .ruled.r-4>*:nth-child(n+3),.ruled.r-4>.glass:nth-child(n+3){border-top:1px solid var(--line-2)}
+}
+@media(max-width:640px){
+  .ruled.r-2,.ruled.r-4{grid-template-columns:1fr}
+  .ruled>*,.ruled>.glass{border-left:0;border-top:1px solid var(--line-2)}
+  .ruled>*:first-child,.ruled>.glass:first-child{border-top:0}
+}

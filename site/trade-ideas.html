@@ -216,7 +216,7 @@
 </section>
 
 <!-- ============ ANATOMY ============ -->
-<section class="section band" id="anatomy">
+<section class="section tint" id="anatomy">
   <div class="wrap split wide-l">
     <div class="reveal">
 <h2 class="h2" style="margin-top:16px">Five parts. None of them optional.</h2>
@@ -292,7 +292,7 @@
 </section>
 
 <!-- ============ RISK FIRST ============ -->
-<section class="section band" id="risk">
+<section class="section tint" id="risk">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">The last engine to see an idea can kill it.</h2>
@@ -331,11 +331,10 @@
 <section class="section-sm">
   <div class="wrap">
     <div class="stats reveal">
-      <div class="stat"><div class="v"><span data-count="9">0</span></div><div class="k">Ideas per day, typical</div></div>
-      <div class="stat"><div class="v"><span data-count="71" data-suffix="%">0%</span></div><div class="k">Average confidence</div></div>
-      <div class="stat"><div class="v"><span data-count="6">0</span></div><div class="k">Engines cross-checking</div></div>
-      <div class="stat"><div class="v"><span data-count="1260">0</span></div><div class="k">Backtest sessions</div></div>
-    </div>
+      <div class="stat"><div class="v"><span id="tiRounds">&mdash;</span></div><div class="k">Rounds filed</div></div>
+      <div class="stat"><div class="v"><span id="tiFilings">&mdash;</span></div><div class="k">Filings on record</div></div>
+      <div class="stat"><div class="v"><span id="tiLenses">3</span></div><div class="k">Lenses on every name</div></div>
+      <div class="stat"><div class="v"><span id="tiRefused">&mdash;</span></div><div class="k">Refused or cut</div></div>    </div>
     <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures are illustrative and
       describe typical product behaviour and simulated backtests. They are not performance results and do not
       predict future outcomes.</p>
@@ -712,6 +711,27 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* pick up cards injected above (FLUX.initReveal also runs on load) */
   if(F.initReveal) F.initReveal();
+});
+</script>
+<script>
+/* Read from the desk record. These were invented: 9 ideas a day, an 82%
+   average confidence, 6 engines cross-checking, and a count of backtest
+   sessions for a product that does not backtest. */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    var $ = function(i){ return document.getElementById(i); };
+    Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
+      var f = r[0] || {}, a = r[1] || {}, ex = a.executive || {};
+      function put(id, v){ var el = $(id); if(el && v != null) F.countTo ? F.countTo(el, v) : (el.textContent = v); }
+      put("tiRounds", f.rounds_total); put("tiFilings", f.filings_total);
+      var tot = ex.total != null ? ex.total : f.rulings_total, ok = ex.approved;
+      var el = $("tiRefused");
+      if(el) el.textContent = (tot && ok != null) ? Math.round((tot - ok) / tot * 100) + "%" : "\u2014";
+    }).catch(function(){});
+  }
+  boot();
 });
 </script>
 </body>

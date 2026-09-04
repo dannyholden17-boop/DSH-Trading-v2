@@ -16,7 +16,12 @@
 <script src="./assets/flux-tv.js?v=28" defer></script>
 <style>
   /* ---- page-specific layout only ---- */
-  .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}
+  .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+    box-shadow:var(--lift-1);overflow:hidden}
+  .idx-strip>.glass{background:none;border:0;box-shadow:none;border-radius:0;
+    border-left:1px solid var(--line-2)}
+  .idx-strip>.glass::after{display:none}
   .idx{padding:15px 16px}
   .idx .sy{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
   .idx .sy b{font-family:var(--f-mono);font-size:.9rem;letter-spacing:.04em}
@@ -269,7 +274,7 @@
 </section>
 
 <!-- ============ SECTOR HEATMAP ============ -->
-<section class="section band" style="padding-block:clamp(48px,6vw,80px)">
+<section class="section tint" style="padding-block:clamp(48px,6vw,80px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Where the money went today.</h2>

@@ -253,7 +253,7 @@
 </section>
 
 <!-- ============ YOUR PORTFOLIO UNDERSTOOD ============ -->
-<section class="section band" style="padding-block:clamp(48px,6vw,84px)">
+<section class="section tint" style="padding-block:clamp(48px,6vw,84px)">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Your portfolio, understood.</h2>
@@ -436,7 +436,7 @@
 </section>
 
 <!-- ============ AUTOPILOT ON YOUR ACCOUNT ============ -->
-<section class="section band" id="autopilot" style="padding-block:clamp(48px,6vw,84px)">
+<section class="section tint" id="autopilot" style="padding-block:clamp(48px,6vw,84px)">
   <div class="wrap split">
     <div class="reveal">
 <h2 class="h2" style="margin-top:16px">Autopilot, on rails you set.</h2>
@@ -516,14 +516,13 @@
 </section>
 
 <!-- ============ STATS BAND ============ -->
-<section class="section band" style="padding-block:clamp(44px,5vw,72px)">
+<section class="section tint" style="padding-block:clamp(44px,5vw,72px)">
   <div class="wrap" style="display:block">
     <div class="stats reveal">
-      <div class="stat"><div class="v"><span data-count="12" data-suffix="+">0</span></div><div class="k">Brokerages supported</div></div>
-      <div class="stat"><div class="v"><span data-count="30" data-suffix="s">0</span></div><div class="k">Typical sync time</div></div>
-      <div class="stat"><div class="v"><span data-count="1.8" data-suffix="M">0</span></div><div class="k">Data points watched daily</div></div>
-      <div class="stat"><div class="v"><span data-count="21">0</span></div><div class="k">Portfolio reports / week</div></div>
-    </div>
+      <div class="stat"><div class="v"><span id="pfRounds">&mdash;</span></div><div class="k">Rounds filed</div></div>
+      <div class="stat"><div class="v"><span id="pfFilings">&mdash;</span></div><div class="k">Filings on record</div></div>
+      <div class="stat"><div class="v"><span id="pfNames">&mdash;</span></div><div class="k">Names covered</div></div>
+      <div class="stat"><div class="v"><span id="pfRefused">&mdash;</span></div><div class="k">Refused or cut</div></div>    </div>
     <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures above are illustrative and
       describe the demo experience, not a guarantee of coverage, speed or output for any particular account.</p>
   </div>
@@ -937,6 +936,27 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* pick up any reveal targets created above */
   if(F.initReveal) F.initReveal();
+});
+</script>
+<script>
+/* Read from the desk record. These were invented: "12+ brokerages
+   supported" (it is Robinhood, through the member's own Claude), a 30s
+   sync time, 1.8M data points a day, 21 reports a week. */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    var $ = function(i){ return document.getElementById(i); };
+    Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
+      var f = r[0] || {}, a = r[1] || {}, ex = a.executive || {};
+      function put(id, v){ var el = $(id); if(el && v != null) F.countTo ? F.countTo(el, v) : (el.textContent = v); }
+      put("pfRounds", f.rounds_total); put("pfFilings", f.filings_total); put("pfNames", f.names_covered);
+      var tot = ex.total != null ? ex.total : f.rulings_total, ok = ex.approved;
+      var el = $("pfRefused");
+      if(el) el.textContent = (tot && ok != null) ? Math.round((tot - ok) / tot * 100) + "%" : "\u2014";
+    }).catch(function(){});
+  }
+  boot();
 });
 </script>
 </body>

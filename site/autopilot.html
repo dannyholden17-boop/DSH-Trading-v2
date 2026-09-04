@@ -73,8 +73,10 @@
   .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
   .ap-cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .ap-fund canvas{width:100%;height:150px;display:block;margin:14px 0 4px}
-  .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
-  .ap-qs{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
+  .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px;
+    border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
+  .ap-qs{padding:12px 14px;border-left:1px solid var(--line-2)}
+  .ap-qs:first-child{border-left:0}
   .ap-qs .n{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
   .ap-qs .l{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .ap-fund .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
@@ -102,7 +104,13 @@
   .ap-panel .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
 
-  .ap-metrics{display:flex;flex-direction:column;gap:14px}
+  .ap-metrics{display:flex;flex-direction:column;
+    border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+    box-shadow:var(--lift-1);overflow:hidden}
+  .ap-metrics>.glass{background:none;border:0;box-shadow:none;border-radius:0;
+    border-top:1px solid var(--line-2)}
+  .ap-metrics>.glass::after{display:none}
+  .ap-metrics>.glass:first-child{border-top:0}
   .ap-metric{padding:16px 18px;position:relative}
   .ap-metric > *{position:relative;z-index:1}
   .ap-metric .l{font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
@@ -150,9 +158,25 @@
   .ap-model p{color:var(--text-dim);font-size:.9rem;margin-top:10px}
 
   /* ---- guardrails ---- */
-  .ap-guards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
-  @media(max-width:900px){.ap-guards{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.ap-guards{grid-template-columns:1fr}}
+  .ap-guards{display:grid;grid-template-columns:repeat(3,1fr);margin-top:44px;
+    border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+    box-shadow:var(--lift-1);overflow:hidden}
+  .ap-guards>.glass{background:none;border:0;box-shadow:none;border-radius:0;
+    border-left:1px solid var(--line-2);border-top:1px solid var(--line-2);padding:clamp(20px,2.1vw,28px)}
+  .ap-guards>.glass::after{display:none}
+  .ap-guards>.glass:nth-child(-n+3){border-top:0}
+  .ap-guards>.glass:nth-child(3n+1){border-left:0}
+  .ap-guards>.glass:hover{transform:none;box-shadow:none;background:var(--blotter-3)}
+  @media(max-width:900px){
+    .ap-guards{grid-template-columns:repeat(2,1fr)}
+    .ap-guards>.glass:nth-child(-n+3){border-top:1px solid var(--line-2)}
+    .ap-guards>.glass:nth-child(-n+2){border-top:0}
+    .ap-guards>.glass:nth-child(3n+1){border-left:1px solid var(--line-2)}
+    .ap-guards>.glass:nth-child(2n+1){border-left:0}}
+  @media(max-width:560px){
+    .ap-guards{grid-template-columns:1fr}
+    .ap-guards>.glass{border-left:0;border-top:1px solid var(--line-2)}
+    .ap-guards>.glass:first-child{border-top:0}}
 
   /* ---- strategy simulator (paper) ---- */
   .ap-sim-warn{margin-top:26px;border:1px solid rgba(245,185,60,.28);border-radius:4px;background:rgba(245,185,60,.06);
@@ -420,7 +444,7 @@
 </section>
 
 <!-- ============ HOW AUTOPILOT DECIDES ============ -->
-<section class="section band" id="how">
+<section class="section tint" id="how">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Every call walks the same five steps.</h2>
@@ -507,14 +531,14 @@
 </section>
 
 <!-- ============ THE MODELS ============ -->
-<section class="section band" id="models">
+<section class="section tint" id="models">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">What is actually running.</h2>
       <p class="lede" style="margin-top:16px">The trade log is the last step. Behind it, six specialised models
         each answer one narrow question, and the fund only acts when enough of them agree.</p>
     </div>
-    <div class="grid g-3" id="modelGrid" style="margin-top:44px"></div>
+    <div class="ruled r-3" id="modelGrid" style="margin-top:44px"></div>
     <p class="faint reveal" style="font-size:13px;margin-top:20px;max-width:72ch">
       These are the models in the loop, named for what runs. Output is probabilistic and can be wrong; it is
       not a prediction you should act on, and it drives a simulated account only.</p>
@@ -565,15 +589,15 @@
 </section>
 
 <!-- ============ STATS BAND ============ -->
-<section class="section-sm band">
+<section class="section-sm tint">
   <div class="wrap">
     <div class="stats reveal">
-      <div class="stat"><div class="v"><span data-count="4820">0</span></div><div class="k">Trades logged, simulated</div></div>
-      <div class="stat"><div class="v"><span data-count="99.7" data-suffix="%">0%</span></div><div class="k">Uptime, illustrative</div></div>
-      <div class="stat"><div class="v"><span data-count="2.4">0</span></div><div class="k">Avg hold, days (sim)</div></div>
-      <div class="stat"><div class="v"><span data-count="1860">0</span></div><div class="k">Reports written (sim)</div></div>
+      <div class="stat"><div class="v"><span id="apsRounds">&mdash;</span></div><div class="k">Rounds filed</div></div>
+      <div class="stat"><div class="v"><span id="apsFilings">&mdash;</span></div><div class="k">Filings on record</div></div>
+      <div class="stat"><div class="v"><span id="apsNames">&mdash;</span></div><div class="k">Names covered</div></div>
+      <div class="stat"><div class="v"><span id="apsRefused">&mdash;</span></div><div class="k">Refused or cut</div></div>
     </div>
-    <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures above are illustrative
+    <p class="disclaimer reveal" style="margin:22px auto 0">Counts above are read from the desk's own record. There is deliberately no uptime, win rate or average hold here: the desk trades a simulated book, so any such figure would be hypothetical. Figures were previously illustrative
       and describe activity inside a simulated $10,000 paper account. They are hypothetical, do not represent
       real trading or performance, and do not predict future outcomes. Flux never promises returns.</p>
   </div>
@@ -1414,6 +1438,33 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   render(current);
+});
+</script>
+<script>
+/* The four counters read the desk record. They used to be invented and
+   animated: 4,820 trades, 99.7% uptime, 2.4 day average hold, 1,860
+   reports. None of those measured anything. */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    var $ = function(i){ return document.getElementById(i); };
+    F.Desk.floor().then(function(f){
+      if(!f) return;
+      function put(id, v){ var el = $(id); if(el && v != null) F.countTo ? F.countTo(el, v) : (el.textContent = v); }
+      put("apsRounds", f.rounds_total);
+      put("apsFilings", f.filings_total);
+      put("apsNames", f.names_covered);
+      var ru = f.rulings_total || 0;
+      return F.Desk.agents().then(function(a){
+        var ex = (a && a.executive) || {}, ok = ex.approved;
+        var el = $("apsRefused");
+        var tot = ex.total != null ? ex.total : ru;
+        if(el) el.textContent = (tot && ok != null) ? Math.round((tot - ok) / tot * 100) + "%" : "\u2014";
+      });
+    }).catch(function(){});
+  }
+  boot();
 });
 </script>
 </body>
