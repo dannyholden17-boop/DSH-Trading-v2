@@ -436,7 +436,7 @@
   </div>
   <div class="tm-actions">
     <button class="btn tm-flag" id="tmFlag" aria-label="Flag">☆</button>
-    <button class="btn tm-flag" id="tmBt" aria-label="Backtest" style="width:44px">⚗</button>
+    <button class="btn tm-flag" id="tmBt" aria-label="Why there is no backtest" style="width:44px">⚗</button>
     <button class="btn btn-buy" id="tmBuy">Buy</button>
     <button class="btn btn-sell" id="tmSell">Sell</button>
   </div>
@@ -523,7 +523,7 @@ document.addEventListener("DOMContentLoaded", function(){
       '<div class="btn-row"><button class="btn btn-primary btn-block" data-a="trade">Paper trade</button>'+
       '<button class="btn btn-ghost" data-a="flag">'+(S.isFlagged(f.t)?'★':'☆')+'</button>'+
       '<button class="btn btn-ghost" data-a="watch">'+(S.isWatched(f.t)?'Watching':'Watch')+'</button></div>'+
-      '<button class="btn btn-ghost btn-block" data-a="backtest" style="margin-top:10px">Run backtest</button>');
+      '<button class="btn btn-ghost btn-block" data-a="backtest" style="margin-top:10px">Why there is no backtest</button>');
     setTimeout(function(){var cv=$("#detChart");if(cv)line(cv,path(seedOf(f.t+f.e),40,f.u),col);},60);
     sheet.querySelector(".btn-row").parentNode.addEventListener("click",function(e){var b=e.target.closest("[data-a]");if(!b)return;act(b.dataset.a,f);});
   }
@@ -546,18 +546,23 @@ document.addEventListener("DOMContentLoaded", function(){
     qty.addEventListener("input",up);
     cf.addEventListener("click",function(){var qq=Math.max(1,Math.floor(+qty.value||0));S.openPosition({sym:sym,side:side,qty:qq});closeSheet();toast((side==="buy"?"Bought ":"Shorted ")+qq+" "+sym);});
   }
-  function openBacktest(f){var seed=seedOf(f.t+"bt"),r=seed;function rr(){r=(r*9301+49297)%233280;return r/233280;}
-    var win=Math.round(55+rr()*22),tr=Math.round(40+rr()*160),sh=(0.8+rr()*1.6).toFixed(2),edge=rr()>.3?"stable":"decaying";
-    openSheet('<div class="sheet-tk"><div class="t">'+f.t+'</div><div style="margin-left:auto;color:var(--text-dim);font-size:12px">5-year replay · '+tr+' trades</div></div>'+
-      '<canvas class="chart-sheet" id="btc"></canvas>'+
-      '<div class="kv"><div class="c"><div class="k">Win rate</div><div class="v up">'+win+'%</div></div>'+
-      '<div class="c"><div class="k">Sharpe</div><div class="v">'+sh+'</div></div>'+
-      '<div class="c"><div class="k">Edge</div><div class="v" style="color:'+(edge==="stable"?"var(--cyan)":"var(--amber)")+'">'+edge+'</div></div>'+
-      '<div class="c"><div class="k">Trades</div><div class="v">'+tr+'</div></div></div>'+
-      '<button class="btn btn-primary btn-block" id="bt2">Paper trade this setup</button>');
-    setTimeout(function(){var cv=$("#btc");if(cv)line(cv,path(seed,60,true),CY);},60);
+  /* Backtesting is not built. This used to invent one: a seeded RNG produced a
+     win rate between 55% and 77% — always favourable — plus a Sharpe and a
+     "5-year replay" label, none of it measured from anything. The panel now
+     says what is true, and points at the record that is real. */
+  function openBacktest(f){
+    openSheet('<div class="sheet-tk"><div class="t">'+f.t+'</div>' +
+      '<div style="margin-left:auto;color:var(--text-dim);font-size:12px">not available</div></div>' +
+      '<p style="color:var(--text-dim);font-size:.92rem;line-height:1.6;margin:14px 0 0">' +
+      '<b style="color:var(--text)">Flux does not backtest.</b> There is no historical replay engine here, ' +
+      'and a number invented for this panel would be worse than none.</p>' +
+      '<p style="color:var(--text-dim);font-size:.92rem;line-height:1.6;margin:12px 0 0">' +
+      'What exists instead is a forward record: the desk files dated predictions, and each is graded ' +
+      'against the tape when it comes due — including the ones that were wrong. That is the only ' +
+      'performance figure this product will show you.</p>' +
+      '<a class="btn btn-primary btn-block" style="margin-top:16px" href="./analysts.html">See the scoreboard</a>' +
+      '<button class="btn btn-ghost btn-block" id="bt2" style="margin-top:8px">Paper trade this setup</button>');
     $("#bt2").addEventListener("click",function(){openTicket(f);});
-    S.log&&S.log("backtest","Backtested "+f.t+" — "+win+"% win",f.t);
   }
 
   /* ---------- ask flux ---------- */

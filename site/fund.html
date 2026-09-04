@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux Fund — Flux</title>
-<meta name="description" content="The Flux Fund: a simulated AI that trades a paper account live and shows every fill. Watch it trade in real time, browse its positions and its whole order history. Simulated, virtual money, not investment advice.">
+<meta name="description" content="The Flux Fund is a scripted demonstration: a paper book filled on a timer and marked to live quotes, so you can see what positions and fills look like in Flux. Not a model, not a strategy, not a track record.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
@@ -81,11 +81,6 @@
   table.fd-hold .tk b{font-weight:700;letter-spacing:.03em}
   table.fd-hold .tk span{display:block;color:var(--text-faint);font-size:12px;font-family:var(--f-sans)}
 
-  .fd-think{display:flex;align-items:center;gap:12px;padding:15px 18px;margin-top:18px}
-  .fd-think .av{width:36px;height:36px;border-radius:4px;flex:none;display:grid;place-items:center;font-size:18px;
-    border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(245,185,60,.18),rgba(122,167,255,.12))}
-  .fd-think .tx{font-size:.9rem;line-height:1.5;color:var(--text-dim)}
-  .fd-think .tx b{color:var(--text)}
 
   .fd-strip{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:16px 18px;border:1px solid rgba(245,185,60,.28);
     background:rgba(245,185,60,.08);border-radius:4px}
@@ -157,15 +152,19 @@
   <!-- HERO -->
   <section class="fd-hero">
     <div>
-      <h1>An AI fund that trades —<br><span class="">live, and in the open.</span></h1>
-      <span class="fd-live" style="margin-top:14px"><span class="dot"></span><span id="liveLbl">Trading now</span></span>
-      <p class="lede" style="max-width:56ch;margin-top:16px">This is the <b>Flux Fund</b>: a simulated AI running its own paper account. It places real-time paper trades, marks to live quotes, and shows you <b>every single fill</b>. Watch it work, then scroll its whole order history below.</p>
+      <h1>A book to look at,<br><span class="">so the interface has something in it.</span></h1>
+      <span class="fd-live" style="margin-top:14px"><span class="dot"></span><span id="liveLbl">Running</span></span>
+      <p class="lede" style="max-width:58ch;margin-top:16px">The Flux Fund is a <b>scripted demonstration</b>. It fills
+        a paper book on a timer and marks it to live quotes so you can see what positions, fills and a P/L
+        column look like in this software. It is not a model, not a strategy, and not the research desk —
+        <a href="./desk.html">the desk is over here</a>, and its rulings are real model output with a record
+        you can grade.</p>
       <div class="fd-cta">
         <a class="btn btn-primary btn-lg" href="#tape">See it trading ↓</a>
         <a class="btn btn-ghost btn-lg" href="./trades.html">Every trade →</a>
         <button class="btn btn-ghost btn-lg" id="copyFundBtn" type="button">Mirror it → my paper account</button>
       </div>
-      <p class="mono" style="font-size:12px;color:var(--text-faint);margin-top:14px">Simulated · virtual money · not investment advice · never trades your real account.</p>
+      <p class="mono" style="font-size:12px;color:var(--text-faint);margin-top:14px">Scripted · virtual money · not a track record · never trades your real account.</p>
     </div>
     <div class="glass sheen fd-aumcard reveal">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -177,7 +176,7 @@
         <span class="fd-ret" id="hRet">—</span>
         <span class="mono" style="font-size:13px;color:var(--text-faint)">since launch · <span id="hDay">—</span> today</span>
       </div>
-      <canvas id="hCurve" style="width:100%;height:120px;display:block;margin-top:12px" aria-label="Simulated equity curve"></canvas>
+      <canvas id="hCurve" style="width:100%;height:120px;display:block;margin-top:12px" aria-label="Scripted equity curve — a demonstration, not a result"></canvas>
       <div class="fd-heromini">
         <div class="fd-mini"><div class="k">Cash</div><div class="v" id="hCash">$—</div></div>
         <div class="fd-mini"><div class="k">Invested</div><div class="v" id="hInv">$—</div></div>
@@ -196,10 +195,13 @@
     <div class="glass fd-stat"><div class="k">Fills placed</div><div class="v mono" id="sTr">—</div></div>
   </section>
 
-  <!-- THINKING -->
-  <div class="glass fd-think reveal">
-    <div class="av">🧠</div>
-    <div class="tx" id="thinkLine">The desk is scanning 253 names across every sector…</div>
+  <!-- WHAT THIS ACTUALLY IS -->
+  <div class="scripted reveal" style="margin-block:22px">
+    <div><b>This book is generated, not decided.</b> Which name it buys comes from a hash of the ticker and
+      the clock; buy or sell is a coin flip; the label on each row names the scripted rule that produced it.
+      Only the prices are real. Nothing here ranked, scored or reasoned about anything, and none of it is a
+      result — if you want decisions with reasons attached, read
+      <a href="./desk.html">the desk</a> and <a href="./analysts.html">the scoreboard</a>.</div>
   </div>
 
   <!-- EQUITY CURVE -->
@@ -284,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
   "use strict";
   var F = window.FLUX || {};
   var $ = function (s) { return document.querySelector(s); };
-  if (!F.Fund) { var tl = $("#thinkLine"); if (tl) tl.textContent = "Fund engine is warming up…"; return; }
+  if (!F.Fund) return;
 
   var m0 = function (n) { return "$" + Math.round(Number(n)).toLocaleString(); };
   var m2 = function (n) { return "$" + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
@@ -294,15 +296,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function setPL(id, n, txt) { var e = document.getElementById(id); if (!e) return; e.textContent = txt; e.classList.remove("up", "down"); e.classList.add(n >= 0 ? "up" : "down"); }
   function tmt(ts) { var d = new Date(ts); return ((d.getHours() % 12) || 12) + ":" + ("" + d.getMinutes()).padStart(2, "0") + ":" + ("" + d.getSeconds()).padStart(2, "0"); }
 
-  var THINK = [
-    "Ranking 253 names by momentum, valuation and volatility — acting only where enough engines agree.",
-    "Risk engine is capping single-name exposure and trimming correlated positions before they're placed.",
-    "Rotating capital toward relative-strength leaders; cutting laggards on trailing stops.",
-    "Watching 52-week breakouts and post-earnings drift across every sector.",
-    "Sizing each entry to a few percent of the book — no oversized bets, ever."
-  ];
-
-  var lastTopTs = 0, thinkI = 0;
+  var lastTopTs = 0;
 
   function renderStats(s) {
     setT("hAum", m2(s.aum)); setT("sAum", m0(s.aum));
@@ -418,7 +412,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // live loop: re-mark + reveal new fills every ~3s
   setInterval(function () { refresh(true); }, 3000);
   // rotate the "thinking" line
-  setInterval(function () { thinkI = (thinkI + 1) % THINK.length; var e = $("#thinkLine"); if (e) { e.style.opacity = 0; setTimeout(function () { e.textContent = THINK[thinkI]; e.style.transition = "opacity .5s"; e.style.opacity = 1; }, 250); } }, 6000);
   // re-mark instantly when live prices tick
   window.addEventListener("flux-prices", function () { if (CUR) { var s = F.Fund.snapshot(); renderStats(s); renderHoldings(s); renderPnL(s); renderAllocation(s); drawCurve($("#hCurve"), s.curve, 5); drawCurve($("#bigCurve"), s.curve, 8); } });
   var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (CUR) { drawCurve($("#hCurve"), CUR.curve, 5); drawCurve($("#bigCurve"), CUR.curve, 8); } }, 160); });

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Every trade — Flux Fund</title>
-<meta name="description" content="Every trade the Flux Fund has made — a simple, sortable ledger of price, size and proceeds. Simulated, virtual money, not investment advice. Sign in to view.">
+<meta name="description" content="The Flux Fund ledger — a scripted demonstration of what positions and fills look like in Flux. Not a strategy and not a track record. Sign in to view.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
@@ -89,8 +89,14 @@
 
   <!-- signed-in ledger -->
   <div id="ledger" hidden>
-    <h1>Every trade the fund has made</h1>
-    <p class="sub">A live ledger of the Flux Fund's simulated paper account. Newest first. Updates as it trades.</p>
+    <h1>Every row the demo has produced</h1>
+    <p class="sub">The Flux Fund's ledger. Newest first, marked to live quotes.</p>
+    <div class="scripted" style="margin-top:16px">
+      <div><b>These rows were generated, not decided.</b> The Flux Fund is a scripted demonstration — a hash
+        of the ticker and the clock picks the name, a coin flip picks the side. It shows what a ledger looks
+        like in this software. It is not a strategy and not a track record. The desk's actual rulings, with
+        the reasoning attached, are on <a href="./desk.html">the desk</a>.</div>
+    </div>
 
     <div class="trow-top">
       <span class="stat">Fills: <b id="tCount">—</b></span>

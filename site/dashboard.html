@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function(){
       <span class="pill"><i></i> AI research signal · not advice</span>
     </div>
     <div class="grid g-3" id="dbRecs"></div>
-    <p class="db-cap">Confidence is the level of agreement across the six engines — not a probability of profit.
+    <p class="db-cap">Conviction is how far the desk agreed with itself — not a probability of profit.
       Levels are illustrative and derived from reference prices. You decide and place any trade yourself.</p>
   </div>
 </section>
@@ -693,11 +693,11 @@ document.addEventListener("DOMContentLoaded",function(){
       </div>
       <div class="db-ap-right">
         <div class="db-ap-stats">
-          <div class="qs"><div class="n mono up" id="dbApDay">+$153</div><div class="l">Day change</div></div>
-          <div class="qs"><div class="n mono">6</div><div class="l">Open positions</div></div>
-          <div class="qs"><div class="n mono up">63%</div><div class="l">Win rate</div></div>
+          <div class="qs"><div class="n mono" id="dbApRound">—</div><div class="l">Round</div></div>
+          <div class="qs"><div class="n mono" id="dbApFilings">—</div><div class="l">Filings</div></div>
+          <div class="qs"><div class="n mono" id="dbApRefused">—</div><div class="l">Refused or cut</div></div>
         </div>
-        <a class="btn btn-ghost btn-sm" href="./autopilot.html">Watch the fund →</a>
+        <a class="btn btn-ghost btn-sm" href="./desk.html">Open the desk →</a>
       </div>
     </div>
   </div>
@@ -724,7 +724,7 @@ document.addEventListener("DOMContentLoaded",function(){
       </a>
       <a class="glass glass-hover db-qa reveal" href="./trade-ideas.html">
         <h3>Trade Ideas</h3>
-        <p>Ranked ideas with the thesis, the levels and a backtest attached to each one.</p>
+        <p>Ranked ideas with the thesis, the levels, and the desk's own reasoning attached to each one.</p>
         <span class="go">See the ideas →</span>
       </a>
       <a class="glass glass-hover db-qa reveal" href="./markets.html">
@@ -1074,6 +1074,24 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     go();
   })();
+</script>
+<script>
+/* the strip above reads the desk record; it used to carry a hardcoded win rate */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    F.Desk.floor().then(function(f){
+      if(!f || !f.round) return;
+      var $ = function(i){ return document.getElementById(i); };
+      var r = $("dbApRound"); if(r) r.textContent = "#" + f.round.seq;
+      var fi = $("dbApFilings"); if(fi && f.filings_total != null) fi.textContent = f.filings_total.toLocaleString();
+      var ru = f.rulings_total || 0, ok = (f.rulings && f.rulings.approved) || 0;
+      var rf = $("dbApRefused"); if(rf) rf.textContent = ru ? Math.round((ru - ok) / ru * 100) + "%" : "—";
+    }).catch(function(){});
+  }
+  boot();
+});
 </script>
 </body>
 </html>

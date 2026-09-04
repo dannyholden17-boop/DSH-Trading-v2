@@ -1,11 +1,23 @@
 /* ============================================================
-   Flux Fund — an always-on, self-running SIMULATED AI fund.
-   Deterministic: every visitor sees the same fund at the same
-   wall-clock second (state keys off floor(now / TICK)). It trades
-   on a 45s cadence, so new fills appear while you watch. Current
-   positions are marked to live quotes (F.priceOf), so P/L moves
-   with the market. 100% paper / virtual money — a transparency
-   demo of how the AI trades, never a real account or a promise.
+   Flux Fund — a SCRIPTED DEMONSTRATION, not a trading system.
+
+   READ THIS BEFORE USING ANY NUMBER FROM THIS FILE ON A PAGE.
+
+   Nothing here is a model, a strategy, or the research desk. The
+   book is generated from a seeded hash of the ticker and the
+   clock: `F.seed(ticker + "|" + tick)` picks what to buy, a coin
+   flip (`roll < 0.72`) decides buy vs sell, and the "reason" on
+   each row is drawn at random from a fixed list of strings. It
+   reads live prices only so the marks move.
+
+   It exists to show what the interface looks like with a book in
+   it. It must never be presented as an AI trading, as a strategy,
+   as a track record, or as the desk's work — the desk is real and
+   lives in flux-desk.js, and its rulings are actual model output.
+
+   Any surface that renders this must label it as a scripted
+   demonstration in the surface itself, not in a footnote.
+   F.Fund.SCRIPTED is exported so a page can assert it.
    ============================================================ */
 (function () {
   "use strict";
@@ -26,13 +38,13 @@
     "JPM","BAC","GS","V","MA","AXP","UNH","LLY","JNJ","XOM","CVX",
     "WMT","COST","HD","NKE","MCD","DIS","BA","CAT","GE","HON","TMUS","SOFI","HOOD"];
 
+  /* Labels for the demo rows. These are NOT reasons — nothing reasoned.
+     They name the scripted rule that produced the row, so the demo cannot
+     be mistaken for model output. */
   var REASONS = {
-    buy: ["Momentum breakout — Kronos rank #{r}", "Trend continuation, above 20D", "Relative-strength leader in {sec}",
-      "Volatility contraction → expansion", "Gap-and-go, holding VWAP", "Sector rotation into {sec}",
-      "Pullback entry to rising trend", "Breadth thrust confirmation", "Earnings drift, post-beat"],
-    sell: ["Trailing stop hit", "Rotating out of laggard", "Risk trim — exposure cap", "Target reached, booking gains",
-      "Momentum fade, below 20D", "Correlation too high vs book", "Weak relative strength"],
-    add: ["Adding to a winner", "Scaling in — trend intact", "Averaging up on strength"],
+    buy:  ["scripted entry", "scripted entry — add to book", "scripted entry — rotation"],
+    sell: ["scripted exit", "scripted exit — trim", "scripted exit — rotation"],
+    add:  ["scripted add"],
   };
 
   // deterministic RNG stream from a string
@@ -148,6 +160,9 @@
   function fill(tpl, r, sec) { return tpl.replace("{r}", r).replace("{sec}", sec); }
 
   var Fund = F.Fund = {
+    /* Assert this before rendering. Nothing here reasoned; see the file header. */
+    SCRIPTED: true,
+    DISCLOSURE: "Scripted demonstration — a seeded script, not a model and not the desk.",
     CFG: CFG,
     // memoized snapshot — rebuilt only when the 45s bucket advances
     snapshot: function () {
