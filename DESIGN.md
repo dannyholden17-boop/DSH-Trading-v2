@@ -69,6 +69,14 @@ colors:
   on-ink-faint: "rgba(255,255,255,.62)"
   on-ink-rule: "rgba(255,255,255,.14)"
   daylight-wash: "rgba(255,255,255,.92)"
+  # --- over the photograph. A hero image is not a flat token, so the type
+  # and chrome that sit on it get their own values, picked for legibility
+  # against a moving photographic ground rather than against a surface.
+  photo-text: "#f2f5fb"
+  photo-text-dim: "#c9d3e6"
+  photo-rule: "rgba(226,234,248,.16)"
+  photo-glass: "rgba(10,14,24,.62)"
+  photo-scrim: "rgba(6,9,16,.86)"
 typography:
   claim:
     fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
@@ -197,14 +205,15 @@ typography:
     lineHeight: 1
     letterSpacing: "-0.035em"
 rounded:
-  # the pit cuts its corners; daylight prints and rounds them. No pill:
-  # the references used black pill CTAs, but the standing brief rules them
-  # out, and a squared button sits closer to the ticket world anyway.
+  # the pit cuts its corners; daylight prints and rounds them. `full` is the
+  # pill, added when the owner pinned a reference whose hero CTAs are pills;
+  # it is for buttons on the photographic hero only, not for panels.
   cut: "2px"
   sm: "4px"
   lg: "6px"
   market-sm: "10px"
   market-lg: "22px"
+  full: "999px"
 spacing:
   hair: "9px"
   xs: "10px"
