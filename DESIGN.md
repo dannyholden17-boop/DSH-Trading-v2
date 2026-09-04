@@ -181,6 +181,21 @@ typography:
     fontWeight: 800
     lineHeight: 1.1
     letterSpacing: "-0.028em"
+  # --- the front room runs a larger, airier scale than the pit. A marketing
+  # surface has room to breathe; a workstation does not. Two steps only —
+  # section heads reuse `headline`, so daylight adds a claim and a figure.
+  marketDisplay:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(2.4rem, 1.1rem + 5.2vw, 5rem)"
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: "-0.045em"
+  marketFigure:
+    fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
+    fontSize: "clamp(1.6rem, 1.1rem + 1.4vw, 2.3rem)"
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: "-0.035em"
 rounded:
   # the pit cuts its corners; daylight prints and rounds them
   cut: "2px"
@@ -456,6 +471,13 @@ numbers, timestamps, routes, field keys.
 - **Data** (Azeret Mono 600–700, tabular, −0.02em): every price, quantity, score, count
   and identifier. Day-sheet figures run 1.5rem in gold; ticket fields 0.98rem in ink.
 - **Disclosure** (Public Sans 400, 12.5px/1.55, sentence case, max 70ch): long legal runs.
+
+**The front room runs a larger scale.** A marketing surface has room to breathe and a
+workstation does not, so daylight adds exactly two steps and reuses the rest:
+*marketDisplay* `clamp(2.4rem, 1.1rem + 5.2vw, 5rem)` for the page claim, and
+*marketFigure* `clamp(1.6rem, 1.1rem + 1.4vw, 2.3rem)` for the big read-off numbers in a
+strip. Section heads use the same **Headline** step as the pit — there is no separate
+daylight section head, and adding one would be drift, not design.
 
 ### Named Rules
 
