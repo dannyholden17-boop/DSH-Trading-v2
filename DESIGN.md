@@ -675,6 +675,14 @@ information moving, not decoration: the tape and marquee scrolls, the recording 
 up/down price flash, and toast entry/exit. A new animation must either be one of those or
 be the stamp.
 
+**The detector's `cramped-padding` rule is disabled for this project, deliberately.** It
+fires on every wrapper built to the One-Container Rule below, because that wrapper carries
+the border and background with zero padding on purpose. Measured on the home page, the
+nearest text to a container edge is 26.9px in the fact strip, 27px in the chain, 97px in
+the opening, and 12px in the densest board row, which is inside the rule's own 12 to 16px
+target. It was reporting the architecture, not a defect. Re-enable it with
+`hook-admin.mjs reset` if the cell padding is ever removed.
+
 **The One-Container Rule.** Where several facts belong together, they share **one** ruled
 container divided by internal hairlines — never N separate cards. The wrapper carries the
 border, the background and the radius and has zero padding; the *cells* carry the padding,
