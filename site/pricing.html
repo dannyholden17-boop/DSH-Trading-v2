@@ -1,7 +1,7 @@
 <!doctype html><html lang="en" data-surface="market"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pricing — Flux</title>
+<title>Pricing; Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
 <meta name="theme-color" content="#f1f3f8">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
@@ -34,10 +34,10 @@
 .pr-head p{color:var(--text-dim);font-size:clamp(1rem,.96rem + .3vw,1.14rem);line-height:1.6;max-width:46ch}
 @media(max-width:860px){.pr-head{grid-template-columns:1fr;align-items:start}.pr-head p{margin-top:14px}}
 
-.seg{display:inline-flex;gap:4px;padding:4px;border-radius:999px;border:1px solid var(--line);
+.seg{display:inline-flex;gap:4px;padding:4px;border-radius:var(--radius);border:1px solid var(--line);
   background:var(--well);margin-top:clamp(24px,3vw,36px)}
 .seg button{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
-  padding:9px 18px;border-radius:999px;border:1px solid transparent;background:transparent;color:var(--text-dim);
+  padding:9px 18px;border-radius:calc(var(--radius) - 4px);border:1px solid transparent;background:transparent;color:var(--text-dim);
   cursor:pointer;transition:color var(--t-hover) var(--ease),background var(--t-hover) var(--ease);white-space:nowrap}
 .seg button:hover{color:var(--text)}
 .seg button[aria-pressed="true"]{color:var(--act-ink);background:var(--act);border-color:var(--act)}
@@ -54,7 +54,7 @@
 .plan .nm{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--text-faint);display:flex;align-items:center;gap:10px}
 .plan .badge{font-family:var(--f-sans);font-size:12px;font-weight:700;letter-spacing:.06em;
-  text-transform:uppercase;background:var(--gold-soft);color:#120d05;padding:3px 9px;border-radius:999px}
+  text-transform:uppercase;background:var(--gold-soft);color:#120d05;padding:3px 9px;border-radius:var(--radius-sm,4px)}
 .plan .amt{font-family:var(--f-display);font-variant-numeric:tabular-nums;
   font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);font-weight:700;letter-spacing:-.04em;
   margin:16px 0 3px;line-height:1}
@@ -192,7 +192,7 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
     <div class="pr-head">
       <h1>Start free.<br><span class="q">Upgrade when it earns it.</span></h1>
       <p>Every plan reads the same desk and trades the same paper account from day one. No card to start,
-        no contract, and no cut of your trades — ever.</p>
+        no contract, and no cut of your trades, ever.</p>
     </div>
 
     <div class="seg" id="cycle" role="group" aria-label="Billing cycle">
@@ -221,8 +221,8 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
       <div class="plan pop">
         <div class="nm">Trader <span class="badge">Most popular</span></div>
         <div class="amt" data-m="$49" data-y="$490">$49</div>
-        <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year — $41/mo equivalent">per month, billed monthly</div>
-        <p class="desc">The analysts' actual filings, not just what survived them — and the desk as a
+        <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year, $41/mo equivalent">per month, billed monthly</div>
+        <p class="desc">The analysts' actual filings, not just what survived them, and the desk as a
           connector inside your own Claude.</p>
         <ul>
           <li>Everything in Scout</li>
@@ -238,7 +238,7 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
       <div class="plan">
         <div class="nm">Desk</div>
         <div class="amt" data-m="$149" data-y="$1,490">$149</div>
-        <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year — $124/mo equivalent">per month, billed monthly</div>
+        <div class="bill" data-bill-m="per month, billed monthly" data-bill-y="per year, $124/mo equivalent">per month, billed monthly</div>
         <p class="desc">For someone running real size who wants the desk pointed at their own names and
           their own risk.</p>
         <ul>
@@ -336,22 +336,22 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
 
     <div class="qs reveal">
       <details open><summary>Can I cancel anytime?</summary>
-        <p>Yes — one click in settings, no phone call and no retention maze. You keep access through the end
+        <p>Yes: one click in settings, no phone call and no retention maze. You keep access through the end
           of the period you already paid for, then drop to the free Scout plan rather than losing your
           account.</p></details>
       <details><summary>Do I need a broker?</summary>
         <p>No. The desk, the record, the scoreboard and the paper terminal all work without one. A broker
-          only matters when you want to act on something yourself — and even then Flux is not in that
+          only matters when you want to act on something yourself, and even then Flux is not in that
           conversation. You connect Robinhood to your own Claude, and Robinhood makes you confirm every
           order. Flux never takes custody of anything and is not a broker-dealer.</p></details>
       <details><summary>What am I actually paying for?</summary>
         <p>The record. Anything can produce a confident-sounding call; what is worth money is a stored,
-          dated, gradeable history of which calls landed — including the ones that did not. Scout shows you
+          dated, gradeable history of which calls landed, including the ones that did not. Scout shows you
           the rulings and the hit rates. Trader shows you the argument underneath them: what each analyst
           filed, what their boss threw out, and why.</p></details>
       <details><summary>Does the desk trade my money?</summary>
         <p>No, on any plan. Everything the desk trades is a simulated account with virtual money. Autopilot
-          does not trade a connected account, and connecting Robinhood does not change that — it gives your
+          does not trade a connected account, and connecting Robinhood does not change that; it gives your
           Claude a broker to talk to, not the desk.</p></details>
       <details><summary>Is the performance real?</summary>
         <p>The market data is real and the desk's decisions are real and timestamped. The money is not:
@@ -371,10 +371,10 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
   <div class="wrap">
     <div class="in">
       <h2>Read a round before you pay for one.</h2>
-      <p>Scout is free forever and shows you the whole record — every ruling, every reason, and the hit
+      <p>Scout is free forever and shows you the whole record; every ruling, every reason, and the hit
         rates behind them. Upgrade the day it earns it, not before.</p>
       <div class="btn-row">
-        <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk — free<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+        <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk, free<i class="ic-i i-arrow" aria-hidden="true"></i></a>
         <a class="btn btn-ghost btn-lg" href="./analysts.html">See the scoreboard</a>
       </div>
       <p class="fine">Flux is research and automation software. It is not investment advice and DSH Trading
@@ -451,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function(){
       (S.ready || Promise.resolve()).then(function(){ return S.checkout(plan); })
         .catch(function(e){
           btn.textContent = orig; btn.style.pointerEvents = "";
-          alert((e && e.message) || "Checkout isn't available yet — billing is still being set up.");
+          alert((e && e.message) || "Checkout isn't available yet; billing is still being set up.");
         });
     });
   });

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flux Autopilot — Flux</title>
+<title>Flux Autopilot; Flux</title>
 <meta name="description" content="Autopilot is the Flux research desk running on a schedule: three analysts file, their boss cuts, an executive rules, and every round is written down. It trades a simulated book and has no path to a brokerage. Simulated, not advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -231,7 +231,7 @@
 <h1 class="h1">The desk doesn't stop<br><span class="">when you close the tab.</span></h1>
       <p class="lede">Autopilot is the research loop running on a schedule: analysts file, their boss cuts,
         the executive rules, and every round is written down whether you were watching or not. It trades a
-        simulated book. It has no path to a brokerage, so it cannot touch your money — not by permission,
+        simulated book. It has no path to a brokerage, so it cannot touch your money, not by permission,
         by construction.</p>
       <div class="ap-pillrow">
         <span class="pill live">Paper account · live</span>
@@ -259,7 +259,7 @@
         <div class="ap-qs"><div class="n mono" id="apRefused">—</div><div class="l">Refused or cut</div></div>
       </div>
       <div class="foot disclosure">Read from the desk record. No win rate is shown because no prediction has
-        been graded yet — when one is, it appears on the <a href="./analysts.html" style="color:var(--gold)">scoreboard</a>, misses included.</div>
+        been graded yet, when one is, it appears on the <a href="./analysts.html" style="color:var(--gold)">scoreboard</a>, misses included.</div>
     </div>
   </div>
 </section>
@@ -277,14 +277,14 @@
     <div class="reveal" style="max-width:64ch">
 <h2 class="h2" style="margin-top:16px">Watch it trade, in real time, with fake money.</h2>
       <p class="lede" style="margin-top:16px">Every fill below is Flux acting on its own inside a $10,000
-        paper account. No real orders, no real dollars — just a transparent record of what the AI decided
+        paper account. No real orders, no real dollars, just a transparent record of what the AI decided
         and why, so you can judge it before it ever touches your book.</p>
       <div class="btn-row" style="margin-top:26px">
         <a class="btn btn-primary btn-lg" href="./fund.html">Open the live fund desk →</a>
         <button type="button" class="btn btn-ghost btn-lg" id="copyFundBtn">Copy the fund → my paper account</button>
       </div>
       <p class="faint" style="font-size:12.5px;margin-top:12px;max-width:60ch">Mirrors the fund's current stance
-        into your own simulated $10,000 paper account — equal-weight, in virtual money. Simulated, not advice.</p>
+        into your own simulated $10,000 paper account, equal-weight, in virtual money. Simulated, not advice.</p>
     </div>
 
     <div class="ap-fund-grid" style="margin-top:44px">
@@ -338,7 +338,7 @@
     </div>
 
     <div class="ap-strip reveal">
-      <span class="ic">⚠</span>
+      <span class="ic"><i class="ic-i warn" aria-hidden="true"></i></span>
       <p>The Flux Fund is a <b>simulated $10,000 paper account using virtual money</b>. Every figure here is
         hypothetical and does not represent real trading or real performance. Simulated results have inherent
         limitations and are not indicative of future results. Flux is not a broker-dealer and none of this is
@@ -351,16 +351,16 @@
 <section class="section" id="simulator">
   <div class="wrap">
     <div class="reveal" style="max-width:64ch">
-<h2 class="h2" style="margin-top:16px">Pick a rule. Watch it play out — on synthetic prices.</h2>
+<h2 class="h2" style="margin-top:16px">Pick a rule. Watch it play out, on synthetic prices.</h2>
       <p class="lede" style="margin-top:16px">This is the same idea behind Autopilot, made transparent: choose a
         simple, readable rule, see exactly which names it holds right now and why, then run a seeded 30-day
-        paper simulation on a synthetic price path. No real money, no live orders — just the concept, in the open.</p>
+        paper simulation on a synthetic price path. No real money, no live orders, just the concept, in the open.</p>
     </div>
 
     <div class="ap-sim-warn reveal">
-      <span class="ic">⚠</span>
+      <span class="ic"><i class="ic-i warn" aria-hidden="true"></i></span>
       <p><b>Simulated backtest on synthetic price paths, for illustration only.</b> This is not a real account,
-        not a prediction, and not investment advice. Results are generated from a seeded random walk — past or
+        not a prediction, and not investment advice. Results are generated from a seeded random walk, past or
         simulated performance is not indicative of future results. In live use, Flux Autopilot only ever acts on
         rules <b>you</b> set and approve, and you keep the stop button.</p>
     </div>
@@ -425,7 +425,7 @@
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">Every call walks the same five steps.</h2>
       <p class="lede" style="margin-top:16px">Nothing skips a desk and nothing reaches you until the last one
-        has signed it — including the calls that get thrown out. Each step is written down.</p>
+        has signed it, including the calls that get thrown out. Each step is written down.</p>
     </div>
     <div class="steps reveal" style="margin-top:44px">
       <div class="step"><div class="n">01</div><h3>Pick the names</h3>
@@ -438,7 +438,7 @@
         <p>The traders read every filing against that analyst's own hit rate and pass on only what they
           would put size behind. Most filings die here.</p></div>
       <div class="step"><div class="n">04</div><h3>The executive rules</h3>
-        <p>Approve, cut the size, or refuse — with the reason and which trader it sided with written down.
+        <p>Approve, cut the size, or refuse, with the reason and which trader it sided with written down.
           It refuses far more than it approves.</p></div>
       <div class="step"><div class="n">05</div><h3>The round is filed</h3>
         <p>Every filing, ruling and reason is stored. When a prediction reaches its date it is graded
@@ -456,7 +456,7 @@
     <div class="reveal" style="max-width:62ch">
 <h2 class="h2" style="margin-top:16px">It never trades quietly.</h2>
       <p class="lede" style="margin-top:16px">Every market hour and every close, Flux writes up what it did and
-        why. The transparency is the point — you should be able to read a full day of decisions before you
+        why. The transparency is the point; you should be able to read a full day of decisions before you
         trust it with a cent.</p>
     </div>
 
@@ -488,7 +488,7 @@
           <span class="ts" id="repTs">—</span>
         </div>
         <div class="ap-rep-body">
-          <p class="ap-rline">Closed the session at <b>$12,633</b> on the paper account — a simulated
+          <p class="ap-rline">Closed the session at <b>$12,633</b> on the paper account: a simulated
             <b class="up">+1.3%</b> day across 14 fills.</p>
           <p class="ap-rline">Best position was <b>NVDA</b> on the morning call sweep; worst was a <b>TSLA</b>
             short trimmed into the close after the 8-K drift stalled.</p>
@@ -525,7 +525,7 @@
 <section class="section" id="control">
   <div class="wrap">
     <div class="reveal" style="max-width:62ch">
-<h2 class="h2" style="margin-top:16px">Guardrails you set — and can pull anytime.</h2>
+<h2 class="h2" style="margin-top:16px">Guardrails you set, and can pull anytime.</h2>
       <p class="lede" style="margin-top:16px">The paper fund runs on its own. Your real account never does
         unless you say so, on rules you write, with a stop button that's always yours.</p>
     </div>
@@ -537,12 +537,12 @@
       </div>
       <div class="glass glass-hover sheen feat reveal">
         <h3>You set the rules</h3>
-        <p>Max position size, daily loss limit, allowed tickers, sectors to avoid — you write the mandate and
+        <p>Max position size, daily loss limit, allowed tickers, sectors to avoid; you write the mandate and
           Autopilot trades inside it.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
         <h3>Pause or stop anytime</h3>
-        <p>One tap freezes new trades or flattens the book. There is no lock-in and no waiting — control is
+        <p>One tap freezes new trades or flattens the book. There is no lock-in and no waiting, control is
           always in your hands.</p>
       </div>
       <div class="glass glass-hover sheen feat reveal">
@@ -588,26 +588,26 @@
     <div class="faq reveal" style="margin-top:40px">
       <details open><summary>Is this real money?</summary>
         <p>No. The Flux Fund is a simulated $10,000 paper account using virtual money. It exists as a
-          transparency tool — a live demonstration of how the AI thinks and trades — not as a real portfolio.
+          transparency tool, a live demonstration of how the AI thinks and trades, not as a real portfolio.
           Every number you see is hypothetical.</p></details>
       <details><summary>Will it trade MY account?</summary>
         <p>Only if you opt in and set the rules. By default Autopilot trades nothing but its own paper money.
-          If you connect a brokerage, you define the mandate — max size, loss limits, allowed tickers — and
+          If you connect a brokerage, you define the mandate, max size, loss limits, allowed tickers, and
           you can pause or stop it at any moment.</p></details>
       <details><summary>Can I see every trade?</summary>
         <p>Yes. The live log shows each fill as it happens, and the hourly and daily reports write up what the
           fund did and why. The whole point of the paper account is that nothing is hidden.</p></details>
       <details><summary>Is this financial advice?</summary>
-        <p>No. Flux is research and automation software — not a broker-dealer and not an investment adviser.
+        <p>No. Flux is research and automation software, not a broker-dealer and not an investment adviser.
           Nothing it produces is personalised advice or a recommendation, and every decision on your real
           account is yours.</p></details>
       <details><summary>What strategies does it use?</summary>
         <p>A multi-engine mix: momentum and breakout scanning, options flow, catalyst-driven setups and
-          mean-reversion — each signal cross-checked and then risk-gated for size, stop, correlation and
+          mean-reversion; each signal cross-checked and then risk-gated for size, stop, correlation and
           exposure before it's allowed to trade.</p></details>
       <details><summary>Can it lose money?</summary>
         <p>Yes. The simulated results include losing trades and losing days, because that's honest. Trading
-          involves risk of loss, including loss of principal, and no strategy — human or AI — removes it.</p></details>
+          involves risk of loss, including loss of principal, and no strategy, human or AI, removes it.</p></details>
     </div>
   </div>
 </section>
@@ -618,7 +618,7 @@
     <div class="cta reveal">
 <h2 class="h2" style="margin-top:14px">Watch Flux trade. Then decide.</h2>
       <p class="lede" style="margin:18px auto 28px;text-align:center">Follow the paper fund for a week, read the
-        reports, and only then connect a brokerage — on your rules, with your stop button.</p>
+        reports, and only then connect a brokerage, on your rules, with your stop button.</p>
       <div class="btn-row" style="justify-content:center">
         <a class="btn btn-primary btn-lg" href="./portfolio.html">Connect your brokerage →</a>
         <a class="btn btn-ghost btn-lg" href="./terminal.html">Open the desk</a>
@@ -1106,7 +1106,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var btn = document.getElementById("copyFundBtn");
   if(!btn) return;
 
-  function toast(msg){ if(F.toast) F.toast(msg, {icon:"⚡", ttl:6000}); }
+  function toast(msg){ if(F.toast) F.toast(msg, {icon:"", ttl:6000}); }
 
   /* place equal-weight paper buys across up to 5 tickers */
   function equalWeightBuy(tickers){
@@ -1144,14 +1144,14 @@ document.addEventListener("DOMContentLoaded", function(){
   function finish(tickers, prevText){
     if(!tickers || !tickers.length) tickers = kronosTickers();
     var n = equalWeightBuy(tickers);
-    if(n > 0) toast("⚡ Copied the fund into your paper account — " + n + " positions.");
-    else toast("⚡ Nothing to copy right now — no ranked buys or no spare paper cash.");
+    if(n > 0) toast("Copied the fund into your paper account: " + n + " positions.");
+    else toast("Nothing to copy right now: no ranked buys or no spare paper cash.");
     btn.disabled = false;
     btn.textContent = prevText;
   }
 
   function run(){
-    if(!window.FLUXBook){ toast("⚡ Paper account isn't available right now."); return; }
+    if(!window.FLUXBook){ toast("Paper account isn't available right now."); return; }
     var prevText = btn.textContent;
     btn.disabled = true;
     btn.textContent = "Copying…";
@@ -1231,7 +1231,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var PRESETS = {
     momentum: {
       key:"momentum", name:"Momentum", sub:"Hold the 3 strongest names",
-      desc:"Ranks every name in the Flux universe by its 1-day move — (price − prev close) ÷ prev close — and holds the 3 strongest, equal-weight.",
+      desc:"Ranks every name in the Flux universe by its 1-day move, (price − prev close) ÷ prev close, and holds the 3 strongest, equal-weight.",
       pick:function(rows){
         return rows.slice().sort(function(a,b){ return b.mom - a.mom; }).slice(0, HOLD)
           .map(function(r){ return { t:r.t, name:r.name, px:r.px, reason:pct(r.mom) + " vs prev close" }; });
@@ -1239,7 +1239,7 @@ document.addEventListener("DOMContentLoaded", function(){
     },
     reversion: {
       key:"reversion", name:"Mean-reversion", sub:"Buy the biggest dips",
-      desc:"Ranks names by how far they sit below their 52-week high — (52w high − price) ÷ 52w high — and buys the 3 deepest dips, equal-weight.",
+      desc:"Ranks names by how far they sit below their 52-week high, (52w high − price) ÷ 52w high, and buys the 3 deepest dips, equal-weight.",
       pick:function(rows){
         return rows.slice().sort(function(a,b){ return b.dip - a.dip; }).slice(0, HOLD)
           .map(function(r){ return { t:r.t, name:r.name, px:r.px, reason:(r.dip*100).toFixed(1) + "% below 52-wk high" }; });
@@ -1247,7 +1247,7 @@ document.addEventListener("DOMContentLoaded", function(){
     },
     balanced: {
       key:"balanced", name:"Balanced", sub:"Equal-weight quality",
-      desc:"Keeps only names with a positive P/E, then equal-weights the 3 with the lowest P/E — leaning toward cheaper, more established quality.",
+      desc:"Keeps only names with a positive P/E, then equal-weights the 3 with the lowest P/E, leaning toward cheaper, more established quality.",
       pick:function(rows){
         return rows.filter(function(r){ return typeof r.pe === "number" && r.pe > 0; })
           .sort(function(a,b){ return a.pe - b.pe; }).slice(0, HOLD)

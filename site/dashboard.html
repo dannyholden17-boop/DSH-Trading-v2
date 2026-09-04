@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard — Flux</title>
-<meta name="description" content="Your Flux members dashboard: the AI Daily Brief, ranked AI trade recommendations, your sample portfolio, watchlist and quick links into the trading app. Simulated sample account — illustrative, not advice.">
+<title>Dashboard; Flux</title>
+<meta name="description" content="Your Flux members dashboard: the AI Daily Brief, ranked AI trade recommendations, your sample portfolio, watchlist and quick links into the trading app. Simulated sample account, illustrative, not advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -261,7 +261,7 @@
         parts.push("Your watchlist: "+top.t+" leads "+(top.chg>=0?"+":"")+(top.chg*100).toFixed(1)+"%"+(moves.length>1?", "+bot.t+" lags "+(bot.chg*100).toFixed(1)+"%":"")+".");
       }
       // model's top idea
-      var v=J.valuation(); if(v.under&&v.under[0]){ var u=v.under[0]; parts.push("Model's top idea: "+u.ticker+" — sees "+(u.upside*100).toFixed(1)+"% upside toward $"+(+u.fair).toFixed(2)+"."); }
+      var v=J.valuation(); if(v.under&&v.under[0]){ var u=v.under[0]; parts.push("Model's top idea: "+u.ticker+", sees "+(u.upside*100).toFixed(1)+"% upside toward $"+(+u.fair).toFixed(2)+"."); }
       // fund
       parts.push("The Autopilot fund is trading live on Kronos signals.");
       parts.push("Simulated · model estimates · not advice.");
@@ -278,7 +278,7 @@
     <div class="glass sheen" style="padding:22px;position:relative;overflow:hidden">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span class="pill live">Getting started</span>
-        <b style="font-size:1rem">Welcome to Flux — <span id="obCount">0/5</span> done. Let's get you trading.</b>
+        <b style="font-size:1rem">Welcome to Flux. <span id="obCount">0/5</span> done, let's get you trading.</b>
         <button class="btn btn-ghost btn-sm" type="button" id="obDismiss" style="margin-left:auto">Dismiss</button>
       </div>
       <div style="height:6px;border-radius:2px;background:rgba(160,180,220,.10);overflow:hidden;margin:16px 0">
@@ -294,9 +294,9 @@ document.addEventListener("DOMContentLoaded", function(){
   if(S && S.isOnboarded && S.isOnboarded()) return;   // already onboarded
   var lg = function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } };
   var steps = [
-    { k:"trade", ic:"⟁", t:"Place your first paper trade", d:"Buy or sell any stock in the terminal — free virtual money.", href:"./terminal.html", done:function(){ return B && B.get().orders.length>0; } },
+    { k:"trade", ic:"⟁", t:"Place your first paper trade", d:"Buy or sell any stock in the terminal, free virtual money.", href:"./terminal.html", done:function(){ return B && B.get().orders.length>0; } },
     { k:"watch", ic:"★", t:"Build your watchlist", d:"Track the names you care about, synced to your account.", href:"./terminal.html", done:function(){ return lg("flux_ob_watch") || (window.FLUXWatch && window.FLUXWatch.get().length>4); } },
-    { k:"alert", ic:"🔔", t:"Set a price alert", d:"Get flagged when a stock crosses your level.", href:"#alForm", done:function(){ return window.FLUXAlerts && window.FLUXAlerts.get().length>0; } },
+    { k:"alert", ic:"", t:"Set a price alert", d:"Get flagged when a stock crosses your level.", href:"#alForm", done:function(){ return window.FLUXAlerts && window.FLUXAlerts.get().length>0; } },
     { k:"ai", ic:"◇", t:"Ask Flux AI", d:"Research any company or your risk in plain English.", href:"./ai.html", done:function(){ return lg("flux_ob_ai"); } },
     { k:"fund", ic:"◷", t:"Watch the Kronos fund", d:"See the AI trade its own $10k live, with reports.", href:"./autopilot.html", done:function(){ return lg("flux_ob_fund"); } }
   ];
@@ -358,13 +358,13 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="db-shead reveal">
       <div style="max-width:60ch">
 <h2 class="h2" style="margin-top:14px">Ranked by engine agreement.</h2>
-        <p class="lede">Eight live research signals, sorted by confidence and expanded in full — the thesis,
+        <p class="lede">Eight live research signals, sorted by confidence and expanded in full: the thesis,
           the levels, and a price trace. Every one is a research signal, not advice.</p>
       </div>
       <span class="pill"><i></i> AI research signal · not advice</span>
     </div>
     <div class="grid g-3" id="dbRecs"></div>
-    <p class="db-cap">Conviction is how far the desk agreed with itself — not a probability of profit.
+    <p class="db-cap">Conviction is how far the desk agreed with itself, not a probability of profit.
       Levels are illustrative and derived from reference prices. You decide and place any trade yourself.</p>
   </div>
 </section>
@@ -373,7 +373,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <section class="section" style="padding-top:0" id="kronosSignals">
   <div class="wrap">
 <h2 class="h2 reveal">Today's forecast signals.</h2>
-    <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return — <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:13px">Forecast-driven · not advice.</span></p>
+    <p class="lede reveal" style="max-width:62ch">Kronos forecasts the next candles for every name, then ranks them by predicted return: <b>&gt;+2% buy, &lt;−2% sell</b>. <span class="mono" style="font-size:13px">Forecast-driven · not advice.</span></p>
     <div class="grid g-3 reveal" id="kSignals" style="margin-top:22px"></div>
     <p class="mono" style="font-size:12px;color:var(--text-faint);margin-top:12px" id="kSrc">Kronos model · updates as forecasts refresh.</p>
   </div>
@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <section class="section" style="padding-top:0" id="deskLive">
   <div class="wrap">
 <h2 class="h2 reveal">Research that never stops.</h2>
-    <p class="lede reveal" style="max-width:64ch">Three analysts, two traders who sift what they file, and an Executive with the green light — running in a loop right now. <a href="./desk.html" style="color:var(--cyan)">Watch the desk →</a></p>
+    <p class="lede reveal" style="max-width:64ch">Three analysts, two traders who sift what they file, and an Executive with the green light, running in a loop right now. <a href="./desk.html" style="color:var(--cyan)">Watch the desk →</a></p>
     <div class="glass reveal" id="dbDesk" style="margin-top:22px;padding:16px 18px"><span class="dk-w-idle">Connecting to the desk…</span></div>
     <div class="grid g-3 reveal" id="dbDeskCalls" style="margin-top:14px"></div>
   </div>
@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <section class="section" style="padding-top:0" id="newsFeed">
   <div class="wrap">
 <h2 class="h2 reveal">Finance news, shuffled live.</h2>
-    <p class="lede reveal" style="max-width:62ch">WSJ, CNBC, Reuters, Bloomberg, MarketWatch and more — merged and refreshed through the day. <a href="./news.html" style="color:var(--cyan)">Open the full feed →</a></p>
+    <p class="lede reveal" style="max-width:62ch">WSJ, CNBC, Reuters, Bloomberg, MarketWatch and more, merged and refreshed through the day. <a href="./news.html" style="color:var(--cyan)">Open the full feed →</a></p>
     <div class="glass reveal" id="dbNews" style="margin-top:22px;padding:14px 18px"><div class="fnw-empty">Loading headlines…</div></div>
   </div>
 </section>
@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <section class="section" style="padding-top:0" id="paperAcct">
   <div class="wrap">
 <h2 class="h2 reveal">Live from your terminal.</h2>
-    <p class="lede reveal" style="max-width:60ch">This is your real (simulated) paper account — every order you place in the trading terminal shows up here. $100,000 of virtual money to learn with.</p>
+    <p class="lede reveal" style="max-width:60ch">This is your real (simulated) paper account; every order you place in the trading terminal shows up here. $100,000 of virtual money to learn with.</p>
     <div class="grid g-4 reveal" id="paChips" style="margin-top:24px"></div>
     <div class="split wide-l reveal" style="margin-top:26px">
       <div class="glass" style="padding:0;overflow:hidden">
@@ -454,7 +454,7 @@ document.addEventListener("DOMContentLoaded", function(){
           <a class="btn btn-primary btn-sm" href="./terminal.html">Open trading terminal →</a>
           <a class="btn btn-ghost btn-sm" href="./options.html">Trade options</a>
           <a class="btn btn-ghost btn-sm" href="./activity.html">Activity &amp; P&amp;L</a>
-          <button class="btn btn-primary btn-sm" type="button" id="paCopyKronos">⚡ Copy the Kronos fund</button>
+          <button class="btn btn-primary btn-sm" type="button" id="paCopyKronos"><i class="ic-i bolt" aria-hidden="true"></i> Copy the Kronos fund</button>
           <button class="btn btn-ghost btn-sm" type="button" id="paReset">Reset paper account</button>
         </div>
       </div>
@@ -492,7 +492,7 @@ document.addEventListener("DOMContentLoaded",function(){
     ].map(function(c){return '<div class="stat glass" style="padding:16px"><b style="font-size:1.5rem" class="'+c[2]+'">'+c[1]+'</b><span>'+c[0]+'</span></div>';}).join("");
     var pos=B.positionsList(),tb=$("#paPos");
     if(tb){
-      if(!pos.length){tb.innerHTML='<tr><td style="padding:22px 18px;color:var(--text-faint)">No paper positions yet — open the terminal to place your first trade.</td></tr>';}
+      if(!pos.length){tb.innerHTML='<tr><td style="padding:22px 18px;color:var(--text-faint)">No paper positions yet, open the terminal to place your first trade.</td></tr>';}
       else{
         tb.innerHTML='<thead><tr>'+["Ticker","Qty","Avg","Last","Mkt value","P/L"].map(function(h,i){return '<th style="text-align:'+(i?"right":"left")+';padding:9px 14px;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);border-bottom:1px solid var(--line-2)">'+h+'</th>';}).join("")+'</tr></thead><tbody>'+
         pos.map(function(p){return '<tr>'+
@@ -551,7 +551,7 @@ document.addEventListener("DOMContentLoaded",function(){
     var msg=$("#alMsg");
     if(!t||!px){msg.style.color="var(--crimson)";msg.textContent="Enter a ticker and a price.";return;}
     var al=A.add(t,op,px);
-    if(!al){msg.style.color="var(--crimson)";msg.textContent="Unknown symbol — try NVDA, AMD, TSLA…";return;}
+    if(!al){msg.style.color="var(--crimson)";msg.textContent="Unknown symbol, try NVDA, AMD, TSLA…";return;}
     msg.style.color="var(--emerald)";msg.textContent="Alert set for "+t+" "+(op==="above"?"above":"below")+" $"+px.toFixed(2)+".";
     $("#alTk").value="";$("#alPx").value="";renderAlerts();
   });
@@ -559,7 +559,7 @@ document.addEventListener("DOMContentLoaded",function(){
   renderAcct();renderAlerts();
   if(!reduced)setInterval(function(){
     renderAcct();
-    if(A){var fired=A.check();if(fired.length){renderAlerts();var m=$("#alMsg");if(m){m.style.color="var(--emerald)";m.textContent="🔔 "+fired.map(function(f){return f.ticker}).join(", ")+" alert"+(fired.length>1?"s":"")+" triggered!";}}}
+    if(A){var fired=A.check();if(fired.length){renderAlerts();var m=$("#alMsg");if(m){m.style.color="var(--emerald)";m.textContent=""+fired.map(function(f){return f.ticker}).join(", ")+" alert"+(fired.length>1?"s":"")+" triggered!";}}}
   },4000);
 });
 </script>
@@ -689,7 +689,7 @@ document.addEventListener("DOMContentLoaded",function(){
           <span class="chg up" id="dbApChg">+1.24%</span>
         </div>
         <p class="db-ap-note">Autopilot trades a simulated $10,000 paper account only. It never trades your real
-          account without your explicit approval and the guardrails you set — and you can pause it anytime.</p>
+          account without your explicit approval and the guardrails you set, and you can pause it anytime.</p>
       </div>
       <div class="db-ap-right">
         <div class="db-ap-stats">
@@ -714,7 +714,7 @@ document.addEventListener("DOMContentLoaded",function(){
     <div class="grid g-4">
       <a class="glass glass-hover db-qa reveal" href="./ai.html">
         <h3>Ask Flux AI</h3>
-        <p>Put a question to the desk — a name, a sector, your own book — in plain English.</p>
+        <p>Put a question to the desk, a name, a sector, your own book, in plain English.</p>
         <span class="go">Open Flux AI →</span>
       </a>
       <a class="glass glass-hover db-qa reveal" href="./research.html">
@@ -794,27 +794,27 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---------------- AI daily brief (typing, 3 variants) ---------------- */
   var BRIEFS = [
     [
-      'Market tone is <b>risk-on</b> into the open — semis are leading, but breadth is narrow with 61% of the move sitting in three names.',
+      'Market tone is <b>risk-on</b> into the open, semis are leading, but breadth is narrow with 61% of the move sitting in three names.',
       'Your watchlist is <b class="up">+1.4%</b> on the average; <b>NVDA</b> and <b>AMD</b> are carrying it, and <b>TSLA</b> is the lone red.',
-      'Top catalyst today: <b>MSFT</b> cloud update after the close — options skew has flipped bullish into it.',
+      'Top catalyst today: <b>MSFT</b> cloud update after the close, options skew has flipped bullish into it.',
       'Unusual flow: a <b>14,200-lot call sweep</b> hit the NVDA $185 strike at the ask, 3 days to expiry (~$4.6M premium).',
-      'Risk flag on your book: it is <b>68% concentrated in semis</b> with 0.81 correlation across the top three — they move together, both ways.',
+      'Risk flag on your book: it is <b>68% concentrated in semis</b> with 0.81 correlation across the top three; they move together, both ways.',
       'One-line plan: hold the winners, keep stops tight on the two runners, and let MSFT confirm before you add.'
     ],
     [
-      'Tone has cooled to <b>mixed</b> — index futures flat, volatility ticking up, and rotation out of momentum into value.',
+      'Tone has cooled to <b>mixed</b>, index futures flat, volatility ticking up, and rotation out of momentum into value.',
       'Watchlist is <b class="up">+0.6%</b>; <b>COIN</b> leads on the BTC bid while <b>PLTR</b> fades a hot open.',
-      'Top catalyst today: <b>TSLA</b> filed an 8-K on the delivery outlook — a setup that historically preceded a <b class="down">−2.3%</b> five-day drift.',
+      'Top catalyst today: <b>TSLA</b> filed an 8-K on the delivery outlook: a setup that historically preceded a <b class="down">−2.3%</b> five-day drift.',
       'Unusual flow: <b>SMCI</b> entered the top 1% of the universe for volume, with short float at 18% and rising.',
-      'Risk flag on your book: two positions sit within 1.2% of their stops — the Risk engine has flagged both for review.',
+      'Risk flag on your book: two positions sit within 1.2% of their stops: the Risk engine has flagged both for review.',
       'One-line plan: trim into strength, respect the stops on the two runners, and keep buying power for the TSLA reaction.'
     ],
     [
-      'Tone is <b>cautiously constructive</b> — the tape is grinding higher on thin volume, the kind that reverses on a single headline.',
+      'Tone is <b>cautiously constructive</b>: the tape is grinding higher on thin volume, the kind that reverses on a single headline.',
       'Watchlist is <b class="up">+2.0%</b> on the average, led by <b>SMCI</b> and <b>NVDA</b>; nothing on it is red this morning.',
-      'Top catalyst today: <b>AAPL</b> reclaimed VWAP and crossed bullish on the 15-minute — a level the tape has respected all week.',
+      'Top catalyst today: <b>AAPL</b> reclaimed VWAP and crossed bullish on the 15-minute: a level the tape has respected all week.',
       'Unusual flow: put/call skew on <b>MSFT</b> turned bullish into the cloud update, and a gamma wall is building at $430.',
-      'Risk flag on your book: your top two names are <b>57%</b> of the portfolio — concentration the Risk radar is watching closely.',
+      'Risk flag on your book: your top two names are <b>57%</b> of the portfolio, concentration the Risk radar is watching closely.',
       'One-line plan: let the leaders run, add only on a pullback to support, and size every new idea against the book.'
     ]
   ];

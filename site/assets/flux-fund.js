@@ -42,8 +42,8 @@
      They name the scripted rule that produced the row, so the demo cannot
      be mistaken for model output. */
   var REASONS = {
-    buy:  ["scripted entry", "scripted entry — add to book", "scripted entry — rotation"],
-    sell: ["scripted exit", "scripted exit — trim", "scripted exit — rotation"],
+    buy:  ["scripted entry", "scripted entry, add to book", "scripted entry, rotation"],
+    sell: ["scripted exit", "scripted exit, trim", "scripted exit, rotation"],
     add:  ["scripted add"],
   };
 
@@ -162,7 +162,7 @@
   var Fund = F.Fund = {
     /* Assert this before rendering. Nothing here reasoned; see the file header. */
     SCRIPTED: true,
-    DISCLOSURE: "Scripted demonstration — a seeded script, not a model and not the desk.",
+    DISCLOSURE: "Scripted demonstration: a seeded script, not a model and not the desk.",
     CFG: CFG,
     // memoized snapshot — rebuilt only when the 45s bucket advances
     snapshot: function () {
@@ -187,7 +187,7 @@
         var alloc = invest * (p.weight / 100), qty = Math.floor(alloc / (p.price || 1));
         if (qty >= 1) { var r = F.Book.place({ side: "buy", ticker: p.t, qty: qty, type: "market", silent: true }); if (r && r.ok) n++; }
       });
-      if (F.toast) F.toast("🤖 Mirrored the fund — " + n + " positions into your paper account.", { icon: "🤖" });
+      if (F.toast) F.toast(" Mirrored the fund — " + n + " positions into your paper account.", { icon: "" });
       return { ok: true, placed: n };
     },
   };

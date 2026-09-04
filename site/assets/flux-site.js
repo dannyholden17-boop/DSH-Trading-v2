@@ -17,7 +17,7 @@
   /* ---- shared demo signals ---- */
   F.SIGNALS=[
     {t:"NVDA",e:"Options",lbl:"Unusual Flow",mv:"+2.1%",u:1,c:88,
-     i:"Call sweep — 14,200 contracts at the $185 strike, 3DTE, all at ask (~$4.6M premium)."},
+     i:"Call sweep, 14,200 contracts at the $185 strike, 3DTE, all at ask (~$4.6M premium)."},
     {t:"AMD",e:"Scanner",lbl:"Breakout",mv:"+3.4%",u:1,c:74,
      i:"Breaking out of a six-week base on 2.7× average volume. Cleared $172, room to $186."},
     {t:"TSLA",e:"Catalyst",lbl:"Catalyst",mv:"-1.8%",u:0,c:69,
@@ -37,9 +37,9 @@
   F.ENGINES=[
     {ic:"⌖",id:"Scanner",d:"Sweeps the desk's 114-name universe for breakouts, volume spikes, gaps and squeeze conditions.",c:"15s",o:"breakouts"},
     {ic:"◈",id:"Catalyst",d:"Parses filings, earnings and the news wire, and estimates the historical drift.",c:"30s",o:"events"},
-    {ic:"⟁",id:"Options",d:"Tracks unusual options activity — sweeps, open-interest shifts, skew and gamma.",c:"10s",o:"flow"},
+    {ic:"⟁",id:"Options",d:"Tracks unusual options activity, sweeps, open-interest shifts, skew and gamma.",c:"10s",o:"flow"},
     {ic:"△",id:"Technicals",d:"Computes indicators across timeframes: crosses, divergences, VWAP and key levels.",c:"20s",o:"levels"},
-    {ic:"⊘",id:"Risk",d:"Watches your book — drawdown, correlation, stops and exposure — and gates orders.",c:"5s",o:"guardrails"},
+    {ic:"⊘",id:"Risk",d:"Watches your book, drawdown, correlation, stops and exposure, and gates orders.",c:"5s",o:"guardrails"},
     {ic:"⧗",id:"Backtest",d:"Replays every flagged setup across years of history to prove the edge is real.",c:"on-demand",o:"validation"}
   ];
 
@@ -50,9 +50,9 @@
   F.MODELS=[
     {n:"The analysts",m:"Claude Haiku 4.5",d:"Three of them, one lens each. Read a name and file a dated prediction with the evidence behind it."},
     {n:"The traders",m:"Claude Haiku 4.5",d:"The analysts' boss. Read every filing against that analyst's own record and pass on only what they would take."},
-    {n:"The executive",m:"Claude Opus 5",d:"Rules on what survives: approve, cut the size, or refuse — with the reason on the record."},
+    {n:"The executive",m:"Claude Opus 5",d:"Rules on what survives: approve, cut the size, or refuse, with the reason on the record."},
     {n:"Kronos",m:"in-browser approximation",d:"A short-horizon price shape. Runs client-side today, so its forecasts are marked as approximate rather than as a trained model's output."},
-    {n:"DSA",m:"deterministic composite",d:"Scores momentum, range, drawdown and value into one number. Arithmetic, not a model — every component is shown."}
+    {n:"DSA",m:"deterministic composite",d:"Scores momentum, range, drawdown and value into one number. Arithmetic, not a model; every component is shown."}
   ];
 
   /* ---- nav ---- */
@@ -292,7 +292,7 @@
     var host=$(".fx-toasts");
     if(!host){ host=document.createElement("div"); host.className="fx-toasts"; host.setAttribute("aria-live","polite"); document.body.appendChild(host); }
     var t=document.createElement("div"); t.className="fx-toast";
-    t.innerHTML='<span class="ic">'+(opts.icon||"🔔")+'</span><div class="tx">'+html+'</div><button class="x" aria-label="Dismiss">✕</button>';
+    t.innerHTML='<span class="ic">'+(opts.icon||'<i class="ic-i i-bell" aria-hidden="true"></i>')+'</span><div class="tx">'+html+'</div><button class="x" aria-label="Dismiss"><i class="ic-i i-close" aria-hidden="true"></i></button>';
     var kill=function(){ t.classList.add("out"); setTimeout(function(){ t.remove(); }, 320); };
     t.querySelector(".x").onclick=kill;
     host.appendChild(t);
@@ -309,7 +309,7 @@
         if(fired&&fired.length){
           fired.forEach(function(al){
             var dir=al.op==="above"?"rose above":"dropped below";
-            F.toast("<b>"+al.ticker+"</b> "+dir+" $"+(+al.price).toFixed(2)+" — now $"+(+al.firedPrice).toFixed(2)+".",{icon:al.op==="above"?"📈":"📉",ttl:9000});
+            F.toast("<b>"+al.ticker+"</b> "+dir+" $"+(+al.price).toFixed(2)+", now $"+(+al.firedPrice).toFixed(2)+".",{icon:al.op==="above"?"<i class='ic-i i-trend-up' aria-hidden='true'></i>":"<i class='ic-i i-trend-down' aria-hidden='true'></i>",ttl:9000});
           });
         }
       }catch(e){}
@@ -515,7 +515,7 @@
       // broadcast so every open surface (terminal, dashboard, activity, account) refreshes
       try{ window.dispatchEvent(new CustomEvent("flux-book-updated",{detail:ord})); }catch(e){}
       // toast a confirmation unless the caller opts out (o.silent) — e.g. the terminal shows its own banner
-      if(!o.silent && F.toast){ try{ F.toast((o.side==="buy"?"🟢 Bought ":"🔴 Sold ")+qty+" <b>"+t+"</b> @ $"+px.toFixed(2)+".",{icon:o.side==="buy"?"🟢":"🔴",ttl:5000}); }catch(e){} }
+      if(!o.silent && F.toast){ try{ F.toast((o.side==="buy"?"Bought ":"Sold ")+qty+" <b>"+t+"</b> @ $"+px.toFixed(2)+".",{icon:'<i class="ic-i i-check" aria-hidden="true"></i>',ttl:5000}); }catch(e){} }
       return{ok:true,msg:(o.side==="buy"?"Bought ":"Sold ")+qty+" "+t+" @ $"+px.toFixed(2),order:ord,book:b};
     },
     positionsList:function(){
@@ -547,7 +547,7 @@
     // add paper buying power (demo "deposit")
     deposit:function(amt){amt=Math.max(0,+amt||0);var b=this.get();b.cash=+(b.cash+amt).toFixed(2);b.start=+((b.start||100000)+amt).toFixed(2);this.save(b);
       try{window.dispatchEvent(new CustomEvent("flux-book-updated",{detail:{deposit:amt}}));}catch(e){}
-      if(F.toast){try{F.toast("💵 Added $"+amt.toLocaleString()+" paper buying power.",{icon:"💵"});}catch(e){}}
+      if(F.toast){try{F.toast("<i class='ic-i i-doc' aria-hidden='true'></i> Added $"+amt.toLocaleString()+" paper buying power.",{icon:"<i class='ic-i i-doc' aria-hidden='true'></i>"});}catch(e){}}
       return b;}
   };
   window.FLUXBook=F.Book;
@@ -562,7 +562,7 @@
       var blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob);
       var a=document.createElement("a");a.href=url;a.download=filename||"flux-export.csv";
       document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
-      if(F.toast)F.toast("⬇️ Exported "+rows.length+" rows.",{icon:"⬇️"});
+      if(F.toast)F.toast("<i class='ic-i i-down' aria-hidden='true'></i> Exported "+rows.length+" rows.",{icon:"<i class='ic-i i-down' aria-hidden='true'></i>"});
     }catch(e){}
   };
 
@@ -621,7 +621,7 @@
         premium:+o.premium,cost:+((+o.premium)*100*Math.max(1,+o.qty||1)).toFixed(2),status:"filled"};
       a.unshift(ord);if(a.length>60)a.length=60;this.save(a);
       try{window.dispatchEvent(new CustomEvent("flux-book-updated",{detail:ord}));}catch(e){}
-      if(F.toast){try{F.toast((ord.side==="buy"?"🟢 Bought ":"🔴 Sold ")+ord.qty+" "+ord.ticker+" $"+ord.strike+" "+ord.right.toUpperCase()+" @ $"+ord.premium.toFixed(2),{icon:"⚙️"});}catch(e){}}
+      if(F.toast){try{F.toast((ord.side==="buy"?"Bought ":"Sold ")+ord.qty+" "+ord.ticker+" $"+ord.strike+" "+ord.right.toUpperCase()+" @ $"+ord.premium.toFixed(2),{icon:'<i class="ic-i i-check" aria-hidden="true"></i>'});}catch(e){}}
       return{ok:true,order:ord};}
   };
   window.FLUXOpt=F.OptBook;

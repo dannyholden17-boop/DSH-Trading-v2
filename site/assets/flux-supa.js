@@ -222,7 +222,7 @@
       .then(function(res){
         var url = res && res.data && res.data.url;
         if(url){ location.href = url; }
-        else { throw new Error((res && res.data && res.data.error) || "Checkout unavailable — is billing configured?"); }
+        else { throw new Error((res && res.data && res.data.error) || "Checkout unavailable, is billing configured?"); }
       });
   };
 
@@ -238,7 +238,7 @@
     _bump: function(){ try{ var k="flux_byok_calls_"+_day(); localStorage.setItem(k, String(1 + (+(localStorage.getItem(k)||0)))); }catch(e){} }
   };
   function _day(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
-  var BYOK_SYSTEM = "You are Fluxi — the AI desk assistant on the Flux paper-trading site. Warm, sharp, concise trading-desk co-pilot. You continuously scan 250+ US stocks (momentum, undervalued & overvalued, breakouts, rebounds); Kronos — a transformer trained on OHLCV candles (open model: dannyholden17-boop/Kronos) — powers your signals (>+2% BUY, <-2% SELL, else HOLD). Hold normal conversation too. HARD RULES: not a financial advisor, no investment advice; all prices/forecasts are simulated paper-trading; never promise returns; don't invent tickers/prices not in the context; keep answers tight (1-4 sentences) unless depth is asked for.";
+  var BYOK_SYSTEM = "You are Fluxi: the AI desk assistant on the Flux paper-trading site. Warm, sharp, concise trading-desk co-pilot. You continuously scan 250+ US stocks (momentum, undervalued & overvalued, breakouts, rebounds); Kronos: a transformer trained on OHLCV candles (open model: dannyholden17-boop/Kronos) — powers your signals (>+2% BUY, <-2% SELL, else HOLD). Hold normal conversation too. HARD RULES: not a financial advisor, no investment advice; all prices/forecasts are simulated paper-trading; never promise returns; don't invent tickers/prices not in the context; keep answers tight (1-4 sentences) unless depth is asked for.";
   function byokHeavy(q){ q=(q||"").toLowerCase(); if(q.length>200) return true;
     return /\b(brief|deep dive|in.?depth|detailed|analy(ze|sis|se)|thesis|overall|thoughts on|walk me through|explain|breakdown|rundown|report|outlook|compare|comparison|vs\.?|comprehensive|thorough|write (me )?a|memo|strateg|pros and cons|elaborate|summar|research)\b/.test(q); }
   function byokChat(question, context){

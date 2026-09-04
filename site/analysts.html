@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Analysts — Flux</title>
+<title>The Analysts; Flux</title>
 <meta name="description" content="Three analysts read every name Flux's research desk works: fundamentals, catalyst and tape. Each files a view, a conviction and its evidence. Simulated / educational, not investment advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -57,7 +57,7 @@
     <span class="st-meta" id="stMeta">—</span>
   </div>
   <p class="st-sub">Every name that reaches a trader has been through three lenses first. Each analyst works
-    one lens only and files a view, a conviction and the evidence behind it — even when the honest answer is
+    one lens only and files a view, a conviction and the evidence behind it, even when the honest answer is
     that there is nothing here. They do not see each other's filings.</p>
 
   <div class="st-cards stagger" id="stCards">
@@ -73,7 +73,7 @@
     </article>
     <article class="st-card" style="--accent:#f5b93c">
       <h2>Catalyst</h2>
-      <p class="what">Reads what is about to happen: filings, earnings, the wire and government sources — and
+      <p class="what">Reads what is about to happen: filings, earnings, the wire and government sources, and
         estimates the drift that historically followed.</p>
       <div class="st-figs">
         <div class="st-fig"><b id="aCatFil">0</b><span>filings</span></div>
@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
       });
       /* The scoreboard. A prediction is graded on its own resolve date, so
-         until one comes due this panel has nothing to report — and says so
+         until one comes due this panel has nothing to report, and says so
          rather than showing a rate computed from nothing. */
       var board = a.scoreboard || [];
       var host = $("#aScore");
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 (open_ === 1 ? 'One call is' : '<b style="color:var(--text)">' + open_ + '</b> calls are') +
                 ' open and waiting to be graded.'
               : 'The analysts have not filed a dated prediction yet, so there is nothing to grade. ' +
-                'Filings above are research notes; a prediction is the stricter thing — a direction, a ' +
+                'Filings above are research notes; a prediction is the stricter thing: a direction, a ' +
                 'target and a date it can be scored on.') +
             ' When one comes due it is scored against the tape whether it worked or not, and the result ' +
             'appears here, including the misses.</li>';

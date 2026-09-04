@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flux — the research desk that shows its work</title>
+<title>Flux: the research desk that shows its work</title>
 <meta name="description" content="Three analysts research a name and file dated, scoreable predictions. Their trading boss throws out most of it. One executive rules on what survives. Every filing is stored and graded against the tape. Simulated money, real market data, not investment advice.">
 <meta name="theme-color" content="#f1f3f8">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
@@ -167,7 +167,7 @@
   text-transform:uppercase;color:var(--text-faint);flex:none;width:88px;padding-top:2px}
 .rd-list .v{color:var(--text-dim);min-width:0}
 .rd-ask{margin-top:15px;display:flex;align-items:center;gap:10px;padding:10px 13px;
-  border:1px solid var(--line-2);border-radius:999px;background:var(--well);
+  border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);
   font-size:12.5px;color:var(--text-faint);
   transition:border-color var(--t-hover) var(--ease),color var(--t-hover) var(--ease)}
 .rd-ask:hover{border-color:var(--clearing);color:var(--text)}
@@ -214,7 +214,7 @@
 .ch-doc{
   position:absolute;top:0;left:16.66%;width:126px;
   transform-style:preserve-3d;
-  border:1px solid var(--line);border-radius:7px;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);
   padding:10px 12px 11px;
   animation:chDoc 16s var(--ease) infinite;
 }
@@ -458,7 +458,7 @@
   <div class="wrap">
     <h1 class="op-claim">Research you can<br>audit, <span class="q">line by line.</span></h1>
     <p class="op-lede">Three analysts research a name and file a dated prediction with the evidence behind
-      it. Their boss — the trading desk — throws out most of it. One executive rules on what survives, and
+      it. Their boss, the trading desk, throws out most of it. One executive rules on what survives, and
       says why. Every filing is stored and graded against the tape afterwards, including the ones that were
       wrong.</p>
     <div class="op-act">
@@ -482,7 +482,7 @@
       <div>
         <h2 id="wkH">The last thing the desk signed</h2>
         <p>Not a mock-up. This is the executive's most recent ruling, the names that were on the board with
-          it, and the note it filed — read straight out of the record.</p>
+          it, and the note it filed, read straight out of the record.</p>
       </div>
       <span class="pit-tag live" id="wkLive">live record</span>
     </div>
@@ -551,7 +551,7 @@
     <div class="ch-head">
       <h2 id="chH">Nothing reaches you unsigned.</h2>
       <p>One name, three desks, in the order it actually happens. The document below is running the same
-        circuit the real one does — and most documents die at the second station.</p>
+        circuit the real one does, and most documents die at the second station.</p>
     </div>
 
     <div class="ch-stage">
@@ -568,19 +568,19 @@
       <ol class="ch-sts">
         <li class="ch-st" data-stage="analysts">
           <h3>Analysts</h3>
-          <p>Three of them, each with their own lens — fundamentals, catalysts, the tape. They farm the data,
+          <p>Three of them, each with their own lens: fundamentals, catalysts, the tape. They farm the data,
             build a model, and file a prediction with a direction, a horizon and a date it can be graded on.</p>
           <span class="did">filed</span>
         </li>
         <li class="ch-st" data-stage="traders">
           <h3>Traders</h3>
           <p>The analysts' boss. They read every filing, check it against that analyst's own track record,
-            and pass forward only what they would put size on — day trade or swing.</p>
+            and pass forward only what they would put size on, day trade or swing.</p>
           <span class="did">sifted</span>
         </li>
         <li class="ch-st" data-stage="executive">
           <h3>Executive</h3>
-          <p>Approves, cuts the size, or refuses outright — and puts the reason on the record next to the
+          <p>Approves, cuts the size, or refuses outright, and puts the reason on the record next to the
             trade, where you can hold it to it later.</p>
           <span class="did">ruled</span>
         </li>
@@ -599,7 +599,7 @@
   <div class="wrap">
     <div class="dks-head">
       <h2 id="dksH">Three desks, and a boss for each one.</h2>
-      <p>Kronos is the house algorithm. It is not the only voice — every analyst and trader also runs a
+      <p>Kronos is the house algorithm. It is not the only voice; every analyst and trader also runs a
         method of their own, named and versioned, and gets scored on it.</p>
     </div>
 
@@ -610,7 +610,7 @@
           <p class="sub" id="rlAnSub">three lenses, one name at a time</p>
         </div>
         <p class="roll-what">They do the digging: filings, the wire, the tape, breadth. Each one writes its
-          own playbook — <b>a named, versioned method</b> — and files predictions against it with a direction,
+          own playbook: <b>a named, versioned method</b>, and files predictions against it with a direction,
           a target, a horizon and a resolve date. When that date arrives the prediction is graded against the
           tape whether it worked or not.</p>
         <dl class="roll-num">
@@ -624,7 +624,7 @@
           <h3>Then: the traders</h3>
           <p class="sub" id="rlTrSub">the analysts' boss</p>
         </div>
-        <p class="roll-what">They are not a scoring function — they are the people the analysts report to.
+        <p class="roll-what">They are not a scoring function; they are the people the analysts report to.
           They read the filings, weigh each one against <b>that analyst's own hit rate</b>, and pass on only
           what they would actually take. They size it, choose day trade or swing, and name the analyst they
           sided with.</p>
@@ -640,7 +640,7 @@
           <p class="sub" id="rlExSub">the last signature</p>
         </div>
         <p class="roll-what">One ruling per name: approve, reduce, or refuse. It has the whole chain in front
-          of it — every analyst filing, the traders' case, the risk flags — and it <b>refuses most of what
+          of it, every analyst filing, the traders' case, the risk flags, and it <b>refuses most of what
           reaches it</b>. The reason is stored with the ruling, so a bad call stays attached to the argument
           that produced it.</p>
         <dl class="roll-num">
@@ -683,7 +683,7 @@
     <div class="plug-head">
       <h2 id="plugH">Your broker stays your broker.</h2>
       <p>Flux is the research. Robinhood is the brokerage. Claude carries the intent between them, and
-        Flux never touches an order — it has no path to one.</p>
+        Flux never touches an order; it has no path to one.</p>
     </div>
 
     <ol class="steps reveal">
@@ -723,7 +723,7 @@
   <div class="wrap">
     <div class="close-in">
       <h2>Read the record before you trust it.</h2>
-      <p>The desk is running now. Open it and read a round end to end — the filings, what the traders threw
+      <p>The desk is running now. Open it and read a round end to end: the filings, what the traders threw
         out, the ruling and the reason. Then decide whether it is worth anything to you.</p>
       <div class="close-act">
         <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk<i class="ic-i i-arrow" aria-hidden="true"></i></a>
@@ -838,14 +838,14 @@ document.addEventListener("DOMContentLoaded", function(){
           if(h){
             fig("sbHealth", up ? "Running" : "Stalled", up
               ? "the last round completed end to end"
-              : (f.rounds_failed_today || 0) + " round(s) failed today — this page will not pretend otherwise");
+              : (f.rounds_failed_today || 0) + " round(s) failed today; this page will not pretend otherwise");
             var v = h.querySelector(".v");
             if(v) v.style.color = up ? "var(--clearing)" : "var(--stamp)";
           }
         })
         .catch(function(){
           set("sRoundSub", "the desk record is unreachable");
-          fig("sbHealth", "Unknown", "could not reach the record — reload to try again");
+          fig("sbHealth", "Unknown", "could not reach the record, reload to try again");
         });
     }
 
@@ -986,7 +986,7 @@ document.addEventListener("DOMContentLoaded", function(){
         .catch(function(){
           set("wkLive", "record unreachable");
           set("wkName", "the desk record is unreachable");
-          set("wkNote", "Could not reach the desk. Nothing here is filled in with an example — reload to try again.");
+          set("wkNote", "Could not reach the desk. Nothing here is filled in with an example, reload to try again.");
         });
     }
 

@@ -46,7 +46,7 @@
       method: "POST",
       headers: { "Content-Type":"application/json", apikey: KEY_, authorization: "Bearer " + KEY_ },
       body: JSON.stringify(body)
-    }).catch(function(){ throw new Error("Couldn't reach the Flux brokerage service — check your connection."); })
+    }).catch(function(){ throw new Error("Couldn't reach the Flux brokerage service, check your connection."); })
       .then(function(r){ return r.json().catch(function(){ return { error:"bad response" }; }); })
       .then(function(d){
         if(!d || d.error) throw new Error((d && (d.message || d.error)) || "Brokerage request failed.");
@@ -80,7 +80,7 @@
         method:"POST",
         headers:{ "Content-Type":"application/json", apikey: KEY_, authorization:"Bearer " + KEY_ },
         body: JSON.stringify({ provider:cand.provider, action:"verify", key:cand.key, secret:cand.secret, paper:cand.paper })
-      }).catch(function(){ throw new Error("Couldn't reach the Flux brokerage service — check your connection."); })
+      }).catch(function(){ throw new Error("Couldn't reach the Flux brokerage service, check your connection."); })
         .then(function(r){ return r.json().catch(function(){ return { error:"bad response" }; }); })
         .then(function(d){
           if(!d || d.error || !d.ok) throw new Error((d && (d.message || d.error)) || "Could not reach that account.");

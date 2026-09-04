@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Account — Flux</title>
+<title>Account; Flux</title>
 <meta name="description" content="Your Flux account and settings: profile, subscription, paper-trading account and preferences. Simulated paper account; not investment advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
@@ -139,7 +139,7 @@
 <section class="section">
   <div class="wrap">
 <h1 class="h2" style="margin-top:10px">Your account</h1>
-    <p class="lede" style="max-width:58ch">Your profile, plan, paper account and preferences — all in one place. <span class="mono" style="font-size:13px">Simulated · virtual money · not advice.</span></p>
+    <p class="lede" style="max-width:58ch">Your profile, plan, paper account and preferences; all in one place. <span class="mono" style="font-size:13px">Simulated · virtual money · not advice.</span></p>
 
     <div class="acc-stack">
 
@@ -222,7 +222,7 @@
           <button class="btn btn-ghost btn-sm" type="button" id="ptaCloseAll">Close all positions</button>
           <button class="btn btn-ghost btn-sm" type="button" id="ptaReset">Reset paper account</button>
         </div>
-        <p class="acc-note">Add virtual buying power, export your simulated trade history, close everything at market, or start over. This is a paper account funded with virtual money — nothing here is real trading, and none of it is investment advice.</p>
+        <p class="acc-note">Add virtual buying power, export your simulated trade history, close everything at market, or start over. This is a paper account funded with virtual money; nothing here is real trading, and none of it is investment advice.</p>
       </div>
 
       <!-- PREFERENCES -->
@@ -242,10 +242,10 @@
       <!-- YOUR STOCKS: watchlist + price alerts -->
       <div class="glass acc-card">
         <div class="acc-ctop"><h2>Your stocks</h2><span class="acc-cap">starred &amp; alerts</span></div>
-        <p class="acc-note" style="margin-top:0">Star the stocks you care about — they power your daily brief. Set a price and we'll email you when it's hit.</p>
+        <p class="acc-note" style="margin-top:0">Star the stocks you care about; they power your daily brief. Set a price and we'll email you when it's hit.</p>
 
         <div class="star-add">
-          <input id="starInput" type="text" maxlength="6" autocomplete="off" placeholder="Add a ticker — e.g. NVDA" aria-label="Add a ticker to your watchlist">
+          <input id="starInput" type="text" maxlength="6" autocomplete="off" placeholder="Add a ticker, e.g. NVDA" aria-label="Add a ticker to your watchlist">
           <button class="btn btn-primary btn-sm" id="starAddBtn" type="button">★ Star</button>
         </div>
         <div id="starList" class="star-list"><span class="acc-note">Loading…</span></div>
@@ -255,15 +255,15 @@
           <input id="alTicker" type="text" maxlength="6" autocomplete="off" placeholder="Ticker" aria-label="Alert ticker">
           <select id="alOp" aria-label="Above or below"><option value="above">rises above</option><option value="below">drops below</option></select>
           <input id="alPrice" type="text" inputmode="decimal" autocomplete="off" placeholder="$ price" aria-label="Alert price">
-          <button class="btn btn-ghost btn-sm" id="alAddBtn" type="button">🔔 Add alert</button>
+          <button class="btn btn-ghost btn-sm" id="alAddBtn" type="button"><i class="ic-i bell" aria-hidden="true"></i> Add alert</button>
         </div>
         <div id="alertList" class="alert-list"><span class="acc-note">Loading…</span></div>
       </div>
 
       <!-- FLUX AI · BYOK -->
       <div class="glass acc-card">
-        <div class="acc-ctop"><h2>Flux AI — your key</h2><span class="acc-cap" id="byokStat">not set</span></div>
-        <p class="acc-note" style="margin-top:0">Plug in your own <b>Anthropic API key</b> for <b>unlimited</b> Fluxi — deep briefs, heavy-model answers, no daily cap. It runs on <b>your credits</b>, and the key is stored <b>only in this browser</b> — it never touches Flux's servers.</p>
+        <div class="acc-ctop"><h2>Flux AI, your key</h2><span class="acc-cap" id="byokStat">not set</span></div>
+        <p class="acc-note" style="margin-top:0">Plug in your own <b>Anthropic API key</b> for <b>unlimited</b> Fluxi, deep briefs, heavy-model answers, no daily cap. It runs on <b>your credits</b>, and the key is stored <b>only in this browser</b>; it never touches Flux's servers.</p>
         <div class="byok-row">
           <input id="byokKey" type="password" autocomplete="off" placeholder="sk-ant-…" aria-label="Anthropic API key">
           <button class="btn btn-primary btn-sm" id="byokSave" type="button">Save</button>
@@ -282,7 +282,7 @@
           <input id="adminEmail" type="email" autocomplete="off" placeholder="new-admin@email.com" aria-label="New admin email">
           <button class="btn btn-primary btn-sm" id="adminAdd" type="button">+ Add admin</button>
         </div>
-        <p class="acc-note">New admins are comped automatically — on their next sign-in (or immediately if they already have an account).</p>
+        <p class="acc-note">New admins are comped automatically, on their next sign-in (or immediately if they already have an account).</p>
       </div>
 
       <!-- DANGER / SESSION -->
@@ -399,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function(){
       if(subEl) subEl.textContent = renew ? ("Renews " + renew) : "Your plan is active.";
       if(actEl) actEl.innerHTML = '<a class="btn btn-ghost btn-sm" href="./pricing.html">Manage plan</a>';
     } else {
-      if(planEl) planEl.textContent = "Free — Scout plan";
+      if(planEl) planEl.textContent = "Free, Scout plan";
       if(subEl) subEl.textContent = "You're on the free plan. Upgrade for the full desk.";
       if(actEl) actEl.innerHTML =
         '<a class="btn btn-primary btn-sm" href="./pricing.html">Upgrade →</a>' +
@@ -543,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function renderStars(){
     if(!starList) return;
     var ts = watchTickers();
-    if(!ts.length){ starList.innerHTML = '<span class="acc-note">No starred stocks yet. Add one above — they power your daily brief.</span>'; return; }
+    if(!ts.length){ starList.innerHTML = '<span class="acc-note">No starred stocks yet. Add one above; they power your daily brief.</span>'; return; }
     starList.innerHTML = ts.map(function(t){
       var p = window.FLUX && FLUX.priceOf ? FLUX.priceOf(t) : null;
       return '<span class="star-chip"><b>'+t+'</b>'+(p!=null?('<em>'+money(p)+'</em>'):'')+'<button data-t="'+t+'" title="Remove" aria-label="Remove '+t+'"><i class="ic-i i-close" aria-hidden="true"></i></button></span>';
@@ -598,7 +598,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(B.active()){
       byokStat.textContent = "active · unlimited";
       if(byokKey) byokKey.placeholder = "•••••••••••• (key saved in this browser)";
-      if(byokNote) byokNote.textContent = "Fluxi is running on your Anthropic credits — unlimited, heavy model eligible. Calls today: " + B.callsToday() + ". Your key never leaves this browser.";
+      if(byokNote) byokNote.textContent = "Fluxi is running on your Anthropic credits, unlimited, heavy model eligible. Calls today: " + B.callsToday() + ". Your key never leaves this browser.";
     } else {
       byokStat.textContent = "not set";
       if(byokKey) byokKey.placeholder = "sk-ant-…";
@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var byokSaveBtn = $("#byokSave"), byokClearBtn = $("#byokClear");
   if(byokSaveBtn) byokSaveBtn.onclick = function(){
     var v = (byokKey && byokKey.value || "").trim();
-    if(!/^sk-ant-/.test(v)){ if(byokNote) byokNote.textContent = "That doesn't look like an Anthropic key — it should start with sk-ant-."; return; }
+    if(!/^sk-ant-/.test(v)){ if(byokNote) byokNote.textContent = "That doesn't look like an Anthropic key; it should start with sk-ant-."; return; }
     SUPA.byok.set(v); if(byokKey) byokKey.value = ""; byokRender();
   };
   if(byokClearBtn) byokClearBtn.onclick = function(){ SUPA.byok.set(""); byokRender(); };

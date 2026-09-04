@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Flux — DSH Sentinel</title>
+<title>Flux, DSH Sentinel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Flux — an autonomous AI trading desk. Liquid-glass HUD: neural core, alpha signals, live portfolio.">
+<meta name="description" content="Flux: an autonomous AI trading desk. Liquid-glass HUD: neural core, alpha signals, live portfolio.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <script src="./assets/dsh-store.js?v=28"></script>
 <script src="./assets/dsh-feed.js?v=28"></script>
 <script src="./assets/dsh.js?v=28" defer></script>
@@ -350,7 +350,7 @@
       </div>
       <div class="btn-row" style="margin-bottom:18px">
         <button class="btn btn-ghost btn-block" id="depBtn">↓ Fund</button>
-        <button class="btn btn-ghost btn-block" id="resetBtn">↺ Reset</button>
+        <button class="btn btn-ghost btn-block" id="resetBtn"><i class="ic-i i-refresh" aria-hidden="true"></i> Reset</button>
       </div>
       <div class="glass">
         <div class="mod-h"><h2>Growth</h2><span class="tag" id="pvLive">live</span></div>
@@ -381,13 +381,13 @@
     <section class="view" id="v-settings">
       <div class="pv-hero"></div>
       <div class="glass">
-        <div class="setrow"><div class="lbl"><b>Live market data</b><span id="setFeed">Simulated — tap to connect Finnhub</span></div>
+        <div class="setrow"><div class="lbl"><b>Live market data</b><span id="setFeed">Simulated, tap to connect Finnhub</span></div>
           <button class="btn btn-ghost" id="setFeedBtn">Connect</button></div>
         <div class="setrow"><div class="lbl"><b>Reset demo</b><span>Clear flags, positions & activity</span></div>
           <button class="btn btn-danger" id="setReset">Reset</button></div>
         <div class="setrow"><div class="lbl"><b>Flux Desktop</b><span>Pro workstation: orders, screener, alerts, news</span></div>
           <a class="btn btn-ghost" href="./desktop.html">Open</a></div>
-        <div class="setrow"><div class="lbl"><b>About</b><span>Flux — DSH Sentinel · Obsidian Flux UI</span></div></div>
+        <div class="setrow"><div class="lbl"><b>About</b><span>Flux, DSH Sentinel · Obsidian Flux UI</span></div></div>
       </div>
       <p class="field-k" style="margin:22px 0 6px">Recent activity</p>
       <div id="activity"></div>
@@ -436,7 +436,7 @@
   </div>
   <div class="tm-actions">
     <button class="btn tm-flag" id="tmFlag" aria-label="Flag">☆</button>
-    <button class="btn tm-flag" id="tmBt" aria-label="Why there is no backtest" style="width:44px">⚗</button>
+    <button class="btn tm-flag" id="tmBt" aria-label="Why there is no backtest" style="width:44px"><i class="ic-i i-doc" aria-hidden="true"></i></button>
     <button class="btn btn-buy" id="tmBuy">Buy</button>
     <button class="btn btn-sell" id="tmSell">Sell</button>
   </div>
@@ -558,7 +558,7 @@ document.addEventListener("DOMContentLoaded", function(){
       'and a number invented for this panel would be worse than none.</p>' +
       '<p style="color:var(--text-dim);font-size:.92rem;line-height:1.6;margin:12px 0 0">' +
       'What exists instead is a forward record: the desk files dated predictions, and each is graded ' +
-      'against the tape when it comes due — including the ones that were wrong. That is the only ' +
+      'against the tape when it comes due, including the ones that were wrong. That is the only ' +
       'performance figure this product will show you.</p>' +
       '<a class="btn btn-primary btn-block" style="margin-top:16px" href="./analysts.html">See the scoreboard</a>' +
       '<button class="btn btn-ghost btn-block" id="bt2" style="margin-top:8px">Paper trade this setup</button>');
@@ -569,7 +569,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function ask(q){if(!q.trim())return;var ql=q.toLowerCase(),f,intro;
     if(/risk|biggest|exposure|drawdown/.test(ql)){var pf=S.portfolio();if(pf.open.length){var w=pf.open.map(function(p){return{p:p,m:S.positionPnl(p)}}).sort(function(a,b){return a.m.pnl-b.m.pnl})[0];
       intro="Biggest risk: <b>"+w.p.sym+"</b>, "+w.p.side+" "+w.p.qty+" at "+(w.m.pnl>=0?"+":"")+S.fmt$(w.m.pnl)+" ("+w.m.pct.toFixed(1)+"%).";f=D.FINDINGS.find(function(x){return x.t===w.p.sym})||D.FINDINGS.find(function(x){return x.e==="Risk"});}
-      else{intro="No open positions — book risk is flat. Watching this:";f=D.FINDINGS.find(function(x){return x.e==="Risk"});}}
+      else{intro="No open positions, book risk is flat. Watching this:";f=D.FINDINGS.find(function(x){return x.e==="Risk"});}}
     else if(/option|flow|sweep|gamma/.test(ql)){intro="Loudest options flow right now:";f=D.FINDINGS.find(function(x){return x.e==="Options"});}
     else if(/breakout|scan|setup|volume/.test(ql)){intro="Top breakout the scanner sees:";f=D.FINDINGS.find(function(x){return x.e==="Scanner"});}
     else{var m=q.toUpperCase().match(/[A-Z]{2,5}/);f=(m&&D.FINDINGS.find(function(x){return x.t===m[0]}));intro=f?("Flux read on <b>"+f.t+"</b>:"):("Sharpest thing on the tape:");if(!f)f=rnd(D.FINDINGS);}
@@ -620,7 +620,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   $("#positions").addEventListener("click",function(e){var b=e.target.closest("[data-close]");if(!b)return;S.closePosition(b.dataset.close);toast("Position closed");});
   $("#resetBtn").addEventListener("click",function(){if(confirm("Reset the demo?")){S.reset();toast("Demo reset");}});
-  $("#depBtn").addEventListener("click",function(){toast("Paper account — funded at $100k");});
+  $("#depBtn").addEventListener("click",function(){toast("Paper account, funded at $100k");});
 
   /* ---------- alerts (flagged) ---------- */
   function renderFlagged(){var fl=S.state().flags,host=$("#flagged");
@@ -642,10 +642,10 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---------- feed pill ---------- */
   function feedUI(s){var pill=$("#feedPill");pill.className="feedpill "+s;
     $("#feedLabel").textContent={sim:"Sim",connecting:"···",live:"Live"}[s]||s;
-    $("#setFeed").textContent=s==="live"?"Live — Finnhub connected":"Simulated — tap to connect Finnhub";}
+    $("#setFeed").textContent=s==="live"?"Live, Finnhub connected":"Simulated, tap to connect Finnhub";}
   function connectSheet(){var connected=F&&F.hasKey();
     openSheet('<div class="sheet-tk"><div class="t" style="font-size:18px">Market data</div><span style="margin-left:auto;font-size:12px;color:var(--text-faint)">Finnhub</span></div>'+
-      '<p style="font-size:13.5px;color:var(--text-dim);margin-bottom:6px">Free realtime feed — grab a key at finnhub.io (20s), paste below.</p>'+
+      '<p style="font-size:13.5px;color:var(--text-dim);margin-bottom:6px">Free realtime feed, grab a key at finnhub.io (20s), paste below.</p>'+
       '<div class="field"><label>Finnhub API key</label><input id="fk" placeholder="paste key…" spellcheck="false" value=""></div>'+
       '<button class="btn btn-primary btn-block" id="fkgo">'+(connected?"Reconnect":"Connect live data")+'</button>'+
       (connected?'<button class="btn btn-ghost btn-block" id="fkoff" style="margin-top:10px">Disconnect</button>':''));

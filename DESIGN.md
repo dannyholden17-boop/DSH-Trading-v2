@@ -197,13 +197,14 @@ typography:
     lineHeight: 1
     letterSpacing: "-0.035em"
 rounded:
-  # the pit cuts its corners; daylight prints and rounds them
+  # the pit cuts its corners; daylight prints and rounds them. No pill:
+  # the references used black pill CTAs, but the standing brief rules them
+  # out, and a squared button sits closer to the ticket world anyway.
   cut: "2px"
   sm: "4px"
   lg: "6px"
   market-sm: "10px"
   market-lg: "22px"
-  full: "999px"
 spacing:
   hair: "9px"
   xs: "10px"
@@ -404,7 +405,7 @@ measured against the ground it actually sits on, composited, not against a nomin
   generated "tasteful" page reaches for. Panels are `#ffffff`, wells `#e6eaf2`, the nav
   rail `#f8f9fc`.
 - **Ink** `#0b0d12` — text at 17.9:1, and **the action**. `--act` is ink and `--act-ink` is
-  white, so a primary button is a black pill. This is the resolution of the brand-amber vs
+  white, so a primary button is a black **squared** button, never a pill. This is the resolution of the brand-amber vs
   semantic-green collision: in daylight the amber stays *data* and never becomes a button.
 - **Text dim** `#4b5361` (6.9:1) and **text faint** `#5e6775` (5.1:1 on paper, 4.6:1 in a
   well). Faint is the floor in this room too.
@@ -721,6 +722,13 @@ theatre is removed (`flux.css:87-93`).
   market page, and that band is a product shot, never a decorative dark stripe.
 - **Don't** put a light surface behind work. An Operate page — desk, terminal, portfolio,
   analysts, traders, executive — stays in the pit. It is looked at for hours.
+- **Don't** ship an emoji or a bare Unicode glyph where an icon belongs. The set lives in
+  flux.css as `.ic-i .i-*`: 25 marks, one stroke weight, drawn once. Inside JavaScript,
+  build the markup with **single-quoted attributes** so it survives a double-quoted string,
+  or better, leave the icon out of a toast entirely and let the words carry it.
+- **Don't** use an em dash in anything a visitor reads. A comma, colon or semicolon says
+  the same thing without the cadence tell. Code comments are exempt; they are not content.
+- **Don't** round a button into a pill. The action is a squared black block.
 - **Don't** write a kicker, eyebrow or label hat above a heading. `.eyebrow` is disabled
   outright and must stay disabled. When a sequence genuinely matters, fold it into the
   heading — "First, three analysts" — rather than stacking "Stage 1" above "Three analysts".

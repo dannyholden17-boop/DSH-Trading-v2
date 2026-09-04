@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trade — Flux</title>
-<meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money — not investment advice.">
+<title>Trade; Flux</title>
+<meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money, not investment advice.">
 <meta name="theme-color" content="#0d1220">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23020617'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%2300f2ff'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%236ab8ff'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%238b5cf6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <!-- TradingView Lightweight Charts (Apache-2.0, vendored locally — see assets/vendor/) -->
@@ -391,7 +391,7 @@
     </div>
     <div class="tm-topright">
       <button class="tm-ic" type="button" aria-label="Add widget" title="Add widget">▦</button>
-      <button class="tm-ic" type="button" aria-label="Notifications" title="Notifications">🔔</button>
+      <button class="tm-ic" type="button" aria-label="Notifications" title="Notifications"><i class="ic-i bell" aria-hidden="true"></i></button>
       <button class="tm-ic" type="button" aria-label="Settings" title="Settings">⚙</button>
       <button class="tm-ic" id="tmFull" type="button" aria-label="Toggle fullscreen" aria-pressed="false" title="Fullscreen">⛶</button>
       <a class="tm-profile" href="./dashboard.html" title="Open dashboard">
@@ -433,7 +433,7 @@
           <div id="tmBkOff">
             <p style="font-size:13px;color:var(--tm-dim);line-height:1.55;margin:4px 0 10px">
               Trade this terminal with your <b style="color:var(--tm-txt)">own brokerage account</b>.
-              Paste your Alpaca API keys — they stay in this browser and are never saved to Flux.</p>
+              Paste your Alpaca API keys; they stay in this browser and are never saved to Flux.</p>
             <form id="tmBkForm" novalidate>
               <label class="tm-k" for="tmBkKey">API key id</label>
               <input class="tm-add" id="tmBkKey" type="text" autocomplete="off" spellcheck="false" placeholder="PK…">
@@ -445,7 +445,7 @@
               </div>
               <button class="btn btn-primary btn-sm" id="tmBkConnect" type="submit" style="width:100%;text-align:center;margin-top:10px">Connect brokerage</button>
             </form>
-            <div class="tm-cap disclosure" id="tmBkMsg" style="margin-top:9px">Keys live in this browser only and never reach a Flux server. Prefer Robinhood? It connects through Claude instead — <a href="./brokerage.html" style="color:var(--gold);text-decoration:underline">how that works</a>.</div>
+            <div class="tm-cap disclosure" id="tmBkMsg" style="margin-top:9px">Keys live in this browser only and never reach a Flux server. Prefer Robinhood? It connects through Claude instead. <a href="./brokerage.html" style="color:var(--gold);text-decoration:underline">how that works</a>.</div>
           </div>
           <!-- connected -->
           <div id="tmBkOn" hidden>
@@ -512,7 +512,7 @@
                 list="tmSyms" spellcheck="false" aria-label="Active symbol" value="NVDA">
               <div class="tm-symco" id="tmSymCo">NVIDIA</div>
             </div>
-            <button class="tm-star" id="tmStar" type="button" title="Star — add to your watchlist" aria-pressed="false">☆</button>
+            <button class="tm-star" id="tmStar" type="button" title="Star, add to your watchlist" aria-pressed="false">☆</button>
           </div>
           <div class="tm-hprice">
             <span class="big" id="tmPrice">—</span>
@@ -520,8 +520,8 @@
             <span id="tmTV" title="TradingView technical rating" style="font-family:var(--f-mono);font-size:12px;margin-left:12px;white-space:nowrap;color:var(--text-faint)"></span>
           </div>
           <div class="tm-chtools" role="group" aria-label="Chart tools">
-            <button class="tm-chtool" id="tmChStyle" type="button" title="Chart style — candles / line / area" aria-label="Chart style">▤</button>
-            <button class="tm-chtool" id="tmChMA" type="button" title="Moving averages — 20 & 50" aria-label="Moving averages" aria-pressed="false">∿</button>
+            <button class="tm-chtool" id="tmChStyle" type="button" title="Chart style, candles / line / area" aria-label="Chart style">▤</button>
+            <button class="tm-chtool" id="tmChMA" type="button" title="Moving averages, 20 & 50" aria-label="Moving averages" aria-pressed="false">∿</button>
             <button class="tm-chtool" id="tmChCmp" type="button" title="Compare against SPY" aria-label="Compare against SPY" aria-pressed="false">⇄</button>
             <button class="tm-chtool" id="tmChFit" type="button" title="Fit / reset zoom" aria-label="Fit chart">⤢</button>
           </div>
@@ -646,7 +646,7 @@
     <span style="margin-left:auto">FLUX TERMINAL · PAPER</span>
   </div>
 
-  <p class="tm-disc">Real quotes, simulated fills, virtual money — not investment advice. Prices shown are live server quotes;
+  <p class="tm-disc">Real quotes, simulated fills, virtual money, not investment advice. Prices shown are live server quotes;
     candles below the latest tick are generated from those quotes for display. Orders fill instantly against a simulated book.
     Flux is not a broker-dealer and no real order is placed. Trading involves risk of loss, including loss of principal.</p>
 
@@ -720,7 +720,7 @@ document.addEventListener("DOMContentLoaded", function(){
   try{ ACCT_MODE = localStorage.getItem("flux_acct_mode") || "paper"; }catch(e){}
   if(ACCT_MODE !== "broker") ACCT_MODE = "paper";
   function brokerMode(){ return ACCT_MODE === "broker"; }
-  var BROKER_EMPTY = 'No brokerage connected yet — add your keys in the Account card and your real account data appears here.';
+  var BROKER_EMPTY = 'No brokerage connected yet, add your keys in the Account card and your real account data appears here.';
 
   /* ---------- element refs ---------- */
   var eqEl=$("#tmEq"), dayEl=$("#tmDay"), acctSpark=$("#tmAcctSpark"), resetBtn=$("#tmReset");
@@ -1157,7 +1157,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function buildWatch(){
     if(!watchEl) return;
     var list=watchTickers();
-    if(!list.length){ watchEl.innerHTML='<div class="tm-empty">Watchlist empty — add a symbol below.</div>'; return; }
+    if(!list.length){ watchEl.innerHTML='<div class="tm-empty">Watchlist empty, add a symbol below.</div>'; return; }
     watchEl.innerHTML=list.map(function(t){
       return '<div class="tm-wl-row" role="option" tabindex="0" data-tk="'+t+'" aria-selected="false">'+
         '<div class="tm-wl-id"><b>'+t+'</b><span>'+coName(t)+'</span></div>'+
@@ -1353,7 +1353,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   function bkMsg(){
     if(!bkOn()) return BROKER_EMPTY;
-    if(bkErr) return 'Brokerage error — ' + bkErr;
+    if(bkErr) return 'Brokerage error: ' + bkErr;
     if(!bkData) return 'Loading your brokerage account…';
     return null;
   }
@@ -1415,7 +1415,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function tvUpdate(){
     var el=document.getElementById("tmTV"); if(!el||!window.FLUX||!FLUX.TV) return;
     if(!isProUser()){
-      el.innerHTML='<a href="./pricing.html" style="color:var(--tm-faint);text-decoration:none" title="TradingView rating is a Pro feature">TV: 🔒 Pro</a>';
+      el.innerHTML='<a href="./pricing.html" style="color:var(--tm-faint);text-decoration:none" title="TradingView rating is a Pro feature">TV: Pro</a>';
       return;
     }
     var t=ACTIVE; el.textContent="TV …"; el.style.color="var(--text-faint)";
@@ -1433,11 +1433,11 @@ document.addEventListener("DOMContentLoaded", function(){
     var b=document.getElementById("tmStar"); if(!b) return;
     var on=isStarred(ACTIVE);
     b.textContent=on?"★":"☆"; b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on));
-    b.title=on?("Starred — "+ACTIVE+" is on your watchlist"):("Star "+ACTIVE+" — add to your watchlist");
+    b.title=on?("Starred. "+ACTIVE+" is on your watchlist"):("Star "+ACTIVE+", add to your watchlist");
   }
   function toggleStar(){
     if(!window.FLUXWatch) return;
-    if(isStarred(ACTIVE)){ FLUXWatch.remove(ACTIVE); } else { FLUXWatch.add(ACTIVE); if(F.toast) F.toast("★ Starred "+ACTIVE+" — it'll show in your daily brief.",{icon:"★"}); }
+    if(isStarred(ACTIVE)){ FLUXWatch.remove(ACTIVE); } else { FLUXWatch.add(ACTIVE); if(F.toast) F.toast("★ Starred "+ACTIVE+"; it'll show in your daily brief.",{icon:"★"}); }
     updateStar();
   }
   function renderSymbol(){
@@ -1538,8 +1538,8 @@ document.addEventListener("DOMContentLoaded", function(){
       symInput.style.opacity=".55";
       resolveSym(v, function(ok){
         symInput.style.opacity="";
-        if(ok){ setActive(v); if(F.toast) F.toast("Found "+v+" — added to your terminal.",{icon:"🔎"}); }
-        else { symInput.value=ACTIVE; if(F.toast) F.toast("Couldn't find \""+v+"\" — check the symbol.",{icon:"⚠️"}); }
+        if(ok){ setActive(v); if(F.toast) F.toast("Found "+v+", added to your terminal.",{icon:""}); }
+        else { symInput.value=ACTIVE; if(F.toast) F.toast("Couldn't find \""+v+"\", check the symbol.",{icon:""}); }
       });
     };
     symInput.addEventListener("change", applySym);
@@ -1565,12 +1565,12 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!LW.on){ [st,ma,cp,ft].forEach(function(b){ if(b){ b.disabled=true; b.style.opacity=".45"; } }); return; }
     var GLYPH={candles:"▤",line:"╱",area:"◺"}, WORD={candles:"Candles",line:"Line",area:"Area"};
     if(st) st.addEventListener("click", function(){
-      var s=LW.style(); st.textContent=GLYPH[s]||"▤"; st.title="Chart style — "+WORD[s]+" (click to change)";
+      var s=LW.style(); st.textContent=GLYPH[s]||"▤"; st.title="Chart style. "+WORD[s]+" (click to change)";
       if(F.toast) F.toast(WORD[s]+" chart",{icon:GLYPH[s]});
     });
     if(ma) ma.addEventListener("click", function(){
       var on=LW.toggleMA(); ma.setAttribute("aria-pressed",String(on));
-      ma.title = on ? "Moving averages on — 20 & 50" : "Moving averages — 20 & 50";
+      ma.title = on ? "Moving averages on, 20 & 50" : "Moving averages, 20 & 50";
     });
     if(cp){
       var bm=LW.benchmark();
@@ -1655,7 +1655,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* reset */
   if(resetBtn) resetBtn.addEventListener("click", function(){
-    if(brokerMode()){ showBanner(false,"Reset only applies to the paper account — your brokerage is never touched."); return; }
+    if(brokerMode()){ showBanner(false,"Reset only applies to the paper account, your brokerage is never touched."); return; }
     if(window.confirm("Reset your paper account to a fresh $100,000? This clears all simulated positions and orders.")){
       Book.reset();
       showBanner(true,"Paper account reset to $100,000.");
@@ -1692,7 +1692,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ---------- brokerage: connect form + real orders ---------- */
   function submitBrokerOrder(){
-    if(!bkOn()){ showBanner(false,"No brokerage connected — paste your keys in the Account card, or switch to Paper."); return; }
+    if(!bkOn()){ showBanner(false,"No brokerage connected, paste your keys in the Account card, or switch to Paper."); return; }
     var qv=qtyVal();
     if(!(qv>0)){ showBanner(false,"Enter a share quantity first."); return; }
     var lv=BK.live(), lim=(otype==="limit" && limitEl) ? parseFloat(limitEl.value) : null;
@@ -1708,7 +1708,7 @@ document.addEventListener("DOMContentLoaded", function(){
         if(placeBtn && !reduce){ placeBtn.classList.remove("tm-pulse"); void placeBtn.offsetWidth; placeBtn.classList.add("tm-pulse"); }
         bkLoad(true);
       })
-      .catch(function(e){ showBanner(false, "Broker rejected the order — "+String(e && e.message || e)); paintTicket(); });
+      .catch(function(e){ showBanner(false, "Broker rejected the order. "+String(e && e.message || e)); paintTicket(); });
   }
 
   (function(){
@@ -1736,7 +1736,7 @@ document.addEventListener("DOMContentLoaded", function(){
           if(sec) sec.value=""; if(k) k.value="";
           if(btn){ btn.disabled=false; btn.textContent="Connect brokerage"; }
           if(msg) msg.textContent="Connected.";
-          if(F.toast) F.toast("Brokerage connected · "+money(a.equity)+" equity",{icon:"🔗"});
+          if(F.toast) F.toast("Brokerage connected · "+money(a.equity)+" equity",{icon:""});
           bkData=null; bkErr=null; bkLoad(true); BK.poll(20000);
         })
         .catch(function(err){
@@ -1747,7 +1747,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(out) out.addEventListener("click", function(){
       if(!window.confirm("Disconnect your brokerage from this browser?")) return;
       BK.disconnect(); BK.stopPoll(); bkData=null; bkErr=null; bkRepaint();
-      if(F.toast) F.toast("Brokerage disconnected.",{icon:"🔌"});
+      if(F.toast) F.toast("Brokerage disconnected.",{icon:""});
     });
     if(ref) ref.addEventListener("click", function(){ bkLoad(true); });
     window.addEventListener("flux-broker-data", function(e){ bkData=e.detail; bkErr=null; bkRepaint(); });
@@ -1847,7 +1847,7 @@ document.addEventListener("DOMContentLoaded", function(){
       ["52-wk low", lo!=null?money(lo):"—", ""],
       ["52-wk range", pos!=null?(pos+"% of range"):"—", ""],
       ["Sector", fu.sec || "—", ""],
-      ["Kronos signal", isProUser() ? kronosSig(t) : '<a href="./pricing.html" style="color:var(--tm-faint);text-decoration:none">🔒 Pro</a>', ""]
+      ["Kronos signal", isProUser() ? kronosSig(t) : '<a href="./pricing.html" style="color:var(--tm-faint);text-decoration:none">Pro</a>', ""]
     ];
     kmEl.innerHTML = rows.map(function(r){
       return '<div class="tm-km-row"><span class="k">'+r[0]+'</span><span class="v '+(r[2]||"")+'">'+r[1]+'</span></div>';
