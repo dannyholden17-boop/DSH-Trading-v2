@@ -112,7 +112,7 @@
 .rl-sym{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .rl-sym b{font-family:var(--f-display);font-size:clamp(1.6rem,1.1rem + 1.4vw,2.3rem);font-weight:800;letter-spacing:-.04em;line-height:1}
 .rl-sym .side{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.12em;
-  padding:3px 8px;border-radius:3px;background:rgba(61,220,151,.14);color:var(--clearing)}
+  padding:3px 8px;border-radius:2px;background:rgba(61,220,151,.14);color:var(--clearing)}
 .rl-sym .side.sell{background:rgba(255,111,82,.14);color:var(--stamp)}
 .rl-name{margin-top:5px;color:var(--text-faint);font-size:12.5px}
 .rl-lcap{margin:17px 0 7px;font-family:var(--f-mono);font-size:12px;font-weight:600;
@@ -282,8 +282,14 @@
   border-left:1px solid var(--line-2);min-width:0;
   transform-style:preserve-3d;
   transition:transform var(--t-stage) var(--ease),box-shadow var(--t-stage) var(--ease)}
-.ch-st:first-child{border-left:0;border-radius:var(--radius-lg) 0 0 var(--radius-lg)}
-.ch-st:last-child{border-radius:0 var(--radius-lg) var(--radius-lg) 0}
+/* The end cells round their own outer corners so a hover fill cannot square
+   off the container's. The parent cannot clip instead: it carries
+   preserve-3d, and overflow:hidden would flatten the station's Z lift.
+   Written as logical single values rather than a four-value shorthand. */
+.ch-st:first-child{border-left:0;
+  border-start-start-radius:var(--radius-lg);border-end-start-radius:var(--radius-lg)}
+.ch-st:last-child{
+  border-start-end-radius:var(--radius-lg);border-end-end-radius:var(--radius-lg)}
 .ch-st h3{margin:0;font-size:1.45rem;font-weight:700;letter-spacing:-.028em}
 .ch-st p{margin-top:10px;color:var(--text-dim);font-size:.92rem;line-height:1.6}
 .ch-st .did{display:inline-flex;align-items:center;gap:7px;margin-top:14px;
