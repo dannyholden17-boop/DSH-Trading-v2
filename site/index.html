@@ -32,27 +32,127 @@
    ============================================================ */
 
 /* ---------- 1. the opening ---------- */
-.op{padding:clamp(46px,7vw,104px) 0 clamp(30px,3.4vw,48px)}
+/* ---------- the top chrome over the opening ----------
+   index lands on the pit, so the ticker and the nav are part of that dark
+   band until you leave the first screen, then both take their daylight
+   treatment. One state class drives both so they can never disagree. */
+body.at-top .ticker{background:#070b14;border-bottom-color:rgba(160,180,220,.10)}
+body.at-top .ticker .up{color:#3ddc97}
+body.at-top .ticker .down{color:#ff6f52}
+body.at-top .ticker .tk-item{color:#a8b4cd}
+body.at-top .ticker .tk-item b{color:#f2f5fb}
+body.at-top .nav{background:#0a0e18;border-bottom-color:transparent}
+body.at-top .nav .brand,body.at-top .nav-links>a,body.at-top .nav-more-btn{color:#f2f5fb}
+body.at-top .nav-links>a[aria-current="page"]{color:#ffd479}
+body.at-top .nav .btn-ghost{border-color:rgba(160,180,220,.34);color:#f2f5fb}
+body.at-top .nav .btn-ghost:hover{border-color:#f2f5fb;color:#f2f5fb;background:rgba(255,255,255,.08)}
+body.at-top .nav .btn-primary{background:#f2f5fb;color:#0a0e18}
+body.at-top .nav .glyph{background:var(--gold-soft)}
+.ticker,.nav{transition:background var(--t-enter) var(--ease),border-color var(--t-enter) var(--ease)}
+@media(prefers-reduced-motion:reduce){.ticker,.nav{transition:none}}
+
+/* ---------- 1. THE OPENING ----------
+   The first viewport IS the desk. Full bleed, in the pit, with the claim
+   over it and the round arriving as you land. The daylight page starts
+   below. This is the page's one authored moment: nothing else on the site
+   animates on load. */
+.op{position:relative;min-height:92svh;display:flex;align-items:center;
+  padding:clamp(96px,11vh,150px) 0 clamp(48px,6vh,86px);overflow:hidden;
+  background:var(--blotter)}
+/* atmosphere: the room is lit from above and behind the board, so the dark
+   is a space rather than a flat rectangle */
+.op::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(1100px 620px at 68% 34%, rgba(61,220,151,.10), transparent 62%),
+    radial-gradient(900px 560px at 12% 8%, rgba(245,185,60,.08), transparent 60%),
+    radial-gradient(1400px 700px at 50% 108%, rgba(122,167,255,.07), transparent 64%)}
+.op>.wrap{position:relative;z-index:1;width:100%}
+.op-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
+  gap:clamp(30px,4.4vw,72px);align-items:center}
 .op-claim{
-  font-size:clamp(2.4rem,1.1rem + 5.2vw,5rem);
+  font-size:clamp(2.4rem,1.1rem + 4vw,4.2rem);
   font-weight:700;letter-spacing:-.045em;line-height:.98;
-  max-width:19ch;text-wrap:balance;
+  max-width:16ch;text-wrap:balance;
 }
 .op-claim .q{color:var(--text-faint);font-weight:400}
-.op-lede{margin-top:clamp(20px,2.2vw,30px);max-width:56ch;color:var(--text-dim);
+.op-lede{margin-top:clamp(20px,2.2vw,30px);max-width:46ch;color:var(--text-dim);
   font-size:clamp(1.02rem,.97rem + .38vw,1.2rem);line-height:1.62}
 .op-act{display:flex;align-items:center;gap:10px 26px;flex-wrap:wrap;margin-top:clamp(24px,2.6vw,34px)}
 .op-more{font-family:var(--f-display);font-weight:700;font-size:.9rem;
   display:inline-flex;align-items:center;gap:8px;
   border-bottom:1px solid var(--line);padding-bottom:3px;
   transition:border-color var(--t-hover) var(--ease),gap var(--t-hover) var(--ease)}
-.op-more:hover{border-color:var(--ink);gap:13px}
+.op-more:hover{border-color:var(--text);gap:13px}
+@media(max-width:960px){
+  .op{min-height:0;padding-top:clamp(64px,9vh,96px)}
+  .op-grid{grid-template-columns:1fr;gap:clamp(28px,5vw,40px)}
+  .op-claim{max-width:16ch}
+}
 
-/* the fact strip: ONE ruled container, divided internally */
-.strip{
-  margin-top:clamp(34px,4.4vw,66px);
-  border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--paper);
-  display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;box-shadow:var(--lift-1);
+/* the arrival: the claim and its column rise once, on load, not on scroll */
+.op-in{opacity:0;transform:translateY(14px);
+  animation:opRise .72s var(--ease) forwards}
+.op-in.d1{animation-delay:.06s} .op-in.d2{animation-delay:.15s} .op-in.d3{animation-delay:.24s}
+@keyframes opRise{to{opacity:1;transform:none}}
+
+/* ---- the live board: the product, in the first viewport ---- */
+.board{border-radius:var(--radius-lg);overflow:hidden;
+  border:1px solid rgba(160,180,220,.20);background:var(--blotter-2);
+  box-shadow:0 2px 6px rgba(0,0,0,.5), 0 40px 80px -30px rgba(0,0,0,1);
+  opacity:0;transform:translateY(18px) scale(.985);
+  animation:opRise .8s var(--ease) .18s forwards}
+.board-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;
+  background:var(--well);border-bottom:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--text-faint)}
+.board-hd .rd{margin-left:auto;letter-spacing:.08em;color:var(--text-dim)}
+.board-rows{list-style:none;margin:0;padding:0}
+.board-rows>li{display:grid;
+  grid-template-columns:6ch minmax(0,1fr) 8.5ch 7.5ch;
+  gap:14px;align-items:baseline;padding:12px 18px;border-top:1px solid var(--line-3);
+  opacity:0;animation:bdIn .5s var(--ease) forwards}
+.board-rows>li:first-child{border-top:0}
+.board-rows>li:nth-child(1){animation-delay:.30s} .board-rows>li:nth-child(2){animation-delay:.36s}
+.board-rows>li:nth-child(3){animation-delay:.42s} .board-rows>li:nth-child(4){animation-delay:.48s}
+.board-rows>li:nth-child(5){animation-delay:.54s} .board-rows>li:nth-child(6){animation-delay:.60s}
+.board-rows>li:nth-child(7){animation-delay:.66s} .board-rows>li:nth-child(8){animation-delay:.72s}
+@keyframes bdIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.board-rows .bd-tk{font-family:var(--f-display);font-weight:800;font-size:.9rem;letter-spacing:-.02em}
+.board-rows .bd-rt{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text-faint);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board-rows .bd-rt.buy{color:var(--clearing)} .board-rows .bd-rt.sell{color:var(--stamp)}
+.board-rows .bd-px{font-family:var(--f-mono);font-size:13px;color:var(--text);
+  font-variant-numeric:tabular-nums;text-align:right;
+  border-radius:3px;transition:background .45s var(--ease),color .45s var(--ease)}
+/* a tick that actually moved flashes its direction, the way a real book does */
+.board-rows .bd-px.tick-up{background:rgba(61,220,151,.20);color:var(--clearing)}
+.board-rows .bd-px.tick-dn{background:rgba(255,111,82,.20);color:var(--stamp)}
+.board-rows .bd-ch{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;
+  text-align:right}
+.board-rows .bd-ch.up{color:var(--clearing)} .board-rows .bd-ch.down{color:var(--stamp)}
+.board-ft{display:flex;align-items:center;gap:9px;padding:13px 18px;
+  background:var(--well);border-top:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
+.board-ft .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);flex:none}
+.board-ft .dot.on{background:var(--clearing);animation:recBlink 2.4s steps(1,end) infinite}
+.board-ft .ru{margin-left:auto;color:var(--text-dim)}
+/* On a phone the four columns crowd the rating into an ellipsis, and
+   "STRONG…" loses the one thing the column is for. The last price is the
+   least load-bearing of the four, so it goes and the verdict stays whole. */
+@media(max-width:560px){
+  .board-rows>li{grid-template-columns:5.5ch minmax(0,1fr) 7.5ch;gap:10px;padding:12px 14px}
+  .board-rows .bd-px{display:none}
+  .board-hd,.board-ft{padding-inline:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  .op-in,.board,.board-rows>li{animation:none;opacity:1;transform:none}
+}
+
+.strip{margin-top:clamp(34px,4.4vw,66px);
+  border:1px solid var(--line-2);border-radius:var(--radius-lg);background:rgba(17,23,38,.66);
+  backdrop-filter:blur(6px);
+  display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;
 }
 .strip>div{padding:clamp(18px,1.9vw,26px) clamp(16px,1.8vw,26px);border-left:1px solid var(--line-2)}
 .strip>div:first-child{border-left:0}
@@ -66,7 +166,7 @@
 .strip dd .v[data-empty],.sb-grid dd .v[data-empty],
 .roll-num dd .v[data-empty]{color:var(--text-faint);font-weight:400;font-size:.6em}
 @media(max-width:760px){
-  .strip{grid-template-columns:1fr 1fr}
+  .strip{margin-top:clamp(34px,4.4vw,64px);grid-template-columns:1fr 1fr}
   .strip>div:nth-child(3){border-left:0}
   .strip>div:nth-child(n+3){border-top:1px solid var(--line-2)}
 }
@@ -460,23 +560,35 @@
 <main id="top">
 
 <!-- ============ 1. THE OPENING ============ -->
-<section class="op">
+<section class="op" data-surface="app">
   <div class="wrap">
-    <h1 class="op-claim">Research you can<br>audit, <span class="q">line by line.</span></h1>
-    <p class="op-lede">Three analysts research a name and file a dated prediction with the evidence behind
-      it. Their boss, the trading desk, throws out most of it. One executive rules on what survives, and
-      says why. Every filing is stored and graded against the tape afterwards, including the ones that were
-      wrong.</p>
-    <div class="op-act">
-      <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk<i class="ic-i i-arrow" aria-hidden="true"></i></a>
-      <a class="op-more" href="./terminal.html">Trade it on paper<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+    <div class="op-grid">
+      <div>
+        <h1 class="op-claim op-in">Research you can<br><span class="q">audit.</span></h1>
+        <p class="op-lede op-in d1">Three analysts research a name and file a dated prediction. Their boss
+          throws out most of it. One executive rules on what survives, and says why. Every call is graded
+          against the tape afterwards, line by line, including the wrong ones.</p>
+        <div class="op-act op-in d2">
+          <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+          <a class="op-more" href="./terminal.html">Trade it on paper<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <!-- The round the desk is on, read live. Not a mock-up. -->
+      <div class="board" aria-label="The desk's current round">
+        <div class="board-hd">On the desk<span class="rd" id="bdRound">reading&hellip;</span></div>
+        <ul class="board-rows" id="bdRows">
+          <li><span class="bd-tk">&mdash;</span><span class="bd-rt">reading the round</span><span class="bd-px"></span><span class="bd-ch"></span></li>
+        </ul>
+        <div class="board-ft"><span class="dot" id="bdDot"></span><span id="bdStage">connecting to the desk</span><span class="ru" id="bdRule"></span></div>
+      </div>
     </div>
 
-    <dl class="strip reveal" id="strip">
-      <div><dt>Round</dt><dd id="sRound"><span class="v" data-empty="1">—</span><small id="sRoundSub">reading the desk…</small></dd></div>
-      <div><dt>Filings on record</dt><dd id="sFilings"><span class="v" data-empty="1">—</span><small id="sFilingsSub">every one readable</small></dd></div>
-      <div><dt>Green-lit</dt><dd id="sOk"><span class="v" data-empty="1">—</span><small id="sOkSub">of everything ruled on</small></dd></div>
-      <div><dt>Refused or cut</dt><dd id="sNo"><span class="v" data-empty="1">—</span><small id="sNoSub">the desk says no far more often</small></dd></div>
+    <dl class="strip op-in d3" id="strip">
+      <div><dt>Round</dt><dd id="sRound"><span class="v" data-empty="1">&mdash;</span><small id="sRoundSub">reading the desk&hellip;</small></dd></div>
+      <div><dt>Filings on record</dt><dd id="sFilings"><span class="v" data-empty="1">&mdash;</span><small id="sFilingsSub">every one readable</small></dd></div>
+      <div><dt>Green-lit</dt><dd id="sOk"><span class="v" data-empty="1">&mdash;</span><small id="sOkSub">of everything ruled on</small></dd></div>
+      <div><dt>Refused or cut</dt><dd id="sNo"><span class="v" data-empty="1">&mdash;</span><small id="sNoSub">the desk says no far more often</small></dd></div>
     </dl>
   </div>
 </section>
@@ -1059,6 +1171,87 @@ document.addEventListener("DOMContentLoaded", function(){
     paintNumbers().then(paintDesks);
     paintWorkstation();
     setInterval(function(){ paintNumbers(); paintWorkstation(); }, 20000);
+  }
+  boot();
+});
+</script>
+<script>
+/* The opening board. Reads the round the desk is actually on, every 20s.
+   Nothing here is illustrative: if the record is unreachable it says so
+   rather than showing a plausible round. */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    var D = F.Desk, $ = function(i){ return document.getElementById(i); };
+    var esc = function(t){ return String(t==null?"":t).replace(/[&<>"]/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); };
+    function rate(l){ var x=String(l||"").toLowerCase();
+      return x.indexOf("buy")>=0 ? "buy" : x.indexOf("sell")>=0 ? "sell" : ""; }
+
+    var lastPx = {};
+    /* Flash a cell only when its number really changed, so the movement on
+       screen is the feed moving and never decoration. */
+    function flash(){
+      Array.prototype.forEach.call(document.querySelectorAll("#bdRows li"), function(li){
+        var t = (li.querySelector(".bd-tk")||{}).textContent, cell = li.querySelector(".bd-px");
+        if(!t || !cell) return;
+        var now = F.priceOf && F.priceOf(t);
+        if(now == null) return;
+        var was = lastPx[t];
+        if(was != null && now !== was){
+          cell.textContent = "$" + now.toFixed(2);
+          cell.classList.remove("tick-up","tick-dn"); void cell.offsetWidth;
+          cell.classList.add(now > was ? "tick-up" : "tick-dn");
+          setTimeout(function(){ cell.classList.remove("tick-up","tick-dn"); }, 700);
+        }
+        lastPx[t] = now;
+      });
+    }
+    window.addEventListener("flux-prices", flash);
+
+    function paint(){
+      return D.floor().then(function(f){
+        if(!f || !f.round) throw new Error("no floor");
+        var r = f.round, tv = (r.meta||{}).tv || {}, running = r.status === "running";
+        var ts = (r.tickers||[]).slice(0, 8);
+
+        $("bdRound").textContent = "round " + r.seq;
+        $("bdRows").innerHTML = ts.map(function(t){
+          var q = tv[t] || {}, ch = q.change;
+          return '<li>' +
+            '<span class="bd-tk">' + esc(t) + '</span>' +
+            '<span class="bd-rt ' + rate(q.label) + '">' + esc(q.label || "no rating") + '</span>' +
+            '<span class="bd-px">' + (q.price != null ? "$" + esc(q.price) : "") + '</span>' +
+            '<span class="bd-ch ' + (ch == null ? "" : ch >= 0 ? "up" : "down") + '">' +
+              (ch == null ? "" : (ch >= 0 ? "+" : "") + esc(ch) + "%") + '</span></li>';
+        }).join("") || '<li><span class="bd-tk">&mdash;</span><span class="bd-rt">no names this round</span><span class="bd-px"></span><span class="bd-ch"></span></li>';
+
+        $("bdDot").classList.toggle("on", running);
+        $("bdStage").textContent = running
+          ? D.stageLabel(r.stage).toLowerCase()
+          : "round " + r.seq + " filed " + D.ago(r.finished_at || r.started_at);
+        var tot = f.rulings_total || 0;
+        $("bdRule").textContent = tot ? tot.toLocaleString() + " rulings on record" : "";
+      }).catch(function(){
+        $("bdRound").textContent = "unreachable";
+        $("bdRows").innerHTML = '<li style="grid-template-columns:1fr"><span class="bd-rt" style="white-space:normal">Could not reach the desk record. Nothing here is filled in with an example.</span></li>';
+        $("bdStage").textContent = "reload to try again";
+      });
+    }
+    paint();
+    setInterval(paint, 20000);
+
+    /* the top chrome belongs to the opening until the opening is behind you */
+    var op = document.querySelector(".op");
+    if(op){
+      var atTop = function(){
+        document.body.classList.toggle("at-top", window.scrollY < op.offsetHeight - 90);
+      };
+      atTop();
+      window.addEventListener("scroll", atTop, { passive: true });
+      window.addEventListener("resize", atTop, { passive: true });
+    }
   }
   boot();
 });
