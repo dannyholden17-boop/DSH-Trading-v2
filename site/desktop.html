@@ -801,19 +801,19 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ---- agents ---- */
   var AGENTS=[
-    {id:"pricenet",name:"PriceNet",mdl:"LSTM v4",desc:"Sequence model forecasting next-session moves for your watchlist.",int:22,
+    {id:"kronos",name:"Kronos",mdl:"in-browser approximation",desc:"A short-horizon price shape. Approximate, not a trained model.",int:22,
       run:function(){var wl=S.state().watchlist;if(!wl.length)return "idle — watchlist empty";
         var s=wl[ri(0,wl.length-1)],f=forecast(s);
         return s+" next-session "+(f.pct>=0?"+":"")+f.pct.toFixed(2)+"% · conf "+f.conf+"%";}},
-    {id:"volregime",name:"VolRegime",mdl:"HMM-3",desc:"Hidden-Markov regime classifier on realized volatility.",int:31,
+    {id:"tape",name:"Tape analyst",mdl:"Claude Haiku 4.5",desc:"Reads trend, range and where the volume went.",int:31,
       run:function(){var r=["low-vol grind","normal","elevated · squeeze risk"][ri(0,2)];return "market regime: "+r+" (p="+(0.62+Math.random()*0.3).toFixed(2)+")";}},
-    {id:"newssense",name:"NewsSense",mdl:"FinBERT",desc:"Sentiment model scoring every headline on the wire.",int:16,
+    {id:"catalyst",name:"Catalyst analyst",mdl:"Claude Haiku 4.5",desc:"Reads filings, earnings and what crossed the wire.",int:16,
       run:function(){var n=newsLog[0];if(!n)return "no headlines yet";
         var sc=(n.hot? -0.2:0.3)+((seedOf(n.txt)%60)-20)/100;
         return n.sym+" sentiment "+(sc>=0?"+":"")+sc.toFixed(2)+" — "+(sc>0.15?"bullish":sc<-0.1?"bearish":"neutral");}},
     {id:"montecarlo",name:"MonteCarlo",mdl:"10k paths",desc:"Portfolio simulation — daily VaR and drawdown odds.",int:38,
       run:function(){var v=varCalc();return "1-day VaR(95): "+S.fmt$(v)+" · P(dd>5%) "+(4+ri(0,9))+"%";}},
-    {id:"alpharank",name:"AlphaRank",mdl:"GBM ensemble",desc:"Re-scores every live signal against 5y of outcomes.",int:26,
+    {id:"traders",name:"The traders",mdl:"Claude Haiku 4.5",desc:"Weigh each analyst filing against that analyst own record.",int:26,
       run:function(){var fs=(D&&D.FINDINGS)||[];var f=fs[ri(0,fs.length-1)];if(!f)return "no signals";
         return "top signal: "+f.t+" ("+f.e+") re-scored "+Math.min(97,(f.c||60)+ri(-4,6))+"%";}},
     {id:"reporter",name:"Reporter",mdl:"Flux-LM",desc:"Writes scheduled desk reports: briefs, pulses, portfolio reviews.",int:120,
@@ -861,7 +861,7 @@ document.addEventListener("DOMContentLoaded", function(){
       html+='<p>Largest drag: <b>'+worst.p.sym+'</b> at '+S.fmtSigned(worst.m.pnl)+' ('+worst.m.pct.toFixed(1)+'%). 1-day VaR(95) est. <b>'+S.fmt$(varCalc())+'</b>.</p>';
     } else html+='<p>No open positions — the book is flat. Buying power '+S.fmt$(pf.cash)+'.</p>';
     html+='<h3>Model forecasts</h3>'+wl.map(function(s){var f=forecast(s);
-      return '<div class="sig-line">'+s+' — PriceNet '+(f.pct>=0?"+":"")+f.pct.toFixed(2)+'% next session · RSI '+f.rsi.toFixed(0)+' · conf '+f.conf+'%</div>'}).join("");
+      return '<div class="sig-line">'+s+' — Kronos '+(f.pct>=0?"+":"")+f.pct.toFixed(2)+'% next session · RSI '+f.rsi.toFixed(0)+' · conf '+f.conf+'%</div>'}).join("");
     html+='<h3>Top movers</h3>'+movers.map(function(x){
       return '<div class="sig-line">'+x.s+' $'+x.c.p.toFixed(2)+' <span class="'+(x.c.pct>=0?'up':'down')+'">'+fmtChg(x.c.pct)+'</span></div>'}).join("");
     html+='<h3>Live signals</h3>'+fs.map(function(f){
@@ -964,11 +964,11 @@ document.addEventListener("DOMContentLoaded", function(){
         if(pf.open.length){var w=pf.open.map(function(p){return{p:p,m:S.positionPnl(p)}}).sort(function(a,b){return a.m.pnl-b.m.pnl})[0];
           ans="Biggest risk is <b>"+w.p.sym+"</b> — "+w.p.side+" "+w.p.qty+" at "+S.fmtSigned(w.m.pnl)+" ("+w.m.pct.toFixed(1)+"%). MonteCarlo puts 1-day VaR(95) at <b>"+S.fmt$(varCalc())+"</b>. Consider a stop or trimming size.";
           acts=[["chart",w.p.sym,"Load "+w.p.sym],["report","", "Open risk report"]];
-        } else ans="Book is flat — no position risk. Buying power "+S.fmt$(pf.cash)+". VolRegime reads the tape as "+(AGENTS[1].last||"normal")+".";
+        } else ans="Book is flat — no position risk. Buying power "+S.fmt$(pf.cash)+". The tape analyst reads the tape as "+(AGENTS[1].last||"normal")+".";
       }
       else if(/report|brief|summary|wrap/.test(ql)){var rep=makeReport();ans="Done — <b>"+rep.title+"</b> is published with your live positions, model forecasts and movers.";acts=[["report","","Open it"]];}
       else if(/forecast|predict|model|target/.test(ql)&&symIn(q)){var s1=symIn(q),f1=forecast(s1);
-        ans="<b>PriceNet</b> (LSTM v4) on <b>"+s1+"</b>: next session "+(f1.pct>=0?"<b class='up'>+":"<b class='down'>")+f1.pct.toFixed(2)+"%</b> · RSI "+f1.rsi.toFixed(0)+" · confidence "+f1.conf+"%. Not advice — validate with a backtest.";
+        ans="<b>Kronos</b> (approximation) on <b>"+s1+"</b>: next session "+(f1.pct>=0?"<b class='up'>+":"<b class='down'>")+f1.pct.toFixed(2)+"%</b> · RSI "+f1.rsi.toFixed(0)+" · confidence "+f1.conf+"%. Not advice — validate with a backtest.";
         acts=[["chart",s1,"Load chart"],["buy",s1,"Trade "+s1]];}
       else if(/oversold|overbought|rsi|macd|technical/.test(ql)&&symIn(q)){var s2=symIn(q),cs2=candles(s2,"1D"),r2=rsiCalc(cs2.map(function(k){return k.c})),lr=r2[r2.length-1];
         ans="<b>"+s2+"</b> daily RSI is <b>"+lr.toFixed(0)+"</b> — "+(lr<30?"<b class='up'>oversold</b>; mean-reversion setups historically favor longs here":lr>70?"<b class='down'>overbought</b>; chasing here has negative expectancy":"neutral territory; no edge from RSI alone")+".";
@@ -984,7 +984,7 @@ document.addEventListener("DOMContentLoaded", function(){
         ans="I don't give advice — but I'll stack the evidence"+(s3?" on <b>"+s3+"</b>":"")+": model forecast, RSI, live signal and a 5-year backtest, then you decide."+(s3?"":" Name a symbol.");
         if(s3)acts=[["chart",s3,"Load "+s3]];}
       else if(symIn(q)){var s4=symIn(q),c4=chg(s4),f4=forecast(s4),sg=sigOf(s4);
-        ans="<b>"+s4+"</b> $"+c4.p.toFixed(2)+" ("+fmtChg(c4.pct)+"). PriceNet sees "+(f4.pct>=0?"+":"")+f4.pct.toFixed(2)+"% next session ("+f4.conf+"% conf)."+(sg?" Live signal: "+sg.e+" — "+sg.i.replace(/<[^>]+>/g,'').slice(0,60)+"… ("+(sg.c||"—")+"%).":"");
+        ans="<b>"+s4+"</b> $"+c4.p.toFixed(2)+" ("+fmtChg(c4.pct)+"). Kronos approximates "+(f4.pct>=0?"+":"")+f4.pct.toFixed(2)+"% next session ("+f4.conf+"% conf)."+(sg?" Live signal: "+sg.e+" — "+sg.i.replace(/<[^>]+>/g,'').slice(0,60)+"… ("+(sg.c||"—")+"%).":"");
         acts=[["chart",s4,"Load chart"],["flag",s4,"☆ Flag"],["buy",s4,"Trade"]];}
       else ans="Desk status: <b>"+AGENTS.filter(function(a){return a.on}).length+" agents</b> running, "+reports.length+" reports published, "+(D&&D.FINDINGS?D.FINDINGS.length:0)+" live signals. Ask about a symbol, your risk, or say <i>run a report</i>.";
       chatPush("ai",ans,acts);

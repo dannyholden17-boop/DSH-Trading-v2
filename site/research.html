@@ -329,9 +329,9 @@ document.addEventListener("DOMContentLoaded", function(){
       </div>
       <div class="glass glass-hover feat reveal">
         <div class="ic">≋</div><h3>The news wire</h3>
-        <p>Every headline touching your universe, scored for sentiment by NewsSense and deduplicated,
+        <p>Every headline touching your universe, read by the catalyst analyst and deduplicated,
           so one story syndicated forty times counts once.</p>
-        <div class="meta"><span>model <b>FinBERT</b></span><span>dedup <b>on</b></span></div>
+        <div class="meta"><span>model <b>Claude Haiku 4.5</b></span><span>dedup <b>on</b></span></div>
       </div>
       <div class="glass glass-hover feat reveal">
         <div class="ic">⟁</div><h3>The options tape</h3>
@@ -440,15 +440,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
   <div class="wrap" style="margin-top:52px">
     <div class="stats reveal">
-      <div class="stat"><div class="v"><span data-count="71" data-suffix="%">0%</span></div><div class="k">Win rate, simulated</div></div>
-      <div class="stat"><div class="v"><span data-count="1.42">0.00</span></div><div class="k">Sharpe, simulated</div></div>
-      <div class="stat"><div class="v"><span data-count="1260">0</span></div><div class="k">Sessions replayed</div></div>
-      <div class="stat"><div class="v"><span data-count="9.4" data-suffix="%">0%</span></div><div class="k">Max drawdown</div></div>
+      <div class="stat"><div class="v"><span id="rsFilings">—</span></div><div class="k">Filings on record</div></div>
+      <div class="stat"><div class="v"><span id="rsRounds">—</span></div><div class="k">Rounds filed</div></div>
+      <div class="stat"><div class="v"><span id="rsGraded">—</span></div><div class="k">Predictions graded</div></div>
+      <div class="stat"><div class="v"><span id="rsRefused">—</span></div><div class="k">Refused or cut</div></div>
     </div>
     <p class="disclaimer reveal" style="margin:24px auto 0;text-align:center">
-      Figures above are illustrative and derived from hypothetical, simulated performance. Simulated results
-      have inherent limitations, do not represent actual trading, and do not guarantee or suggest future
-      outcomes. Flux does not promise returns.</p>
+      Counts read from the desk's own record. There is deliberately no win rate, Sharpe or drawdown here:
+      the desk trades a simulated book, so any such figure would be hypothetical, and a prediction is only
+      graded once it reaches its resolve date. Grades — including the misses — appear on the
+      <a href="./analysts.html">scoreboard</a> as they come due.</p>
   </div>
 </section>
 
@@ -587,6 +588,27 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* pick up cards injected above (FLUX.initReveal also runs on load) */
   if(F.initReveal) F.initReveal();
+});
+</script>
+<script>
+/* the four counters above are the desk's own record, not an illustration */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    var $ = function(i){ return document.getElementById(i); };
+    Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
+      var f = r[0] || {}, a = r[1] || {};
+      function put(id, v){ var el = $(id); if(el && v != null) F.countTo ? F.countTo(el, v) : (el.textContent = v); }
+      put("rsFilings", f.filings_total);
+      put("rsRounds",  f.rounds_total);
+      put("rsGraded",  a.predictions_resolved || 0);
+      var ru = f.rulings_total || 0, ok = (f.rulings && f.rulings.approved) || 0;
+      var el = $("rsRefused");
+      if(el) el.textContent = ru ? Math.round((ru - ok) / ru * 100) + "%" : "—";
+    }).catch(function(){});
+  }
+  boot();
 });
 </script>
 </body>

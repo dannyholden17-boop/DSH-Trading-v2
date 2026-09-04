@@ -43,13 +43,16 @@
     {ic:"⧗",id:"Backtest",d:"Replays every flagged setup across years of history to prove the edge is real.",c:"on-demand",o:"validation"}
   ];
 
+  /* The models actually in the loop. Named for what runs, not for what
+     would sound impressive — the previous list (PriceNet/LSTM v4,
+     AlphaRank/"five years of outcomes", NewsSense/FinBERT) described
+     nothing that exists. */
   F.MODELS=[
-    {n:"PriceNet",m:"LSTM v4",d:"Sequence model forecasting next-session moves across your watchlist."},
-    {n:"VolRegime",m:"HMM-3",d:"Hidden-Markov classifier that labels the current volatility regime."},
-    {n:"NewsSense",m:"FinBERT",d:"Sentiment model scoring every headline that crosses the wire."},
-    {n:"MonteCarlo",m:"10k paths",d:"Portfolio simulation for daily VaR and drawdown probability."},
-    {n:"AlphaRank",m:"GBM ensemble",d:"Re-scores every live signal against five years of outcomes."},
-    {n:"Reporter",m:"Flux-LM",d:"Writes your scheduled desk reports: briefs, pulses and reviews."}
+    {n:"The analysts",m:"Claude Haiku 4.5",d:"Three of them, one lens each. Read a name and file a dated prediction with the evidence behind it."},
+    {n:"The traders",m:"Claude Haiku 4.5",d:"The analysts' boss. Read every filing against that analyst's own record and pass on only what they would take."},
+    {n:"The executive",m:"Claude Opus 5",d:"Rules on what survives: approve, cut the size, or refuse — with the reason on the record."},
+    {n:"Kronos",m:"in-browser approximation",d:"A short-horizon price shape. Runs client-side today, so its forecasts are marked as approximate rather than as a trained model's output."},
+    {n:"DSA",m:"deterministic composite",d:"Scores momentum, range, drawdown and value into one number. Arithmetic, not a model — every component is shown."}
   ];
 
   /* ---- nav ---- */
