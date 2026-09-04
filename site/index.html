@@ -185,7 +185,14 @@
 .ch-head p{color:var(--text-dim);font-size:clamp(1rem,.96rem + .28vw,1.1rem);line-height:1.6;max-width:46ch}
 @media(max-width:860px){.ch-head{grid-template-columns:1fr;align-items:start}.ch-head p{margin-top:14px}}
 
-.ch-stage{margin-top:clamp(30px,3.4vw,50px);position:relative;padding-top:88px}
+/* The stage is a room with depth, not a flat strip. The document is a real
+   sheet travelling through it: it comes forward and squares up at the desk
+   that is working on it, then turns away and recedes into the page as it
+   moves on. Everything animates on `transform` and `opacity` only, so the
+   whole cycle stays on the compositor — no layout, no paint. */
+.ch-stage{margin-top:clamp(30px,3.4vw,50px);position:relative;padding-top:88px;
+  perspective:1100px;perspective-origin:50% 34%}
+
 /* the rail the document rides */
 .ch-rail{position:absolute;left:0;right:0;top:58px;height:1px;background:var(--line);overflow:hidden}
 .ch-rail::after{content:"";position:absolute;inset:0;width:34%;
@@ -193,13 +200,57 @@
   animation:chRail 16s linear infinite}
 @keyframes chRail{0%{transform:translateX(-110%)}100%{transform:translateX(400%)}}
 
+/* The carriage spans the stage, so translating it by a third of its own
+   width lands the sheet exactly on the next desk. Moving the carriage
+   instead of the sheet's `left` is what keeps this off the layout path. */
+.ch-carriage{position:absolute;left:0;right:0;top:0;height:0;z-index:4;
+  transform-style:preserve-3d;animation:chTravel 16s var(--ease) infinite}
+@keyframes chTravel{
+  0%,32%   {transform:translate3d(0,0,0)}
+  41%,65%  {transform:translate3d(33.333%,0,0)}
+  74%,100% {transform:translate3d(66.666%,0,0)}
+}
+
 .ch-doc{
   position:absolute;top:0;left:16.66%;width:126px;
-  transform:translateX(-50%) rotate(-1.2deg);
+  transform-style:preserve-3d;
   border:1px solid var(--line);border-radius:7px;background:var(--paper);
-  box-shadow:0 2px 3px rgba(11,13,16,.07), 0 20px 34px -14px rgba(11,13,16,.34);
   padding:10px 12px 11px;
   animation:chDoc 16s var(--ease) infinite;
+}
+/* the sheet's own turn in space: square to the reader at a desk, angled
+   away and pushed back while it is between them */
+@keyframes chDoc{
+  0%    {transform:translateX(-50%) translateZ(-90px) rotateY(-20deg) rotate(-1.2deg);opacity:0}
+  6%    {transform:translateX(-50%) translateZ(48px)  rotateY(0deg)   rotate(-1.2deg);opacity:1}
+  32%   {transform:translateX(-50%) translateZ(48px)  rotateY(0deg)   rotate(-1.2deg);opacity:1}
+  36%   {transform:translateX(-50%) translateZ(-70px) rotateY(-17deg) rotate(.6deg);  opacity:1}
+  44%   {transform:translateX(-50%) translateZ(48px)  rotateY(0deg)   rotate(-1.2deg);opacity:1}
+  65%   {transform:translateX(-50%) translateZ(48px)  rotateY(0deg)   rotate(-1.2deg);opacity:1}
+  69%   {transform:translateX(-50%) translateZ(-70px) rotateY(-17deg) rotate(.6deg);  opacity:1}
+  77%   {transform:translateX(-50%) translateZ(48px)  rotateY(0deg)   rotate(-1.2deg);opacity:1}
+  96%   {transform:translateX(-50%) translateZ(48px)  rotateY(0deg)   rotate(-1.2deg);opacity:1}
+  100%  {transform:translateX(-50%) translateZ(-90px) rotateY(20deg)  rotate(-1.2deg);opacity:0}
+}
+/* A sheet this close to the surface casts a real shadow, and the shadow
+   tightens as it settles and spreads as it lifts away. Drawn as its own
+   layer so it can blur independently of the sheet's face. */
+.ch-doc::after{
+  content:"";position:absolute;left:6%;right:6%;bottom:-14px;height:20px;
+  border-radius:50%;background:rgba(11,13,18,.30);filter:blur(9px);
+  transform:translateZ(-1px);animation:chCast 16s var(--ease) infinite;
+}
+@keyframes chCast{
+  0%   {opacity:0;   transform:translateZ(-1px) scale(1.5)}
+  6%   {opacity:.55; transform:translateZ(-1px) scale(1)}
+  32%  {opacity:.55; transform:translateZ(-1px) scale(1)}
+  36%  {opacity:.22; transform:translateZ(-1px) scale(1.55)}
+  44%  {opacity:.55; transform:translateZ(-1px) scale(1)}
+  65%  {opacity:.55; transform:translateZ(-1px) scale(1)}
+  69%  {opacity:.22; transform:translateZ(-1px) scale(1.55)}
+  77%  {opacity:.55; transform:translateZ(-1px) scale(1)}
+  96%  {opacity:.55; transform:translateZ(-1px) scale(1)}
+  100% {opacity:0;   transform:translateZ(-1px) scale(1.5)}
 }
 .ch-doc .sym{display:block;font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:-.02em}
 .ch-doc .meta{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;
@@ -211,13 +262,6 @@
 .ch-doc .marks i:nth-child(2){animation-delay:5.9s}
 .ch-doc .marks i:nth-child(3){animation-delay:11.2s}
 @keyframes chMark{0%,3%{background:var(--well)}6%,100%{background:var(--clearing)}}
-@keyframes chDoc{
-  0%,4%    {left:16.66%;opacity:0;filter:blur(4px)}
-  8%,32%   {left:16.66%;opacity:1;filter:blur(0)}
-  41%,65%  {left:50%;   opacity:1;filter:blur(0)}
-  74%,96%  {left:83.33%;opacity:1;filter:blur(0)}
-  100%     {left:83.33%;opacity:0;filter:blur(4px)}
-}
 
 /* the pins sit on the rail, in the rail's own layer, so no container clips them */
 .ch-pins{position:absolute;left:0;right:0;top:54px;height:10px;pointer-events:none}
@@ -233,9 +277,11 @@
 /* the stations: ONE ruled container, three columns, hairlines between */
 .ch-sts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);
   border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--paper);
-  box-shadow:var(--lift-1)}
+  box-shadow:var(--lift-1);transform-style:preserve-3d;position:relative;z-index:1}
 .ch-st{padding:clamp(20px,2.2vw,30px) clamp(17px,1.9vw,26px) clamp(18px,2vw,26px);
-  border-left:1px solid var(--line-2);min-width:0}
+  border-left:1px solid var(--line-2);min-width:0;
+  transform-style:preserve-3d;
+  transition:transform var(--t-stage) var(--ease),box-shadow var(--t-stage) var(--ease)}
 .ch-st:first-child{border-left:0;border-radius:var(--radius-lg) 0 0 var(--radius-lg)}
 .ch-st:last-child{border-radius:0 var(--radius-lg) var(--radius-lg) 0}
 .ch-st h3{margin:0;font-size:1.45rem;font-weight:700;letter-spacing:-.028em}
@@ -248,7 +294,10 @@
 .ch-st:nth-child(2) .did{animation-delay:5.8s}
 .ch-st:nth-child(3) .did{animation-delay:11.1s}
 @keyframes chDid{0%,2%{opacity:0;transform:translateY(4px)}8%,94%{opacity:1;transform:none}100%{opacity:0}}
-.ch-st.live-now{background:var(--blotter-3);box-shadow:inset 0 -2px 0 var(--ink)}
+/* the desk the round is actually on stands proud of the other two, in the
+   same perspective the sheet travels through */
+.ch-st.live-now{background:var(--blotter-3);box-shadow:inset 0 -2px 0 var(--ink),var(--lift-2);
+  transform:translateZ(26px)}
 
 .ch-foot{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;margin-top:18px}
 .ch-foot .cap{font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
@@ -260,11 +309,13 @@
   .ch-st:first-child{border-top:0}
   .ch-pins{display:none}
   .ch-stage{padding-top:0}
-  .ch-rail,.ch-doc{display:none}
+  .ch-rail,.ch-carriage{display:none}
 }
 @media(prefers-reduced-motion:reduce){
-  .ch-doc,.ch-rail::after,.ch-doc .marks i,.ch-pins i,.ch-st .did{animation:none}
-  .ch-doc{left:83.33%;opacity:1;filter:none}
+  .ch-doc,.ch-doc::after,.ch-carriage,.ch-rail::after,.ch-doc .marks i,.ch-pins i,.ch-st .did{animation:none}
+  .ch-carriage{transform:translate3d(66.666%,0,0)}
+  .ch-doc{opacity:1;transform:translateX(-50%) rotate(-1.2deg)}
+  .ch-doc::after{opacity:.4;transform:none}
   .ch-doc .marks i{background:var(--clearing)}
   .ch-pins i{background:var(--ink);border-color:var(--ink)}
   .ch-st .did{opacity:1}
@@ -506,11 +557,13 @@
     <div class="ch-stage">
       <div class="ch-rail" aria-hidden="true"></div>
       <div class="ch-pins" aria-hidden="true"><i></i><i></i><i></i></div>
-      <article class="ch-doc" aria-hidden="true">
+      <div class="ch-carriage" aria-hidden="true">
+      <article class="ch-doc">
         <span class="sym">AFRM</span>
         <span class="meta">filing</span>
         <span class="marks"><i></i><i></i><i></i></span>
       </article>
+      </div>
 
       <ol class="ch-sts">
         <li class="ch-st" data-stage="analysts">
