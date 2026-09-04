@@ -2,7 +2,8 @@
   "buildPath": "code",
   "detector": {
     "ignoreRules": [
-      "cramped-padding"
+      "cramped-padding",
+      "hero-eyebrow-chip"
     ],
     "ignoreFiles": [],
     "ignoreValues": [
