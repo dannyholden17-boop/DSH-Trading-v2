@@ -51,9 +51,13 @@
   .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
   @media(max-width:760px){.idea-body{grid-template-columns:1fr;gap:16px}}
   .thesis{font-size:1rem;color:var(--text-dim);line-height:1.6}
-  .kvs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
-  @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}}
-  .kv{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:9px 10px;min-width:0}
+  .kvs{display:grid;grid-template-columns:repeat(4,1fr);margin-top:16px;
+    border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
+  @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}
+    .kv:nth-child(2n+1){border-left:0}
+    .kv:nth-child(n+3){border-top:1px solid var(--line-2)}}
+  .kv{padding:10px 12px;min-width:0;border-left:1px solid var(--line-2)}
+  .kv:first-child{border-left:0}
   .kv .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
   .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.9rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
   .idea-chart{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
@@ -115,9 +119,20 @@
   .anno-row .c .d{font-size:13px;color:var(--text-faint);margin-top:3px}
 
   /* ---- risk gates ---- */
-  .gates{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
-  @media(max-width:980px){.gates{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.gates{grid-template-columns:1fr}}
+  .gates{display:grid;grid-template-columns:repeat(4,1fr);margin-top:40px;
+    border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
+    box-shadow:var(--lift-1);overflow:hidden}
+  .gates>.glass{background:none;border:0;box-shadow:none;border-radius:0;
+    border-left:1px solid var(--line-2);padding:clamp(20px,2.1vw,28px)}
+  .gates>.glass::after{display:none}
+  .gates>.glass:first-child{border-left:0}
+  .gates>.glass:hover{transform:none;box-shadow:none;background:var(--blotter-3)}
+  @media(max-width:980px){.gates{grid-template-columns:repeat(2,1fr)}
+    .gates>.glass:nth-child(2n+1){border-left:0}
+    .gates>.glass:nth-child(n+3){border-top:1px solid var(--line-2)}}
+  @media(max-width:560px){.gates{grid-template-columns:1fr}
+    .gates>.glass{border-left:0;border-top:1px solid var(--line-2)}
+    .gates>.glass:first-child{border-top:0}}
 </style>
 </head>
 <body>
@@ -220,8 +235,9 @@
   <div class="wrap split wide-l">
     <div class="reveal">
 <h2 class="h2" style="margin-top:16px">Five parts. None of them optional.</h2>
-      <p class="lede" style="margin-top:16px">If any one of these is missing, the idea doesn't ship. That rule
-        is what stops the feed turning into a wall of tickers with arrows next to them.</p>
+      <p class="lede" style="margin-top:16px">If any one of these is missing, the idea doesn't ship. The last
+        one matters most: every idea carries a date it gets graded on, so the feed cannot quietly forget the
+        calls that went wrong.</p>
       <div class="flist">
         <div class="fi"><span class="k">1</span><div><b>The thesis</b>
           <p>One paragraph, plain English, naming the specific thing that happened: the sweep, the filing,
@@ -251,8 +267,8 @@
         <div class="t">Levels</div>
         <div class="d">Entry 184.20 · Stop 180.02 · Target 192.47 · R:R 2.0</div></div></div>
       <div class="anno-row"><span class="n">4</span><div class="c">
-        <div class="t">Backtest</div>
-        <div class="d">1,260 sessions replayed · walk-forward · slippage and commission included</div></div></div>
+        <div class="t">Resolve date</div>
+        <div class="d">Graded against the tape on 12 Sep, whether it worked or not</div></div></div>
       <div class="anno-row"><span class="n">5</span><div class="c">
         <div class="t">Risk gate</div>
         <div class="d">Sized to 0.8% of book · correlation 0.41 vs. holdings · passed</div></div></div>
