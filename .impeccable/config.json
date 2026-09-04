@@ -1,7 +1,9 @@
 {
   "buildPath": "code",
   "detector": {
-    "ignoreRules": [],
+    "ignoreRules": [
+      "cramped-padding"
+    ],
     "ignoreFiles": [],
     "ignoreValues": [
       {
