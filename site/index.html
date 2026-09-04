@@ -33,7 +33,15 @@
 
 /* ---------- 1. the opening ---------- */
 .op{padding:clamp(46px,7vw,104px) 0 clamp(30px,3.4vw,48px)}
+/* The opening SHOWS the desk rather than describing it: the claim on the left,
+   the desk's actual current round on the right, read live. */
+.op-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+  gap:clamp(28px,4vw,60px);align-items:center}
+/* the claim shares its row with the board, so it drops a step from the
+   full-width marketDisplay to keep two lines */
+.op-grid .op-claim{font-size:clamp(2.2rem,1.2rem + 2.9vw,3.7rem);max-width:15ch}
 .op-claim{
+
   font-size:clamp(2.4rem,1.1rem + 5.2vw,5rem);
   font-weight:700;letter-spacing:-.045em;line-height:.98;
   max-width:19ch;text-wrap:balance;
@@ -48,7 +56,37 @@
   transition:border-color var(--t-hover) var(--ease),gap var(--t-hover) var(--ease)}
 .op-more:hover{border-color:var(--ink);gap:13px}
 
-/* the fact strip: ONE ruled container, divided internally */
+/* ---- the live board: the pit, dropped into daylight ---- */
+.board{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--lift-3);
+  border:1px solid rgba(160,180,220,.16)}
+.board-hd{display:flex;align-items:center;gap:10px;padding:13px 16px;
+  background:var(--well);border-bottom:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--text-faint)}
+.board-hd .rd{margin-left:auto;letter-spacing:.08em;color:var(--text-dim)}
+.board-rows{list-style:none;margin:0;padding:0;background:var(--blotter-2)}
+.board-rows>li{display:grid;grid-template-columns:5.5ch minmax(0,1fr) auto auto;
+  gap:12px;align-items:baseline;padding:11px 16px;border-top:1px solid var(--line-3)}
+.board-rows>li:first-child{border-top:0}
+.board-rows .bd-tk{font-family:var(--f-display);font-weight:800;font-size:.95rem;letter-spacing:-.02em}
+.board-rows .bd-rt{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text-faint);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board-rows .bd-rt.buy{color:var(--clearing)} .board-rows .bd-rt.sell{color:var(--stamp)}
+.board-rows .bd-px{font-family:var(--f-mono);font-size:12.5px;color:var(--text-dim);
+  font-variant-numeric:tabular-nums}
+.board-rows .bd-ch{font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;
+  min-width:7ch;text-align:right}
+.board-rows .bd-ch.up{color:var(--clearing)} .board-rows .bd-ch.down{color:var(--stamp)}
+.board-ft{display:flex;align-items:center;gap:9px;padding:12px 16px;
+  background:var(--well);border-top:1px solid var(--line-2);
+  font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
+.board-ft .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);flex:none}
+.board-ft .dot.on{background:var(--clearing);animation:recBlink 2.4s steps(1,end) infinite}
+.board-ft .ru{margin-left:auto;color:var(--text-dim)}
+@media(max-width:920px){
+  .op-grid{grid-template-columns:1fr;gap:clamp(26px,4vw,38px)}
+}
 .strip{
   margin-top:clamp(34px,4.4vw,66px);
   border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--paper);
@@ -462,14 +500,27 @@
 <!-- ============ 1. THE OPENING ============ -->
 <section class="op">
   <div class="wrap">
-    <h1 class="op-claim">Research you can<br>audit, <span class="q">line by line.</span></h1>
-    <p class="op-lede">Three analysts research a name and file a dated prediction with the evidence behind
-      it. Their boss, the trading desk, throws out most of it. One executive rules on what survives, and
-      says why. Every filing is stored and graded against the tape afterwards, including the ones that were
-      wrong.</p>
-    <div class="op-act">
-      <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk<i class="ic-i i-arrow" aria-hidden="true"></i></a>
-      <a class="op-more" href="./terminal.html">Trade it on paper<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+    <div class="op-grid">
+      <div>
+        <h1 class="op-claim">Research you can<br>audit, <span class="q">line by line.</span></h1>
+        <p class="op-lede">Three analysts research a name and file a dated prediction with the evidence
+          behind it. Their boss, the trading desk, throws out most of it. One executive rules on what
+          survives, and says why. Every call is graded against the tape afterwards, including the wrong
+          ones.</p>
+        <div class="op-act">
+          <a class="btn btn-primary btn-lg" href="./desk.html">Open the desk<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+          <a class="op-more" href="./terminal.html">Trade it on paper<i class="ic-i i-arrow" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <!-- what the desk is on right now, read from the record. Not a mockup. -->
+      <div class="board reveal" data-surface="app" aria-label="The desk's current round">
+        <div class="board-hd">On the desk<span class="rd" id="bdRound">reading…</span></div>
+        <ul class="board-rows" id="bdRows">
+          <li><span class="bd-tk">&mdash;</span><span class="bd-rt">reading the round</span><span class="bd-px"></span><span class="bd-ch"></span></li>
+        </ul>
+        <div class="board-ft"><span class="dot" id="bdDot"></span><span id="bdStage">connecting to the desk</span><span class="ru" id="bdRule"></span></div>
+      </div>
     </div>
 
     <dl class="strip reveal" id="strip">
@@ -1059,6 +1110,55 @@ document.addEventListener("DOMContentLoaded", function(){
     paintNumbers().then(paintDesks);
     paintWorkstation();
     setInterval(function(){ paintNumbers(); paintWorkstation(); }, 20000);
+  }
+  boot();
+});
+</script>
+<script>
+/* The opening board. Reads the round the desk is actually on, every 20s.
+   Nothing here is illustrative: if the record is unreachable it says so
+   rather than showing a plausible round. */
+document.addEventListener("DOMContentLoaded", function(){
+  function boot(){
+    var F = window.FLUX;
+    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    var D = F.Desk, $ = function(i){ return document.getElementById(i); };
+    var esc = function(t){ return String(t==null?"":t).replace(/[&<>"]/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); };
+    function rate(l){ var x=String(l||"").toLowerCase();
+      return x.indexOf("buy")>=0 ? "buy" : x.indexOf("sell")>=0 ? "sell" : ""; }
+
+    function paint(){
+      return D.floor().then(function(f){
+        if(!f || !f.round) throw new Error("no floor");
+        var r = f.round, tv = (r.meta||{}).tv || {}, running = r.status === "running";
+        var ts = (r.tickers||[]).slice(0, 7);
+
+        $("bdRound").textContent = "round " + r.seq;
+        $("bdRows").innerHTML = ts.map(function(t){
+          var q = tv[t] || {}, ch = q.change;
+          return '<li>' +
+            '<span class="bd-tk">' + esc(t) + '</span>' +
+            '<span class="bd-rt ' + rate(q.label) + '">' + esc(q.label || "no rating") + '</span>' +
+            '<span class="bd-px">' + (q.price != null ? "$" + esc(q.price) : "") + '</span>' +
+            '<span class="bd-ch ' + (ch == null ? "" : ch >= 0 ? "up" : "down") + '">' +
+              (ch == null ? "" : (ch >= 0 ? "+" : "") + esc(ch) + "%") + '</span></li>';
+        }).join("") || '<li><span class="bd-tk">&mdash;</span><span class="bd-rt">no names this round</span><span class="bd-px"></span><span class="bd-ch"></span></li>';
+
+        $("bdDot").classList.toggle("on", running);
+        $("bdStage").textContent = running
+          ? D.stageLabel(r.stage).toLowerCase()
+          : "round " + r.seq + " filed " + D.ago(r.finished_at || r.started_at);
+        var tot = f.rulings_total || 0;
+        $("bdRule").textContent = tot ? tot.toLocaleString() + " rulings on record" : "";
+      }).catch(function(){
+        $("bdRound").textContent = "unreachable";
+        $("bdRows").innerHTML = '<li style="grid-template-columns:1fr"><span class="bd-rt" style="white-space:normal">Could not reach the desk record. Nothing here is filled in with an example.</span></li>';
+        $("bdStage").textContent = "reload to try again";
+      });
+    }
+    paint();
+    setInterval(paint, 20000);
   }
   boot();
 });
