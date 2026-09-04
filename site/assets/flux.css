@@ -954,16 +954,51 @@ body::before{
    done, and what they are on right now.
  * ---------------------------------------------------------- */
 .st-wrap{max-width:var(--maxw);margin-inline:auto;padding:34px var(--gutter) 70px}
-.st-top{display:flex;align-items:baseline;gap:10px 16px;flex-wrap:wrap}
-.st-top h1{font-family:var(--f-display);font-size:2.1rem;font-weight:800;
-  letter-spacing:-.03em;margin:0}
+/* The station pages open in the same grammar as the front page: an amber
+   eyebrow rule, a claim at the hero step, a lede, and the whole block
+   arriving once on load. Shared by analysts, traders and executive. */
+.st-wrap{position:relative;isolation:isolate}
+.st-wrap::before{content:"";position:absolute;inset:-34px 0 auto 0;height:420px;z-index:-1;
+  background:
+    radial-gradient(880px 420px at 76% 0%, rgba(245,185,60,.10), transparent 62%),
+    radial-gradient(720px 380px at 6% 30%, rgba(61,220,151,.06), transparent 60%)}
+/* Explicit rows: the eyebrow and the claim each own the full width, then the
+   live marker and the round meta share the line under them. Flex could not
+   do this once the claim took a max-width, since max-width beats a 100%
+   basis and the marker kept riding up beside the headline. */
+.st-top{display:grid;grid-template-columns:1fr auto;gap:8px 18px;align-items:baseline}
+.st-eyebrow{grid-column:1/-1}
+.st-top h1{grid-column:1/-1}
+.st-live{grid-column:1;justify-self:start}
+.st-meta{grid-column:2;justify-self:end;margin-left:0}
+@media(max-width:640px){
+  .st-top{grid-template-columns:1fr}
+  .st-meta{grid-column:1;justify-self:start}
+}
+.st-top h1{font-family:var(--f-display);
+  font-size:clamp(2rem,1.2rem + 2.6vw,3.4rem);font-weight:700;
+  letter-spacing:-.042em;line-height:1;margin:0;max-width:19ch;text-wrap:balance}
+.st-top h1 .q{color:var(--text-faint);font-weight:400}
+.st-eyebrow{display:inline-flex;align-items:center;gap:9px;width:100%;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold)}
+.st-eyebrow::before{content:"";width:20px;height:1px;background:currentColor;flex:none}
+.st-eyebrow,.st-top h1,.st-sub,.st-live,.st-meta{
+  opacity:0;transform:translateY(12px);animation:opRise .68s var(--ease) forwards}
+.st-top h1{animation-delay:.07s}
+.st-live,.st-meta{animation-delay:.14s}
+.st-sub{animation-delay:.16s}
+@media(prefers-reduced-motion:reduce){
+  .st-eyebrow,.st-top h1,.st-sub,.st-live,.st-meta{animation:none;opacity:1;transform:none}
+}
 .st-live{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);
   font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
 .st-live .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);flex:none}
 .st-live.on .dot{background:var(--clearing);animation:recBlink 2.4s steps(1,end) infinite}
 .st-meta{margin-left:auto;font-family:var(--f-mono);font-size:13px;color:var(--text-faint);
   font-variant-numeric:tabular-nums}
-.st-sub{margin:10px 0 0;color:var(--text-dim);font-size:1rem;line-height:1.62;max-width:76ch}
+.st-sub{margin:clamp(16px,1.8vw,24px) 0 0;color:var(--text-dim);
+  font-size:clamp(1rem,.96rem + .3vw,1.12rem);line-height:1.62;max-width:64ch}
 
 /* The desks. One ruled container, N columns, hairlines between — never a
    row of cards, and never a boxed figure block nested inside one of them.
@@ -1031,8 +1066,28 @@ body::before{
 /* ---------------------------------------------------------- *
    18. BROKERAGE — the one connection, and its honest limits
  * ---------------------------------------------------------- */
-.bk-hero{max-width:var(--maxw);margin-inline:auto;padding:44px var(--gutter) 0}
-.bk-hero h1{font-family:var(--f-display);font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);
+/* brokerage opens in the same grammar as every other page */
+.bk-hero{position:relative;isolation:isolate;max-width:var(--maxw);margin-inline:auto;
+  padding:clamp(44px,6vw,88px) var(--gutter) 0}
+.bk-hero::before{content:"";position:absolute;inset:-20px -100vw auto -100vw;height:400px;z-index:-1;
+  background:
+    radial-gradient(880px 400px at 74% 0%, rgba(245,185,60,.12), transparent 62%),
+    radial-gradient(700px 360px at 8% 40%, rgba(39,72,184,.05), transparent 60%)}
+.bk-eyebrow{display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold)}
+.bk-eyebrow::before{content:"";width:20px;height:1px;background:currentColor;flex:none}
+.bk-hero h1 .q{color:var(--text-faint);font-weight:400}
+.bk-eyebrow,.bk-hero h1,.bk-hero .lede{
+  opacity:0;transform:translateY(12px);animation:opRise .68s var(--ease) forwards}
+.bk-hero h1{animation-delay:.07s}
+.bk-hero .lede{animation-delay:.14s}
+@media(prefers-reduced-motion:reduce){
+  .bk-eyebrow,.bk-hero h1,.bk-hero .lede{animation:none;opacity:1;transform:none}
+}
+.bk-hero h1{margin-top:clamp(13px,1.5vw,20px);
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(2rem,1.2rem + 2.6vw,3.4rem);line-height:1;
   font-weight:800;letter-spacing:-.03em;margin:0;max-width:20ch}
 .bk-hero .lede{margin:14px 0 0;font-size:1.12rem;line-height:1.6;color:var(--text-dim);max-width:66ch}
 .bk-badge{display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border-radius:2px;
@@ -1296,7 +1351,7 @@ html[data-surface="market"] body::before{
   --gold:#f5b93c; --gold-soft:#ffd479;
   --clearing:#3ddc97; --stamp:#ff6f52; --floor:#7aa7ff;
   --chrome:#2b3550; --chrome-hi:#3b486b;
-  --act:#3ddc97; --act-ink:#04150d;
+  --act:var(--card-buy); --act-ink:var(--ink);
   --radius:6px; --radius-lg:10px;
   --lift-1:0 1px 0 rgba(255,255,255,.04) inset, 0 1px 2px rgba(0,0,0,.5), 0 4px 12px -6px rgba(0,0,0,.7);
   --lift-2:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -20px rgba(0,0,0,.95);
@@ -1365,3 +1420,67 @@ html[data-surface="market"] body::before{
   .ruled>*,.ruled>.glass{border-left:0;border-top:1px solid var(--line-2)}
   .ruled>*:first-child,.ruled>.glass:first-child{border-top:0}
 }
+
+/* ---------------------------------------------------------- *
+   23. THE PAGE HERO
+
+   The home page opens on a photograph. Every other page opens
+   on the same grammar in a quieter register: an amber eyebrow
+   rule, a two-tone claim, a lede, and pill actions, over a lit
+   plate rather than a picture. The photograph stays special to
+   the front page; the interiors share its voice without
+   competing with it.
+
+   Token-driven, so the same markup lights correctly in the pit
+   and in daylight.
+ * ---------------------------------------------------------- */
+.phero{position:relative;overflow:hidden;isolation:isolate;
+  padding:clamp(46px,7vw,96px) 0 clamp(30px,4vw,52px)}
+.phero::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(900px 460px at 78% 12%, rgba(245,185,60,.10), transparent 62%),
+    radial-gradient(760px 420px at 8% 96%, rgba(61,220,151,.07), transparent 60%)}
+.phero>.wrap{position:relative}
+
+.phero-eyebrow{display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold)}
+.phero-eyebrow::before{content:"";width:20px;height:1px;background:currentColor;flex:none}
+
+.phero-claim{margin:clamp(13px,1.5vw,20px) 0 0;
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(2rem,1.2rem + 2.6vw,3.4rem);
+  letter-spacing:-.042em;line-height:1;max-width:19ch;text-wrap:balance}
+.phero-claim .q{color:var(--text-faint);font-weight:400}
+
+.phero-lede{margin:clamp(16px,1.8vw,24px) 0 0;max-width:60ch;color:var(--text-dim);
+  font-size:clamp(1rem,.96rem + .3vw,1.12rem);line-height:1.62}
+.phero-act{display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap;
+  margin-top:clamp(22px,2.4vw,32px)}
+
+/* a live marker for pages that carry one, sitting beside the claim */
+.phero-live{display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-faint)}
+.phero-live .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);flex:none}
+.phero-live.on .dot{background:var(--clearing);animation:recBlink 2.4s steps(1,end) infinite}
+
+/* the arrival, matched to the front page: once, on load, never on scroll */
+.phero-eyebrow,.phero-claim,.phero-lede,.phero-act,.phero-live{
+  opacity:0;transform:translateY(12px);animation:opRise .68s var(--ease) forwards}
+.phero-claim{animation-delay:.07s}
+.phero-lede{animation-delay:.14s}
+.phero-live{animation-delay:.18s}
+.phero-act{animation-delay:.22s}
+@keyframes opRise{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .phero-eyebrow,.phero-claim,.phero-lede,.phero-act,.phero-live{
+    animation:none;opacity:1;transform:none}
+}
+
+/* ---- the action is a pill everywhere now ----
+   The pinned reference's CTAs are pills, and a button that changes shape
+   between the front page and the interiors reads as two different sites. */
+.btn{border-radius:999px}
+.btn-lg{padding:16px 30px}
+.btn-sm{padding:9px 18px}

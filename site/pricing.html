@@ -25,7 +25,23 @@
    ============================================================ */
 
 /* ---------- the opening ---------- */
-.pr-open{padding:clamp(44px,6vw,92px) 0 clamp(24px,3vw,40px)}
+.pr-open{position:relative;isolation:isolate;overflow:hidden;
+  padding:clamp(44px,6vw,92px) 0 clamp(24px,3vw,40px)}
+.pr-open::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(880px 420px at 78% 6%, rgba(245,185,60,.13), transparent 62%),
+    radial-gradient(700px 380px at 4% 92%, rgba(39,72,184,.05), transparent 60%)}
+.pr-open .phero-eyebrow{display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold)}
+.pr-open .phero-eyebrow::before{content:"";width:20px;height:1px;background:currentColor;flex:none}
+.pr-open .phero-eyebrow,.pr-open h1,.pr-head p{
+  opacity:0;transform:translateY(12px);animation:opRise .68s var(--ease) forwards}
+.pr-open h1{animation-delay:.07s}
+.pr-head p{animation-delay:.14s}
+@media(prefers-reduced-motion:reduce){
+  .pr-open .phero-eyebrow,.pr-open h1,.pr-head p{animation:none;opacity:1;transform:none}
+}
 .pr-open h1{font-size:clamp(2.4rem,1.1rem + 5.2vw,5rem);font-weight:700;letter-spacing:-.045em;
   line-height:1;max-width:17ch}
 .pr-open h1 .q{color:var(--text-faint);font-weight:400}
@@ -190,7 +206,10 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
 <section class="pr-open">
   <div class="wrap">
     <div class="pr-head">
-      <h1>Start free.<br><span class="q">Upgrade when it earns it.</span></h1>
+      <div>
+        <span class="phero-eyebrow">Plans and what they cost</span>
+        <h1>Start free.<br><span class="q">Upgrade when it earns it.</span></h1>
+      </div>
       <p>Every plan reads the same desk and trades the same paper account from day one. No card to start,
         no contract, and no cut of your trades, ever.</p>
     </div>
