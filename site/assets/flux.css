@@ -1680,22 +1680,40 @@ table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line
   .stat:nth-child(2n+1){border-left:0}
   .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
 
+/* The home hero already has .op-scrim doing the darkening, so its host runs
+   bare — two gradients on one layer only muddies the photograph beneath. */
+.fx-film-host--bare::after{display:none}
+.fx-film-host--bare .fx-film{object-position:center 62%}
+/* The plate stops drifting once a film owns the frame: two motions on one
+   layer read as a wobble. */
+.op:has(.fx-film-host.in) .op-plate{animation:none}
+
 /* ---------------------------------------------------------------------------
-   THE HERO FILM
-   Sits over the photographic plate, transparent until a real frame paints.
-   Everything below degrades to the plate: no film, no loss.
+   THE FILM HOST
+   A generated film behind a page's hero, scrubbed by scroll. The host is a
+   layer, not a container: it sits behind the hero's own content and is
+   transparent until a real frame paints, so every page degrades to exactly
+   what it renders without a film.
 --------------------------------------------------------------------------- */
-.op-film{
-  position:absolute;inset:0;z-index:0;
-  width:100%;height:100%;object-fit:cover;object-position:center 62%;
-  opacity:0;transition:opacity .9s cubic-bezier(.22,1,.36,1);
-  pointer-events:none;
+.fx-film-host{
+  position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  opacity:0;transition:opacity 1s cubic-bezier(.22,1,.36,1);
 }
-.op-film.in{opacity:1}
-/* The plate stops drifting once the film owns the frame — two motions on the
-   same layer read as a wobble. */
-.op-film.in ~ .op-plate,
-.op:has(.op-film.in) .op-plate{animation:none}
-@media(prefers-reduced-motion:reduce){
-  .op-film{display:none}
+.fx-film-host.in{opacity:1}
+.fx-film{width:100%;height:100%;object-fit:cover;object-position:center 60%;display:block}
+
+/* The host darkens toward the copy so a headline never sits on raw footage. */
+.fx-film-host::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,10,13,.82) 0%,rgba(8,10,13,.62) 42%,rgba(8,10,13,.88) 100%);
 }
+
+/* Hosts live inside heroes that must stack above them. */
+.dk-top,.st-top,.tm-head,.fd-head{position:relative;isolation:isolate}
+.dk-top>*:not(.fx-film-host),
+.st-top>*:not(.fx-film-host),
+.tm-head>*:not(.fx-film-host),
+.fd-head>*:not(.fx-film-host){position:relative;z-index:1}
+.phero>.wrap{z-index:1}
+
+@media(prefers-reduced-motion:reduce){ .fx-film-host{display:none} }

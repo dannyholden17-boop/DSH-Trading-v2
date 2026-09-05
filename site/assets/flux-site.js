@@ -168,6 +168,86 @@
     return true;
   };
 
+
+  /* ---- the hero film ------------------------------------------------------
+
+     A generated film, scrubbed by the reader's scroll. Declarative: any
+     container becomes a film host by carrying
+
+       <div class="fx-film-host" data-film="<desktop mp4>"
+                                 data-film-m="<mobile mp4>"
+                                 data-film-pos="center 62%"></div>
+
+     as its first child. The host builds its own <video>; nothing autoplays,
+     so the motion is the reader's.
+
+     It is strictly an enhancement. The layer starts transparent and is
+     revealed only after a real frame has painted, so a slow connection, a
+     blocked asset, save-data or prefers-reduced-motion all leave the page
+     exactly as it renders without it. A load error removes the element
+     rather than leaving a dead layer behind.
+  -------------------------------------------------------------------------- */
+  F.initFilm=function(root){
+    var hosts=$$(".fx-film-host",root||document);
+    if(!hosts.length||!("IntersectionObserver" in window))return;
+    if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    if(navigator.connection&&navigator.connection.saveData)return;
+
+    var small=window.matchMedia("(max-width:720px)").matches;
+
+    hosts.forEach(function(host){
+      var src=small?(host.getAttribute("data-film-m")||host.getAttribute("data-film")):host.getAttribute("data-film");
+      if(!src)return;
+
+      var v=document.createElement("video");
+      v.className="fx-film";
+      v.muted=true; v.defaultMuted=true;
+      v.playsInline=true; v.setAttribute("playsinline","");
+      v.setAttribute("aria-hidden","true");
+      v.setAttribute("disablepictureinpicture","");
+      v.setAttribute("disableremoteplayback","");
+      v.preload="auto";
+      if(host.getAttribute("data-film-pos")) v.style.objectPosition=host.getAttribute("data-film-pos");
+      v.src=src;
+      host.appendChild(v);
+
+      var dur=0,ready=false,raf=0,want=0,have=-1,listening=false;
+
+      v.addEventListener("loadedmetadata",function(){dur=v.duration||0;});
+      /* reveal on a painted frame, never on metadata alone */
+      v.addEventListener("loadeddata",function(){ready=true;host.classList.add("in");seek();});
+      v.addEventListener("error",function(){ if(v.parentNode) v.parentNode.removeChild(v); });
+
+      function progress(){
+        var r=host.getBoundingClientRect(),vh=window.innerHeight||1;
+        var total=r.height+vh;                 /* host traversing the viewport */
+        var p=(vh-r.top)/(total||1);
+        return p<0?0:(p>1?1:p);
+      }
+      function seek(){
+        raf=0;
+        if(!ready||!dur)return;
+        if(Math.abs(want-have)>0.02){          /* coalesce; never re-seek to now */
+          have=want;
+          try{v.currentTime=want;}catch(e){/* seek raced a load */}
+        }
+      }
+      function onScroll(){
+        want=progress()*(dur||0);
+        if(!raf)raf=requestAnimationFrame(seek);
+      }
+
+      new IntersectionObserver(function(es){
+        if(es[0].isIntersecting){
+          if(!listening){window.addEventListener("scroll",onScroll,{passive:true});listening=true;}
+          onScroll();
+        }else if(listening){
+          window.removeEventListener("scroll",onScroll);listening=false;
+        }
+      },{rootMargin:"250px 0px"}).observe(host);
+    });
+  };
+
   /* ---- counters ---- */
   F.initCounters=function(){
     var els=$$("[data-count]");
@@ -752,6 +832,6 @@
   };
 
   document.addEventListener("DOMContentLoaded",function(){
-    F.initNav();F.initReveal();F.initStagger();F.initCounters();F.initFX();F.initAuth();F.initTicker();
+    F.initNav();F.initReveal();F.initStagger();F.initCounters();F.initFX();F.initAuth();F.initTicker();F.initFilm();
   });
 })();

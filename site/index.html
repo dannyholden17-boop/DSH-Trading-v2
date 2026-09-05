@@ -615,9 +615,12 @@ body.at-top .nav .glyph{background:var(--gold-soft)}
   <div class="op-plate" aria-hidden="true"></div>
   <!-- The floor, scrubbed by scroll. Sits OVER the photographic plate and only
        becomes visible once a real frame has painted, so a blocked CDN, a slow
-       connection or reduced-motion leaves the page exactly as it was. -->
-  <video class="op-film" aria-hidden="true" muted playsinline preload="none"
-         disablepictureinpicture disableremoteplayback></video>
+       connection or reduced-motion leaves the page exactly as it was. The
+       scrim below already darkens for the copy, so this host stays bare. -->
+  <div class="fx-film-host fx-film-host--bare" aria-hidden="true"
+       data-film="https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/2a544a34-e95d-491c-8e24-6acee4aa76a3.mp4"
+       data-film-m="https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/3eeef184-4ffe-445f-b7fd-a9a1a8cbabfb.mp4"
+       data-film-pos="center 62%"></div>
   <div class="op-scrim" aria-hidden="true"></div>
 
   <div class="wrap">
@@ -1316,79 +1319,5 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 </script>
 
-<script>
-/* ---------------------------------------------------------------------------
-   The hero film, scrubbed by scroll.
-
-   One continuous 15s push-in across a darkened floor before the bell. Scroll
-   position drives currentTime; nothing autoplays, so the motion is the
-   reader's, not ours.
-
-   It is strictly an enhancement. The film layer starts transparent and is only
-   revealed after a real frame has painted, so if the asset is slow, blocked, or
-   the reader prefers reduced motion, the photographic plate underneath is what
-   they see — which is the page exactly as it shipped before.
---------------------------------------------------------------------------- */
-(function(){
-  var FILM = {
-    desktop: "https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/2a544a34-e95d-491c-8e24-6acee4aa76a3.mp4",
-    mobile:  "https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/3eeef184-4ffe-445f-b7fd-a9a1a8cbabfb.mp4"
-  };
-  var hero = document.querySelector(".op");
-  var film = document.querySelector(".op-film");
-  if(!hero || !film || !("IntersectionObserver" in window)) return;
-
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduce) return;                        // the photograph is the whole story
-  if(navigator.connection && navigator.connection.saveData) return;
-
-  var small = window.matchMedia("(max-width:720px)").matches;
-  film.src = small ? FILM.mobile : FILM.desktop;
-  film.load();
-
-  var dur = 0, ready = false, raf = 0, want = 0, have = -1;
-
-  film.addEventListener("loadedmetadata", function(){ dur = film.duration || 0; });
-  // Reveal only once a frame is genuinely on screen, never on metadata alone.
-  film.addEventListener("loadeddata", function(){
-    ready = true;
-    film.classList.add("in");
-    tick();
-  });
-  film.addEventListener("error", function(){ film.remove(); });
-
-  function target(){
-    var r = hero.getBoundingClientRect();
-    var travel = r.height || 1;
-    var p = Math.min(1, Math.max(0, -r.top / travel));
-    return p * (dur || 0);
-  }
-
-  function tick(){
-    raf = 0;
-    if(!ready || !dur) return;
-    // Coalesce: never seek to a time we are already effectively at.
-    if(Math.abs(want - have) > 0.02){
-      have = want;
-      try { film.currentTime = want; } catch(e){ /* seek raced a load */ }
-    }
-  }
-
-  function onScroll(){
-    want = target();
-    if(!raf) raf = requestAnimationFrame(tick);
-  }
-
-  var io = new IntersectionObserver(function(es){
-    if(es[0].isIntersecting){
-      window.addEventListener("scroll", onScroll, {passive:true});
-      onScroll();
-    } else {
-      window.removeEventListener("scroll", onScroll);
-    }
-  }, {rootMargin:"200px 0px"});
-  io.observe(hero);
-})();
-</script>
 </body>
 </html>
