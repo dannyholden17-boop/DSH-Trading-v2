@@ -211,13 +211,13 @@ document.addEventListener("DOMContentLoaded", function(){
               'text-transform:uppercase;color:var(--text-faint);min-width:9ch">' + esc(r.horizon || "all") + '</span>' +
               '<span style="font-family:var(--f-mono);font-size:13px;color:var(--text-dim)">' +
               esc(r.resolved || 0) + ' resolved</span>' +
-              '<span style="margin-left:auto;font-family:var(--f-mono);font-size:15px;font-weight:600;color:' +
+              '<span style="margin-left:auto;font-family:var(--f-mono);font-size:1rem;font-weight:600;color:' +
               (r.hit_rate == null ? "var(--text-faint)" : r.hit_rate >= 0.5 ? "var(--clearing)" : "var(--stamp)") +
               '">' + rate + '</span></li>';
           }).join("");
         } else {
           $("#aScoreCap").textContent = open_ ? open_ + " open" : "nothing due yet";
-          host.innerHTML = '<li style="color:var(--text-dim);font-size:.94rem;line-height:1.65">' +
+          host.innerHTML = '<li style="color:var(--text-dim);font-size:.9rem;line-height:1.65">' +
             (open_
               ? 'No prediction has reached its resolve date yet, so there is no hit rate to show. ' +
                 (open_ === 1 ? 'One call is' : '<b style="color:var(--text)">' + open_ + '</b> calls are') +

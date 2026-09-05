@@ -66,6 +66,10 @@
   --glass-line-2:rgba(226,234,248,.09);
   --glass-blur:blur(18px) saturate(1.2);
   --glass-shadow:0 1px 2px rgba(0,0,0,.42), 0 4px 10px -3px rgba(0,0,0,.5), 0 14px 26px -18px rgba(0,0,0,.86);
+  /* A panel that marks itself with an accent hairline has already said
+     "look here". Adding a deep float says it twice, which is the
+     generated-page signature. Accent panels take the contact shadow only. */
+  --glass-shadow-edge:0 1px 2px rgba(0,0,0,.42), 0 3px 8px -4px rgba(0,0,0,.55);
 
   /* --- motion: one scale, four speeds. Nothing animates at a random duration. --- */
   --ease:cubic-bezier(.22,1,.36,1);      /* power2.out — the house curve */
@@ -247,6 +251,11 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .pill-violet i{background:var(--floor)}
 .pill-cyan{color:var(--gold);border-color:rgba(245,185,60,.4)}
 .pill-cyan i{background:var(--gold)}
+/* A pill holding a sentence is a note, not an acronym. Caps and stencil
+   tracking are for a word or two; past that they only slow the reading,
+   and these particular sentences are the ones that must be read. */
+.pill-note{text-transform:none;letter-spacing:.005em;font-weight:400;
+  font-size:12.5px;line-height:1.45;white-space:normal;text-align:left}
 
 /* the badge: 2–4 letters in heavy display, the way a jacket carries it */
 .badge{font-family:var(--f-display);font-weight:900;font-size:12px;letter-spacing:.06em;
@@ -303,7 +312,7 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 
   .tkt-head{grid-area:head;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     padding:13px 20px 13px 34px;border-bottom:2px solid rgba(21,16,10,.5)}
-  .tkt-org{font-family:var(--f-display);font-weight:900;font-size:13px;letter-spacing:.08em}
+  .tkt-org{font-family:var(--f-display);font-weight:900;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
   /* the org name is a caps lockup and wants the tracking; the sentence-case
      subtitle beside it does not, and inherits it unless we say otherwise */
   .tkt-org span{font-weight:600;opacity:.62;margin-left:6px;letter-spacing:.01em}
