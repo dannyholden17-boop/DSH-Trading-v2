@@ -58,6 +58,15 @@
   --lift-2:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -20px rgba(0,0,0,.95);
   --lift-3:0 1px 0 rgba(255,255,255,.06) inset, 0 4px 8px rgba(0,0,0,.5), 0 34px 60px -28px rgba(0,0,0,1);
 
+  /* --- glass: the material every panel is made of, taken from the hero's board --- */
+  --glass:rgba(14,19,32,.58);
+  --glass-2:rgba(22,29,46,.62);
+  --glass-hd:rgba(255,255,255,.045);
+  --glass-line:rgba(226,234,248,.14);
+  --glass-line-2:rgba(226,234,248,.09);
+  --glass-blur:blur(18px) saturate(1.2);
+  --glass-shadow:0 2px 8px rgba(0,0,0,.35), 0 40px 80px -36px rgba(0,0,0,.9);
+
   /* --- motion: one scale, four speeds. Nothing animates at a random duration. --- */
   --ease:cubic-bezier(.22,1,.36,1);      /* power2.out — the house curve */
   --ease-in:cubic-bezier(.5,0,.75,0);
@@ -852,12 +861,25 @@ button,[role="button"],a.btn{min-height:24px}
    animates at a duration invented on the spot.
  * ---------------------------------------------------------- */
 body{position:relative;background:var(--blotter)}
+/* The whole site sits on the room the desk works in: the hero photograph,
+   darkened and blurred into a backdrop, fixed behind every page. It is what
+   every glass panel is glass OVER. Without it, glass is just a grey box.
+   Pre-blurred in the file (6KB webp) rather than filtered live. */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.11), transparent 62%),
-    radial-gradient(900px 520px at 88% 4%,  rgba(122,167,255,.08), transparent 58%),
-    radial-gradient(760px 460px at 6% 34%,  rgba(61,220,151,.05),  transparent 60%);
+  background-color:#070a12;
+  background-image:
+    radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.16), transparent 62%),
+    radial-gradient(900px 520px at 88% 4%,  rgba(255,212,121,.10), transparent 58%),
+    linear-gradient(180deg, rgba(7,10,18,.42) 0%, rgba(7,10,18,.66) 60%, rgba(7,10,18,.84) 100%),
+    url("./img/backdrop.jpg");
+  background-image:
+    radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.16), transparent 62%),
+    radial-gradient(900px 520px at 88% 4%,  rgba(255,212,121,.10), transparent 58%),
+    linear-gradient(180deg, rgba(7,10,18,.42) 0%, rgba(7,10,18,.66) 60%, rgba(7,10,18,.84) 100%),
+    image-set(url("./img/backdrop.webp") type("image/webp"), url("./img/backdrop.jpg") type("image/jpeg"));
+  background-size:auto,auto,auto,cover;background-position:center,center,center,64% 40%;
+  background-repeat:no-repeat;
 }
 .nav,main,section,.footer,.tm-shell,.dk-wrap{position:relative;z-index:1}
 
@@ -1484,3 +1506,50 @@ html[data-surface="market"] body::before{
 .btn{border-radius:999px}
 .btn-lg{padding:16px 30px}
 .btn-sm{padding:9px 18px}
+
+/* ---------------------------------------------------------- *
+   24. GLASS, EVERYWHERE
+
+   The hero's board is the material the whole site is made of:
+   translucent, blurred over the backdrop, a light hairline, a
+   deep soft shadow. Every panel component takes it here, in one
+   place, so the interiors are the same substance as the front
+   page rather than flat boxes standing next to it.
+ * ---------------------------------------------------------- */
+.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,
+.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,
+.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,
+.kvs,.gates,.pf-quick,.pf-metrics,.sb-grid,.roll,.roll-num,.ch-sts{
+  background:var(--glass)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border-color:var(--glass-line)!important;
+  box-shadow:var(--glass-shadow)!important;
+  background-image:none!important;
+}
+/* headers and feet inside a panel take the lighter glass so they read as a
+   band rather than a second box */
+.st-panel-h,.board-hd,.board-ft,.fl-panel-h,.dk-h,.wk-cap,
+table.cmp .grp td,.plan.pop{background:var(--glass-hd)!important}
+/* dividers inside glass are light, never the dark-room line */
+.st-panel-h,.board-hd,.board-ft,.st-rows>li,.board-rows>li,.ruled>*,.strip>div,
+.st-card,.ch-st,.dk-node,.step,.plan,.vows div,.qs details,.roll-row,
+table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line-2)!important}
+/* radius: the hero's card is the reference */
+.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,
+.steps,.board,.plans,.cmp-wrap,.vows,.qs,.ap-guards,.ap-metrics,.fd-stats,.fd-pnl,
+.idx-strip,.gates,.pf-metrics,.sb-grid,.roll,.ch-sts{border-radius:var(--radius-lg)!important}
+/* the old top-edge highlight and inner gradient are the flat world's; gone */
+.glass::after{display:none!important}
+
+/* the section tint sat a solid band on the page; over a backdrop it is a
+   faint darkening only, so the room stays visible through it */
+.tint,.band{background:rgba(7,10,18,.36)!important;border-color:var(--glass-line-2)!important}
+.pit{background:transparent!important}
+
+/* the nav and the ticker are glass too, so they belong to the same room */
+.nav{background:rgba(10,14,24,.62)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border-bottom-color:var(--glass-line-2)!important}
+.ticker{background:rgba(7,11,20,.72)!important;border-bottom-color:var(--glass-line-2)!important}
+.footer{background:rgba(5,8,15,.72)!important;border-top-color:var(--glass-line-2)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
