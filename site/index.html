@@ -995,8 +995,13 @@ document.addEventListener("DOMContentLoaded", function(){
           CACHE.floor = f;
           var r = f.round;
 
+          /* A round is written the moment the tick fires and finishes "done"
+             whether or not the analysts ever ran, so "filed" has to come off
+             what actually reached the record, not off the status column. */
+          var filedAgo = f.last_filed_at ? D.ago(f.last_filed_at) : null;
           fig("sRound", r.seq,
-            (r.status === "running" ? D.stageLabel(r.stage) : "filed " + D.ago(r.finished_at || r.started_at)) +
+            (r.status === "running" ? D.stageLabel(r.stage)
+              : (f.rounds_today ? "filed " + filedAgo : (filedAgo ? "last filing " + filedAgo : "nothing filed yet"))) +
             (f.rounds_today ? " · " + f.rounds_today + " today" : ""));
 
           if(f.filings_total != null) fig("sFilings", f.filings_total, "every one stored and readable");
@@ -1016,9 +1021,23 @@ document.addEventListener("DOMContentLoaded", function(){
           var up = f.healthy !== false;
           var h = $("sbHealth");
           if(h){
-            fig("sbHealth", up ? "Running" : "Stalled", up
-              ? "the last round completed end to end"
-              : (f.rounds_failed_today || 0) + " round(s) failed today; this page will not pretend otherwise");
+            /* Say why, in plain words. The raw reason is a provider error
+               string and does not belong on a public page, but "we are quiet
+               and here is roughly why" does. */
+            var why;
+            if(up){
+              why = "the last round filed end to end";
+            } else {
+              var n = f.rounds_failed_today || 0;
+              var reason = String(f.stall_reason || "");
+              why = (n ? n + " round" + (n === 1 ? "" : "s") + " filed nothing today" : "the desk is not filing")
+                  + (/credit balance|quota|rate.?limit/i.test(reason)
+                      ? "; the research model is out of credit"
+                      : (reason ? "; the research stage is erroring" : ""))
+                  + (f.last_filed_at ? ". Last filing " + D.ago(f.last_filed_at) : "")
+                  + ". This page will not pretend otherwise.";
+            }
+            fig("sbHealth", up ? "Running" : "Stalled", why);
             var v = h.querySelector(".v");
             if(v) v.style.color = up ? "var(--clearing)" : "var(--stamp)";
           }
