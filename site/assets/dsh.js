@@ -84,7 +84,7 @@
     {id:"Options",   ic:"⟁", tasks:["scanning sweeps","unusual OI delta","building gamma map","put/call skew"]},
     {id:"Technicals",ic:"△", tasks:["MACD cross scan","RSI divergence","VWAP reclaim check","support / resistance"]},
     {id:"Risk",      ic:"⊘", tasks:["position drawdown","correlation to SPX","stop-loss watch","exposure by sector"]},
-    {id:"Backtest",  ic:"⧗", tasks:["replaying 5y history","validating setup","edge-decay check","walk-forward test"]},
+    {id:"Record",    ic:"⧗", tasks:["checking resolve dates","grading a due call","posting the miss","updating the scoreboard"]},
   ];
   /* ---- findings + inner monologue ----------------------------------------
 
@@ -136,7 +136,7 @@
       ${opts.actions!==false?`<div class="f-acts">
         <button class="act act-primary">Dig in</button>
         <button class="act">Paper trade</button>
-        <button class="act">Backtest</button>
+        <button class="act">The record</button>
         <button class="act">Watch</button>
       </div>`:""}`;
     return el;

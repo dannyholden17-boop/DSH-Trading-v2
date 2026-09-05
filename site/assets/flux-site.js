@@ -43,7 +43,7 @@
     {ic:"⟁",id:"Options",d:"Tracks unusual options activity, sweeps, open-interest shifts, skew and gamma.",c:"10s",o:"flow"},
     {ic:"△",id:"Technicals",d:"Computes indicators across timeframes: crosses, divergences, VWAP and key levels.",c:"20s",o:"levels"},
     {ic:"⊘",id:"Risk",d:"Watches your book, drawdown, correlation, stops and exposure, and gates orders.",c:"5s",o:"guardrails"},
-    {ic:"⧗",id:"Backtest",d:"Replays every flagged setup across years of history to prove the edge is real.",c:"on-demand",o:"validation"}
+    {ic:"⧗",id:"Record",d:"Files every prediction with the date it resolves, then grades it against the tape when that date arrives. Flux does not backtest.",c:"on resolve",o:"grades"}
   ];
 
   /* The models actually in the loop. Named for what runs, not for what

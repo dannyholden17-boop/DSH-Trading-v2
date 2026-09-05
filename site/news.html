@@ -349,85 +349,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
   var CAT = {markets:"Markets", earnings:"Earnings", tech:"Tech", macro:"Macro", crypto:"Crypto"};
 
-  /* ---------- curated base feed (deterministic order) ---------- */
-  var FEED = [
-    {c:"tech",s:"bull",t:"2m",src:"Flux Scanner",im:3,tk:["NVDA","AVGO"],
-     h:"NVDA call sweep hits $4.6M as desks position into GTC",
-     sum:"14,200 contracts lifted at the $185 strike, 3DTE, all at ask: the options tape is leaning into the event before the story moves."},
-    {c:"markets",s:"bull",t:"6m",src:"Newswire",im:2,tk:["SPY","QQQ"],
-     h:"Desks add risk into the close as breadth widens across megacaps",
-     sum:"Advancers outnumber decliners for a third straight session; the move is no longer just three tickers, which points to a healthier tape."},
-    {c:"earnings",s:"bear",t:"11m",src:"Company filing",im:3,tk:["AMD"],
-     h:"Chipmaker guides next quarter below consensus on soft data-center orders",
-     sum:"Revenue outlook lands under the Street and margins tick lower; the print reads as a demand-timing wobble, not a broken thesis."},
-    {c:"macro",s:"neut",t:"18m",src:"Newswire",im:2,tk:["SPY","QQQ"],
-     h:"Rate futures little changed after an in-line inflation print",
-     sum:"Core came in as expected, so the curve barely moved: the market's read is that the path of cuts is unchanged for now."},
-    {c:"crypto",s:"bull",t:"23m",src:"Exchange notice",im:2,tk:["BTC","MARA","COIN"],
-     h:"Bitcoin reclaims its prior range high; miners lead the tape",
-     sum:"Spot cleared the level it failed at twice last week; high-beta proxies are moving roughly 2x the underlying on the reclaim."},
-    {c:"tech",s:"bear",t:"31m",src:"Newswire",im:2,tk:["MSFT","AMZN"],
-     h:"Cloud names slip as capex commentary spooks growth investors",
-     sum:"Heavier spend guidance is being read as a margin headwind; the wire tone on the group has cooled from neutral to negative intraday."},
-    {c:"markets",s:"neut",t:"44m",src:"Exchange notice",im:1,tk:["VIX","SPY"],
-     h:"Volatility gauge drifts lower into a quiet options-expiry week",
-     sum:"With no tier-one data until Thursday, implied vol is bleeding: a calm tape that historically reverses on a single headline."},
-    {c:"earnings",s:"bull",t:"52m",src:"Company filing",im:3,tk:["NFLX"],
-     h:"Streaming leader tops subscriber estimates and lifts its full-year outlook",
-     sum:"Net adds beat and the raised guide clears the bar; the reaction depends on whether the beat was already priced into the run-up."},
-    {c:"tech",s:"bull",t:"1h",src:"Company filing",im:2,tk:["AVGO","NVDA"],
-     h:"AI-infrastructure supplier flags a record backlog in a fresh filing",
-     sum:"Order book commentary points to demand extending into next year; read-through is constructive for the wider accelerator complex."},
-    {c:"macro",s:"bear",t:"1h",src:"Newswire",im:2,tk:["SPY"],
-     h:"Jobless claims tick up, cooling the soft-landing narrative",
-     sum:"The four-week average nudges higher for the first time in a month, not alarming on its own, but the tone of the wire turned cautious."},
-    {c:"crypto",s:"bear",t:"2h",src:"Exchange notice",im:1,tk:["COIN"],
-     h:"Exchange token slides after network fees fall to a multi-month low",
-     sum:"Thinner activity is pressuring fee-linked names; sentiment on the group flipped negative even as spot held its range."},
-    {c:"markets",s:"bull",t:"2h",src:"Newswire",im:1,tk:["IWM"],
-     h:"Small caps quietly outperform as a rotation into value builds",
-     sum:"The laggard index is leading for once; a broadening move is usually a healthier signal than another narrow megacap melt-up."},
-    {c:"tech",s:"neut",t:"3h",src:"Company filing",im:3,tk:["TSLA"],
-     h:"EV maker files an 8-K revising its delivery outlook for the quarter",
-     sum:"The revision is modest but the filing resets expectations; comparable filings historically preceded a small multi-day drift."},
-    {c:"earnings",s:"neut",t:"3h",src:"Company filing",im:1,tk:["CRM","ORCL"],
-     h:"Enterprise-software vendor reaffirms guidance with margins in line",
-     sum:"No surprises in the update: a reaffirm rather than a raise, which the tape tends to read as neither here nor there."},
-    {c:"tech",s:"bull",t:"4h",src:"Flux Scanner",im:2,tk:["SMCI"],
-     h:"Unusual volume flags a squeeze setup in a heavily shorted name",
-     sum:"The name is in the top 1% of the universe for relative volume with short float near 18%: a classic squeeze condition, not a call."},
-    {c:"macro",s:"neut",t:"5h",src:"Newswire",im:2,tk:["SPY","QQQ"],
-     h:"Central-bank minutes show members split on the pace of cuts",
-     sum:"The record reads more divided than the last statement implied; rates markets are treating it as noise until the next print."}
-  ];
-
-  /* ---------- synthetic wire items for the live prepend ---------- */
-  var WIRE = [
-    {c:"tech",s:"bull",src:"Flux Scanner",im:2,tk:["PLTR","NVDA"],
-     h:"Fresh call flow lights up a momentum name on the scanner",
-     sum:"A block print at the near-dated strike pushed the name into the top of the unusual-activity list this session."},
-    {c:"markets",s:"neut",src:"Newswire",im:1,tk:["SPY","DIA"],
-     h:"Indices churn sideways as the tape waits on the next catalyst",
-     sum:"Range-bound with light volume; no clear leadership as desks hold fire ahead of the data on the calendar."},
-    {c:"earnings",s:"bull",src:"Company filing",im:2,tk:["AAPL"],
-     h:"Hardware maker's filing points to steadier gross margins",
-     sum:"A supply-chain note in the disclosure reads constructive for the next quarter's margin line."},
-    {c:"crypto",s:"bull",src:"Exchange notice",im:1,tk:["BTC","MARA"],
-     h:"Miners extend gains as network activity picks back up",
-     sum:"On-chain throughput ticked higher overnight and the high-beta names are tracking it, roughly two-to-one against spot."},
-    {c:"macro",s:"bear",src:"Newswire",im:2,tk:["SPY","QQQ"],
-     h:"A firmer inflation whisper nudges rate expectations higher",
-     sum:"Chatter of a hotter print is lifting yields at the margin; the wire tone on rate-sensitive groups cooled into the afternoon."},
-    {c:"tech",s:"bear",src:"Newswire",im:2,tk:["INTC","AMD"],
-     h:"Legacy chip name drags the group on a cautious channel check",
-     sum:"A soft read on one supplier is spilling over into peers; sentiment on the sub-group flipped negative on the headline."},
-    {c:"markets",s:"bull",src:"Newswire",im:1,tk:["IWM","SPY"],
-     h:"Breadth thrust builds as laggards join the move",
-     sum:"More than two-thirds of the tape is green: the kind of participation that tends to precede follow-through, not fade it."},
-    {c:"crypto",s:"neut",src:"Exchange notice",im:1,tk:["COIN"],
-     h:"Exchange volumes steady after a volatile overnight session",
-     sum:"Flows normalized by the open; fee-linked names are flat as the group digests the move."}
-  ];
+  /* Two hardcoded corpora lived here — a curated FEED of eleven stories and a
+     WIRE of shorter items — each carrying an invented headline, an invented
+     summary and a fabricated attribution: "Company filing", "Newswire",
+     "Exchange notice". They described events that did not happen and credited
+     them to sources that did not report them. Nothing read them any more: the
+     real feed below replaced them and they were left behind. Deleted. */
 
   /* ---------- render ---------- */
   /* ---------- REAL news feed (flux-news / WSJ, CNBC, Reuters, Bloomberg, MarketWatch, …) ---------- */

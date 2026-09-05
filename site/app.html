@@ -479,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var CY="#f5b93c", VI="#7aa7ff", EM="#3ddc97", CR="#ff6f52", AM="#f5b93c";
 
   /* short label per finding */
-  var LBL={Options:"Unusual Flow",Scanner:"Breakout",Catalyst:"Catalyst",Technicals:"Divergence",Risk:"Risk Alert",Backtest:"Backtested"};
+  var LBL={Options:"Unusual Flow",Scanner:"Breakout",Catalyst:"Catalyst",Technicals:"Divergence",Risk:"Risk Alert",Record:"Graded"};
   function label(f){ return LBL[f.e]||f.e; }
   function sigColor(f){ return f.s==="high"&&!f.u ? CR : f.u ? EM : CY; }
 
@@ -582,9 +582,14 @@ document.addEventListener("DOMContentLoaded", function(){
       '<div class="field"><label>Quantity</label><input id="qty" type="number" min="1" value="'+q+'"></div>'+
       '<div class="kv"><div class="c"><div class="k">Est. cost</div><div class="v" id="cost">'+S.fmt$(px*q)+'</div></div>'+
       '<div class="c"><div class="k">Buying power</div><div class="v">'+S.fmt$(S.portfolio().cash)+'</div></div></div>'+
-      '<button class="btn btn-primary btn-block" id="confirm">Confirm paper buy</button>');
+      '<button class="btn btn-primary btn-block" id="confirm">Confirm paper buy</button>'+
+      '<p id="tkDisc" style="margin:12px 0 0;font-size:11.5px;line-height:1.6;color:var(--text-faint)">'+
+        'Simulated order, virtual money, not investment advice.</p>');
     var seg=$("#side"),qty=$("#qty"),cf=$("#confirm");
-    function up(){var qq=+qty.value||0;$("#cost").textContent=S.fmt$(S.price(sym)*qq);cf.textContent="Confirm paper "+side;}
+    function up(){var qq=+qty.value||0;$("#cost").textContent=S.fmt$(S.price(sym)*qq);cf.textContent="Confirm paper "+side;
+      var d=$("#tkDisc"); if(d) d.textContent = side==="sell"
+        ? "Simulated order, virtual money, not investment advice. A short has no ceiling on what it can lose: the loss grows with the price and can exceed what you put up."
+        : "Simulated order, virtual money, not investment advice.";}
     seg.addEventListener("click",function(e){var b=e.target.closest("[data-side]");if(!b)return;side=b.dataset.side;$$("button",seg).forEach(function(x){x.classList.toggle("on",x===b)});up();});
     qty.addEventListener("input",up);
     cf.addEventListener("click",function(){var qq=Math.max(1,Math.floor(+qty.value||0));S.openPosition({sym:sym,side:side,qty:qq});closeSheet();toast((side==="buy"?"Bought ":"Shorted ")+qq+" "+sym);});

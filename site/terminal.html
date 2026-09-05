@@ -1229,10 +1229,12 @@ document.addEventListener("DOMContentLoaded", function(){
      money at a real brokerage. */
   var DISC_PAPER = 'Real quotes, simulated fills, virtual money, not investment advice. Prices shown are live server quotes; ' +
     'candles below the latest tick are generated from those quotes for display. Orders fill instantly against a simulated book. ' +
-    'Flux is not a broker-dealer and no real order is placed. Trading involves risk of loss, including loss of principal.';
+    'Flux is not a broker-dealer and no real order is placed. Trading involves risk of loss, including loss of principal. ' +
+    'A short position has no ceiling on what it can lose: the loss grows with the price and can exceed what you put up.';
   var DISC_BKPAPER = 'This terminal is pointed at your own brokerage\u2019s paper account. Orders you place here are sent to that broker ' +
     'and fill against their simulated book, not Flux\u2019s. No real money is at risk in a broker paper account, but the order is real ' +
-    'and it leaves this browser. Flux is not a broker-dealer and gives no investment advice. Trading involves risk of loss, including loss of principal.';
+    'and it leaves this browser. Flux is not a broker-dealer and gives no investment advice. Trading involves risk of loss, ' +
+    'including loss of principal, and a short or margin position can lose more than the amount put up.';
   var DISC_LIVE = 'This terminal is pointed at a LIVE brokerage account. An order you confirm here is a real order for real money, ' +
     'placed at your broker, and Flux cannot cancel or recall it. Nothing is sent without your explicit confirmation, and switching back ' +
     'to Paper returns you to the simulated book. Flux is not a broker-dealer and gives no investment advice. Trading involves risk of loss, ' +
