@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Trade Ideas; Flux</title>
-<meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a backtest attached; every one gated by the Risk engine. Never a naked 'buy this'.">
+<meta name="description" content="Flux trade ideas arrive with the thesis, the levels, a confidence score and a dated prediction that gets graded against the tape; every one gated by the Risk engine. Never a naked 'buy this'.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
 <script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-fund.js?v=28" defer></script>
@@ -26,17 +27,6 @@
   .sig .av{background:rgba(226,234,248,.06);border-color:var(--glass-line)}
   .sig .bar{background:rgba(226,234,248,.08)}
   /* the four counters, read from the desk record: one ruled row, not a loose column */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
-    background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-    box-shadow:var(--glass-shadow);overflow:hidden}
-  .stat{padding:clamp(18px,2vw,24px) clamp(16px,2vw,24px);border-left:1px solid var(--glass-line-2);min-width:0}
-  .stat:first-child{border-left:0}
-  .stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);
-    font-weight:750;letter-spacing:-.02em;line-height:1}
-  .stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:8px}
-  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}
-    .stat:nth-child(2n+1){border-left:0}
-    .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
 
   /* ---- page-only layout: trade-ideas.html ---- */
   .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -92,8 +82,9 @@
     color:var(--text-faint);margin-top:8px}
   .idea-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;
     padding-top:15px;border-top:1px solid var(--glass-line-2)}
-  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
+  /* a sentence, not a stamp: this is the line that must be read */
+  .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:12.5px;letter-spacing:.005em;
+    line-height:1.45;color:var(--text-dim);display:inline-flex;align-items:center;gap:7px}
   .idea-foot .gate b{color:var(--emerald);font-weight:700}
   @media(max-width:560px){.idea-foot .gate{margin-left:0;width:100%}}
 
@@ -208,8 +199,9 @@
     <div class="reveal">
 <h1 class="h1">Ideas with the <span class="">homework attached.</span></h1>
       <p class="lede">Anyone can shout a ticker. A Flux idea arrives with the thesis in plain English,
-        the levels it lives and dies on, a confidence score you can interrogate, and a backtest that
-        shows how the setup behaved the last thousand times it appeared.</p>
+        the levels it lives and dies on, a confidence score you can interrogate, and a resolve date.
+        On that date the call is graded against the tape, whether it worked or not, and the grade stays
+        attached to the analyst who made it.</p>
       <div class="btn-row">
         <a class="btn btn-primary btn-lg" href="./ideas.html">See today's ideas</a>
         <a class="btn btn-ghost btn-lg" href="./research.html">How the research works</a>
@@ -227,7 +219,7 @@
         <span class="k">ranked by confidence</span>
       </div>
       <div class="feed-rows" id="feedRows"></div>
-      <p class="faint mono" style="font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin-top:14px;position:relative;z-index:1">
+      <p class="muted mono" style="font-size:12.5px;letter-spacing:.005em;line-height:1.5;margin-top:14px;position:relative;z-index:1">
         Illustrative sample feed · not advice</p>
     </div>
   </div>
@@ -239,7 +231,7 @@
     <span>Every idea ships with a <b>thesis</b></span><span>·</span>
     <span><b>entry, stop and target</b></span><span>·</span>
     <span>a <b>confidence score</b></span><span>·</span>
-    <span>and a <b>backtest</b></span>
+    <span>and a <b>dated, graded call</b></span>
   </div>
 </div>
 
@@ -277,9 +269,10 @@
         <div class="fi"><span class="k">3</span><div><b>The numbers</b>
           <p>Entry zone, invalidation stop, target and the resulting reward-to-risk. The stop is the honest
             part: it's the price at which the thesis is simply wrong.</p></div></div>
-        <div class="fi"><span class="k">4</span><div><b>The backtest</b>
-          <p>The same setup replayed across historical sessions, with the sample size shown so you can tell
-            a pattern from a coincidence.</p></div></div>
+        <div class="fi"><span class="k">4</span><div><b>The resolve date</b>
+          <p>Every idea carries the date its own thesis has to be right by. On that date it is graded
+            against the tape and the result is filed, including the ones that were wrong. Nothing here is
+            backtested: the record is built forward, one call at a time.</p></div></div>
         <div class="fi"><span class="k">5</span><div><b>The risk gate</b>
           <p>Position size against your book, correlation with what you already hold, and total exposure.
             An idea that breaks your rules never reaches the feed.</p></div></div>
@@ -382,7 +375,7 @@
       <div class="stat"><div class="v"><span id="tiLenses">3</span></div><div class="k">Lenses on every name</div></div>
       <div class="stat"><div class="v"><span id="tiRefused">&mdash;</span></div><div class="k">Refused or cut</div></div>    </div>
     <p class="disclaimer reveal" style="margin:22px auto 0;text-align:center">Figures are illustrative and
-      describe typical product behaviour and simulated backtests. They are not performance results and do not
+      describe typical product behaviour on simulated data. They are not performance results and do not
       predict future outcomes.</p>
   </div>
 </section>
@@ -404,8 +397,8 @@
           explicitly <em>not</em> a probability of profit and not a measure of how much you might make.</p></details>
       <details><summary>Are these signals guaranteed?</summary>
         <p>No. Nothing in markets is, and any product that says otherwise is lying to you. Ideas can be wrong,
-          data can lag, and historical patterns break. That's why every idea carries a stop, a sample size and
-          a backtest you can inspect, so you can size the risk you're actually taking.</p></details>
+          data can lag, and patterns break. That's why every idea carries a stop, a resolve date and the
+          filing analyst's own graded record, so you can size the risk you're actually taking.</p></details>
       <details><summary>Is this financial advice?</summary>
         <p>No. Flux is research and automation software. It is not a broker-dealer, not an investment adviser,
           and nothing it produces is personalised advice or a recommendation. Every decision, and its outcome,
@@ -415,8 +408,8 @@
           the thesis, and the next level the tape has historically respected. They're a starting frame to adjust
           to your own plan, not instructions.</p></details>
       <details><summary>Can I test an idea before risking anything?</summary>
-        <p>Yes, and we'd rather you did. Every idea has a one-tap path to paper trading and to the backtest
-          behind it, on every plan including the free one.</p></details>
+        <p>Yes, and we'd rather you did. Every idea has a one-tap path to paper trading, on every plan
+          including the free one, and you can watch it resolve without a dollar at risk.</p></details>
     </div>
   </div>
 </section>
@@ -459,10 +452,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -766,7 +759,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150); return; }
     var $ = function(i){ return document.getElementById(i); };
     Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
       var f = r[0] || {}, a = r[1] || {}, ex = a.executive || {};

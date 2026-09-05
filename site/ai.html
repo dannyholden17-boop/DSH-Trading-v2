@@ -260,7 +260,7 @@
 (function(){
   function boot(){
     var J = window.JARVIS, F = window.FLUX;
-    if(!J || !F || !F.Kronos){ return setTimeout(boot, 120); }
+    if(!J || !F || !F.Kronos){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 120); return; }
 
     if(F.initNav) F.initNav();
     if(F.initFX) F.initFX();

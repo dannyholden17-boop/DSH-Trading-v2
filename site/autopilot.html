@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
 <script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-fund.js?v=28" defer></script>
@@ -34,17 +35,6 @@
   .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
     border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
   /* the four counters, read from the desk record: one ruled row, not a loose column */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
-    background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-    box-shadow:var(--glass-shadow);overflow:hidden}
-  .stat{padding:clamp(18px,2vw,24px) clamp(16px,2vw,24px);border-left:1px solid var(--glass-line-2);min-width:0}
-  .stat:first-child{border-left:0}
-  .stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);
-    font-weight:750;letter-spacing:-.02em;line-height:1}
-  .stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:8px}
-  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}
-    .stat:nth-child(2n+1){border-left:0}
-    .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
 
   /* ---- animation utilities ---- */
   .{background-size:220% 220%;animation:apGrad 7s ease infinite}
@@ -544,19 +534,22 @@
           <span class="ttl">Flux Fund</span>
           <span class="ts" id="repTs">—</span>
         </div>
+        <p class="scripted" style="margin:0 18px 4px">A worked example of the wrap's shape. It carries no
+          figures, because <b>this account has not traded</b>. Yours is written off your own paper book at
+          the close of each session.</p>
         <div class="ap-rep-body">
-          <p class="ap-rline">Closed the session at <b>$12,633</b> on the paper account: a simulated
-            <b class="up">+1.3%</b> day across 14 fills.</p>
-          <p class="ap-rline">Best position was <b>NVDA</b> on the morning call sweep; worst was a <b>TSLA</b>
-            short trimmed into the close after the 8-K drift stalled.</p>
-          <p class="ap-rline">Exposure ran at <b>61% gross</b> all afternoon; the Risk engine blocked two
-            correlated semis from being added on top.</p>
-          <p class="ap-rline">Tomorrow's plan: hold <b>4 of 6</b> positions, tighten stops on the two runners,
-            and watch <b>MSFT</b> into the cloud update.</p>
+          <p class="ap-rline"><b>The close.</b> Where the paper account finished, the day's simulated move,
+            and how many fills it took to get there.</p>
+          <p class="ap-rline"><b>Best and worst.</b> The position that carried the day and the one that cost
+            it, with the reason each went the way it did.</p>
+          <p class="ap-rline"><b>Exposure.</b> How much of the book was at risk through the session, and
+            every trade the Risk engine refused to let on top of it.</p>
+          <p class="ap-rline"><b>Tomorrow.</b> What is being held, what is being tightened, and the one
+            scheduled event that could change the answer.</p>
         </div>
         <div class="ap-rep-foot">
-          <span id="repStat">writing wrap…</span>
-          <span style="margin-left:auto">Illustrative sample · simulated</span>
+          <span id="repStat">writing…</span>
+          <span style="margin-left:auto">Example &middot; not advice</span>
         </div>
       </div>
     </div>
@@ -692,10 +685,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -1480,7 +1473,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150); return; }
     var $ = function(i){ return document.getElementById(i); };
     F.Desk.floor().then(function(f){
       if(!f) return;

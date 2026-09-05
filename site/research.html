@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
 <script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-fund.js?v=28" defer></script>
@@ -29,17 +30,6 @@
   .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
     border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
   /* the four counters, read from the desk record: one ruled row, not a loose column */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
-    background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-    box-shadow:var(--glass-shadow);overflow:hidden}
-  .stat{padding:clamp(18px,2vw,24px) clamp(16px,2vw,24px);border-left:1px solid var(--glass-line-2);min-width:0}
-  .stat:first-child{border-left:0}
-  .stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);
-    font-weight:750;letter-spacing:-.02em;line-height:1}
-  .stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:8px}
-  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}
-    .stat:nth-child(2n+1){border-left:0}
-    .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
 
   /* interactive research tool */
   .rtool{display:flex;gap:9px;margin:16px 16px 6px;flex-wrap:wrap}
@@ -98,8 +88,9 @@
   .model h3{font-size:1rem;font-family:var(--f-mono);letter-spacing:-.01em}
   .model p{color:var(--text-dim);font-size:.9rem;margin-top:10px}
 
-  /* schedule timeline */
-  .tl{position:relative;margin-top:44px;padding-left:30px}
+  /* schedule timeline: capped to a reading column so it doesn't strand a
+     half-empty page beside a full-width grid section above it */
+  .tl{position:relative;margin-top:44px;padding-left:30px;max-width:70ch}
   .tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:1px;
     background:linear-gradient(180deg,var(--cyan),var(--violet));opacity:.35}
   .tl-item{position:relative;padding-bottom:26px}
@@ -536,10 +527,10 @@ document.addEventListener("DOMContentLoaded", function(){
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -566,10 +557,14 @@ document.addEventListener("DOMContentLoaded", function(){
   var lines = $$("#report .rline");
   var caret = $("#caret"), stat = $("#repStat");
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduce){
+  /* The scripted example report this animated was removed. Without this guard
+     the timers still ran and overwrote the real tool's status line with a
+     completion notice for a report that no longer exists. */
+  if(!lines.length){ /* nothing to reveal */ }
+  else if(reduce){
     lines.forEach(function(l){l.classList.add("in")});
     if(caret) caret.classList.add("done");
-    if(stat) stat.textContent = "report complete · 412 documents read";
+    if(stat) stat.textContent = "example report complete";
   } else {
     var delay = 260;
     lines.forEach(function(l, i){
@@ -577,7 +572,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     setTimeout(function(){
       if(caret) caret.classList.add("done");
-      if(stat) stat.textContent = "report complete · 412 documents read";
+      if(stat) stat.textContent = "example report complete";
     }, delay + lines.length * 190 + 500);
     var phases = ["reading filings…","parsing transcripts…","scoring the wire…","running models…","writing report…"];
     var pi = 0;
@@ -621,7 +616,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150); return; }
     var $ = function(i){ return document.getElementById(i); };
     Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
       var f = r[0] || {}, a = r[1] || {};
