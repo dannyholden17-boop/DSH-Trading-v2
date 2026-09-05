@@ -1708,12 +1708,24 @@ table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line
   background:linear-gradient(180deg,rgba(8,10,13,.82) 0%,rgba(8,10,13,.62) 42%,rgba(8,10,13,.88) 100%);
 }
 
+/* A band, not a strip. Some pages open on a header block only a hundred and
+   sixty pixels tall, and a fifteen-second camera move inside that reads as
+   noise rather than as a room. The band spans the whole opening — eyebrow,
+   headline, status line and the paragraph under it — and dissolves into the
+   page instead of ending on an edge. */
+.fx-film-host--band{inset:0 0 auto 0;height:clamp(300px,42vh,470px)}
+.fx-film-host--band::after{
+  background:linear-gradient(180deg,rgba(8,10,13,.74) 0%,rgba(8,10,13,.6) 34%,rgba(8,10,13,.9) 78%,var(--bg) 100%);
+}
+
 /* Hosts live inside heroes that must stack above them. */
 .dk-top,.st-top,.tm-head,.fd-head{position:relative;isolation:isolate}
 .dk-top>*:not(.fx-film-host),
 .st-top>*:not(.fx-film-host),
 .tm-head>*:not(.fx-film-host),
 .fd-head>*:not(.fx-film-host){position:relative;z-index:1}
+.dk-wrap>*:not(.fx-film-host),
+.st-wrap>*:not(.fx-film-host){position:relative;z-index:1}
 .phero>.wrap{z-index:1}
 
 @media(prefers-reduced-motion:reduce){ .fx-film-host{display:none} }
