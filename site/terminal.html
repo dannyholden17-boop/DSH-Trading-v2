@@ -73,6 +73,7 @@
   .tm-sess.closed .dot{background:var(--amber);box-shadow:var(--lift-1)}
   .tm-paper{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;
     padding:5px 10px;border-radius:2px;border:1px solid rgba(245,185,60,.4);background:rgba(245,185,60,.09);color:var(--amber);white-space:nowrap}
+  .tm-paper.is-live{border-color:rgba(214,64,64,.55);background:rgba(214,64,64,.12);color:var(--crimson)}
   .tm-topright{display:flex;align-items:center;gap:6px;flex:none}
   .tm-ic{width:32px;height:32px;flex:none;border-radius:4px;border:1px solid var(--tm-line);background:var(--tm-card-2);
     color:var(--tm-dim);cursor:pointer;display:grid;place-items:center;font-size:.9rem;line-height:1;font-family:var(--f-mono)}
@@ -397,7 +398,7 @@
     </div>
     <div class="tm-sessionwrap">
       <span class="tm-sess" id="tmSess"><span class="dot"></span><span id="tmSessTxt">Market</span></span>
-      <span class="tm-paper">Paper · simulated</span>
+      <span class="tm-paper" id="tmModeChip">Paper · simulated</span>
     </div>
     <div class="tm-topright">
       <button class="tm-ic" type="button" aria-label="Add widget" title="Add widget">▦</button>
@@ -586,7 +587,7 @@
       <section class="tm-card" aria-label="Order ticket">
         <div class="tm-hd">
           <h3 id="tmTicketTtl">Order · NVDA</h3>
-          <span class="tm-cap">simulated fill</span>
+          <span class="tm-cap" id="tmTicketMode">simulated fill</span>
         </div>
         <form id="tmForm" novalidate>
           <div class="tm-seg" id="tmSideSeg" role="group" aria-label="Order side">
@@ -653,10 +654,10 @@
     <span>LAYOUT: <b>ACTIVE</b></span>
     <span id="tmStFeed">FEEDS: <b class="wait">CONNECTING…</b></span>
     <span>LAST TICK <b id="tmStTick">—</b></span>
-    <span style="margin-left:auto">FLUX TERMINAL · PAPER</span>
+    <span style="margin-left:auto" id="tmStMode">FLUX TERMINAL · PAPER</span>
   </div>
 
-  <p class="tm-disc">Real quotes, simulated fills, virtual money, not investment advice. Prices shown are live server quotes;
+  <p class="tm-disc" id="tmDisc">Real quotes, simulated fills, virtual money, not investment advice. Prices shown are live server quotes;
     candles below the latest tick are generated from those quotes for display. Orders fill instantly against a simulated book.
     Flux is not a broker-dealer and no real order is placed. Trading involves risk of loss, including loss of principal.</p>
 
@@ -1216,8 +1217,53 @@ document.addEventListener("DOMContentLoaded", function(){
     if(otype==="limit"){ var l=parseFloat(limitEl&&limitEl.value); if(!isNaN(l)&&l>0) return l; }
     return priceOf(ACTIVE);
   }
+  /* ---------- mode chrome: the standing labels must never lie ----------
+     Four surfaces state what account this terminal is pointed at: the chip in
+     the top bar, the order-ticket caption, the status bar, and the standing
+     disclosure under the grid. All four were written for the simulated book
+     and stayed that way even when the Brokerage tab was armed with live
+     Alpaca keys — a page that says "no real order is placed" above a button
+     that places one. They are repainted from the actual state instead.
+
+     Three states: the simulated book, a broker's own paper account, and real
+     money at a real brokerage. */
+  var DISC_PAPER = 'Real quotes, simulated fills, virtual money, not investment advice. Prices shown are live server quotes; ' +
+    'candles below the latest tick are generated from those quotes for display. Orders fill instantly against a simulated book. ' +
+    'Flux is not a broker-dealer and no real order is placed. Trading involves risk of loss, including loss of principal.';
+  var DISC_BKPAPER = 'This terminal is pointed at your own brokerage\u2019s paper account. Orders you place here are sent to that broker ' +
+    'and fill against their simulated book, not Flux\u2019s. No real money is at risk in a broker paper account, but the order is real ' +
+    'and it leaves this browser. Flux is not a broker-dealer and gives no investment advice. Trading involves risk of loss, including loss of principal.';
+  var DISC_LIVE = 'This terminal is pointed at a LIVE brokerage account. An order you confirm here is a real order for real money, ' +
+    'placed at your broker, and Flux cannot cancel or recall it. Nothing is sent without your explicit confirmation, and switching back ' +
+    'to Paper returns you to the simulated book. Flux is not a broker-dealer and gives no investment advice. Trading involves risk of loss, ' +
+    'including loss of principal, and losses can exceed your initial outlay on short or margin positions.';
+
+  function modeState(){
+    if(!brokerMode()) return "paper";
+    if(!bkOn()) return "paper";        // Brokerage tab open, nothing connected: nothing can be sent
+    return BK.live() ? "live" : "bkpaper";
+  }
+  function paintModeChrome(){
+    var st=modeState();
+    var chip=$("#tmModeChip"), tik=$("#tmTicketMode"), bar=$("#tmStMode"), disc=$("#tmDisc");
+    if(chip){
+      chip.textContent = st==="live" ? "Live money · real orders"
+                       : st==="bkpaper" ? "Broker paper · real orders"
+                       : "Paper · simulated";
+      chip.classList.toggle("is-live", st==="live");
+    }
+    if(tik) tik.textContent = st==="live" ? "real order · real money"
+                            : st==="bkpaper" ? "sent to your broker"
+                            : "simulated fill";
+    if(bar) bar.textContent = st==="live" ? "FLUX TERMINAL · LIVE MONEY"
+                            : st==="bkpaper" ? "FLUX TERMINAL · BROKER PAPER"
+                            : "FLUX TERMINAL · PAPER";
+    if(disc) disc.textContent = st==="live" ? DISC_LIVE : st==="bkpaper" ? DISC_BKPAPER : DISC_PAPER;
+  }
+
   function paintTicket(){
     if(ticketTtl) ticketTtl.textContent="Order · "+ACTIVE;
+    paintModeChrome();
     if(brokerMode()){
       // brokerage view: never show paper numbers as if they were the broker's
       var a = bkAcct();
