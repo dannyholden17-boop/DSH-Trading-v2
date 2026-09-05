@@ -185,7 +185,7 @@
       <div class="rep-head">
         <span class="pill pill-violet"><i></i> Reporter</span>
         <span class="ttl">Research any name</span>
-        <span class="ts" id="repTs">live</span>
+        <span class="ts" id="repTs">ready</span>
       </div>
       <div class="rtool">
         <input id="rTicker" type="text" placeholder="Type a ticker, e.g. NVDA" aria-label="Ticker to research" maxlength="6" autocomplete="off">
@@ -222,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function(){
       }
       var brief = J.research(t);
       out.textContent = brief || ("I don't cover " + t + " yet, try NVDA, TSLA, COIN, AMD, MSFT or another large-cap.");
+      if(brief && window.fluxStampReport) window.fluxStampReport();
       tvLine(t);
     }
     window.addEventListener("flux-sub", function(){ if(lastT) run(lastT); });
@@ -543,15 +544,18 @@ document.addEventListener("DOMContentLoaded", function(){
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 
   /* ---- report timestamp ---- */
-  var ts = $("#repTs");
-  if(ts){
+  /* The stamp says when a report was generated, so it waits until one is.
+     Writing the page-load time into it claimed a report that did not exist. */
+  window.fluxStampReport = function(){
+    var ts = document.getElementById("repTs");
+    if(!ts) return;
     var d = new Date(), hh = d.getHours();
     var ap = hh >= 12 ? "PM" : "AM";
     var h12 = hh % 12; if(h12 === 0) h12 = 12;
     var mm = String(d.getMinutes());
     if(mm.length < 2) mm = "0" + mm;
     ts.textContent = "generated " + h12 + ":" + mm + " " + ap;
-  }
+  };
 
   /* ---- typewriter-style staggered line reveal ---- */
   var lines = $$("#report .rline");

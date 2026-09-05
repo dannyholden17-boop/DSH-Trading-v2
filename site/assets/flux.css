@@ -1412,14 +1412,16 @@ html[data-surface="market"] body::before{
    marker in the surface, not in a footnote, so the demo can
    never be read as a track record.
  * ---------------------------------------------------------- */
-.scripted{display:flex;align-items:flex-start;gap:11px;
-  padding:13px 16px;border:1px solid var(--line);border-radius:var(--radius);
-  background:var(--well);color:var(--text-dim);
-  font-size:13px;line-height:1.55;max-width:86ch}
-.scripted::before{content:"";flex:none;width:16px;height:16px;margin-top:1px;
-  background-color:var(--gold);
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E") center/contain no-repeat;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Not flex and not grid. Both make every element child its own item, so a
+   <b> or an <a> inside the note was pulled out of the sentence and laid out
+   as its own column. The icon is a background instead, and the prose stays
+   in normal flow where it belongs. */
+.scripted{display:block;padding:13px 16px 13px 43px;
+  border:1px solid var(--line);border-radius:var(--radius);
+  background-color:var(--well);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5b93c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:16px 14px;background-size:16px 16px;
+  color:var(--text-dim);font-size:13px;line-height:1.55;max-width:86ch}
 .scripted b{color:var(--text);font-weight:700}
 .scripted a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 

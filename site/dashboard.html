@@ -50,8 +50,12 @@
   .db-brief-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
   .db-clock{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
   .db-lines{display:flex;flex-direction:column}
-  .db-line{font-size:1rem;line-height:1.6;color:var(--text-dim);margin-bottom:9px;display:flex;gap:10px}
-  .db-line::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
+  /* Not flex: a flex container makes every <b> in the sentence its own
+     column. The marker is absolutely positioned in the indent instead. */
+  .db-line{font-size:1rem;line-height:1.6;color:var(--text-dim);margin-bottom:9px;
+    position:relative;padding-left:20px}
+  .db-line::before{content:"›";position:absolute;left:0;top:0;color:var(--cyan);
+    font-family:var(--f-mono);font-weight:700}
   .db-line b{color:var(--text);font-weight:600}
   .db-line .up{font-weight:700}
   .db-brief.typing .db-line{opacity:0;transform:translateY(6px)}
@@ -789,15 +793,11 @@ document.addEventListener("DOMContentLoaded", function(){
       {weekday:"long", month:"long", day:"numeric", year:"numeric"});
   }
 
-  /* ---------------- live clock (brief header) ---------------- */
+  /* No ticking clock over the example brief. A second-by-second timestamp
+     on a worked example says it is being written for you right now, and it
+     is not. The real brief carries the time it was actually filed. */
   var clockEl = $("#dbClock");
-  function tick(){
-    if(!clockEl) return;
-    var d = new Date(), h = d.getHours(), ap = h >= 12 ? "PM" : "AM", h12 = h % 12; if(h12 === 0) h12 = 12;
-    clockEl.textContent = "Flux-LM · " + h12 + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds()) + " " + ap;
-  }
-  tick();
-  setInterval(tick, 1000);
+  if(clockEl) clockEl.textContent = "example";
 
   /* ---------------- AI daily brief (typing, 3 variants) ---------------- */
   /* Worked examples of the brief's shape. Deliberately free of invented

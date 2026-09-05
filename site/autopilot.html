@@ -155,8 +155,12 @@
   .ap-rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
   .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
   .ap-rep-body{padding:16px 18px 6px}
-  .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;display:flex;gap:9px}
-  .ap-rline::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
+  /* Not flex: a flex container makes every <b> in the sentence its own
+     column. The marker is absolutely positioned in the indent instead. */
+  .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;
+    position:relative;padding-left:18px}
+  .ap-rline::before{content:"›";position:absolute;left:0;top:0;color:var(--cyan);
+    font-family:var(--f-mono);font-weight:700}
   .ap-rline b{color:var(--text);font-weight:600}
   .ap-report.typing .ap-rline{opacity:0;transform:translateY(6px)}
   .ap-report.typing .ap-rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
@@ -532,7 +536,7 @@
         <div class="ap-rep-head">
           <span class="pill pill-violet"><i></i> Daily wrap</span>
           <span class="ttl">Flux Fund</span>
-          <span class="ts" id="repTs">—</span>
+          <span class="ts" id="repTs">example</span>
         </div>
         <p class="scripted" style="margin:0 18px 4px">A worked example of the wrap's shape. It carries no
           figures, because <b>this account has not traded</b>. Yours is written off your own paper book at
@@ -711,14 +715,10 @@ document.addEventListener("DOMContentLoaded", function(){
   function ri(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
   function pad2(n){ n = String(n); return n.length<2 ? "0"+n : n; }
 
-  /* ---------- report timestamp ---------- */
-  var ts = $("#repTs");
-  if(ts){
-    var d = new Date(), hh = d.getHours();
-    var ap = hh >= 12 ? "PM" : "AM";
-    var h12 = hh % 12; if(h12 === 0) h12 = 12;
-    ts.textContent = "filed " + h12 + ":" + pad2(d.getMinutes()) + " " + ap;
-  }
+  /* No timestamp on the example. A live clock over an example wrap says it
+     was filed just now, which is the whole trick this page stopped playing.
+     The real wrap gets its filed time from the record, not from the reader's
+     own clock. */
 
   /* ---------- report line reveal (research.html pattern) ---------- */
   var report = $("#report");
@@ -727,14 +727,14 @@ document.addEventListener("DOMContentLoaded", function(){
   var stat = $("#repStat");
   if(reduce){
     lines.forEach(function(l){ l.classList.add("in"); });
-    if(stat) stat.textContent = "wrap complete · 14 fills · simulated";
+    if(stat) stat.textContent = "example complete";
   } else {
     var delay = 260;
     lines.forEach(function(l, i){
       setTimeout(function(){ l.classList.add("in"); }, delay + i * 220);
     });
     setTimeout(function(){
-      if(stat) stat.textContent = "wrap complete · 14 fills · simulated";
+      if(stat) stat.textContent = "example complete";
     }, delay + lines.length * 220 + 400);
     var phases = ["tallying fills…","scoring P/L…","ranking positions…","writing wrap…"];
     var pi = 0;

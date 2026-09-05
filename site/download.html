@@ -46,6 +46,8 @@
   .dl-note.show{display:flex;animation:pop .35s both}
   .dl-note .nk{font-family:var(--f-mono);color:var(--cyan);font-weight:700;flex:none;line-height:1.5}
   .dl-note b{color:var(--text)}
+  .dl-waitlabel{margin:22px 0 10px;color:var(--text-faint);font-size:.9rem}
+  .dl-actions-2{gap:10px}
 
   /* ---- store badges (inline SVG, no external assets) ---- */
   .store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
@@ -219,45 +221,26 @@
 
       <div class="dl-actions">
         <a class="btn btn-lg btn-primary" href="./dashboard.html">Launch Flux on web →</a>
-        <a class="btn btn-lg btn-ghost" href="#" id="dlMac" data-dl="mac" data-os="macOS">Tell me when Mac is ready</a>
-        <a class="btn btn-lg btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Windows</a>
-        <a class="btn btn-lg btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux</a>
       </div>
-      <p class="mono" style="margin-top:10px;color:var(--emerald);font-size:13px">Nothing to install; Flux runs in your browser. Trade now on web, sync to your phone.</p>
+      <p class="dl-waitlabel">Or be told when a client ships:</p>
+      <div class="dl-actions dl-actions-2">
+        <a class="btn btn-ghost" href="#" id="dlMac" data-dl="mac" data-os="macOS">Mac</a>
+        <a class="btn btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Windows</a>
+        <a class="btn btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux</a>
+      </div>
       <p class="mono dl-meta" id="dlMetaLine">No desktop build has shipped yet. Flux Web is the whole desk, today.</p>
 
       <div class="dl-note" id="betaNote" role="status" aria-live="polite">
         <span class="nk">›</span><span id="betaNoteText"></span>
       </div>
 
-      <div class="store-row">
-        <a class="store-badge" href="#" id="badgeIOS" data-dl="ios" data-os="iOS" aria-label="Download on the App Store">
-          <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#070a12"/>
-            <g transform="translate(17,13) scale(1.08)" fill="#f2f5fb">
-              <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.75-4.11z" transform="translate(-3,-4)"/>
-              <path d="M14.6 4.5c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.3-.58 3.02-1.44z" transform="translate(-3,-4)"/>
-            </g>
-            <text x="47" y="22" fill="#a8b4cd" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
-            <text x="46" y="39" fill="#f2f5fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
-          </svg>
-        </a>
-        <a class="store-badge" href="#" id="badgeAndroid" data-dl="android" data-os="Android" aria-label="Get it on Google Play">
-          <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#070a12"/>
-            <g transform="translate(15,15)">
-              <polygon points="3,2 14,10 3,10" fill="#00d67f"/>
-              <polygon points="3,18 14,10 3,10" fill="#00a0ff"/>
-              <polygon points="3,2 19.4,10 14,10" fill="#ff3a44"/>
-              <polygon points="3,18 19.4,10 14,10" fill="#ffce00"/>
-            </g>
-            <text x="47" y="22" fill="#a8b4cd" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
-            <text x="46" y="39" fill="#f2f5fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
-          </svg>
-        </a>
+      <p class="dl-waitlabel">And when the phone apps land:</p>
+      <div class="dl-actions dl-actions-2">
+        <a class="btn btn-ghost" href="#" id="badgeIOS" data-dl="ios" data-os="iOS">iPhone</a>
+        <a class="btn btn-ghost" href="#" id="badgeAndroid" data-dl="android" data-os="Android">Android</a>
       </div>
-      <p class="store-caption">Flux is not in the App Store or on Google Play yet. These will link
-        to the listings when they exist; today they add you to the list.</p>
+      <p class="store-caption">Flux is not in the App Store or on Google Play. The store badges go
+        here when there are listings to link to, and not before.</p>
     </div>
 
     <div class="glass rel-card reveal">
