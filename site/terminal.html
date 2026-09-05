@@ -73,7 +73,8 @@
   .tm-sess.closed .dot{background:var(--amber);box-shadow:var(--lift-1)}
   .tm-paper{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;
     padding:5px 10px;border-radius:2px;border:1px solid rgba(245,185,60,.4);background:rgba(245,185,60,.09);color:var(--amber);white-space:nowrap}
-  .tm-paper.is-live{border-color:rgba(214,64,64,.55);background:rgba(214,64,64,.12);color:var(--crimson)}
+  .tm-paper.is-live{border-color:color-mix(in srgb,var(--crimson) 55%,transparent);
+    background:color-mix(in srgb,var(--crimson) 12%,transparent);color:var(--crimson)}
   .tm-topright{display:flex;align-items:center;gap:6px;flex:none}
   .tm-ic{width:32px;height:32px;flex:none;border-radius:4px;border:1px solid var(--tm-line);background:var(--tm-card-2);
     color:var(--tm-dim);cursor:pointer;display:grid;place-items:center;font-size:.9rem;line-height:1;font-family:var(--f-mono)}

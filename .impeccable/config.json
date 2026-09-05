@@ -35,6 +35,14 @@
           "site/app.html"
         ],
         "createdAt": "2026-09-05T01:54:08.636Z"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "site/app.html"
+        ],
+        "createdAt": "2026-09-05T05:02:23.094Z"
       }
     ]
   }
