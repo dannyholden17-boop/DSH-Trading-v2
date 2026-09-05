@@ -1679,3 +1679,23 @@ table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line
   .stats{grid-template-columns:1fr 1fr}
   .stat:nth-child(2n+1){border-left:0}
   .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
+
+/* ---------------------------------------------------------------------------
+   THE HERO FILM
+   Sits over the photographic plate, transparent until a real frame paints.
+   Everything below degrades to the plate: no film, no loss.
+--------------------------------------------------------------------------- */
+.op-film{
+  position:absolute;inset:0;z-index:0;
+  width:100%;height:100%;object-fit:cover;object-position:center 62%;
+  opacity:0;transition:opacity .9s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+.op-film.in{opacity:1}
+/* The plate stops drifting once the film owns the frame — two motions on the
+   same layer read as a wobble. */
+.op-film.in ~ .op-plate,
+.op:has(.op-film.in) .op-plate{animation:none}
+@media(prefers-reduced-motion:reduce){
+  .op-film{display:none}
+}
