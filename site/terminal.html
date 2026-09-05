@@ -121,6 +121,23 @@
   .tm-reset:hover{color:var(--crimson);border-color:rgba(255,111,82,.4)}
 
   /* ---- watchlist ---- */
+  /* Five of these cards are empty in the markup and fill in a single frame at
+     about 200ms, which grew the left column by nearly 600px and shoved the
+     rest of the workstation down the page. Reserving each card's settled
+     height makes the layout final from first paint. The numbers are measured,
+     not guessed, and are stable across widths; a card whose content the member
+     grows past this is their own action, not a jump. Only above the stacking
+     breakpoint, where the columns exist. */
+  @media(min-width:761px){
+    .tm-card[aria-label="Account"]{min-height:233px}
+    .tm-card[aria-label="Watchlist"]{min-height:294px}
+    .tm-card[aria-label="Market pulse"]{min-height:430px}
+    .tm-card[aria-label="Chart"]{min-height:530px}
+    .tm-card[aria-label="Key metrics"]{min-height:238px}
+    .tm-card[aria-label="Order ticket"]{min-height:324px}
+    .tm-card[aria-label="Recent orders"]{min-height:101px}
+    .tm-card[aria-label="Positions"]{min-height:101px}
+  }
   .tm-wl{display:flex;flex-direction:column;max-height:calc(100vh - 340px);overflow-y:auto;margin-inline:-4px;padding-inline:4px}
   @media(max-width:760px){.tm-wl{max-height:none}}
   .tm-wl-row{display:flex;align-items:center;gap:9px;padding:8px 7px;border-top:1px solid var(--tm-line-2);cursor:pointer;border-radius:4px}
