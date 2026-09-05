@@ -18,7 +18,7 @@
     --glass:rgba(14,19,32,.58); --glass-2:rgba(22,29,46,.62); --glass-hd:rgba(255,255,255,.045);
     --glass-line:rgba(226,234,248,.14); --glass-line-2:rgba(226,234,248,.09);
     --glass-blur:blur(18px) saturate(1.2);
-    --glass-shadow:0 2px 8px rgba(0,0,0,.35), 0 40px 80px -36px rgba(0,0,0,.9);
+    --glass-shadow:0 1px 2px rgba(0,0,0,.42), 0 4px 10px -3px rgba(0,0,0,.5), 0 14px 26px -18px rgba(0,0,0,.86);
     --bg:#070a12; --panel:var(--glass-hd); --panel-2:transparent; --well:rgba(6,9,17,.5);
     --line:var(--glass-line); --line-2:var(--glass-line-2);
     --card-buy-lift:#ffc95a; --card-sell-lift:#ff7f63;
@@ -180,6 +180,9 @@
   .toolrow{display:flex;gap:8px;align-items:end;padding:8px 10px;border-bottom:1px solid var(--line-2);background:var(--panel);flex-wrap:wrap}
   .toolrow .fld{width:110px}
   .newsrow{display:flex;gap:10px;padding:7px 12px;border-bottom:1px solid var(--line-2);font-size:12px;align-items:baseline}
+  /* The wire runs under a real clock, so it has to say it is a sample. */
+  .scripted-note{margin:0;padding:9px 12px;border-bottom:1px solid var(--line-2);
+    background:rgba(245,185,60,.06);color:var(--text-dim);font-size:12px;line-height:1.5}
   .newsrow .t{font-family:var(--mono);font-size:12px;color:var(--faint);white-space:nowrap}
   .newsrow .tag{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cyan);border:1px solid rgba(245,185,60,.3);
     border-radius:2px;padding:1px 6px;cursor:pointer}
@@ -736,7 +739,7 @@ document.addEventListener("DOMContentLoaded", function(){
       }
       $("#scRun").addEventListener("click",run);run();
     } else if(dockTab==="news"){
-      host.innerHTML='<div id="newsFeed"></div>';renderNews();
+      host.innerHTML='<p class="scripted-note">Sample wire \u00b7 shows the shape of the feed, not live headlines</p><div id="newsFeed"></div>';renderNews();
     }
   }
   $("#dockBody").addEventListener("click",function(e){
@@ -749,17 +752,19 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   /* ============ news ============ */
+  /* Sample wire. These say what the desk watches for, never a figure it
+     claims to have seen: an invented number under a real clock reads as news. */
   var NEWS=[
-    ["NVDA","Call sweep: 14,200 contracts at the $185 strike hit the tape; all at ask",1],
-    ["AMD","Breaks out of six-week base on 2.7× average volume",0],
-    ["TSLA","8-K filing: delivery guidance cut; historical 5-day drift −2.3%",1],
-    ["SPY","Breadth improves, 63% of S&P constituents above the 50-DMA",0],
-    ["SMCI","Top 1% of universe for unusual volume; short float 18% and rising",1],
-    ["AAPL","Reclaims VWAP after morning flush; MACD crosses bullish on the 15m",0],
-    ["COIN","BTC clears $72k, high-beta proxies re-rating",0],
-    ["MSFT","Put/call skew flips bullish ahead of cloud segment update",0],
-    ["GOOG","Unusual 4.8:1 call ratio as antitrust headline fades",0],
-    ["META","Position risk: drawdown −4.2%, correlation to SPX at 0.81",1],
+    ["NVDA","Options: unusual call size against the name\u2019s normal pattern",1],
+    ["AMD","Technical: price clears a multi-week base on above-average volume",0],
+    ["TSLA","Filing: an 8-K lands and the analysts pull the guidance language",1],
+    ["SPY","Breadth: how much of the index is participating in the move",0],
+    ["SMCI","Volume: the name enters the unusual-activity screen",1],
+    ["AAPL","Technical: price reclaims a level the tape has respected",0],
+    ["COIN","Correlation: crypto beta re-rates with the underlying bid",0],
+    ["MSFT","Options: skew shifts ahead of a scheduled segment update",0],
+    ["GOOG","Sentiment: the wire cools on a headline the desk already priced",0],
+    ["META","Risk: a position\u2019s correlation to the index rises against you",1],
   ];
   var newsIdx=0,newsLog=[];
   function pushNews(){

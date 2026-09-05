@@ -23,7 +23,7 @@
     --glass-line:rgba(226,234,248,.14);
     --glass-line-2:rgba(226,234,248,.09);
     --glass-blur:blur(18px) saturate(1.2);
-    --glass-shadow:0 2px 8px rgba(0,0,0,.35), 0 40px 80px -36px rgba(0,0,0,.9);
+    --glass-shadow:0 1px 2px rgba(0,0,0,.42), 0 4px 10px -3px rgba(0,0,0,.5), 0 14px 26px -18px rgba(0,0,0,.86);
     --well:rgba(6,9,17,.5);
     --line:var(--glass-line);
     --line-2:var(--glass-line-2);
@@ -80,6 +80,8 @@
   .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:16px 18px 12px;
     background:rgba(10,14,24,.62);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
     border-bottom:1px solid var(--line-2)}
+  /* A hint is read, not scanned: no caps, no stencil tracking. */
+  .hint-line{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.005em;color:var(--text-faint);line-height:1.5}
   .ic-btn{width:40px;height:40px;border-radius:4px;border:1px solid var(--line);background:var(--glass);
     display:grid;place-items:center;color:var(--text-dim);cursor:pointer;flex:none}
   .ic-btn:hover{border-color:rgba(245,185,60,.4);color:var(--cyan)}
@@ -357,7 +359,7 @@
       <div class="pv-hero">
 </div>
       <div id="watchList"></div>
-      <p class="field-k disclosure" style="margin:22px 0 6px">Tap a symbol to trade or flag it</p>
+      <p class="hint-line" style="margin:22px 0 6px">Tap a symbol to trade or flag it</p>
     </section>
 
     <!-- ============ PORTFOLIO ============ -->

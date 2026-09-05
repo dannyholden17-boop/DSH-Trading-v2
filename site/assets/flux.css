@@ -65,7 +65,7 @@
   --glass-line:rgba(226,234,248,.14);
   --glass-line-2:rgba(226,234,248,.09);
   --glass-blur:blur(18px) saturate(1.2);
-  --glass-shadow:0 2px 8px rgba(0,0,0,.35), 0 40px 80px -36px rgba(0,0,0,.9);
+  --glass-shadow:0 1px 2px rgba(0,0,0,.42), 0 4px 10px -3px rgba(0,0,0,.5), 0 14px 26px -18px rgba(0,0,0,.86);
 
   /* --- motion: one scale, four speeds. Nothing animates at a random duration. --- */
   --ease:cubic-bezier(.22,1,.36,1);      /* power2.out — the house curve */
@@ -304,7 +304,9 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
   .tkt-head{grid-area:head;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     padding:13px 20px 13px 34px;border-bottom:2px solid rgba(21,16,10,.5)}
   .tkt-org{font-family:var(--f-display);font-weight:900;font-size:13px;letter-spacing:.08em}
-  .tkt-org span{font-weight:600;opacity:.62;margin-left:6px}
+  /* the org name is a caps lockup and wants the tracking; the sentence-case
+     subtitle beside it does not, and inherits it unless we say otherwise */
+  .tkt-org span{font-weight:600;opacity:.62;margin-left:6px;letter-spacing:.01em}
   .tkt-no{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:rgba(21,16,10,.7)}
   .tkt-no b{color:var(--ink)}
 
@@ -399,7 +401,9 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .footer{border-top:1px solid var(--line);background:var(--rail);padding-block:48px 30px;margin-top:24px}
 .footer-grid{display:grid;grid-template-columns:1.7fr repeat(4,1fr);gap:34px}
 @media(max-width:860px){.footer-grid{grid-template-columns:1fr 1fr;gap:26px}}
-.footer h2,.footer h3,.footer h4{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
+/* Column labels are labels, not document headings: a 12px all-caps <h2> under a
+   28px page <h2> reads as a broken outline to a screen reader and to the eye. */
+.footer h2,.footer h3,.footer h4,.footer .ft-h{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--text-faint);margin:0 0 12px;font-weight:600}
 .footer a{display:block;color:var(--text-dim);font-size:.9rem;padding:5px 0}
 .footer a:hover{color:var(--gold)}
@@ -1608,3 +1612,29 @@ table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line
 .wk-pane{border-left-color:var(--glass-line-2)!important}
 .rl-levels{border-color:var(--glass-line-2)!important}
 .rl-levels>div{border-color:var(--glass-line-2)!important}
+
+/* ---------------------------------------------------------- *
+   26. GLASS DOES NOT NEST
+
+   Section 24 hands the glass material to every panel component.
+   Several of those components legitimately sit INSIDE another
+   one: a levels grid inside a ruling pane, a figure pair inside
+   a roll row, quick stats inside a hero card. Glass over glass
+   is a card on a card, which is the exact thing this design has
+   been pulling out of the site all along.
+
+   So an inner panel keeps only its hairlines. The container owns
+   the material; the child owns the division.
+ * ---------------------------------------------------------- */
+/* Any panel component that lands inside another panel gives up the
+   material and keeps only its division. One :is() pair covers every
+   combination, so a new panel added to section 24 is covered here too. */
+:is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields) :is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields){
+  background:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+/* an inner panel that had a border keeps it, at hairline weight */
+:is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields) :is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields){
+  border-color:var(--glass-line-2)!important;
+}
