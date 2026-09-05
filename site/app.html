@@ -7,12 +7,12 @@
 <meta name="description" content="Flux: the research desk as a workstation. The live round, the executive's rulings, and a simulated paper book.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<script src="./assets/dsh-store.js?v=31"></script>
-<script src="./assets/flux-supa.js?v=31" defer></script>
-<script src="./assets/flux-desk.js?v=31" defer></script>
-<script src="./assets/dsh-feed.js?v=31"></script>
-<script src="./assets/dsh.js?v=31" defer></script>
-<link rel="stylesheet" href="./assets/fonts.css?v=31">
+<script src="./assets/dsh-store.js?v=32"></script>
+<script src="./assets/flux-supa.js?v=32" defer></script>
+<script src="./assets/flux-desk.js?v=32" defer></script>
+<script src="./assets/dsh-feed.js?v=32"></script>
+<script src="./assets/dsh.js?v=32" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=32">
 <style>
   :root{
     color-scheme: dark;
@@ -407,7 +407,7 @@
     <section class="view" id="v-settings">
       <div class="pv-hero"></div>
       <div class="glass">
-        <div class="setrow"><div class="lbl"><b>Live market data</b><span id="setFeed">Simulated, tap to connect Finnhub</span></div>
+        <div class="setrow"><div class="lbl"><b>Live market data</b><span id="setFeed">Checking the feed…</span></div>
           <button class="btn btn-ghost" id="setFeedBtn">Connect</button></div>
         <div class="setrow"><div class="lbl"><b>Reset demo</b><span>Clear flags, positions & activity</span></div>
           <button class="btn btn-danger" id="setReset">Reset</button></div>
@@ -707,15 +707,23 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---------- feed pill ---------- */
   function feedUI(s){var pill=$("#feedPill");pill.className="feedpill "+s;
     $("#feedLabel").textContent={sim:"Sim",connecting:"···",live:"Live"}[s]||s;
-    $("#setFeed").textContent=s==="live"?"Live, Finnhub connected":"Simulated, tap to connect Finnhub";}
-  function connectSheet(){var connected=F&&F.hasKey();
-    openSheet('<div class="sheet-tk"><div class="t" style="font-size:18px">Market data</div><span style="margin-left:auto;font-size:12px;color:var(--text-faint)">Finnhub</span></div>'+
-      '<p style="font-size:13.5px;color:var(--text-dim);margin-bottom:6px">Free realtime feed, grab a key at finnhub.io (20s), paste below.</p>'+
-      '<div class="field"><label>Finnhub API key</label><input id="fk" placeholder="paste key…" spellcheck="false" value=""></div>'+
-      '<button class="btn btn-primary btn-block" id="fkgo">'+(connected?"Reconnect":"Connect live data")+'</button>'+
-      (connected?'<button class="btn btn-ghost btn-block" id="fkoff" style="margin-top:10px">Disconnect</button>':''));
-    $("#fkgo").addEventListener("click",function(){var k=$("#fk").value.trim();if(!k){$("#fk").focus();return;}F.setKey(k);toast("Connecting…");closeSheet();});
-    var off=$("#fkoff");if(off)off.addEventListener("click",function(){F.clearKey();toast("Simulation mode");closeSheet();});}
+    $("#setFeed").textContent=s==="live"?"Live quotes":"Simulated, tap for detail";}
+  /* The feed is keyless now, so this sheet says what the data is and where it
+     comes from instead of asking for a credential. */
+  function connectSheet(){
+    var live=F&&F.status&&F.status()==="live", src=(F&&F.source&&F.source())||null;
+    openSheet('<div class="sheet-tk"><div class="t" style="font-size:18px">Market data</div>'+
+      '<span style="margin-left:auto;font-size:12px;color:var(--text-faint)">'+(live?"live":"simulated")+'</span></div>'+
+      '<p style="font-size:13.5px;color:var(--text-dim);margin-bottom:10px">Quotes come from the same server-side feed the rest of Flux runs on'+
+      (src?(" (currently <b style=\"color:var(--text)\">"+String(src).replace(/[<>&]/g,"")+"</b>)"):"")+
+      '. Nothing to connect and no key to paste. Prices refresh about every ten seconds, so they read as live rather than tick by tick.</p>'+
+      '<p style="font-size:12.5px;color:var(--text-faint);line-height:1.6;margin:0">Market data may be delayed or estimated. When the feed cannot be reached Flux falls back to simulation and labels it <b>Sim</b> rather than leaving a stale price on screen.</p>'+
+      '<button class="btn btn-ghost btn-block" id="fkoff" style="margin-top:14px">'+(live?"Switch to simulation":"Retry the live feed")+'</button>');
+    var off=$("#fkoff");
+    if(off)off.addEventListener("click",function(){
+      if(live){F.disconnect();toast("Simulation mode");}else{F.connect();toast("Reconnecting…");}
+      closeSheet();
+    });}
   $("#feedPill").addEventListener("click",connectSheet);
   $("#setFeedBtn").addEventListener("click",connectSheet);
   $("#setReset").addEventListener("click",function(){if(confirm("Reset the demo?")){S.reset();toast("Demo reset");}});
