@@ -51,20 +51,35 @@ paragraphs onto extra lines.
 > The usual shortcut for `size-adjust` is the x-height ratio. It was wrong here
 > by four percent on Public Sans — enough on its own to re-wrap a paragraph.
 
-## 3. A pane that grew as it filled
+## 3. Panes that grew as they filled
 
 `options.html` rendered its chain table empty and filled it, growing the pane by
-about seven rows and shoving the page down. `.op-scroll` now carries a
-`min-height`.
+about seven rows. `.op-scroll` now carries a `min-height`.
+
+`terminal.html` had five cards doing the same in a single frame at ~200ms —
+Watchlist, Market pulse, Key metrics, Recent orders, Positions — together
+growing the left column by nearly 600px. Each now reserves its settled height,
+measured and checked stable across widths.
 
 ## Results
 
 | Page | Before | After |
 |---|---|---|
 | `options.html` | 0.384 **POOR** | 0.038 |
-| `terminal.html` | 0.312 **POOR** | 0 |
 | `terms.html` | 0.116 | ~0 |
-| `index.html` | 0.059 | 0.002 |
+| `index.html` | 0.059 | 0.0002 |
+| `terminal.html` | 0.312 **POOR** | ~0.195 — see below |
+
+> [!warning] terminal.html is improved but not fixed
+> Reserving the card heights took the actual movement from ~600px to ~40px, but
+> the page still scores about 0.195. CLS weights an element by its size, and
+> these are full-column cards that settle by a few tens of pixels once live
+> prices land. What is left is a settle rather than a jump, but it is over the
+> 0.1 threshold and should be described that way.
+>
+> Getting it to zero means giving the panels **fixed heights with internal
+> scroll**, which is how a real workstation behaves — panels scroll, they do not
+> grow. That is a design change to a page in daily use, so it has not been made.
 
 > [!tip] Keeping it
 > Anything inserted into the page after load must have its space reserved
