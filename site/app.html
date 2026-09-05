@@ -7,12 +7,12 @@
 <meta name="description" content="Flux: the research desk as a workstation. The live round, the executive's rulings, and a simulated paper book.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<script src="./assets/dsh-store.js?v=30"></script>
-<script src="./assets/flux-supa.js?v=30" defer></script>
-<script src="./assets/flux-desk.js?v=30" defer></script>
-<script src="./assets/dsh-feed.js?v=30"></script>
-<script src="./assets/dsh.js?v=30" defer></script>
-<link rel="stylesheet" href="./assets/fonts.css?v=30">
+<script src="./assets/dsh-store.js?v=31"></script>
+<script src="./assets/flux-supa.js?v=31" defer></script>
+<script src="./assets/flux-desk.js?v=31" defer></script>
+<script src="./assets/dsh-feed.js?v=31"></script>
+<script src="./assets/dsh.js?v=31" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=31">
 <style>
   :root{
     color-scheme: dark;
@@ -335,9 +335,10 @@
         <div class="mod-h">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
           <h2>The desk record</h2>
-          <span class="tag" id="roiTag">live</span>
         </div>
-        <canvas class="grow-chart" id="optChart"></canvas>
+        <p class="deskempty" style="margin:2px 0 14px">The desk grades a call only once it reaches its
+          resolve date, so there is no curve here yet. When there is one it will be drawn from the record
+          below, not from a shape.</p>
         <div class="sumrow" style="margin-top:14px;margin-bottom:0">
           <div class="sumcell" style="border:1px solid var(--line-2);border-radius:4px;background:var(--well)">
             <div class="k">Filings on record</div><div class="v mono" id="sigCount">&mdash;</div></div>
@@ -376,8 +377,10 @@
         <button class="btn btn-ghost btn-block" id="resetBtn"><i class="ic-i i-refresh" aria-hidden="true"></i> Reset</button>
       </div>
       <div class="glass">
-        <div class="mod-h"><h2>Growth</h2><span class="tag" id="pvLive">live</span></div>
-        <canvas class="grow-chart" id="pvChart"></canvas>
+        <div class="mod-h"><h2>Growth</h2></div>
+        <p class="deskempty" style="margin:2px 0 0">Flux does not keep a value history for the paper
+          account yet, so there is no curve to plot. The figures below are computed from your open
+          positions at the current price.</p>
       </div>
       <div class="sumrow" style="margin-top:16px;margin-bottom:0">
         <div class="glass sumcell"><div class="k">Open P&amp;L</div><div class="v mono" id="pvOpen">$0.00</div></div>
@@ -479,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var CY="#f5b93c", VI="#7aa7ff", EM="#3ddc97", CR="#ff6f52", AM="#f5b93c";
 
   /* short label per finding */
-  var LBL={Options:"Unusual Flow",Scanner:"Breakout",Catalyst:"Catalyst",Technicals:"Divergence",Risk:"Risk Alert",Backtest:"Backtested"};
+  var LBL={Options:"Unusual Flow",Scanner:"Breakout",Catalyst:"Catalyst",Technicals:"Divergence",Risk:"Risk Alert",Record:"Graded"};
   function label(f){ return LBL[f.e]||f.e; }
   function sigColor(f){ return f.s==="high"&&!f.u ? CR : f.u ? EM : CY; }
 
@@ -524,11 +527,16 @@ document.addEventListener("DOMContentLoaded", function(){
       '<div class="rt"><div class="conf" style="color:'+col+'">'+(f.c||'—')+'%</div><div class="cl">conf</div></div>';
     return el;}
   var sigWrap=$("#signals");
-  D.FINDINGS.slice(0,4).forEach(function(f){sigWrap.appendChild(sigEl(f));});
-  function pushSignal(){var f=rnd(D.FINDINGS),el=sigEl(f);el.style.animation="fade .4s both";sigWrap.insertBefore(el,sigWrap.firstChild);
-    while(sigWrap.children.length>7)sigWrap.removeChild(sigWrap.lastChild);
-    var n=(+$("#sigCount").textContent.replace(/\D/g,'')||127)+1;$("#sigCount").textContent=n;}
-  setInterval(pushSignal,5200);
+  /* This seeded four invented findings and then pushed a random one every
+     5.2 seconds, incrementing "Filings on record" off a hardcoded 127 seed —
+     a counter that climbed while the reader watched, counting nothing. The
+     real figure comes off the desk record in boot() below. */
+  if(D.FINDINGS.length){
+    D.FINDINGS.slice(0,4).forEach(function(f){sigWrap.appendChild(sigEl(f));});
+  } else {
+    sigWrap.innerHTML = D.noFindings("No signal has been filed yet.");
+    var lt=$("#liveScan"); if(lt) lt.remove();
+  }
   sigWrap.addEventListener("click",function(e){var s=e.target.closest(".sig");if(!s)return;var f=cardData[s.dataset.fid];if(f)openTerminal(f.t,f);});
 
   /* This used to rotate a random line from a list of seven ("neural scan
@@ -555,7 +563,7 @@ document.addEventListener("DOMContentLoaded", function(){
     openSheet('<div class="sheet-tk"><div class="av" style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-weight:700;border:1px solid var(--line);background:rgba(245,185,60,.08);color:var(--cyan)">'+f.t.slice(0,3)+'</div>'+
       '<div><div class="t">'+f.t+'</div><div style="font-size:12px;color:var(--text-dim)">'+label(f)+' · $'+px.toFixed(2)+'</div></div>'+
       '<div style="margin-left:auto;text-align:right"><div class="mono '+(f.u?'up':'down')+'" style="font-weight:700">'+f.mv+'</div><div class="cl" style="color:'+col+'">'+(f.c||'—')+'% conf</div></div></div>'+
-      '<canvas class="chart-sheet" id="detChart"></canvas>'+
+      '<canvas aria-label="Illustrative trace, not this name\u2019s price history" class="chart-sheet" id="detChart"></canvas>'+
       '<p style="font-size:.9rem;line-height:1.55;color:var(--text)">'+f.i+'</p>'+
       '<div class="kv">'+stats+'</div>'+
       '<div class="btn-row"><button class="btn btn-primary btn-block" data-a="trade">Paper trade</button>'+
@@ -577,9 +585,14 @@ document.addEventListener("DOMContentLoaded", function(){
       '<div class="field"><label>Quantity</label><input id="qty" type="number" min="1" value="'+q+'"></div>'+
       '<div class="kv"><div class="c"><div class="k">Est. cost</div><div class="v" id="cost">'+S.fmt$(px*q)+'</div></div>'+
       '<div class="c"><div class="k">Buying power</div><div class="v">'+S.fmt$(S.portfolio().cash)+'</div></div></div>'+
-      '<button class="btn btn-primary btn-block" id="confirm">Confirm paper buy</button>');
+      '<button class="btn btn-primary btn-block" id="confirm">Confirm paper buy</button>'+
+      '<p id="tkDisc" style="margin:12px 0 0;font-size:12.5px;line-height:1.6;color:var(--text-faint)">'+
+        'Simulated order, virtual money, not investment advice.</p>');
     var seg=$("#side"),qty=$("#qty"),cf=$("#confirm");
-    function up(){var qq=+qty.value||0;$("#cost").textContent=S.fmt$(S.price(sym)*qq);cf.textContent="Confirm paper "+side;}
+    function up(){var qq=+qty.value||0;$("#cost").textContent=S.fmt$(S.price(sym)*qq);cf.textContent="Confirm paper "+side;
+      var d=$("#tkDisc"); if(d) d.textContent = side==="sell"
+        ? "Simulated order, virtual money, not investment advice. A short has no ceiling on what it can lose: the loss grows with the price and can exceed what you put up."
+        : "Simulated order, virtual money, not investment advice.";}
     seg.addEventListener("click",function(e){var b=e.target.closest("[data-side]");if(!b)return;side=b.dataset.side;$$("button",seg).forEach(function(x){x.classList.toggle("on",x===b)});up();});
     qty.addEventListener("input",up);
     cf.addEventListener("click",function(){var qq=Math.max(1,Math.floor(+qty.value||0));S.openPosition({sym:sym,side:side,qty:qq});closeSheet();toast((side==="buy"?"Bought ":"Shorted ")+qq+" "+sym);});
@@ -612,6 +625,17 @@ document.addEventListener("DOMContentLoaded", function(){
     else if(/breakout|scan|setup|volume/.test(ql)){intro="Top breakout the scanner sees:";f=D.FINDINGS.find(function(x){return x.e==="Scanner"});}
     else{var m=q.toUpperCase().match(/[A-Z]{2,5}/);f=(m&&D.FINDINGS.find(function(x){return x.t===m[0]}));intro=f?("Flux read on <b>"+f.t+"</b>:"):("Sharpest thing on the tape:");if(!f)f=rnd(D.FINDINGS);}
     S.log&&S.log("ask","Asked Flux: "+q);
+    /* No finding matched. Say that, rather than dressing an empty record as
+       an answer — a fabricated read is worse than no read. */
+    if(!f){
+      openSheet('<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="feedpill" style="border-color:rgba(122,167,255,.5);color:var(--violet)"><span class="dot" style="background:var(--violet)"></span>Flux</span>'+
+        '<span style="margin-left:auto;font-size:12px;color:var(--text-faint)">\u201C'+q.replace(/[<>&]/g,"")+'\u201D</span></div>'+
+        '<p style="font-size:1rem;line-height:1.55;margin-bottom:6px">Nothing on the record answers that yet.</p>'+
+        '<p style="color:var(--text-dim);font-size:.92rem;line-height:1.6;margin:0">Flux answers from what the desk has actually filed. '+
+        'It has filed nothing on this, and it will not invent a read to fill the gap. '+
+        '<a href="./desk.html" style="color:var(--cyan)">Watch the desk work</a>.</p>');
+      return;
+    }
     var col=sigColor(f),px=S.price(f.t);
     openSheet('<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="feedpill" style="border-color:rgba(122,167,255,.5);color:var(--violet)"><span class="dot" style="background:var(--violet)"></span>Flux</span>'+
       '<span style="margin-left:auto;font-size:12px;color:var(--text-faint)">“'+q+'”</span></div>'+
@@ -641,7 +665,7 @@ document.addEventListener("DOMContentLoaded", function(){
     $("#pvOpen").innerHTML='<span class="'+(pf.openPnl>=0?'up':'down')+'">'+S.fmtSigned(pf.openPnl)+'</span>';
     $("#pvReal").innerHTML='<span class="'+(pf.realized>=0?'up':'down')+'">'+S.fmtSigned(pf.realized)+'</span>';
     $("#pvCash").textContent=S.fmt$(pf.cash);$("#pvPos").textContent=pf.open.length;
-    var pv=$("#pvChart");if(pv&&pv.clientWidth)line(pv,path(7,40,pf.totalPnl>=0),pf.totalPnl>=0?CY:CR);
+
     // allocation
     var parts=pf.open.map(function(p,i){return{sym:p.sym,v:S.positionPnl(p).cur*p.qty,c:["#f5b93c","#7aa7ff","#3ddc97","#f5b93c","#ff6b9d"][i%5]}});
     if(pf.cash>0)parts.push({sym:"Cash",v:pf.cash,c:"#3a4a6b"});
@@ -675,7 +699,10 @@ document.addEventListener("DOMContentLoaded", function(){
     host.innerHTML=a.map(function(x){var d=new Date(x.ts);return '<div class="setrow"><div class="lbl"><b style="font-weight:500;font-size:13.5px">'+x.text+'</b></div><span class="mono" style="font-size:12px;color:var(--text-faint)">'+d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+'</span></div>';}).join("");}
 
   /* ---------- optimization chart (home) ---------- */
-  function drawOpt(){var cv=$("#optChart");if(cv&&cv.clientWidth)line(cv,path(42,50,true),CY);}
+  /* This drew path(42,50,true): a seeded random walk with +.32 added to every
+     step, so the "desk record" curve rose no matter what, under a live tag,
+     beside two counters that are genuinely read off the record. A chart that
+     cannot go down is not a record of anything. Removed. */
 
   /* ---------- feed pill ---------- */
   function feedUI(s){var pill=$("#feedPill");pill.className="feedpill "+s;
@@ -701,7 +728,6 @@ document.addEventListener("DOMContentLoaded", function(){
     $("#viewTitle").textContent=TITLE[v];
     $("#askForm").style.display=(v==="flux")?"flex":"none";
     if(v==="markets")renderMarkets();if(v==="portfolio")renderPortfolio();if(v==="alerts")renderFlagged();if(v==="settings"){renderActivity();}
-    if(v==="flux")setTimeout(drawOpt,30);
     document.querySelector("main").scrollTop=0;
   }
   $("#nav").addEventListener("click",function(e){var b=e.target.closest("button");if(b)go(b.dataset.view);});
@@ -808,8 +834,7 @@ document.addEventListener("DOMContentLoaded", function(){
     openTicket(f);setTimeout(function(){var seg=$("#side");if(seg){var b=seg.querySelector('[data-side="'+side+'"]');if(b)b.click();}},30);}
 
   /* boot */
-  drawOpt();
-  window.addEventListener("resize",function(){if(cur==="flux")drawOpt();if(cur==="portfolio")renderPortfolio();});
+  window.addEventListener("resize",function(){if(cur==="portfolio")renderPortfolio();});
 });
 </script>
 <script>

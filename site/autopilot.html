@@ -7,15 +7,15 @@
 <meta name="description" content="Autopilot is the Flux research desk running on a schedule: three analysts file, their boss cuts, an executive rules, and every round is written down. It trades a simulated book and has no path to a brokerage. Simulated, not advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=30">
-<link rel="stylesheet" href="./assets/flux.css?v=30">
-<script src="./assets/flux-supa.js?v=30" defer></script>
-<script src="./assets/flux-site.js?v=30" defer></script>
-<script src="./assets/flux-desk.js?v=30" defer></script>
-<script src="./assets/flux-universe.js?v=30" defer></script>
-<script src="./assets/flux-feed.js?v=30" defer></script>
-<script src="./assets/flux-fund.js?v=30" defer></script>
-<script src="./assets/flux-kronos.js?v=30" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=31">
+<link rel="stylesheet" href="./assets/flux.css?v=31">
+<script src="./assets/flux-supa.js?v=31" defer></script>
+<script src="./assets/flux-site.js?v=31" defer></script>
+<script src="./assets/flux-desk.js?v=31" defer></script>
+<script src="./assets/flux-universe.js?v=31" defer></script>
+<script src="./assets/flux-feed.js?v=31" defer></script>
+<script src="./assets/flux-fund.js?v=31" defer></script>
+<script src="./assets/flux-kronos.js?v=31" defer></script>
 <style>
   /* ============================================================
      page-only styles: autopilot.html
@@ -277,6 +277,10 @@
 
 <!-- ============ HERO ============ -->
 <section class="section phero">
+    <div class="fx-film-host" aria-hidden="true"
+         data-film="https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/e89b46ff-a90d-47b6-a4aa-27e19ca48419.mp4"
+         data-film-m="https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/8a0a6408-df0b-46f7-8cfd-6128ed6cc63e.mp4"
+         data-film-pos="center 55%"></div>
   <div class="wrap ap-hero">
     <div class="reveal">
 <h1 class="h1">The desk doesn't stop<br><span class="">when you close the tab.</span></h1>
@@ -703,7 +707,6 @@ document.addEventListener("DOMContentLoaded", function(){
   var F = window.FLUX || {};
   var $ = F.$ || function(s,r){return (r||document).querySelector(s);};
   var $$ = F.$$ || function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
-  var SIGNALS = F.SIGNALS || [];
   var EM = F.EM || "#3ddc97", CR = F.CR || "#ff6f52", CY = F.CY || "#f5b93c";
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

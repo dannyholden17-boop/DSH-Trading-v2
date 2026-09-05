@@ -7,15 +7,15 @@
 <meta name="description" content="Connect your brokerage and see your whole portfolio in one intelligent view. Flux reads your positions, watches your risk in real time and puts an AI analyst on your actual holdings, read-only until you say otherwise.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=30">
-<link rel="stylesheet" href="./assets/flux.css?v=30">
-<script src="./assets/flux-supa.js?v=30" defer></script>
-<script src="./assets/flux-site.js?v=30" defer></script>
-<script src="./assets/flux-desk.js?v=30" defer></script>
-<script src="./assets/flux-universe.js?v=30" defer></script>
-<script src="./assets/flux-feed.js?v=30" defer></script>
-<script src="./assets/flux-fund.js?v=30" defer></script>
-<script src="./assets/flux-kronos.js?v=30" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=31">
+<link rel="stylesheet" href="./assets/flux.css?v=31">
+<script src="./assets/flux-supa.js?v=31" defer></script>
+<script src="./assets/flux-site.js?v=31" defer></script>
+<script src="./assets/flux-desk.js?v=31" defer></script>
+<script src="./assets/flux-universe.js?v=31" defer></script>
+<script src="./assets/flux-feed.js?v=31" defer></script>
+<script src="./assets/flux-fund.js?v=31" defer></script>
+<script src="./assets/flux-kronos.js?v=31" defer></script>
 <style>
   /* ---- page-only layout: portfolio.html ---- */
   .pf-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -895,11 +895,16 @@ document.addEventListener("DOMContentLoaded", function(){
   if(sigWrap && F.SIGNALS && F.sigHTML){
     var names = {};
     HOLD.forEach(function(s){ names[s.t] = 1; });
-    F.SIGNALS.filter(function(s){ return names[s.t]; }).slice(0, 2).forEach(function(s){
-      var box = document.createElement("div");
-      box.innerHTML = F.sigHTML(s);
-      if(box.firstChild) sigWrap.appendChild(box.firstChild);
-    });
+    var mine = F.SIGNALS.filter(function(s){ return names[s.t]; }).slice(0, 2);
+    if(!mine.length && F.sigNone){
+      sigWrap.innerHTML = F.sigNone("Nothing has been filed on the names in this book.");
+    } else {
+      mine.forEach(function(s){
+        var box = document.createElement("div");
+        box.innerHTML = F.sigHTML(s);
+        if(box.firstChild) sigWrap.appendChild(box.firstChild);
+      });
+    }
   }
 
   /* ---------------- live-ticking total value ---------------- */

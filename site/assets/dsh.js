@@ -84,36 +84,31 @@
     {id:"Options",   ic:"⟁", tasks:["scanning sweeps","unusual OI delta","building gamma map","put/call skew"]},
     {id:"Technicals",ic:"△", tasks:["MACD cross scan","RSI divergence","VWAP reclaim check","support / resistance"]},
     {id:"Risk",      ic:"⊘", tasks:["position drawdown","correlation to SPX","stop-loss watch","exposure by sector"]},
-    {id:"Backtest",  ic:"⧗", tasks:["replaying 5y history","validating setup","edge-decay check","walk-forward test"]},
+    {id:"Record",    ic:"⧗", tasks:["checking resolve dates","grading a due call","posting the miss","updating the scoreboard"]},
   ];
-  DSH.FINDINGS = [
-    {t:"NVDA",e:"Options",s:"high",u:1,mv:"+2.1%",i:"Massive <b>call sweep</b>, 14,200 contracts at $185, 3DTE, all at ask (~$4.6M premium).",st:[["IV","62%"],["OI Δ","+38%"],["Vol","4.1×"]],c:88},
-    {t:"AMD", e:"Scanner",s:"med",u:1,mv:"+3.4%",i:"Breaking out of a 6-week base on <b>2.7× volume</b>. Cleared $172, room to $186.",st:[["RelVol","2.7×"],["ATR","4.8"],["Base","41d"]],c:74},
-    {t:"TSLA",e:"Catalyst",s:"high",u:0,mv:"-1.8%",i:"New 8-K: guidance cut on <b>delivery outlook</b>. Historically a −2.3% 5-day drift.",st:[["Drift","−2.3%"],["n","17"],["Conf","0.71"]],c:69},
-    {t:"AAPL",e:"Technicals",s:"info",u:1,mv:"+0.6%",i:"<b>VWAP reclaim</b> after morning flush + MACD bull cross on the 15m. Setup hits 68%.",st:[["Hit","68%"],["R:R","1:2.4"],["Stop","$226"]],c:66},
-    {t:"MSFT",e:"Options",s:"med",u:1,mv:"+1.2%",i:"Put/call skew flipped bullish into the cloud update. <b>Gamma wall</b> building at $430.",st:[["Skew","+0.8"],["Wall","$430"],["GEX","high"]],c:71},
-    {t:"SMCI",e:"Scanner",s:"high",u:1,mv:"+5.9%",i:"Top <b>1%</b> of the universe for unusual volume. Squeeze: 18% short float, rising.",st:[["Short","18%"],["RelVol","6.2×"],["DTC","3.1"]],c:63},
-    {t:"META",e:"Risk",s:"med",u:0,mv:"-0.9%",i:"Your position drawdown hit <b>−4.2%</b>, nearing the −5% stop. Corr to SPX up to 0.81.",st:[["DD","−4.2%"],["Stop","−5%"],["ρ","0.81"]],c:0},
-    {t:"COIN",e:"Catalyst",s:"info",u:1,mv:"+4.1%",i:"BTC broke $72k — <b>high-beta proxy</b>. COIN moves 2.4× spot on up-days like this.",st:[["Beta","2.4×"],["BTC","+3.1%"],["ρ","0.88"]],c:70},
-    {t:"PLTR",e:"Technicals",s:"info",u:1,mv:"+2.8%",i:"<b>RSI divergence</b> resolved up; 50/200 EMA golden cross confirmed on the daily.",st:[["RSI","61"],["Cross","gold"],["Trend","up"]],c:64},
-    {t:"AMZN",e:"Backtest",s:"info",u:1,mv:"+1.0%",i:"Ran the breakout over <b>5 years</b>: 71% win-rate, avg +3.9% / −1.8%, edge stable.",st:[["Win","71%"],["Avg+","3.9%"],["Edge","stable"]],c:76},
-    {t:"GOOG",e:"Options",s:"med",u:1,mv:"+1.6%",i:"Unusual <b>call ratio</b> 4.8:1 as the antitrust headline fades. Smart money leaning long.",st:[["C:P","4.8"],["Prem","$2.1M"],["DTE","9"]],c:67},
-    {t:"SPY", e:"Risk",s:"info",u:0,mv:"+0.4%",i:"Breadth improving: 63% of the S&P above its 50-DMA. <b>Risk-on</b> tilt confirmed.",st:[["Breadth","63%"],["VIX","13.9"],["Tilt","on"]],c:72},
-  ];
-  DSH.THOUGHTS = [
-    ["scan","6,412 tickers swept · 38 pass filters"],
-    ["think","NVDA sweep + rising OI → conviction long, sizing 1.5%"],
-    ["catalyst","TSLA 8-K parsed · matched to 17 historical analogs"],
-    ["backtest","replaying AMD breakout across 1,260 sessions…"],
-    ["risk","META nearing stop · drafting alert"],
-    ["think","cross-checking AAPL VWAP setup vs options skew"],
-    ["scan","volume anomaly · SMCI top 1% of universe"],
-    ["idea","assembling 3 trade ideas for your review"],
-    ["think","SPX breadth improving, tilting the book risk-on"],
-    ["catalyst","BTC through $72k · re-scoring COIN & MARA"],
-    ["backtest","edge on reclaim setup holds · 68% over 5y"],
-    ["think","dismissing 4 low-confidence signals · noise"],
-  ];
+  /* ---- findings + inner monologue ----------------------------------------
+
+     DSH.FINDINGS held twelve invented market events, and DSH.THOUGHTS the
+     narration to match: an NVDA call sweep with a made-up premium figure, a
+     TSLA 8-K cutting delivery guidance, BTC through $72k, and — worst of the
+     set — "Ran the breakout over 5 years: 71% win-rate, avg +3.9% / -1.8%,
+     edge stable." That is a performance claim, printed on the same product
+     that says in as many words that Flux does not backtest.
+
+     They rendered on app.html under "Alpha Signals" with a live tag, and on
+     desktop.html as the desk's running commentary. Both are now empty: the
+     panels that consumed them show an empty state until a real source fills
+     them. The bindings stay so every consumer keeps its shape.  */
+  DSH.FINDINGS = [];
+  DSH.THOUGHTS = [];
+
+  /* The honest empty state for any panel that renders findings. */
+  DSH.noFindings = function(what){
+    return '<div class="empty" style="padding:20px"><div class="bg">\u25CE</div>' +
+      (what || 'Nothing on the record yet.') +
+      ' Flux shows a signal only when a live source produces one.</div>';
+  };
+
   DSH.SEV = {
     high:{cls:"tag-high",label:"high",color:"var(--bad)"},
     med :{cls:"tag-med", label:"med", color:"var(--warn)"},
@@ -141,7 +136,7 @@
       ${opts.actions!==false?`<div class="f-acts">
         <button class="act act-primary">Dig in</button>
         <button class="act">Paper trade</button>
-        <button class="act">Backtest</button>
+        <button class="act">The record</button>
         <button class="act">Watch</button>
       </div>`:""}`;
     return el;

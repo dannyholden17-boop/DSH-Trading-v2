@@ -7,13 +7,13 @@
 <meta name="description" content="Flux supports one brokerage: Robinhood, through Claude's own Robinhood connector. Flux never holds your credentials and never places an order; you approve every trade yourself.">
 <meta name="theme-color" content="#0a0e18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=30">
-<link rel="stylesheet" href="./assets/flux.css?v=30">
-<script src="./assets/flux-supa.js?v=30" defer></script>
-<script src="./assets/flux-site.js?v=30" defer></script>
-<script src="./assets/flux-universe.js?v=30" defer></script>
-<script src="./assets/flux-feed.js?v=30" defer></script>
-<script src="./assets/flux-desk.js?v=30" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=31">
+<link rel="stylesheet" href="./assets/flux.css?v=31">
+<script src="./assets/flux-supa.js?v=31" defer></script>
+<script src="./assets/flux-site.js?v=31" defer></script>
+<script src="./assets/flux-universe.js?v=31" defer></script>
+<script src="./assets/flux-feed.js?v=31" defer></script>
+<script src="./assets/flux-desk.js?v=31" defer></script>
 <style>
 /* ============================================================
    brokerage.html: the steps, the two lists and the note are the
@@ -77,9 +77,10 @@
   <span class="bk-eyebrow">One broker &middot; Robinhood</span>
   <h1>Connect Robinhood,<br><span class="q">keep your hand on every order.</span></h1>
   <p class="lede">Flux supports one brokerage, and it connects somewhere that may surprise you: not here.
-    The link is made inside Claude, using Claude's own Robinhood connector: the same connector the desk's
-    analysts and traders already run on. This site never sees your Robinhood login, and it never places a
-    trade.</p>
+    The link is made inside Claude, using Claude&rsquo;s own Robinhood connector, in your Claude and under your
+    authorisation. The desk itself is not connected to it and never has been &mdash; the desk trades a
+    simulated book with virtual money, and connecting Robinhood does not change that. This site never sees
+    your Robinhood login, and it never places a trade.</p>
 
   <ol class="bk-steps stagger">
     <li class="bk-step">

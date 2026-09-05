@@ -7,18 +7,18 @@
 <meta name="description" content="Flux AI Research reads filings, earnings calls, the news wire and the options tape, then writes you the answer, with model forecasts, catalysts and risk, on a schedule.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=30">
-<link rel="stylesheet" href="./assets/flux.css?v=30">
-<script src="./assets/flux-supa.js?v=30" defer></script>
-<script src="./assets/flux-site.js?v=30" defer></script>
-<script src="./assets/flux-desk.js?v=30" defer></script>
-<script src="./assets/flux-universe.js?v=30" defer></script>
-<script src="./assets/flux-feed.js?v=30" defer></script>
-<script src="./assets/flux-fund.js?v=30" defer></script>
-<script src="./assets/flux-kronos.js?v=30" defer></script>
-<script src="./assets/flux-research.js?v=30" defer></script>
-<script src="./assets/flux-tv.js?v=30" defer></script>
-<script src="./assets/flux-jarvis.js?v=30" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=31">
+<link rel="stylesheet" href="./assets/flux.css?v=31">
+<script src="./assets/flux-supa.js?v=31" defer></script>
+<script src="./assets/flux-site.js?v=31" defer></script>
+<script src="./assets/flux-desk.js?v=31" defer></script>
+<script src="./assets/flux-universe.js?v=31" defer></script>
+<script src="./assets/flux-feed.js?v=31" defer></script>
+<script src="./assets/flux-fund.js?v=31" defer></script>
+<script src="./assets/flux-kronos.js?v=31" defer></script>
+<script src="./assets/flux-research.js?v=31" defer></script>
+<script src="./assets/flux-tv.js?v=31" defer></script>
+<script src="./assets/flux-jarvis.js?v=31" defer></script>
 <style>
   /* cells inside a ruled container are transparent; the container is the glass
      (!important because the shared .glass rule paints every cell otherwise) */
@@ -427,32 +427,38 @@ document.addEventListener("DOMContentLoaded", function(){
   </div>
 </section>
 
-<!-- ============ BACKTEST ============ -->
+<!-- ============ THE FORWARD RECORD ============ -->
 <section class="section" id="validation">
   <div class="wrap split">
     <div class="reveal">
-<h2 class="h2" style="margin-top:16px">Every claim gets replayed against history.</h2>
-      <p class="lede" style="margin-top:16px">Research that can't be checked is just prose. When the Catalyst
-        engine says a filing type preceded a drift, the Backtest engine has already replayed that setup across
-        years of sessions, and the report shows you the sample size, not just the headline number.</p>
+<h2 class="h2" style="margin-top:16px">Every claim gets a date it has to be right by.</h2>
+      <p class="lede" style="margin-top:16px">Research that can&rsquo;t be checked is just prose. Flux does not
+        backtest &mdash; there is no historical replay engine here, and a number invented for a panel would be
+        worse than none. What exists instead is a forward record: every prediction is filed with the date it
+        resolves, and on that date it is graded against the tape whether it worked or not.</p>
       <div class="flist">
-        <div class="fi"><span class="k">⧗</span><div><b>Walk-forward, not curve-fit</b>
-          <p>Setups are tested on data the model never saw, in the order it actually happened.</p></div></div>
-        <div class="fi"><span class="k">n</span><div><b>Sample size shown</b>
-          <p>Fourteen comparable events is not four hundred. The report says which it is.</p></div></div>
-        <div class="fi"><span class="k">⊘</span><div><b>Costs included</b>
-          <p>Simulated fills assume slippage and commission, not perfect prints at the close.</p></div></div>
+        <div class="fi"><span class="k">◷</span><div><b>Dated before the fact</b>
+          <p>A call carries its resolve date at the moment it is filed, so it cannot be quietly re-dated once
+            the tape disagrees with it.</p></div></div>
+        <div class="fi"><span class="k">n</span><div><b>Graded either way</b>
+          <p>The misses are written to the same record as the hits, against the analyst who made them.</p></div></div>
+        <div class="fi"><span class="k">⊘</span><div><b>The refusals are kept</b>
+          <p>Candidates that failed a gate stay on the record with the gate that stopped them, so what the desk
+            threw out is as readable as what it took.</p></div></div>
       </div>
     </div>
 
     <div class="glass chart-card reveal">
       <div class="chart-legend">
-        <span class="pill"><i></i> Backtest</span>
-        <span class="k disclosure">Simulated equity curve · 1,260 sessions</span>
+        <span class="pill pill-note"><i></i> The record</span>
+        <span class="k disclosure">Built forward, one call at a time</span>
       </div>
-      <canvas id="eqCurve" aria-label="Illustrative simulated equity curve"></canvas>
+      <p class="deskempty" style="padding:26px 4px">The desk grades a prediction only once it reaches its
+        resolve date, so there is no curve to draw until enough calls have come due. When there is one it will
+        be the record itself, not an illustration of one &mdash; which is why this panel is empty rather than
+        filled with a shape.</p>
       <p class="faint mono disclosure" style="font-size:12px;margin-top:10px;letter-spacing:.08em;text-transform:uppercase">
-        Illustrative · hypothetical · not a record of actual trading</p>
+        No hypothetical curve &middot; no backtest &middot; no simulated track record</p>
     </div>
   </div>
 
@@ -488,8 +494,9 @@ document.addEventListener("DOMContentLoaded", function(){
           behind it rather than taking the summary on faith.</p></details>
       <details><summary>Can the AI get it wrong?</summary>
         <p>Yes. Language models misread things, data feeds lag, and history is not a promise. That's exactly
-          why every quantitative claim is tied to a backtest with a visible sample size, and why sources stay
-          attached, so you can check the work instead of trusting the tone.</p></details>
+          why every claim carries its source, and why every prediction carries the date it has to be right by
+          and is graded against the tape when that date arrives &mdash; so you can check the work instead of
+          trusting the tone.</p></details>
       <details><summary>Can I ask for a report on something specific?</summary>
         <p>Any time. Ask for a name, a sector, a theme or your own book in plain English and the Reporter
           assembles it on demand, using the same inputs as the scheduled briefs.</p></details>
@@ -497,10 +504,13 @@ document.addEventListener("DOMContentLoaded", function(){
         <p>Filings and wire items typically land in the research index within a minute of publication;
           scheduled reports are written at their configured time. Every report is stamped with the moment it
           was generated and the cutoff of the data behind it.</p></details>
-      <details><summary>Do the backtest numbers mean I'll make money?</summary>
-        <p>No. Backtested and simulated results are hypothetical. They show whether a pattern existed in
-          historical data, not whether it will repeat, and not what your own fills, timing or risk tolerance
-          would have produced. Trading involves risk of loss, including loss of principal.</p></details>
+      <details><summary>Does Flux backtest, and does its record mean I'll make money?</summary>
+        <p>Flux does not backtest: there is no historical replay engine in this product, and any backtested
+          figure you saw here would have been invented. The record it does keep is forward &mdash; dated
+          predictions graded against the tape as they come due &mdash; and it is a record of a simulated book,
+          so it is hypothetical too. It shows what the desk called and how those calls landed, not what your
+          own fills, timing or risk tolerance would have produced, and not what happens next. Trading involves
+          risk of loss, including loss of principal.</p></details>
     </div>
   </div>
 </section>
@@ -597,19 +607,6 @@ document.addEventListener("DOMContentLoaded", function(){
       grid.appendChild(el);
     });
   }
-
-  /* ---- equity curve ---- */
-  function drawEq(){
-    var cv = $("#eqCurve");
-    if(cv && F.drawArea) F.drawArea(cv, "research", 60, true);
-  }
-  drawEq();
-
-  var rt;
-  window.addEventListener("resize", function(){
-    clearTimeout(rt);
-    rt = setTimeout(drawEq, 140);
-  });
 
   /* pick up cards injected above (FLUX.initReveal also runs on load) */
   if(F.initReveal) F.initReveal();

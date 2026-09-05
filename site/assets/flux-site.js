@@ -14,25 +14,28 @@
 
   F.CY="#e8b33c"; F.VI="#6f9ad6"; F.EM="#56b97f"; F.CR="#e8674a"; F.AM="#e8b33c";
 
-  /* ---- shared demo signals ---- */
-  F.SIGNALS=[
-    {t:"NVDA",e:"Options",lbl:"Unusual Flow",mv:"+2.1%",u:1,c:88,
-     i:"Call sweep, 14,200 contracts at the $185 strike, 3DTE, all at ask (~$4.6M premium)."},
-    {t:"AMD",e:"Scanner",lbl:"Breakout",mv:"+3.4%",u:1,c:74,
-     i:"Breaking out of a six-week base on 2.7× average volume. Cleared $172, room to $186."},
-    {t:"TSLA",e:"Catalyst",lbl:"Catalyst",mv:"-1.8%",u:0,c:69,
-     i:"New 8-K: guidance cut on delivery outlook. Historically a −2.3% five-day drift."},
-    {t:"AAPL",e:"Technicals",lbl:"VWAP reclaim",mv:"+0.6%",u:1,c:66,
-     i:"Reclaimed VWAP after the morning flush; MACD crossed bullish on the 15-minute."},
-    {t:"SMCI",e:"Scanner",lbl:"Squeeze",mv:"+5.9%",u:1,c:63,
-     i:"Top 1% of the universe for unusual volume. Short float 18% and rising."},
-    {t:"MSFT",e:"Options",lbl:"Gamma wall",mv:"+1.2%",u:1,c:71,
-     i:"Put/call skew flipped bullish into the cloud update. Gamma wall building at $430."},
-    {t:"COIN",e:"Catalyst",lbl:"High-beta proxy",mv:"+4.1%",u:1,c:70,
-     i:"BTC cleared $72k. COIN moves 2.4× spot on up-days like this one."},
-    {t:"PLTR",e:"Technicals",lbl:"Divergence",mv:"+2.8%",u:1,c:64,
-     i:"RSI divergence resolved higher; 50/200 EMA golden cross confirmed on the daily."}
-  ];
+  /* ---- market signals -----------------------------------------------------
+
+     This was eight hardcoded objects describing market events that never
+     happened: an NVDA call sweep of 14,200 contracts at a named strike for
+     ~$4.6M of premium, a TSLA 8-K cutting delivery guidance, BTC clearing
+     $72k. They were rendered as live across seven pages, ranked by
+     "engine agreement" on the dashboard, and filtered against the member's
+     own holdings on the portfolio page — which turns an invented filing into
+     something that looks like personalised research about a name they own.
+
+     There is no wording that makes an invented 8-K publishable, so the array
+     is empty rather than rewritten. It stays as a binding so the seven
+     consumers keep their shape; each one renders F.sigNone() instead of a
+     row when it is empty, and fills only when a real signal source exists.  */
+  F.SIGNALS=[];
+
+  /* The honest empty state for any panel that renders signal rows. */
+  F.sigNone=function(what){
+    return '<p class="deskempty">' + (what || 'No signals to show.') + ' ' +
+      'Flux publishes a signal only when a live source produces one, so this ' +
+      'panel stays empty rather than filling with an example.</p>';
+  };
 
   F.ENGINES=[
     {ic:"⌖",id:"Scanner",d:"Sweeps the desk's 114-name universe for breakouts, volume spikes, gaps and squeeze conditions.",c:"15s",o:"breakouts"},
@@ -40,7 +43,7 @@
     {ic:"⟁",id:"Options",d:"Tracks unusual options activity, sweeps, open-interest shifts, skew and gamma.",c:"10s",o:"flow"},
     {ic:"△",id:"Technicals",d:"Computes indicators across timeframes: crosses, divergences, VWAP and key levels.",c:"20s",o:"levels"},
     {ic:"⊘",id:"Risk",d:"Watches your book, drawdown, correlation, stops and exposure, and gates orders.",c:"5s",o:"guardrails"},
-    {ic:"⧗",id:"Backtest",d:"Replays every flagged setup across years of history to prove the edge is real.",c:"on-demand",o:"validation"}
+    {ic:"⧗",id:"Record",d:"Files every prediction with the date it resolves, then grades it against the tape when that date arrives. Flux does not backtest.",c:"on resolve",o:"grades"}
   ];
 
   /* The models actually in the loop. Named for what runs, not for what
@@ -166,6 +169,86 @@
       'These figures come off the record itself and stay blank until it exists.</p>';
     if(caption) caption.remove();
     return true;
+  };
+
+
+  /* ---- the hero film ------------------------------------------------------
+
+     A generated film, scrubbed by the reader's scroll. Declarative: any
+     container becomes a film host by carrying
+
+       <div class="fx-film-host" data-film="<desktop mp4>"
+                                 data-film-m="<mobile mp4>"
+                                 data-film-pos="center 62%"></div>
+
+     as its first child. The host builds its own <video>; nothing autoplays,
+     so the motion is the reader's.
+
+     It is strictly an enhancement. The layer starts transparent and is
+     revealed only after a real frame has painted, so a slow connection, a
+     blocked asset, save-data or prefers-reduced-motion all leave the page
+     exactly as it renders without it. A load error removes the element
+     rather than leaving a dead layer behind.
+  -------------------------------------------------------------------------- */
+  F.initFilm=function(root){
+    var hosts=$$(".fx-film-host",root||document);
+    if(!hosts.length||!("IntersectionObserver" in window))return;
+    if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    if(navigator.connection&&navigator.connection.saveData)return;
+
+    var small=window.matchMedia("(max-width:720px)").matches;
+
+    hosts.forEach(function(host){
+      var src=small?(host.getAttribute("data-film-m")||host.getAttribute("data-film")):host.getAttribute("data-film");
+      if(!src)return;
+
+      var v=document.createElement("video");
+      v.className="fx-film";
+      v.muted=true; v.defaultMuted=true;
+      v.playsInline=true; v.setAttribute("playsinline","");
+      v.setAttribute("aria-hidden","true");
+      v.setAttribute("disablepictureinpicture","");
+      v.setAttribute("disableremoteplayback","");
+      v.preload="auto";
+      if(host.getAttribute("data-film-pos")) v.style.objectPosition=host.getAttribute("data-film-pos");
+      v.src=src;
+      host.appendChild(v);
+
+      var dur=0,ready=false,raf=0,want=0,have=-1,listening=false;
+
+      v.addEventListener("loadedmetadata",function(){dur=v.duration||0;});
+      /* reveal on a painted frame, never on metadata alone */
+      v.addEventListener("loadeddata",function(){ready=true;host.classList.add("in");seek();});
+      v.addEventListener("error",function(){ if(v.parentNode) v.parentNode.removeChild(v); });
+
+      function progress(){
+        var r=host.getBoundingClientRect(),vh=window.innerHeight||1;
+        var total=r.height+vh;                 /* host traversing the viewport */
+        var p=(vh-r.top)/(total||1);
+        return p<0?0:(p>1?1:p);
+      }
+      function seek(){
+        raf=0;
+        if(!ready||!dur)return;
+        if(Math.abs(want-have)>0.02){          /* coalesce; never re-seek to now */
+          have=want;
+          try{v.currentTime=want;}catch(e){/* seek raced a load */}
+        }
+      }
+      function onScroll(){
+        want=progress()*(dur||0);
+        if(!raf)raf=requestAnimationFrame(seek);
+      }
+
+      new IntersectionObserver(function(es){
+        if(es[0].isIntersecting){
+          if(!listening){window.addEventListener("scroll",onScroll,{passive:true});listening=true;}
+          onScroll();
+        }else if(listening){
+          window.removeEventListener("scroll",onScroll);listening=false;
+        }
+      },{rootMargin:"250px 0px"}).observe(host);
+    });
   };
 
   /* ---- counters ---- */
@@ -752,6 +835,6 @@
   };
 
   document.addEventListener("DOMContentLoaded",function(){
-    F.initNav();F.initReveal();F.initStagger();F.initCounters();F.initFX();F.initAuth();F.initTicker();
+    F.initNav();F.initReveal();F.initStagger();F.initCounters();F.initFX();F.initAuth();F.initTicker();F.initFilm();
   });
 })();
