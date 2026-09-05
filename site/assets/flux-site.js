@@ -59,14 +59,48 @@
   ];
 
   /* ---- nav ---- */
+  /* ---- run-once guard -----------------------------------------------------
+
+     Several pages called initNav/initReveal/initStagger/initFX themselves and
+     then this file called the same functions again on DOMContentLoaded. Each
+     one bound its handlers a second time, so a single tap on the mobile menu
+     button ran the toggle twice and the menu opened and closed on the same
+     click. These are now idempotent: the second call is a no-op, and this
+     file's DOMContentLoaded pass is the owner. */
+  var RAN = {};
+  function once(name){
+    if(RAN[name]) return true;
+    RAN[name] = true;
+    return false;
+  }
+
   F.initNav=function(){
+    if(once("nav")) return;
     var nav=$(".nav");
     if(nav){
       var onScroll=function(){nav.classList.toggle("scrolled",window.scrollY>12)};
       onScroll();window.addEventListener("scroll",onScroll,{passive:true});
     }
     var t=$(".nav-toggle"),links=$(".nav-links");
-    if(t&&links){t.addEventListener("click",function(){links.classList.toggle("open")});}
+    if(t&&links){
+      /* the button owns the disclosure, so it has to say what it controls and
+         what state that thing is in */
+      if(!links.id) links.id="navLinks";
+      t.setAttribute("aria-controls",links.id);
+      t.setAttribute("aria-expanded","false");
+      if(!t.hasAttribute("aria-label")) t.setAttribute("aria-label","Menu");
+      t.addEventListener("click",function(){
+        var open=links.classList.toggle("open");
+        t.setAttribute("aria-expanded",open?"true":"false");
+      });
+      document.addEventListener("keydown",function(e){
+        if(e.key==="Escape"&&links.classList.contains("open")){
+          links.classList.remove("open");
+          t.setAttribute("aria-expanded","false");
+          t.focus();
+        }
+      });
+    }
     // mark current page
     var path=(location.pathname.split("/").pop()||"index.html").toLowerCase();
     $$(".nav-links a").forEach(function(a){
@@ -105,6 +139,9 @@
 
   /* ---- reveal ---- */
   F.initReveal=function(root){
+    /* re-callable with a root for content added after load; the whole-document
+       pass runs once so a page that also calls it does not double-observe */
+    if(!root && once("reveal")) return;
     var els=$$(".reveal",root||document).filter(function(e){return !e.classList.contains("in")});
     if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("in")});return;}
     var io=new IntersectionObserver(function(es){
@@ -115,6 +152,7 @@
 
   /* Staggered groups: the container is observed, the children arrive in order. */
   F.initStagger=function(root){
+    if(!root && once("stagger")) return;
     var els=$$(".stagger",root||document).filter(function(e){return !e.classList.contains("in")});
     if(!els.length)return;
     if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("in")});return;}
@@ -253,6 +291,7 @@
 
   /* ---- counters ---- */
   F.initCounters=function(){
+    if(once("counters")) return;
     var els=$$("[data-count]");
     if(!els.length)return;
     var run=function(el){
@@ -470,6 +509,7 @@
   };
 
   F.initFX=function(){
+    if(once("fx")) return;
     var body=document.body;
     F.initAlerts();
     F.initSearch();
@@ -768,6 +808,7 @@
   window.FLUXAlerts=F.Alerts;
 
   F.initAuth=function(){
+    if(once("auth")) return;
     var u=F.Auth.get(),cta=$(".nav-cta");
     if(cta){
       if(u){

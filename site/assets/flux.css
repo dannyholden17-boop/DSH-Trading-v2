@@ -900,7 +900,15 @@ body::before{
   background-size:auto,auto,auto,cover;background-position:center,center,center,64% 40%;
   background-repeat:no-repeat;
 }
-.nav,main,section,.footer,.tm-shell,.dk-wrap{position:relative;z-index:1}
+/* This lifted every major block onto its own layer so the page's ambient
+   washes sit behind them. It also caught .nav, which is declared
+   position:sticky;z-index:60 further up — the blanket rule reset it to
+   relative/1, so the nav was neither sticky nor above the page. On any layout
+   whose main overlaps the header box that put the mobile menu button
+   underneath main, where it could not be clicked at all. The nav is excluded
+   and restated. */
+main,section,.footer,.tm-shell,.dk-wrap{position:relative;z-index:1}
+.nav{position:sticky;top:0;z-index:60}
 
 /* Surfaces catch the light on their top edge and fall away below. */
 .fl-panel,.daysheet,.roster,.dk-ledger,.dk-filings,.glass,.card,.plan{

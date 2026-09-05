@@ -11,7 +11,12 @@
   "use strict";
   var URL_ = "https://pyzcwddyagodmtjuvwdn.supabase.co";
   var KEY_ = "sb_publishable_CIYiWNtbGgXDQgEj2kyvrw_AMxXwr8l";
-  var SDK  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+  /* Pinned. "@2" resolves to whatever the latest v2 is on the day the page
+     loads, which means a third party can change the code running on this site
+     without anyone here deciding to. Public desk content does not wait on
+     this script either: flux-desk.js falls back to REST with the publishable
+     key, so a CDN outage costs the sign-in state, not the page. */
+  var SDK  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.10/dist/umd/supabase.min.js";
   var SKEY = "sb-pyzcwddyagodmtjuvwdn-auth-token";
 
   var S = { client:null, _user:null, loaded:false };

@@ -4,62 +4,145 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Analysts; Flux</title>
-<meta name="description" content="Three analysts read every name Flux's research desk works: fundamentals, catalyst and tape. Each files a view, a conviction and its evidence. Simulated / educational, not investment advice.">
+<meta name="description" content="Three analysts read every name Flux's research desk works: fundamentals, catalyst and tape. Each files a view, a conviction and its evidence. Simulated research, not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=35">
-<link rel="stylesheet" href="./assets/flux.css?v=35">
-<script src="./assets/flux-supa.js?v=35" defer></script>
-<script src="./assets/flux-site.js?v=35" defer></script>
-<script src="./assets/flux-universe.js?v=35" defer></script>
-<script src="./assets/flux-feed.js?v=35" defer></script>
-<script src="./assets/flux-desk.js?v=35" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=36">
+<link rel="stylesheet" href="./assets/flux.css?v=36">
+<!-- This page reads the desk record and nothing else. flux-universe and
+     flux-feed are deliberately absent: they pulled a 266-name universe and
+     polled quotes for up to 240 symbols every ten seconds for a page that
+     shows the round's own names and their round-time ratings. -->
+<script src="./assets/flux-supa.js?v=36" defer></script>
+<script src="./assets/flux-site.js?v=36" defer></script>
+<script src="./assets/flux-desk.js?v=36" defer></script>
 <style>
-/* The station's glass, page-scoped. flux.css declares the hero's rgba glass
-   token and then re-declares --glass as the opaque --blotter-2 in its legacy
-   alias block, so the shared glass pass renders flat. Setting the intended
-   values on the page wrapper lets the shared .st-panel and .st-cards rules
-   read as the same substance as the front page here. */
+/* ============================================================
+   analysts.html — a research desk, not a dashboard.
+
+   The hero film, the shader and the aurora are gone from this
+   page: it is somewhere you come to read what three analysts
+   filed, and moving imagery behind that is a cost with no
+   return. What is left is type, rules and the record.
+   ============================================================ */
 .st-wrap{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
-/* every hairline and hover inside the glass is light, never the dark-room line */
-.st-card:hover{background:var(--glass-hd)}
-.st-fig,.st-note{border-color:var(--glass-line-2)}
-/* the desk list and the wire share the row; the wire and the record stack
-   beside it so a quiet wire does not leave a column of nothing */
-.st-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.st-split>*{margin-top:0}
-.st-col{display:grid;gap:16px;align-content:start;min-width:0}
-.st-col>.st-panel{margin-top:0}
+/* the page's own backdrop wash is dropped with the film it sat behind */
+.st-wrap::before{display:none}
+
+/* ---- desk status -------------------------------------------------------- */
+.an-status{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;
+  margin-top:20px;padding:14px 16px;border:1px solid var(--glass-line);
+  border-radius:var(--radius);background:var(--glass)}
+.an-status .dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:6px;
+  background:var(--text-faint)}
+.an-status[data-state="running"] .dot{background:var(--clearing)}
+.an-status[data-state="filed"]   .dot{background:var(--clearing)}
+.an-status[data-state="stalled"] .dot,
+.an-status[data-state="failed"]  .dot{background:var(--gold)}
+.an-status[data-state="offline"] .dot{background:var(--stamp)}
+.an-status .body{min-width:0;flex:1}
+.an-status .head{font-family:var(--f-display);font-size:1.15rem;font-weight:700;color:var(--text)}
+.an-status .sub{margin:5px 0 0;font-size:.9rem;line-height:1.55;color:var(--text-dim)}
+.an-status .when{margin:6px 0 0;font-family:var(--f-mono);font-size:12.5px;color:var(--text-faint)}
+
+/* ---- the three desks ---------------------------------------------------- */
+.an-desks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+@media(max-width:900px){.an-desks{grid-template-columns:1fr}}
+.an-desk{padding:18px 18px 16px;border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+  background:var(--glass);display:flex;flex-direction:column;gap:9px;min-height:196px}
+.an-desk h3{font-family:var(--f-display);font-size:1.15rem;letter-spacing:-.01em;
+  border-left:2px solid var(--accent);padding-left:10px}
+.an-desk .what{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin:0}
+.an-desk .figs{display:flex;gap:26px;margin-top:auto;padding-top:12px;
+  border-top:1px solid var(--glass-line-2)}
+.an-desk .fig b{display:block;font-family:var(--f-mono);font-size:1.6rem;font-weight:700;
+  color:var(--text);font-variant-numeric:tabular-nums}
+.an-desk .fig span{display:block;margin-top:2px;font-family:var(--f-mono);font-size:11.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint)}
+.an-desk .last{margin:0;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);line-height:1.5}
+
+/* ---- panels ------------------------------------------------------------- */
+.an-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;margin-top:30px;
+  align-items:start}
+@media(max-width:900px){.an-grid{grid-template-columns:1fr}}
+.an-panel{border:1px solid var(--glass-line);border-radius:var(--radius-lg);background:var(--glass);
+  overflow:hidden}
+.an-panel-h{display:flex;align-items:baseline;gap:12px;padding:14px 18px;
+  border-bottom:1px solid var(--glass-line-2);background:var(--glass-hd)}
+.an-panel-h h2{font-family:var(--f-display);font-size:1.15rem;letter-spacing:-.01em}
+.an-panel-h .cap{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);
+  white-space:nowrap}
+.an-list{list-style:none;margin:0;padding:0}
+.an-list>li{padding:11px 18px;border-top:1px solid var(--glass-line-2)}
+.an-list>li:first-child{border-top:0}
+.an-empty{padding:16px 18px;color:var(--text-dim);font-size:.9rem;line-height:1.6}
+.an-empty b{color:var(--text)}
+
+/* a name under review */
+.an-name{display:flex;gap:12px;align-items:baseline}
+.an-name .t{font-family:var(--f-display);font-weight:700;min-width:5.5ch;color:var(--text)}
+.an-name .r{font-family:var(--f-mono);font-size:12px;letter-spacing:.07em;color:var(--text-faint)}
+.an-name .c{margin-left:auto;font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+
+/* a wire story */
+.an-wire{display:grid;gap:4px}
+.an-wire .hl{font-size:.92rem;line-height:1.5;color:var(--text-dim)}
+.an-wire .fo{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;
+  font-family:var(--f-mono);font-size:11.5px;color:var(--text-faint)}
+.an-wire .fo .tk{color:var(--gold);font-weight:600}
+
+/* filings */
+.an-filing .top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an-filing .ag{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--floor)}
+.an-filing .tk{font-family:var(--f-display);font-weight:700;color:var(--text)}
+.an-filing p{margin:6px 0 0;font-size:.9rem;line-height:1.55;color:var(--text-dim)}
+.an-gate{padding:18px;display:grid;gap:12px}
+.an-gate p{margin:0;color:var(--text-dim);font-size:.92rem;line-height:1.6}
+.an-gate .acts{display:flex;gap:10px;flex-wrap:wrap}
+
+.an-disc{margin-top:30px;color:var(--text-faint);font-size:12.5px;line-height:1.65;max-width:78ch}
+/* Clipped rather than parked at -9999px: an off-canvas element still has a
+   box out there, which shows up as content outside the viewport in any
+   overflow audit and can drag the scroll region on some engines. */
+.an-skip{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
+  padding:10px 16px;background:var(--rail);border:1px solid var(--gold);
+  border-radius:var(--radius);color:var(--text);z-index:100;white-space:nowrap}
+.an-skip:focus{left:12px;top:12px;width:auto;height:auto;clip-path:none;overflow:visible}
+/* a heading the page needs for structure but does not need to show */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
 
-<!-- The price ticker mounts here. It is in the markup rather than created by
-     JS so its 30px is reserved at parse time; inserting it afterwards shoved
-     every page down 30px the moment the script ran. -->
-<div class="ticker" id="fluxTicker" aria-hidden="true"></div>
+<a class="an-skip" href="#main">Skip to content</a>
+
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
-    <nav class="nav-links" id="navLinks">
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
       <a href="./desk.html">Desk</a>
       <a href="./analysts.html" aria-current="page">Analysts</a>
       <a href="./traders.html">Traders</a>
       <a href="./executive.html">Executive</a>
       <a href="./fund.html">Fund</a>
       <a href="./terminal.html">Terminal</a>
+      <!-- A disclosure of ordinary links rather than an ARIA menu. role="menu"
+           promises arrow-key roving focus and typeahead; these are navigation
+           links, so they are marked up as navigation links. -->
       <div class="nav-more">
-        <button type="button" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
-        <div class="nav-menu" role="menu">
-          <a role="menuitem" href="./ai.html">Flux AI</a>
-          <a role="menuitem" href="./autopilot.html">Autopilot</a>
-          <a role="menuitem" href="./portfolio.html">Portfolio</a>
-          <a role="menuitem" href="./markets.html">Markets</a>
-          <a role="menuitem" href="./research.html">Research</a>
-          <a role="menuitem" href="./ideas.html">Ideas</a>
-          <a role="menuitem" href="./news.html">News</a>
-          <a role="menuitem" href="./built.html">How Flux is built</a>
-          <a role="menuitem" href="./brokerage.html">Connect Robinhood</a>
+        <button type="button" class="nav-more-btn" aria-expanded="false" aria-controls="navMore">More<i class="ic-i i-chev" aria-hidden="true"></i></button>
+        <div class="nav-menu" id="navMore">
+          <a href="./ai.html">Flux AI</a>
+          <a href="./autopilot.html">Autopilot</a>
+          <a href="./portfolio.html">Portfolio</a>
+          <a href="./markets.html">Markets</a>
+          <a href="./research.html">Research</a>
+          <a href="./ideas.html">Ideas</a>
+          <a href="./news.html">News</a>
+          <a href="./built.html">How Flux is built</a>
+          <a href="./brokerage.html">Connect Robinhood</a>
         </div>
       </div>
       <a href="./pricing.html">Pricing</a>
@@ -72,80 +155,103 @@
   </div>
 </header>
 
-<main class="st-wrap" id="stBody">
-  <div class="fx-film-host fx-film-host--band" aria-hidden="true"
-       data-film="https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/80982ae0-cc3b-4173-905e-c08b6815a365.mp4"
-       data-film-m="https://d2ol7oe51mr4n9.cloudfront.net/user_3IruKYPLSXTnZKHYb0TTfVFQZ81/7ee7625a-4688-4eee-9d99-9eb3ab01c09a.mp4"
-       data-film-pos="center 62%"></div>
+<main class="st-wrap" id="main">
   <div class="st-top">
     <span class="st-eyebrow">Stage one of three</span>
     <h1>Three analysts,<br><span class="q">always reading.</span></h1>
-    <span class="st-live" id="stLive"><span class="dot"></span><b id="stStage">reading the desk…</b></span>
-    <span class="st-meta" id="stMeta">—</span>
   </div>
   <p class="st-sub">Every name that reaches a trader has been through three lenses first. Each analyst works
     one lens only and files a view, a conviction and the evidence behind it, even when the honest answer is
-    that there is nothing here. They do not see each other's filings.</p>
+    that there is nothing here. They do not see each other&rsquo;s filings.</p>
 
-  <div class="st-cards stagger" id="stCards">
-    <article class="st-card" style="--accent:#7aa7ff">
-      <h2>Fundamentals</h2>
-      <p class="what">Reads the business: growth, margin, balance sheet, what the multiple is paying for and
-        whether the last print supports it.</p>
-      <div class="st-figs">
-        <div class="st-fig"><b id="aFundFil">0</b><span>filings</span></div>
-        <div class="st-fig"><b id="aFundNames">0</b><span>names read</span></div>
-      </div>
-      <p class="st-note" id="aFundLast">—</p>
-    </article>
-    <article class="st-card" style="--accent:#f5b93c">
-      <h2>Catalyst</h2>
-      <p class="what">Reads what is about to happen: filings, earnings, the wire and government sources, and
-        estimates the drift that historically followed.</p>
-      <div class="st-figs">
-        <div class="st-fig"><b id="aCatFil">0</b><span>filings</span></div>
-        <div class="st-fig"><b id="aCatNames">0</b><span>names read</span></div>
-      </div>
-      <p class="st-note" id="aCatLast">—</p>
-    </article>
-    <article class="st-card" style="--accent:#3ddc97">
-      <h2>Tape</h2>
-      <p class="what">Reads price itself: trend, range, where the volume went, and what the technical rating
-        says without any story attached.</p>
-      <div class="st-figs">
-        <div class="st-fig"><b id="aTapeFil">0</b><span>filings</span></div>
-        <div class="st-fig"><b id="aTapeNames">0</b><span>names read</span></div>
-      </div>
-      <p class="st-note" id="aTapeLast">—</p>
-    </article>
-  </div>
-
-  <div class="st-split">
-    <section class="st-panel">
-      <div class="st-panel-h">On the desk right now <em id="aNamesCap">—</em></div>
-      <ul class="st-rows" id="aNames"><li>Reading the round…</li></ul>
-    </section>
-    <div class="st-col">
-      <section class="st-panel">
-        <div class="st-panel-h">On the wire <em id="aWireCap">—</em></div>
-        <ul class="st-rows" id="aWire"><li>Loading the wire…</li></ul>
-      </section>
-      <section class="st-panel">
-        <div class="st-panel-h">The record <em id="aScoreCap">—</em></div>
-        <ul class="st-rows" id="aScore"><li>Reading the scoreboard…</li></ul>
-      </section>
+  <!-- desk health. aria-live so a reader who cannot see the dot is still told
+       when the desk stops filing. -->
+  <div class="an-status" id="anStatus" data-state="loading" role="status" aria-live="polite">
+    <span class="dot" aria-hidden="true"></span>
+    <div class="body">
+      <div class="head" id="anStatusHead">Reading the desk record&hellip;</div>
+      <p class="sub" id="anStatusSub">Checking what the analysts have filed and when.</p>
+      <p class="when" id="anStatusWhen" hidden></p>
     </div>
   </div>
 
-  <section class="st-panel">
-    <div class="st-panel-h">The filings <em id="aGateCap">members only</em></div>
-    <ul class="st-rows" id="aFilings"><li>Checking your access…</li></ul>
+  <section aria-labelledby="anDesksH">
+    <h2 id="anDesksH" class="sr-only">The three analyst desks</h2>
+    <div class="an-desks" id="anDesks">
+      <article class="an-desk" style="--accent:#7aa7ff">
+        <h3>Fundamentals</h3>
+        <p class="what">Reads the business: growth, margin, balance sheet, what the multiple is paying for
+          and whether the last print supports it.</p>
+        <div class="figs">
+          <div class="fig"><b id="anFundFil">&mdash;</b><span>filings</span></div>
+          <div class="fig"><b id="anFundNames">&mdash;</b><span>names read</span></div>
+        </div>
+        <p class="last" id="anFundLast">&mdash;</p>
+      </article>
+      <article class="an-desk" style="--accent:#f5b93c">
+        <h3>Catalyst</h3>
+        <p class="what">Reads what is about to happen: filings, earnings, the wire and government sources,
+          and estimates the drift that historically followed.</p>
+        <div class="figs">
+          <div class="fig"><b id="anCatFil">&mdash;</b><span>filings</span></div>
+          <div class="fig"><b id="anCatNames">&mdash;</b><span>names read</span></div>
+        </div>
+        <p class="last" id="anCatLast">&mdash;</p>
+      </article>
+      <article class="an-desk" style="--accent:#3ddc97">
+        <h3>Tape</h3>
+        <p class="what">Reads price itself: trend, range, where the volume went, and what the technical
+          rating says without any story attached.</p>
+        <div class="figs">
+          <div class="fig"><b id="anTapeFil">&mdash;</b><span>filings</span></div>
+          <div class="fig"><b id="anTapeNames">&mdash;</b><span>names read</span></div>
+        </div>
+        <p class="last" id="anTapeLast">&mdash;</p>
+      </article>
+    </div>
   </section>
 
-  <p class="st-disc">Research output, not investment advice. The desk trades a simulated book with virtual
-    money. Model output can be wrong; every filing is a hypothesis, not a recommendation.</p>
-</main>
+  <div class="an-grid">
+    <section class="an-panel" aria-labelledby="anDeskH">
+      <div class="an-panel-h">
+        <h2 id="anDeskH">On the desk</h2>
+        <span class="cap" id="anNamesCap">&mdash;</span>
+      </div>
+      <ul class="an-list" id="anNames"><li class="an-empty">Reading the round&hellip;</li></ul>
+    </section>
 
+    <section class="an-panel" aria-labelledby="anWireH">
+      <div class="an-panel-h">
+        <h2 id="anWireH">On the wire</h2>
+        <span class="cap" id="anWireCap">&mdash;</span>
+      </div>
+      <ul class="an-list" id="anWire"><li class="an-empty">Reading the round&hellip;</li></ul>
+    </section>
+  </div>
+
+  <!-- The record stays out of the document until there is a sample worth
+       showing. An empty scoreboard is not page content. -->
+  <section class="an-panel" id="anRecord" aria-labelledby="anRecordH" hidden style="margin-top:18px">
+    <div class="an-panel-h">
+      <h2 id="anRecordH">The record</h2>
+      <span class="cap" id="anScoreCap">&mdash;</span>
+    </div>
+    <ul class="an-list" id="anScore"></ul>
+  </section>
+
+  <section class="an-panel" aria-labelledby="anFilingsH" style="margin-top:18px">
+    <div class="an-panel-h">
+      <h2 id="anFilingsH">The filings</h2>
+      <span class="cap" id="anGateCap">&mdash;</span>
+    </div>
+    <div id="anFilings"><p class="an-empty">Checking your access&hellip;</p></div>
+  </section>
+
+  <p class="an-disc">Research output, not investment advice. Flux is not a broker-dealer. The desk trades a
+    simulated book with virtual money, and model output can be wrong; every filing is a hypothesis, not a
+    recommendation. Ratings and prices shown against a name are the values captured when that round ran,
+    not live quotes.</p>
+</main>
 <footer class="footer"><div class="wrap">
   <div class="footer-grid">
     <div>
@@ -158,162 +264,400 @@
     <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
-  <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
+  <div class="footer-bottom"><span>&copy; 2026 DSH Trading &middot; Flux</span><span class="mono">Not advice &middot; <a href="./privacy.html" style="color:inherit">Privacy</a> &middot; <a href="./terms.html" style="color:inherit">Terms</a></span></div>
 </div></footer>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  function boot(){
-    var F = window.FLUX;
-    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 140); return; }
-    var D = F.Desk;
-    if(F.initNav) F.initNav();
-    if(F.initFX) F.initFX();
-    if(F.initReveal) F.initReveal();
-    if(F.initStagger) F.initStagger();
-    var $ = function(s){ return document.querySelector(s); };
-    var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
-      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); };
-    var num = function(el, v){ if(el) F.countTo(el, v); };
-    function fail(msg){
-      var s = $("#stStage"); if(s) s.textContent = "record unreachable";
-      var b = $("#stBody");
-      if(b) b.insertAdjacentHTML("afterbegin",
-        '<p class="st-disc">' + msg + '</p>');
+/* ============================================================================
+   The analysts page.
+
+   flux-site.js owns page initialisation; this file does not call initNav and
+   friends. Calling them here as well used to bind the mobile menu twice, so a
+   single tap opened and closed it in the same click.
+   ========================================================================== */
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---- text safety ------------------------------------------------------ */
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c];
+    });
+  }
+  /* Headlines arrive already carrying entities from whatever produced them, so
+     &#x2019; was rendering as literal text. Decode once on the way in, then
+     escape once on the way out — decoding after escaping would undo the
+     escaping and hand the page an injection. */
+  var DECODER = document.createElement("textarea");
+  function decodeEntities(s){
+    s = String(s == null ? "" : s);
+    if(s.indexOf("&") < 0) return s;
+    DECODER.innerHTML = s;
+    var out = DECODER.value;
+    DECODER.textContent = "";
+    return out;
+  }
+
+  /* ---- relative time that keeps up ------------------------------------- */
+  function agoFrom(ts){
+    if(!ts) return null;
+    var t = Date.parse(ts);
+    if(isNaN(t)) return null;
+    var s = Math.max(0, (Date.now() - t) / 1000);
+    if(s < 45)    return "just now";
+    if(s < 3600)  return Math.round(s/60) + "m ago";
+    if(s < 86400) return Math.round(s/3600) + "h ago";
+    return Math.round(s/86400) + "d ago";
+  }
+  /* Every element with data-at re-renders in place, so a tab left open does
+     not sit there claiming a filing was two minutes ago an hour later. */
+  function paintTimes(root){
+    var els = (root || document).querySelectorAll("[data-at]");
+    for(var i = 0; i < els.length; i++){
+      var a = agoFrom(els[i].getAttribute("data-at"));
+      if(a) els[i].textContent = (els[i].getAttribute("data-at-prefix") || "") + a;
+    }
+  }
+
+  /* ---- the wire --------------------------------------------------------- */
+  var NAME_STOP = /^(inc|corp|corporation|company|co|holdings?|group|technologies|technology|systems|international|ltd|plc|the|and|class|common|stock)$/i;
+
+  /* meta.news is { TICKER: ["\"headline\" (Source)", ...] }: a string, with no
+     link and no publication time. Parse it into records, decide whether the
+     story actually belongs to the ticker it was filed under, and never invent
+     the fields that are not there. */
+  function parseWire(news, feats, roundAt){
+    var names = {};
+    (feats || []).forEach(function(f){
+      if(f && f.t) names[String(f.t).toUpperCase()] = String(f.name || "");
+    });
+
+    var out = [], seen = {};
+    Object.keys(news || {}).forEach(function(key){
+      var list = news[key] || [];
+      if(!Array.isArray(list)) list = [list];
+      var ticker = key === "__GOV__" ? "GOV" : String(key).toUpperCase();
+
+      list.forEach(function(raw){
+        var text = decodeEntities(String(raw == null ? "" : raw)).trim();
+        if(!text) return;
+
+        /* "headline" (Source) — quotes and the trailing source are optional */
+        var m = text.match(/^\s*["“]?(.*?)["”]?\s*\(([^()]{2,60})\)\s*$/);
+        var headline = (m ? m[1] : text).trim().replace(/^["“]|["”]$/g, "");
+        var source   = m ? m[2].trim() : "";
+        if(headline.length < 12) return;
+
+        var norm = headline.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+        if(!norm || seen[norm]) return;      // the same story filed under two names
+        seen[norm] = 1;
+
+        out.push({
+          ticker: ticker,
+          headline: headline,
+          source: source,
+          capturedAt: roundAt || null,
+          score: relevance(headline, ticker, names[ticker])
+        });
+      });
+    });
+    out.sort(function(a,b){ return b.score - a.score; });
+    return out;
+  }
+
+  /* Does this story actually mention the company it was filed under? A wire
+     item attached to an unrelated name is worse than no wire item, so anything
+     that cannot be tied back is held out of the list and counted instead. */
+  function relevance(headline, ticker, company){
+    if(ticker === "GOV") return 0.6;
+    var h = " " + headline.toLowerCase() + " ";
+    if(new RegExp("\\b" + ticker.toLowerCase() + "\\b").test(h)) return 1;
+    var tokens = String(company || "").split(/[^A-Za-z0-9]+/)
+      .filter(function(w){ return w.length >= 4 && !NAME_STOP.test(w); });
+    for(var i = 0; i < tokens.length; i++){
+      if(h.indexOf(" " + tokens[i].toLowerCase()) >= 0) return 0.9;
+    }
+    return 0.2;
+  }
+
+  /* ---- the page --------------------------------------------------------- */
+  var STATE = { pinnedRound: null, filingsFor: null, timer: null, tick: null, busy: false };
+  var RELEVANT = 0.5;
+
+  function setStatus(state, head, sub, at, atPrefix){
+    var box = $("anStatus");
+    if(!box) return;
+    box.setAttribute("data-state", state);
+    $("anStatusHead").textContent = head;
+    $("anStatusSub").textContent = sub;
+    var w = $("anStatusWhen");
+    if(at){
+      w.hidden = false;
+      w.setAttribute("data-at", at);
+      w.setAttribute("data-at-prefix", atPrefix || "");
+      paintTimes(box);
+    } else { w.hidden = true; w.removeAttribute("data-at"); }
+  }
+
+  function num(el, v){
+    if(!el) return;
+    el.textContent = (v == null) ? "—" : Number(v).toLocaleString();
+  }
+
+  /* ---- desk health ------------------------------------------------------ */
+  function paintFloor(r){
+    if(!r.ok || !r.value || !r.value.round){
+      /* Tell a reader that the record could not be read, rather than drawing
+         an empty desk that looks like a quiet one. */
+      var kind = r.kind === "timeout" ? "The desk record timed out."
+               : r.kind === "offline" ? "The desk record could not be reached."
+               : "The desk record could not be read.";
+      setStatus("offline", "Desk record unavailable",
+        kind + " Nothing on this page is filled in with an example.");
+      emptyPanel("anNames", "The names under review come from the desk record, which is not reachable right now.");
+      emptyPanel("anWire",  "The wire comes from the desk record, which is not reachable right now.");
+      $("anNamesCap").textContent = "unavailable";
+      $("anWireCap").textContent  = "unavailable";
+      return null;
     }
 
-    D.agents().then(function(a){
-      if(!a) throw new Error("no agents");
-      var by = {};
-      (a.analysts || []).forEach(function(x){ by[x.agent] = x; });
-      var map = [["fundamentals","aFund"],["catalyst","aCat"],["tape","aTape"]];
-      map.forEach(function(m){
-        var x = by[m[0]] || {};
-        num($("#" + m[1] + "Fil"), x.filings || 0);
-        num($("#" + m[1] + "Names"), x.names || 0);
-        var el = $("#" + m[1] + "Last");
-        if(el){
-          var pb = (a.playbooks || []).filter(function(b){ return b.agent === m[0]; })[0];
-          var line = x.last_at
-            ? "Last filed " + D.ago(x.last_at) + " · " + (x.rounds || 0) + " rounds worked."
-            : "Has not filed yet.";
-          el.innerHTML = (pb && pb.method_name
-              ? '<b style="color:var(--text);font-weight:600">' + esc(pb.method_name) +
-                '</b> <span style="color:var(--text-faint)">v' + esc(pb.version) + '</span><br>'
-              : "") + esc(line);
-        }
-      });
-      /* The scoreboard. A prediction is graded on its own resolve date, so
-         until one comes due this panel has nothing to report, and says so
-         rather than showing a rate computed from nothing. */
-      var board = a.scoreboard || [];
-      var host = $("#aScore");
-      var resolved = a.predictions_resolved || 0, open_ = a.predictions_open || 0;
-      if(host){
-        if(board.length){
-          $("#aScoreCap").textContent = resolved + " resolved";
-          host.innerHTML = board.map(function(r){
-            var rate = r.hit_rate != null ? Math.round(r.hit_rate * 100) + "%" : "—";
-            return '<li style="display:flex;gap:14px;align-items:baseline;flex-wrap:wrap">' +
-              '<b style="font-family:var(--f-display);min-width:11ch">' + esc(r.agent) + '</b>' +
-              '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;' +
-              'text-transform:uppercase;color:var(--text-faint);min-width:9ch">' + esc(r.horizon || "all") + '</span>' +
-              '<span style="font-family:var(--f-mono);font-size:13px;color:var(--text-dim)">' +
-              esc(r.resolved || 0) + ' resolved</span>' +
-              '<span style="margin-left:auto;font-family:var(--f-mono);font-size:1rem;font-weight:600;color:' +
-              (r.hit_rate == null ? "var(--text-faint)" : r.hit_rate >= 0.5 ? "var(--clearing)" : "var(--stamp)") +
-              '">' + rate + '</span></li>';
-          }).join("");
-        } else {
-          $("#aScoreCap").textContent = open_ ? open_ + " open" : "nothing due yet";
-          host.innerHTML = '<li style="color:var(--text-dim);font-size:.9rem;line-height:1.65">' +
-            (open_
-              ? 'No prediction has reached its resolve date yet, so there is no hit rate to show. ' +
-                (open_ === 1 ? 'One call is' : '<b style="color:var(--text)">' + open_ + '</b> calls are') +
-                ' open and waiting to be graded.'
-              : 'The analysts have not filed a dated prediction yet, so there is nothing to grade. ' +
-                'Filings above are research notes; a prediction is the stricter thing: a direction, a ' +
-                'target and a date it can be scored on.') +
-            ' When one comes due it is scored against the tape whether it worked or not, and the result ' +
-            'appears here, including the misses.</li>';
-        }
-      }
-    }).catch(function(){ fail("Could not reach the desk record. Nothing on this page is filled in with an example."); });
+    var f = r.value, round = f.round, good = f.last_good_round || null;
+    var running = round.status === "running";
+    var healthy = f.healthy !== false;
 
-    D.floor().then(function(f){
-      if(!f || !f.round) throw new Error("no floor");
-      var r = f.round, meta = r.meta || {}, tv = meta.tv || {}, news = meta.news || {};
-      var live = r.status === "running";
-      var el = $("#stLive"); if(el) el.classList.toggle("on", live);
-      $("#stStage").textContent = live ? D.stageLabel(r.stage) : "round " + r.seq + " filed";
-      $("#stMeta").textContent = "Round " + r.seq + " · " + D.ago(r.finished_at || r.started_at)
-        + (f.rounds_today ? " · " + f.rounds_today + " rounds today" : "");
+    if(running){
+      setStatus("running", "Round " + round.seq + " is running",
+        "The analysts are working through this round's names now.",
+        round.started_at, "started ");
+    } else if(healthy){
+      /* "filed" is only ever said about a round that actually filed. */
+      setStatus("filed", "Round " + (good ? good.seq : round.seq) + " filed",
+        (f.rounds_today ? f.rounds_today + " rounds filed in the last 24 hours." : "The desk is filing normally."),
+        good ? good.filed_at : round.finished_at, "filed ");
+    } else {
+      setStatus("stalled", "Research desk temporarily paused",
+        (f.stall_reason || "The desk is not filing at the moment.") +
+        " The names and filings below are from the last round that completed.",
+        f.last_filed_at, "last analyst filing ");
+    }
 
-      var ts = r.tickers || [];
-      $("#aNamesCap").textContent = ts.length + " names";
-      $("#aNames").innerHTML = ts.map(function(t){
-        var q = tv[t] || {}, ch = q.change;
-        return '<li style="display:flex;gap:12px;align-items:baseline">' +
-          '<b style="font-family:var(--f-display);min-width:5.5ch">' + esc(t) + '</b>' +
-          '<span style="color:var(--text-faint);font-family:var(--f-mono);font-size:12px;' +
-          'letter-spacing:.08em;text-transform:uppercase">' + esc(q.label || "no rating") + '</span>' +
-          '<span style="margin-left:auto;font-family:var(--f-mono);font-size:13px;color:' +
-          (ch == null ? "var(--text-faint)" : ch >= 0 ? "var(--clearing)" : "var(--stamp)") + '">' +
-          (ch == null ? "—" : (ch >= 0 ? "+" : "") + esc(ch) + "%") + '</span></li>';
-      }).join("") || '<li>No names on the desk this round.</li>';
+    /* Names and the wire come from the round the page is pinned to, so the
+       page never shows one round's names beside another round's stories. */
+    var meta = round.meta || {};
+    paintNames(round, meta);
+    paintWire(meta, round.started_at);
 
-      var wire = [];
-      Object.keys(news).forEach(function(k){
-        (news[k] || []).forEach(function(h){
-          var m = String(h).match(/^\s*"?(.*?)"?\s*\(([^()]*)\)\s*$/);
-          wire.push([k === "__GOV__" ? "GOV" : k, m ? m[1] : String(h), m ? m[2] : ""]);
-        });
-      });
-      $("#aWireCap").textContent = wire.length ? wire.length + " headlines" : "quiet";
-      $("#aWire").innerHTML = wire.length ? wire.slice(0,8).map(function(w){
-        return '<li style="display:flex;gap:12px;font-size:13px;line-height:1.5;color:var(--text-dim)">' +
-          '<b style="color:var(--gold);font-family:var(--f-mono);font-size:12px;min-width:5.5ch">' +
-          esc(w[0]) + '</b><span>' + esc(w[1]) +
-          (w[2] ? ' <em style="font-style:normal;color:var(--text-faint)">&middot; ' + esc(w[2]) + '</em>' : "") +
-          '</span></li>';
-      }).join("") : '<li>Nothing crossed the wire on these names this round.</li>';
-      return r;
-    }).then(function(){
-      return D.rounds(1).then(function(rs){
-        var rid = rs && rs[0] && rs[0].id;
-        if(!rid) return;
-        return D.notes(rid).then(function(ns){
-          var an = (ns || []).filter(function(n){ return n.stage === "analyst"; });
-          var host = $("#aFilings");
-          if(!an.length){
-            $("#aGateCap").textContent = "members only";
-            host.innerHTML = '<li>The analysts\' filings are part of a Flux membership. ' +
-              '<a href="./signin.html" style="color:var(--gold);text-decoration:underline">Sign in</a> ' +
-              'to read what each lens actually wrote on every name this round.</li>';
-            return;
-          }
-          $("#aGateCap").textContent = an.length + " this round";
-          host.innerHTML = an.map(function(n){
-            var p = n.payload || {};
-            return '<li><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">' +
-              '<span style="font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;' +
-              'text-transform:uppercase;color:var(--floor)">' + esc(n.agent) + '</span>' +
-              '<b style="font-family:var(--f-display)">' + esc(n.ticker) + '</b>' +
-              (p.view ? '<span style="font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' +
-                esc(p.view) + '</span>' : "") +
-              (p.conviction != null ? '<span style="margin-left:auto;font-family:var(--f-mono);' +
-                'font-size:12px;color:var(--text-faint)">conviction ' + esc(p.conviction) + '</span>' : "") +
-              '</div>' +
-              (p.rationale ? '<p style="margin:6px 0 0;font-size:.9rem;line-height:1.55;color:var(--text-dim)">' +
-                esc(p.rationale) + '</p>' : "") + '</li>';
-          }).join("");
-        });
-      });
-    }).catch(function(){});
-
+    /* The filings panel reads the newest round that actually filed. Taking it
+       from this same response is what stops the old race with rounds(1). */
+    return good && good.id != null ? good.id : null;
   }
-  boot();
-});
+
+  function emptyPanel(id, msg){
+    var host = $(id);
+    if(host) host.innerHTML = '<li class="an-empty">' + esc(msg) + '</li>';
+  }
+
+  function paintNames(round, meta){
+    var tv = meta.tv || {}, ts = round.tickers || [];
+    $("anNamesCap").textContent = ts.length ? ts.length + " names" : "none";
+    if(!ts.length){
+      emptyPanel("anNames", "No names were on the desk in this round.");
+      return;
+    }
+    $("anNames").innerHTML = ts.map(function(t){
+      var q = tv[t] || {}, ch = q.change;
+      var col = ch == null ? "var(--text-faint)" : (ch >= 0 ? "var(--clearing)" : "var(--stamp)");
+      return '<li><div class="an-name">' +
+        '<span class="t">' + esc(t) + '</span>' +
+        '<span class="r">' + esc(q.label || "no rating") + '</span>' +
+        '<span class="c" style="color:' + col + '">' +
+        (ch == null ? "—" : (ch >= 0 ? "+" : "") + esc(ch) + "%") +
+        '</span></div></li>';
+    }).join("");
+  }
+
+  function paintWire(meta, roundAt){
+    var all = parseWire(meta.news, meta.feats, roundAt);
+    var keep = all.filter(function(w){ return w.score >= RELEVANT; });
+    var dropped = all.length - keep.length;
+
+    $("anWireCap").textContent = keep.length ? keep.length + (keep.length === 1 ? " story" : " stories") : "quiet";
+    if(!keep.length){
+      emptyPanel("anWire", all.length
+        ? "Nothing on the wire could be tied to a name on the desk this round."
+        : "Nothing crossed the wire on these names this round.");
+      return;
+    }
+    $("anWire").innerHTML = keep.slice(0, 8).map(function(w){
+      return '<li><div class="an-wire">' +
+        '<span class="hl">' + esc(w.headline) + '</span>' +
+        '<span class="fo"><span class="tk">' + esc(w.ticker) + '</span>' +
+        (w.source ? '<span>' + esc(w.source) + '</span>' : '<span>source not recorded</span>') +
+        (w.capturedAt ? '<span data-at="' + esc(w.capturedAt) + '" data-at-prefix="captured "></span>' : "") +
+        '</span></div></li>';
+    }).join("") +
+    (dropped ? '<li class="an-empty" style="font-size:12.5px">' + dropped +
+       (dropped === 1 ? " story was" : " stories were") +
+       " held back: nothing in the headline tied them to the name they were filed under.</li>" : "");
+    paintTimes($("anWire"));
+  }
+
+  /* ---- the analyst desks and the record --------------------------------- */
+  function paintAgents(r){
+    if(!r.ok || !r.value){
+      ["Fund","Cat","Tape"].forEach(function(k){
+        var el = $("an" + k + "Last");
+        if(el) el.textContent = "Standing unavailable.";
+      });
+      return;
+    }
+    var a = r.value, by = {};
+    (a.analysts || []).forEach(function(x){ by[x.agent] = x; });
+    [["fundamentals","anFund"],["catalyst","anCat"],["tape","anTape"]].forEach(function(m){
+      var x = by[m[0]] || {};
+      num($(m[1] + "Fil"), x.filings);
+      num($(m[1] + "Names"), x.names);
+      var el = $(m[1] + "Last");
+      if(!el) return;
+      if(x.last_at){
+        el.setAttribute("data-at", x.last_at);
+        el.setAttribute("data-at-prefix", "Last filed ");
+        el.textContent = "Last filed " + agoFrom(x.last_at);
+      } else {
+        el.removeAttribute("data-at");
+        el.textContent = "Has not filed yet.";
+      }
+    });
+
+    /* The record only appears once something has actually been graded. An
+       empty scoreboard is not content. */
+    var board = a.scoreboard || [], sec = $("anRecord");
+    if(!board.length){ if(sec) sec.hidden = true; return; }
+    if(sec) sec.hidden = false;
+    $("anScoreCap").textContent = (a.predictions_resolved || 0) + " resolved";
+    $("anScore").innerHTML = board.map(function(x){
+      var rate = x.hit_rate != null ? Math.round(x.hit_rate * 100) + "%" : "—";
+      var col = x.hit_rate == null ? "var(--text-faint)"
+              : x.hit_rate >= 0.5 ? "var(--clearing)" : "var(--stamp)";
+      return '<li><div class="an-name">' +
+        '<span class="t" style="min-width:11ch">' + esc(x.agent) + '</span>' +
+        '<span class="r">' + esc(x.horizon || "all") + '</span>' +
+        '<span class="r">' + esc(x.resolved || 0) + ' resolved</span>' +
+        '<span class="c" style="color:' + col + '">' + rate + '</span></div></li>';
+    }).join("");
+  }
+
+  /* ---- the filings ------------------------------------------------------ */
+  function gate(title, body, showPricing){
+    $("anGateCap").textContent = "members only";
+    $("anFilings").innerHTML =
+      '<div class="an-gate"><p>' + esc(body) + '</p><div class="acts">' +
+      '<a class="btn btn-primary btn-sm" href="./signin.html?next=analysts.html">Sign in</a>' +
+      (showPricing ? '<a class="btn btn-ghost btn-sm" href="./pricing.html">View membership</a>' : "") +
+      '</div></div>';
+  }
+  function note(msg){
+    $("anGateCap").textContent = "—";
+    $("anFilings").innerHTML = '<p class="an-empty">' + esc(msg) + '</p>';
+  }
+
+  function paintFilings(roundId){
+    if(roundId == null){
+      note("No round has filed yet, so there is nothing to read here.");
+      return Promise.resolve();
+    }
+    if(STATE.filingsFor === roundId) return Promise.resolve();   // already showing this round
+    return FLUX.Desk.notesResult(roundId).then(function(r){
+      STATE.filingsFor = roundId;
+      var signedIn = !!(window.FLUXAuth && FLUXAuth.get());
+
+      if(r.kind === "denied" || r.kind === "auth" || (!signedIn && r.kind === "empty")){
+        gate("members", "The analysts' filings are part of a Flux membership. Sign in to read what each "
+          + "lens actually wrote on every name in this round.", true);
+        return;
+      }
+      if(!r.ok && r.kind !== "empty"){
+        note(r.kind === "timeout"
+          ? "The filings request timed out. Nothing is filled in with an example."
+          : "The filings could not be loaded just now. Nothing is filled in with an example.");
+        return;
+      }
+      var an = r.rows.filter(function(n){ return n.stage === "analyst"; });
+      if(!an.length){
+        /* Signed in and allowed to read, but this round produced nothing.
+           That is a quiet desk, not a locked door. */
+        note("You have access to the filings, but this round produced none. "
+           + "When the analysts file again their notes appear here.");
+        return;
+      }
+      $("anGateCap").textContent = an.length + " this round";
+      $("anFilings").innerHTML = '<ul class="an-list">' + an.map(function(n){
+        var p = n.payload || {};
+        return '<li><div class="an-filing"><div class="top">' +
+          '<span class="ag">' + esc(n.agent) + '</span>' +
+          '<span class="tk">' + esc(n.ticker) + '</span>' +
+          (p.view ? '<span class="r" style="font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">' + esc(p.view) + '</span>' : "") +
+          (p.conviction != null ? '<span style="margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)">conviction ' + esc(p.conviction) + '</span>' : "") +
+          '</div>' +
+          (p.rationale ? '<p>' + esc(p.rationale) + '</p>' : "") +
+          '</div></li>';
+      }).join("") + '</ul>';
+    });
+  }
+
+  /* ---- refresh ---------------------------------------------------------- */
+  function refresh(){
+    if(STATE.busy) return Promise.resolve();          // never two in flight
+    STATE.busy = true;
+    var D = window.FLUX && FLUX.Desk;
+    if(!D){ STATE.busy = false; return Promise.resolve(); }
+    return Promise.all([D.floorResult(), D.agentsResult()]).then(function(res){
+      var roundId = paintFloor(res[0]);
+      paintAgents(res[1]);
+      return paintFilings(roundId);
+    }).catch(function(){
+      setStatus("offline", "Desk record unavailable",
+        "Something went wrong reading the desk record. Nothing is filled in with an example.");
+    }).then(function(){ STATE.busy = false; });
+  }
+
+  function startPolling(){
+    stopPolling();
+    /* Only while someone is looking. A backgrounded tab polling a database
+       every thirty seconds is somebody else's battery. */
+    STATE.timer = setInterval(function(){
+      if(!document.hidden) refresh();
+    }, 30000);
+    STATE.tick = setInterval(function(){ paintTimes(document); }, 30000);
+  }
+  function stopPolling(){
+    if(STATE.timer){ clearInterval(STATE.timer); STATE.timer = null; }
+    if(STATE.tick){ clearInterval(STATE.tick); STATE.tick = null; }
+  }
+
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden){ stopPolling(); }
+    else { refresh(); startPolling(); }
+  });
+
+  function boot(){
+    /* The desk record is public and does not need the auth SDK, so the page
+       does not wait on a CDN that may not answer. */
+    if(!(window.FLUX && FLUX.Desk)){
+      if((boot.n = (boot.n || 0) + 1) < 40) return void setTimeout(boot, 120);
+      setStatus("offline", "Desk record unavailable",
+        "The page could not load its data layer. Nothing is filled in with an example.");
+      return;
+    }
+    refresh();
+    startPolling();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", boot);
+  } else { boot(); }
+})();
 </script>
 </body>
 </html>

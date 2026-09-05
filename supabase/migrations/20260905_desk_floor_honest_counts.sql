@@ -85,3 +85,9 @@ as $function$
     'server_time',    now()
   );
 $function$;
+
+-- ---------------------------------------------------------------------------
+-- Superseded below by 20260905_desk_floor_safe_reason_and_pinned_round.sql,
+-- which keeps these counts and adds the safe stall reason and the pinned
+-- last_good_round. Kept here for the history of why the counts changed.
+-- ---------------------------------------------------------------------------

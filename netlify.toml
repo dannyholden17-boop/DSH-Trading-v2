@@ -6,17 +6,57 @@
   publish = "site"
   command = ""
 
-# Assets are NOT fingerprinted (stable filenames like flux.css), and pages
-# cache-bust them with a ?v= query string. So the browser may cache, but it
-# must revalidate every time — that way a redeploy (or a bumped ?v=) is visible
-# immediately instead of being stuck behind a long max-age.
+# ---------------------------------------------------------------------------
+# Security headers
+#
+# The site talks to exactly four hosts and embeds nothing, so the policy can be
+# tight everywhere except script/style, where it cannot: every page carries
+# inline <script> and inline style attributes, so 'unsafe-inline' is required
+# until those are extracted. That is a real weakening and worth writing down
+# rather than pretending the policy is stricter than it is — it still blocks
+# script from any host not listed, which is the class of injection that matters
+# most for a page that renders text from a database.
+#
+#   supabase.co        the desk record, edge functions
+#   cdn.jsdelivr.net   the pinned Supabase SDK
+#   cloudfront.net     the generated films on the hero pages
+#   api.anthropic.com  a member's own key, from their own browser (BYOK)
+# ---------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://d2ol7oe51mr4n9.cloudfront.net; media-src 'self' https://d2ol7oe51mr4n9.cloudfront.net; font-src 'self'; connect-src 'self' https://pyzcwddyagodmtjuvwdn.supabase.co wss://pyzcwddyagodmtjuvwdn.supabase.co https://cdn.jsdelivr.net https://api.anthropic.com; upgrade-insecure-requests"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# ---------------------------------------------------------------------------
+# Caching
+#
+# Asset filenames are stable (flux.css, not flux.a1b2c3.css) and every
+# reference carries a ?v= query string, so the query IS the cache key: bumping
+# it produces a URL the browser has never seen and the new file is fetched at
+# once. That makes immutable correct here rather than dangerous.
+#
+# The invariant this depends on: every reference to /assets/* must carry ?v=.
+# An unversioned reference would be cached for a year. There are none today.
+# ---------------------------------------------------------------------------
 [[headers]]
   for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Pages are the thing that points at a new ?v=, so they must never be stale.
+[[headers]]
+  for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
-  for = "/*.html"
+  for = "/"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
