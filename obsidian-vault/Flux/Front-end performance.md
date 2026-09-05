@@ -59,7 +59,15 @@ about seven rows. `.op-scroll` now carries a `min-height`.
 `terminal.html` had five cards doing the same in a single frame at ~200ms —
 Watchlist, Market pulse, Key metrics, Recent orders, Positions — together
 growing the left column by nearly 600px. Each now reserves its settled height,
-measured and checked stable across widths.
+measured at desktop and again below the stacking breakpoint, where the same
+cards settle taller.
+
+`activity.html` was fine on desktop and **0.326 on a phone**: its five stat
+cards sit in one row at desktop width and stack into five rows under 520px, so
+filling the grid from empty grew the page by five card-heights and pushed
+everything below off the screen. It now ships five placeholder cards in the
+markup. Worth remembering as a class of bug — a grid that reflows by breakpoint
+can be stable on desktop and severe on mobile.
 
 ## Results
 

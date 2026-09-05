@@ -7,20 +7,20 @@
 <meta name="description" content="The Flux paper-trading terminal: a dense multi-widget workstation with candlestick charts, a live watchlist, an order ticket, positions and recent orders. Real quotes, simulated fills, virtual money, not investment advice.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=33">
-<link rel="stylesheet" href="./assets/flux.css?v=33">
+<link rel="stylesheet" href="./assets/fonts.css?v=34">
+<link rel="stylesheet" href="./assets/flux.css?v=34">
 <!-- TradingView Lightweight Charts (Apache-2.0, vendored locally — see assets/vendor/) -->
-<script src="./assets/vendor/lightweight-charts.js?v=33" defer></script>
-<script src="./assets/flux-supa.js?v=33" defer></script>
-<script src="./assets/flux-site.js?v=33" defer></script>
-<script src="./assets/flux-universe.js?v=33" defer></script>
-<script src="./assets/flux-feed.js?v=33" defer></script>
-<script src="./assets/flux-fund.js?v=33" defer></script>
-<script src="./assets/flux-kronos.js?v=33" defer></script>
-<script src="./assets/flux-tv.js?v=33" defer></script>
-<script src="./assets/flux-news.js?v=33" defer></script>
-<script src="./assets/flux-broker.js?v=33" defer></script>
-<script src="./assets/flux-research.js?v=33" defer></script>
+<script src="./assets/vendor/lightweight-charts.js?v=34" defer></script>
+<script src="./assets/flux-supa.js?v=34" defer></script>
+<script src="./assets/flux-site.js?v=34" defer></script>
+<script src="./assets/flux-universe.js?v=34" defer></script>
+<script src="./assets/flux-feed.js?v=34" defer></script>
+<script src="./assets/flux-fund.js?v=34" defer></script>
+<script src="./assets/flux-kronos.js?v=34" defer></script>
+<script src="./assets/flux-tv.js?v=34" defer></script>
+<script src="./assets/flux-news.js?v=34" defer></script>
+<script src="./assets/flux-broker.js?v=34" defer></script>
+<script src="./assets/flux-research.js?v=34" defer></script>
 <style>
   /* ============================================================
      page-only LAYOUT: terminal.html (tm- prefixed)
@@ -138,6 +138,20 @@
     .tm-card[aria-label="Recent orders"]{min-height:101px}
     .tm-card[aria-label="Positions"]{min-height:101px}
   }
+  /* Below the breakpoint the columns stack, so the same cards settle at
+     different heights. Measured at 390 and 520; the chart already carries its
+     own explicit heights, and Key metrics changes again when its grid goes
+     two-column at 520. */
+  @media(max-width:760px){
+    .tm-card[aria-label="Account"]{min-height:258px}
+    .tm-card[aria-label="Watchlist"]{min-height:353px}
+    .tm-card[aria-label="Market pulse"]{min-height:478px}
+    .tm-card[aria-label="Order ticket"]{min-height:384px}
+    .tm-card[aria-label="Recent orders"]{min-height:120px}
+    .tm-card[aria-label="Positions"]{min-height:120px}
+  }
+  @media(max-width:520px){ .tm-card[aria-label="Key metrics"]{min-height:497px} }
+  @media(min-width:521px) and (max-width:760px){ .tm-card[aria-label="Key metrics"]{min-height:282px} }
   .tm-wl{display:flex;flex-direction:column;max-height:calc(100vh - 340px);overflow-y:auto;margin-inline:-4px;padding-inline:4px}
   @media(max-width:760px){.tm-wl{max-height:none}}
   .tm-wl-row{display:flex;align-items:center;gap:9px;padding:8px 7px;border-top:1px solid var(--tm-line-2);cursor:pointer;border-radius:4px}
