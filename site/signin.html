@@ -7,14 +7,14 @@
 <meta name="description" content="Sign in to Flux to unlock your AI trading desk: the daily brief, ranked trade recommendations, and your paper portfolio synced across devices. Trading is simulated; no real brokerage is connected.">
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="./assets/fonts.css?v=32">
-<link rel="stylesheet" href="./assets/flux.css?v=32">
-<script src="./assets/flux-supa.js?v=32" defer></script>
-<script src="./assets/flux-site.js?v=32" defer></script>
-<script src="./assets/flux-universe.js?v=32" defer></script>
-<script src="./assets/flux-feed.js?v=32" defer></script>
-<script src="./assets/flux-fund.js?v=32" defer></script>
-<script src="./assets/flux-kronos.js?v=32" defer></script>
+<link rel="stylesheet" href="./assets/fonts.css?v=33">
+<link rel="stylesheet" href="./assets/flux.css?v=33">
+<script src="./assets/flux-supa.js?v=33" defer></script>
+<script src="./assets/flux-site.js?v=33" defer></script>
+<script src="./assets/flux-universe.js?v=33" defer></script>
+<script src="./assets/flux-feed.js?v=33" defer></script>
+<script src="./assets/flux-fund.js?v=33" defer></script>
+<script src="./assets/flux-kronos.js?v=33" defer></script>
 <style>
   /* ---- page-only layout: signin.html ---- */
 
@@ -102,6 +102,10 @@
 </head>
 <body>
 
+<!-- The price ticker mounts here. It is in the markup rather than created by
+     JS so its 30px is reserved at parse time; inserting it afterwards shoved
+     every page down 30px the moment the script ran. -->
+<div class="ticker" id="fluxTicker" aria-hidden="true"></div>
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>

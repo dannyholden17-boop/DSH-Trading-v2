@@ -273,3 +273,51 @@
   src: url("./fonts/ijwRs572Xtc6ZYQws9YVwnNGfJ7QwOk1.woff2") format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+/* ============================================================
+   METRIC-MATCHED FALLBACKS
+
+   Every face above is font-display:swap, so the browser paints in a
+   system font first and swaps when the woff2 lands. Where the two
+   fonts have different metrics that swap reflows the page: on the
+   terms page it moved body copy down 26px and re-wrapped a list onto
+   an extra line, which is a large part of what read as the site being
+   glitchy.
+
+   These three faces are the local system fallback re-declared with the
+   real font's vertical metrics (read from the woff2 with fontTools)
+   and an x-height-matched size-adjust. The fallback then occupies the
+   same space as the webfont, so the swap changes the shape of the
+   letters and nothing else.
+
+   ascent/descent/line-gap are the webfont's own typo metrics over its
+   unitsPerEm, read with fontTools. size-adjust is the measured ratio of
+   average advance width between the real face and the fallback, taken in
+   the browser over a sample of the site's own copy - x-height is the usual
+   shortcut for it and was wrong here by four percent on Public Sans, which
+   is enough to re-wrap a paragraph onto an extra line.
+   ============================================================ */
+@font-face {
+  font-family: 'Archivo Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  ascent-override: 87.80%;
+  descent-override: 21.00%;
+  line-gap-override: 0.00%;
+  size-adjust: 98.62%;
+}
+@font-face {
+  font-family: 'Public Sans Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  ascent-override: 95.00%;
+  descent-override: 22.50%;
+  line-gap-override: 0.00%;
+  size-adjust: 104.31%;
+}
+@font-face {
+  font-family: 'Azeret Mono Fallback';
+  src: local('Menlo'), local('Consolas'), local('DejaVu Sans Mono'), local('Courier New');
+  ascent-override: 93.70%;
+  descent-override: 23.00%;
+  line-gap-override: 0.00%;
+  size-adjust: 107.96%;
+}

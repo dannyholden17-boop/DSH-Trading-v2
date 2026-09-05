@@ -80,9 +80,9 @@
   --t-stage:700ms;                        /* a stage of the loop changing */
 
   /* --- type --- */
-  --f-display:"Archivo","Archivo Expanded",-apple-system,"Segoe UI",sans-serif;
-  --f-sans:"Public Sans",-apple-system,"Segoe UI",Roboto,sans-serif;
-  --f-mono:"Azeret Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --f-display:"Archivo","Archivo Fallback","Archivo Expanded",-apple-system,"Segoe UI",sans-serif;
+  --f-sans:"Public Sans","Public Sans Fallback",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"Azeret Mono","Azeret Mono Fallback",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 
   --maxw:1180px;
   --gutter:clamp(20px,5vw,56px);

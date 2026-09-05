@@ -795,7 +795,15 @@
      direction only; pauses on hover. Prices are simulated / live.
      ------------------------------------------------------------ */
   F.initTicker=function(){
-    if(document.getElementById("fluxTicker"))return;         // once per page
+    /* The bar lives in the markup so its 30px is reserved at parse time.
+       This used to create the element and insert it above the nav once the
+       universe had loaded, which pushed every page down 30px the moment the
+       script ran - the single largest layout shift on the site. Now it only
+       fills a slot that is already holding its own space, so nothing moves.
+       An empty slot on a page whose universe never loads is a thin rail-
+       coloured strip, which is what the page looks like anyway. */
+    var bar=document.getElementById("fluxTicker");
+    if(!bar||bar.getAttribute("data-on"))return;             // once per page
     if(!F.PRICES||!Object.keys(F.PRICES).length)return;      // needs the universe
     var PREF=["AAPL","NVDA","MSFT","AMZN","GOOGL","META","TSLA","AMD","AVGO","NFLX",
               "JPM","V","MA","COST","ORCL","CRM","PLTR","COIN","HOOD","SMCI","MRVL",
@@ -810,11 +818,9 @@
              '<span class="tk-px"></span><span class="tk-chg"></span></span>';
     }
     var seq=list.map(itemHTML).join("");
-    var bar=document.createElement("div");
-    bar.id="fluxTicker"; bar.className="ticker"; bar.setAttribute("aria-hidden","true");
     // two copies of the sequence -> seamless -50% loop
     bar.innerHTML='<div class="tk-track">'+seq+seq+'</div>';
-    document.body.insertBefore(bar, document.body.firstChild);
+    bar.setAttribute("data-on","1");
 
     function paint(){
       var items=bar.querySelectorAll(".tk-item");
