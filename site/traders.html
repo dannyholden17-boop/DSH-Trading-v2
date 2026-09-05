@@ -141,7 +141,7 @@
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 140); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 140); return; }
     var D = F.Desk;
     if(F.initNav) F.initNav();
     if(F.initFX) F.initFX();

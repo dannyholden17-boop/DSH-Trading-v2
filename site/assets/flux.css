@@ -1647,3 +1647,7 @@ table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line
 :is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields) :is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields){
   border-color:var(--glass-line-2)!important;
 }
+
+/* The honest empty state for a desk-figure band. */
+.deskempty{margin:0;max-width:62ch;color:var(--text-dim);font-size:12.5px;
+  letter-spacing:.005em;line-height:1.55;text-align:center;margin-inline:auto}

@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
 <script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-fund.js?v=28" defer></script>
@@ -954,7 +955,9 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150);
+      else if(F && F.deskStatsEmpty) F.deskStatsEmpty(document.querySelector(".stats"), document.querySelector(".stats + .disclaimer"));
+      return; }
     var $ = function(i){ return document.getElementById(i); };
     Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
       var f = r[0] || {}, a = r[1] || {}, ex = a.executive || {};
@@ -963,7 +966,10 @@ document.addEventListener("DOMContentLoaded", function(){
       var tot = ex.total != null ? ex.total : f.rulings_total, ok = ex.approved;
       var el = $("pfRefused");
       if(el) el.textContent = (tot && ok != null) ? Math.round((tot - ok) / tot * 100) + "%" : "\u2014";
-    }).catch(function(){});
+      F.deskStatsEmpty(document.querySelector(".stats"), document.querySelector(".stats + .disclaimer"));
+    }).catch(function(){
+      F.deskStatsEmpty(document.querySelector(".stats"), document.querySelector(".stats + .disclaimer"));
+    });
   }
   boot();
 });

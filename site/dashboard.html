@@ -1091,7 +1091,9 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150);
+      else if(F && F.deskStatsEmpty) F.deskStatsEmpty(document.querySelector(".db-ap-stats"));
+      return; }
     F.Desk.floor().then(function(f){
       if(!f || !f.round) return;
       var $ = function(i){ return document.getElementById(i); };
@@ -1099,7 +1101,8 @@ document.addEventListener("DOMContentLoaded", function(){
       var fi = $("dbApFilings"); if(fi && f.filings_total != null) fi.textContent = f.filings_total.toLocaleString();
       var ru = f.rulings_total || 0, ok = (f.rulings && f.rulings.approved) || 0;
       var rf = $("dbApRefused"); if(rf) rf.textContent = ru ? Math.round((ru - ok) / ru * 100) + "%" : "—";
-    }).catch(function(){});
+    }).then(done, done);
+    function done(){ F.deskStatsEmpty(document.querySelector(".db-ap-stats")); }
   }
   boot();
 });

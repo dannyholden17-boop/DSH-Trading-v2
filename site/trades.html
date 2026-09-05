@@ -131,7 +131,7 @@
 (function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Fund){ return setTimeout(boot, 120); }
+    if(!F || !F.Fund){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 120); return; }
     if(F.initNav) F.initNav();
     if(F.initFX) F.initFX();
 

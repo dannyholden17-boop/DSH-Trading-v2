@@ -941,7 +941,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 160); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 160); return; }
     var D = F.Desk;
     var $ = function(i){ return document.getElementById(i); };
     var esc = function(t){ return String(t == null ? "" : t).replace(/[&<>"]/g, function(c){
@@ -1232,7 +1232,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150); return; }
     var D = F.Desk, $ = function(i){ return document.getElementById(i); };
     var esc = function(t){ return String(t==null?"":t).replace(/[&<>"]/g, function(c){
       return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); };

@@ -143,6 +143,31 @@
     requestAnimationFrame(step);
   };
 
+  /* The desk's record, when there is no record yet.
+
+     These bands read real counts off the desk. Before the first round
+     completes there is nothing to read, and four em-dashes under a
+     caption calling them "illustrative" is both ugly and untrue: they
+     are the real figures, and the real figures are none. So the band
+     says that in a sentence and gets out of the way. */
+  F.deskStatsEmpty=function(container, caption){
+    if(!container) return false;
+    var cells = container.querySelectorAll(".stat, .qs, .ap-qs");
+    if(!cells.length) return false;
+    var filled = 0;
+    cells.forEach(function(c){
+      var t = (c.textContent||"").replace(/[\s\u2014-]/g, "");
+      // a cell counts as filled only if it carries a digit
+      if(/[0-9]/.test(t)) filled++;
+    });
+    if(filled) return false;
+    container.innerHTML =
+      '<p class="deskempty">The desk has not filed a round yet, so there is nothing to count. ' +
+      'These figures come off the record itself and stay blank until it exists.</p>';
+    if(caption) caption.remove();
+    return true;
+  };
+
   /* ---- counters ---- */
   F.initCounters=function(){
     var els=$$("[data-count]");
