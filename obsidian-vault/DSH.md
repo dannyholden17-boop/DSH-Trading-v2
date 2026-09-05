@@ -28,6 +28,7 @@ dsh-trading.com, and its notes live in `Flux/`:
 
 - [[Truthfulness constraints]] — what Flux may and may not say
 - [[The trading floor]] — the desk hierarchy and its 46 agents
+- [[The agent roster]] — all 152 subagents
 - [[Live system state]] — what is running, and what is blocked
 - [[Market data]] — where quotes come from
 - [[Front-end performance]] — layout stability

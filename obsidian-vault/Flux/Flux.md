@@ -27,6 +27,7 @@ dated calls it can be graded on, and runs a simulated fund in the open.
 
 - [[Truthfulness constraints]] — what Flux may and may not say. Read first.
 - [[The trading floor]] — the desk hierarchy and the 46 agents
+- [[The agent roster]] — all 152 subagents, and what was deliberately left out
 - [[Live system state]] — what is deployed, what is blocked right now
 - [[Market data]] — where quotes come from
 - [[Front-end performance]] — layout stability, and how to keep it
