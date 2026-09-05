@@ -1,9 +1,9 @@
-<!doctype html><html lang="en" data-surface="market"><head>
+<!doctype html><html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pricing; Flux</title>
 <meta name="description" content="Flux pricing: Scout is free forever, Trader is $49/mo and Desk is $149/mo. Paper trading on every plan, two months free on annual, cancel anytime.">
-<meta name="theme-color" content="#f1f3f8">
+<meta name="theme-color" content="#0a0e18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
@@ -22,7 +22,15 @@
    The three plans are the one place a comparison genuinely wants
    parallel columns, so they get columns — inside a single frame,
    divided by rules, not three floating cards.
+
+   Every container is the hero's glass: translucent over the room's
+   backdrop, a light hairline, a deep soft shadow.
    ============================================================ */
+
+/* flux.css line 90 re-aliases --glass to the opaque --blotter-2 after
+   section 24 has defined the translucent value, so the page restates
+   the material until that legacy alias is removed. */
+:root{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
 
 /* ---------- the opening ---------- */
 .pr-open{position:relative;isolation:isolate;overflow:hidden;
@@ -50,8 +58,9 @@
 .pr-head p{color:var(--text-dim);font-size:clamp(1rem,.96rem + .3vw,1.14rem);line-height:1.6;max-width:46ch}
 @media(max-width:860px){.pr-head{grid-template-columns:1fr;align-items:start}.pr-head p{margin-top:14px}}
 
-.seg{display:inline-flex;gap:4px;padding:4px;border-radius:var(--radius);border:1px solid var(--line);
-  background:var(--well);margin-top:clamp(24px,3vw,36px)}
+.seg{display:inline-flex;gap:4px;padding:4px;border-radius:var(--radius);border:1px solid var(--glass-line);
+  background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow);margin-top:clamp(24px,3vw,36px)}
 .seg button{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
   padding:9px 18px;border-radius:calc(var(--radius) - 4px);border:1px solid transparent;background:transparent;color:var(--text-dim);
   cursor:pointer;transition:color var(--t-hover) var(--ease),background var(--t-hover) var(--ease);white-space:nowrap}
@@ -60,13 +69,14 @@
 .seg-note{margin-left:14px;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
 
 /* ---------- the plans: one frame, three columns, hairlines between ---------- */
-.plans{margin-top:clamp(26px,3vw,40px);border:1px solid var(--line);border-radius:var(--radius-lg);
-  background:var(--paper);box-shadow:var(--lift-1);
+.plans{margin-top:clamp(26px,3vw,40px);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+  background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow);
   display:grid;grid-template-columns:repeat(3,1fr)}
 .plan{display:flex;flex-direction:column;padding:clamp(24px,2.6vw,34px);
-  border-left:1px solid var(--line-2);position:relative}
+  border-left:1px solid var(--glass-line-2);position:relative;background:transparent}
 .plan:first-child{border-left:0}
-.plan.pop{background:var(--blotter-3)}
+.plan.pop{background:var(--glass-hd)}
 .plan .nm{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--text-faint);display:flex;align-items:center;gap:10px}
 .plan .badge{font-family:var(--f-sans);font-size:12px;font-weight:700;letter-spacing:.06em;
@@ -76,9 +86,9 @@
   margin:16px 0 3px;line-height:1}
 .plan .bill{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);min-height:18px}
 .plan .desc{color:var(--text-dim);font-size:.92rem;line-height:1.55;margin-top:16px;min-height:52px}
-.plan ul{list-style:none;padding:0;margin:20px 0 26px;border-top:1px solid var(--line-3)}
+.plan ul{list-style:none;padding:0;margin:20px 0 26px;border-top:1px solid var(--glass-line-2)}
 .plan li{display:flex;gap:10px;font-size:.9rem;color:var(--text-dim);line-height:1.45;
-  padding:9px 0;border-bottom:1px solid var(--line-3)}
+  padding:9px 0;border-bottom:1px solid var(--glass-line-2)}
 .plan li::before{content:"";width:.8em;height:.8em;margin-top:.28em;flex:none;
   background-color:var(--clearing);
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;
@@ -86,7 +96,7 @@
 .plan .btn{margin-top:auto;width:100%}
 @media(max-width:920px){
   .plans{grid-template-columns:1fr}
-  .plan{border-left:0;border-top:1px solid var(--line-2)}
+  .plan{border-left:0;border-top:1px solid var(--glass-line-2)}
   .plan:first-child{border-top:0}
   .plan .desc{min-height:0}
 }
@@ -94,52 +104,55 @@
 /* ---------- the table ---------- */
 .pr-sec{padding-block:clamp(40px,5vw,76px)}
 .pr-sec h2{font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);font-weight:700;letter-spacing:-.035em;max-width:18ch}
-.cmp-wrap{margin-top:clamp(24px,2.8vw,38px);border:1px solid var(--line);border-radius:var(--radius-lg);
-  background:var(--paper);box-shadow:var(--lift-1);overflow:hidden}
+.cmp-wrap{margin-top:clamp(24px,2.8vw,38px);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+  background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow);overflow:hidden}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.cmp{width:100%;min-width:640px;border-collapse:collapse;font-size:.92rem}
-table.cmp th,table.cmp td{padding:12px 16px;text-align:center;border-top:1px solid var(--line-3)}
-table.cmp thead th{border-top:0;border-bottom:1px solid var(--line-2);padding:18px 16px;vertical-align:bottom}
+table.cmp th,table.cmp td{padding:12px 16px;text-align:center;border-top:1px solid var(--glass-line-2)}
+table.cmp thead th{border-top:0;border-bottom:1px solid var(--glass-line-2);padding:18px 16px;vertical-align:bottom}
 table.cmp th:first-child,table.cmp td:first-child{text-align:left;width:40%;min-width:220px;color:var(--text-dim)}
 table.cmp thead .pn{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
 table.cmp thead .pp{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);font-weight:400;display:block;margin-top:5px}
 table.cmp tbody tr{transition:background var(--t-hover) var(--ease)}
-table.cmp tbody tr:hover{background:var(--blotter-3)}
-table.cmp .grp td{background:var(--well);border-top:1px solid var(--line-2);
+table.cmp tbody tr:hover{background:var(--glass-hd)}
+table.cmp .grp td{background:var(--glass-hd);border-top:1px solid var(--glass-line-2);
   font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);
   padding-block:10px;font-weight:700}
-table.cmp .grp:hover td{background:var(--well)}
+table.cmp .grp:hover td{background:var(--glass-hd)}
 .yes{color:var(--clearing);font-weight:800}
 .no{color:var(--text-faint)}
 table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-dim)}
 .cmp-hint{display:none;font-family:var(--f-mono);font-size:12px;color:var(--text-faint);
-  padding:12px 16px;border-bottom:1px solid var(--line-3)}
+  padding:12px 16px;border-bottom:1px solid var(--glass-line-2)}
 @media(max-width:640px){.cmp-hint{display:block}}
 
 /* ---------- the promises: one strip, internal rules ---------- */
-.vows{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);
-  border-radius:var(--radius-lg);background:var(--paper);overflow:hidden;box-shadow:var(--lift-1)}
-.vows div{padding:clamp(18px,2vw,26px);border-left:1px solid var(--line-2)}
+.vows{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--glass-line);
+  border-radius:var(--radius-lg);background:var(--glass);overflow:hidden;box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.vows div{padding:clamp(18px,2vw,26px);border-left:1px solid var(--glass-line-2)}
 .vows div:first-child{border-left:0}
 .vows b{display:block;font-family:var(--f-display);font-size:.98rem;font-weight:700;letter-spacing:-.02em}
 .vows span{display:block;margin-top:7px;font-size:12.5px;color:var(--text-faint);line-height:1.5}
 @media(max-width:820px){
   .vows{grid-template-columns:1fr 1fr}
   .vows div:nth-child(3){border-left:0}
-  .vows div:nth-child(n+3){border-top:1px solid var(--line-2)}
+  .vows div:nth-child(n+3){border-top:1px solid var(--glass-line-2)}
 }
 
 /* ---------- the questions ---------- */
-.qs{margin-top:clamp(22px,2.6vw,34px);border:1px solid var(--line);border-radius:var(--radius-lg);
-  background:var(--paper);overflow:hidden;box-shadow:var(--lift-1)}
-.qs details{border-top:1px solid var(--line-2)}
+.qs{margin-top:clamp(22px,2.6vw,34px);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+  background:var(--glass);overflow:hidden;box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.qs details{border-top:1px solid var(--glass-line-2)}
 .qs details:first-child{border-top:0}
 .qs summary{display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;
   padding:clamp(17px,1.9vw,23px) clamp(18px,2.1vw,28px);list-style:none;
   font-family:var(--f-display);font-weight:700;font-size:1.02rem;letter-spacing:-.02em;
   transition:background var(--t-hover) var(--ease)}
 .qs summary::-webkit-details-marker{display:none}
-.qs summary:hover{background:var(--blotter-3)}
+.qs summary:hover{background:var(--glass-hd)}
 .qs summary::after{content:"";flex:none;width:13px;height:13px;background-color:var(--text-faint);
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
   mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
@@ -150,18 +163,23 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
 
 /* ---------- the close ---------- */
 .pr-close{padding-block:clamp(20px,2.4vw,34px) clamp(48px,6vw,88px)}
-.pr-close .in{border-radius:var(--radius-lg);background:var(--ink);color:#fff;
-  padding:clamp(34px,4.6vw,68px) clamp(26px,4vw,58px);box-shadow:var(--lift-3)}
+/* the close was an ink slab in the light room; here it is the same glass as
+   the plans, with the room's warm light caught in its top corner */
+.pr-close .in{position:relative;overflow:hidden;border-radius:var(--radius-lg);
+  border:1px solid var(--glass-line);color:var(--text);
+  background:
+    radial-gradient(760px 340px at 92% -10%, rgba(245,185,60,.14), transparent 62%),
+    var(--glass-2);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  padding:clamp(34px,4.6vw,68px) clamp(26px,4vw,58px);box-shadow:var(--glass-shadow)}
 .pr-close h2{font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);font-weight:700;letter-spacing:-.04em;
-  max-width:24ch;color:#fff}
-.pr-close p{margin-top:16px;max-width:56ch;color:rgba(255,255,255,.72);font-size:1.02rem;line-height:1.62}
+  max-width:24ch;color:var(--text)}
+.pr-close p{margin-top:16px;max-width:56ch;color:var(--text-dim);font-size:1.02rem;line-height:1.62}
 .pr-close .btn-row{margin-top:clamp(22px,2.6vw,32px)}
-.pr-close .btn-primary{background:#fff;color:var(--ink)}
-.pr-close .btn-primary:hover{background:#fff}
-.pr-close .btn-ghost{border-color:rgba(255,255,255,.34);color:#fff}
-.pr-close .btn-ghost:hover{border-color:#fff;color:#fff;background:rgba(255,255,255,.08)}
+.pr-close .btn-ghost{border-color:var(--glass-line);color:var(--text)}
+.pr-close .btn-ghost:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,185,60,.06)}
 .pr-close .fine{margin-top:clamp(26px,3vw,36px);padding-top:22px;
-  border-top:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.62);
+  border-top:1px solid var(--glass-line-2);color:var(--text-faint);
   font-size:12.5px;line-height:1.7;max-width:82ch}
 </style>
 </head>
@@ -413,10 +431,10 @@ table.cmp .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-si
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

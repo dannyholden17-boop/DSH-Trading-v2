@@ -58,6 +58,19 @@
   --lift-2:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -20px rgba(0,0,0,.95);
   --lift-3:0 1px 0 rgba(255,255,255,.06) inset, 0 4px 8px rgba(0,0,0,.5), 0 34px 60px -28px rgba(0,0,0,1);
 
+  /* --- glass: the material every panel is made of, taken from the hero's board --- */
+  --glass:rgba(14,19,32,.58);
+  --glass-2:rgba(22,29,46,.62);
+  --glass-hd:rgba(255,255,255,.045);
+  --glass-line:rgba(226,234,248,.14);
+  --glass-line-2:rgba(226,234,248,.09);
+  --glass-blur:blur(18px) saturate(1.2);
+  --glass-shadow:0 1px 2px rgba(0,0,0,.42), 0 4px 10px -3px rgba(0,0,0,.5), 0 14px 26px -18px rgba(0,0,0,.86);
+  /* A panel that marks itself with an accent hairline has already said
+     "look here". Adding a deep float says it twice, which is the
+     generated-page signature. Accent panels take the contact shadow only. */
+  --glass-shadow-edge:0 1px 2px rgba(0,0,0,.42), 0 3px 8px -4px rgba(0,0,0,.55);
+
   /* --- motion: one scale, four speeds. Nothing animates at a random duration. --- */
   --ease:cubic-bezier(.22,1,.36,1);      /* power2.out — the house curve */
   --ease-in:cubic-bezier(.5,0,.75,0);
@@ -78,8 +91,14 @@
 
   /* --- legacy aliases: every page still speaks these names --- */
   --bg:var(--blotter);
-  --glass:var(--blotter-2);
-  --glass-2:var(--blotter-3);
+  /* --glass and --glass-2 were aliased to the opaque surfaces here, AFTER the
+     translucent values in the glass block above. The later declaration won,
+     so every panel that asked for glass got a solid box and every
+     backdrop-filter had nothing to filter. The two names now belong to the
+     glass block; --surface and --surface-3 carry the opaque meaning for the
+     handful of places that genuinely want a solid fill. */
+  --surface:var(--blotter-2);
+  --surface-3:var(--blotter-3);
   --surface-2:var(--well);
   --cyan:var(--gold);
   --cyan-deep:#c8912a;
@@ -232,6 +251,11 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .pill-violet i{background:var(--floor)}
 .pill-cyan{color:var(--gold);border-color:rgba(245,185,60,.4)}
 .pill-cyan i{background:var(--gold)}
+/* A pill holding a sentence is a note, not an acronym. Caps and stencil
+   tracking are for a word or two; past that they only slow the reading,
+   and these particular sentences are the ones that must be read. */
+.pill-note{text-transform:none;letter-spacing:.005em;font-weight:400;
+  font-size:12.5px;line-height:1.45;white-space:normal;text-align:left}
 
 /* the badge: 2–4 letters in heavy display, the way a jacket carries it */
 .badge{font-family:var(--f-display);font-weight:900;font-size:12px;letter-spacing:.06em;
@@ -288,8 +312,10 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 
   .tkt-head{grid-area:head;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     padding:13px 20px 13px 34px;border-bottom:2px solid rgba(21,16,10,.5)}
-  .tkt-org{font-family:var(--f-display);font-weight:900;font-size:13px;letter-spacing:.08em}
-  .tkt-org span{font-weight:600;opacity:.62;margin-left:6px}
+  .tkt-org{font-family:var(--f-display);font-weight:900;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+  /* the org name is a caps lockup and wants the tracking; the sentence-case
+     subtitle beside it does not, and inherits it unless we say otherwise */
+  .tkt-org span{font-weight:600;opacity:.62;margin-left:6px;letter-spacing:.01em}
   .tkt-no{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:rgba(21,16,10,.7)}
   .tkt-no b{color:var(--ink)}
 
@@ -384,7 +410,9 @@ a:not([class]):hover{text-decoration-color:var(--gold)}
 .footer{border-top:1px solid var(--line);background:var(--rail);padding-block:48px 30px;margin-top:24px}
 .footer-grid{display:grid;grid-template-columns:1.7fr repeat(4,1fr);gap:34px}
 @media(max-width:860px){.footer-grid{grid-template-columns:1fr 1fr;gap:26px}}
-.footer h2,.footer h3,.footer h4{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
+/* Column labels are labels, not document headings: a 12px all-caps <h2> under a
+   28px page <h2> reads as a broken outline to a screen reader and to the eye. */
+.footer h2,.footer h3,.footer h4,.footer .ft-h{font-family:var(--f-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--text-faint);margin:0 0 12px;font-weight:600}
 .footer a{display:block;color:var(--text-dim);font-size:.9rem;padding:5px 0}
 .footer a:hover{color:var(--gold)}
@@ -852,12 +880,25 @@ button,[role="button"],a.btn{min-height:24px}
    animates at a duration invented on the spot.
  * ---------------------------------------------------------- */
 body{position:relative;background:var(--blotter)}
+/* The whole site sits on the room the desk works in: the hero photograph,
+   darkened and blurred into a backdrop, fixed behind every page. It is what
+   every glass panel is glass OVER. Without it, glass is just a grey box.
+   Pre-blurred in the file (6KB webp) rather than filtered live. */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.11), transparent 62%),
-    radial-gradient(900px 520px at 88% 4%,  rgba(122,167,255,.08), transparent 58%),
-    radial-gradient(760px 460px at 6% 34%,  rgba(61,220,151,.05),  transparent 60%);
+  background-color:#070a12;
+  background-image:
+    radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.16), transparent 62%),
+    radial-gradient(900px 520px at 88% 4%,  rgba(255,212,121,.10), transparent 58%),
+    linear-gradient(180deg, rgba(7,10,18,.42) 0%, rgba(7,10,18,.66) 60%, rgba(7,10,18,.84) 100%),
+    url("./img/backdrop.jpg");
+  background-image:
+    radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.16), transparent 62%),
+    radial-gradient(900px 520px at 88% 4%,  rgba(255,212,121,.10), transparent 58%),
+    linear-gradient(180deg, rgba(7,10,18,.42) 0%, rgba(7,10,18,.66) 60%, rgba(7,10,18,.84) 100%),
+    image-set(url("./img/backdrop.webp") type("image/webp"), url("./img/backdrop.jpg") type("image/jpeg"));
+  background-size:auto,auto,auto,cover;background-position:center,center,center,64% 40%;
+  background-repeat:no-repeat;
 }
 .nav,main,section,.footer,.tm-shell,.dk-wrap{position:relative;z-index:1}
 
@@ -1371,14 +1412,16 @@ html[data-surface="market"] body::before{
    marker in the surface, not in a footnote, so the demo can
    never be read as a track record.
  * ---------------------------------------------------------- */
-.scripted{display:flex;align-items:flex-start;gap:11px;
-  padding:13px 16px;border:1px solid var(--line);border-radius:var(--radius);
-  background:var(--well);color:var(--text-dim);
-  font-size:13px;line-height:1.55;max-width:86ch}
-.scripted::before{content:"";flex:none;width:16px;height:16px;margin-top:1px;
-  background-color:var(--gold);
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E") center/contain no-repeat;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Not flex and not grid. Both make every element child its own item, so a
+   <b> or an <a> inside the note was pulled out of the sentence and laid out
+   as its own column. The icon is a background instead, and the prose stays
+   in normal flow where it belongs. */
+.scripted{display:block;padding:13px 16px 13px 43px;
+  border:1px solid var(--line);border-radius:var(--radius);
+  background-color:var(--well);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5b93c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:16px 14px;background-size:16px 16px;
+  color:var(--text-dim);font-size:13px;line-height:1.55;max-width:86ch}
 .scripted b{color:var(--text);font-weight:700}
 .scripted a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 
@@ -1484,3 +1527,155 @@ html[data-surface="market"] body::before{
 .btn{border-radius:999px}
 .btn-lg{padding:16px 30px}
 .btn-sm{padding:9px 18px}
+
+/* ---------------------------------------------------------- *
+   24. GLASS, EVERYWHERE
+
+   The hero's board is the material the whole site is made of:
+   translucent, blurred over the backdrop, a light hairline, a
+   deep soft shadow. Every panel component takes it here, in one
+   place, so the interiors are the same substance as the front
+   page rather than flat boxes standing next to it.
+ * ---------------------------------------------------------- */
+.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,
+.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,
+.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,
+.kvs,.gates,.pf-quick,.pf-metrics,.sb-grid,.roll,.roll-num,.ch-sts{
+  background:var(--glass)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border-color:var(--glass-line)!important;
+  box-shadow:var(--glass-shadow)!important;
+  background-image:none!important;
+}
+/* headers and feet inside a panel take the lighter glass so they read as a
+   band rather than a second box */
+.st-panel-h,.board-hd,.board-ft,.fl-panel-h,.dk-h,.wk-cap,
+table.cmp .grp td,.plan.pop{background:var(--glass-hd)!important}
+/* dividers inside glass are light, never the dark-room line */
+.st-panel-h,.board-hd,.board-ft,.st-rows>li,.board-rows>li,.ruled>*,.strip>div,
+.st-card,.ch-st,.dk-node,.step,.plan,.vows div,.qs details,.roll-row,
+table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line-2)!important}
+/* radius: the hero's card is the reference */
+.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,
+.steps,.board,.plans,.cmp-wrap,.vows,.qs,.ap-guards,.ap-metrics,.fd-stats,.fd-pnl,
+.idx-strip,.gates,.pf-metrics,.sb-grid,.roll,.ch-sts{border-radius:var(--radius-lg)!important}
+/* the old top-edge highlight and inner gradient are the flat world's; gone */
+.glass::after{display:none!important}
+
+/* the section tint sat a solid band on the page; over a backdrop it is a
+   faint darkening only, so the room stays visible through it */
+.tint,.band{background:rgba(7,10,18,.36)!important;border-color:var(--glass-line-2)!important}
+.pit{background:transparent!important}
+
+/* the nav and the ticker are glass too, so they belong to the same room */
+.nav{background:rgba(10,14,24,.62)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border-bottom-color:var(--glass-line-2)!important}
+.ticker{background:rgba(7,11,20,.72)!important;border-bottom-color:var(--glass-line-2)!important}
+.footer{background:rgba(5,8,15,.72)!important;border-top-color:var(--glass-line-2)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+
+/* ---------------------------------------------------------- *
+   25. THE TICKET, IN GLASS
+
+   The ruling used to be printed on ochre card stock and tilted
+   half a degree: the paper metaphor. That metaphor was rejected
+   on the front page and it does not survive on the desk either.
+   The ruling is now a glass panel of the same material as the
+   hero's board. Markup and the desk's JS are untouched; only the
+   substance changes.
+ * ---------------------------------------------------------- */
+.ticket{background:var(--glass-2)!important;color:var(--text)!important;
+  border:1px solid var(--glass-line);border-radius:var(--radius-lg)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow)!important;transform:none!important}
+.ticket.is-sell{background:var(--glass-2)!important}
+.ticket.punched::before{display:none}
+.ticket .field-k{color:var(--text-faint)!important}
+.tkt-head{background:var(--glass-hd);border-bottom:1px solid var(--glass-line-2)!important;padding-left:20px!important}
+.tkt-org{color:var(--text)} .tkt-org span{color:var(--text-faint);opacity:1}
+.tkt-no{color:var(--text-faint)!important} .tkt-no b{color:var(--text)!important}
+.tkt-main{padding-left:20px!important}
+.tkt-sym{color:var(--text)}
+.tkt-name{color:var(--text-dim)!important}
+.tkt-fields{border-top-color:var(--glass-line-2)!important;border-bottom-color:var(--glass-line-2)!important}
+.tkt-fields>div{border-right-color:var(--glass-line-2)!important}
+.tkt-fields dd{color:var(--text)}
+.tkt-headline{color:var(--text)}
+.tkt-chain{border-left:1px solid var(--glass-line-2)!important;background:var(--glass-hd)}
+@media(max-width:620px){.tkt-chain{border-left:0!important;border-top:1px solid var(--glass-line-2)!important}}
+.tkt-foot{border-top-color:var(--glass-line-2)!important;padding-left:20px!important;background:var(--glass-hd)}
+.tkt-sim{color:var(--text-faint)!important}
+.tkt-foot .btn{background:var(--act)!important;color:var(--act-ink)!important}
+.tkt-foot .btn:hover{background:var(--card-buy-lift)!important;color:var(--ink)!important}
+/* stamps take the dark-ledger inks, which were mixed for exactly this ground */
+.ticket .stamp-ok{color:#6fe3b0!important}
+.ticket .stamp-cut{color:#f5b93c!important}
+.ticket .stamp-no{color:#ff8f78!important}
+.ticket .stamp-pending,.tkt-chain .stamp-pending{color:var(--text-faint)!important;
+  border-color:var(--glass-line)!important;opacity:1}
+
+/* the home workstation joins the same material */
+.wk{background:var(--glass)!important;border-color:var(--glass-line)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow)!important}
+.wk-tape{background:var(--glass-hd)!important;border-bottom-color:var(--glass-line-2)!important}
+.wk-pane{border-left-color:var(--glass-line-2)!important}
+.rl-levels{border-color:var(--glass-line-2)!important}
+.rl-levels>div{border-color:var(--glass-line-2)!important}
+
+/* ---------------------------------------------------------- *
+   26. GLASS DOES NOT NEST
+
+   Section 24 hands the glass material to every panel component.
+   Several of those components legitimately sit INSIDE another
+   one: a levels grid inside a ruling pane, a figure pair inside
+   a roll row, quick stats inside a hero card. Glass over glass
+   is a card on a card, which is the exact thing this design has
+   been pulling out of the site all along.
+
+   So an inner panel keeps only its hairlines. The container owns
+   the material; the child owns the division.
+ * ---------------------------------------------------------- */
+/* Any panel component that lands inside another panel gives up the
+   material and keeps only its division. One :is() pair covers every
+   combination, so a new panel added to section 24 is covered here too. */
+:is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields) :is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields){
+  background:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+/* an inner panel that had a border keeps it, at hairline weight */
+:is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields) :is(.glass,.st-panel,.st-cards,.ruled,.strip,.fl-panel,.dk-chain,.dk-ledger,.dk-filings,.steps,.board,.daysheet,.roster,.plans,.cmp-wrap,.vows,.qs,.card,.plan,.ap-guards,.ap-metrics,.ap-qstats,.fd-stats,.fd-pnl,.fd-heromini,.idx-strip,.nw-sect,.kvs,.gates,.pf-quick,.pf-metrics,.pf-metric,.sb-grid,.roll,.roll-row,.roll-num,.ch-sts,.rl-levels,.sig,.tkt-fields){
+  border-color:var(--glass-line-2)!important;
+}
+
+/* The honest empty state for a desk-figure band. */
+.deskempty{margin:0;max-width:62ch;color:var(--text-dim);font-size:12.5px;
+  letter-spacing:.005em;line-height:1.55;text-align:center;margin-inline:auto}
+
+/* ---------------------------------------------------------- *
+   27. THE STAT BAND
+
+   A row of figures off the desk record. It was pasted into three
+   pages verbatim and used on a fourth that never defined it, so
+   that page rendered as loose labels on the page ground. It lives
+   here once now.
+
+   The figure is its own type role: mono, tabular, fluid between
+   1.5rem and 2.2rem. It is documented in DESIGN.md as statFigure.
+ * ---------------------------------------------------------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+  background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow);overflow:hidden}
+.stat{padding:clamp(18px,2vw,24px) clamp(16px,2vw,24px);border-left:1px solid var(--glass-line-2);min-width:0}
+.stat:first-child{border-left:0}
+.stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;
+  font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);font-weight:750;letter-spacing:-.02em;line-height:1}
+.stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-faint);margin-top:8px}
+@media(max-width:700px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:nth-child(2n+1){border-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}

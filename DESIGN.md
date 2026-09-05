@@ -145,6 +145,14 @@ typography:
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "normal"
+  statFigure:
+    fontFamily: "Azeret Mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem)"
+    fontWeight: 750
+    lineHeight: 1
+    letterSpacing: "-0.02em"
+    fontFeature: "tabular-nums"
+    note: "The figure in a .stat band. Fluid because the band is four across on a desk and two on a phone."
   subtitle:
     fontFamily: "Archivo, Archivo Expanded, -apple-system, Segoe UI, sans-serif"
     fontSize: "1.12rem"

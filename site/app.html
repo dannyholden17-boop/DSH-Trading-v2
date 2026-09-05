@@ -8,6 +8,8 @@
 <meta name="theme-color" content="#0d1220">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <script src="./assets/dsh-store.js?v=28"></script>
+<script src="./assets/flux-supa.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/dsh-feed.js?v=28"></script>
 <script src="./assets/dsh.js?v=28" defer></script>
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
@@ -16,11 +18,21 @@
     color-scheme: dark;
     --bg:#0d1220;
     --obsidian:#060b1a;
-    --glass:rgba(34,32,29,.6);
-    --glass-2:rgba(20,28,50,.5);
-    --well:rgba(0,0,0,.32);
-    --line:rgba(255,255,255,.10);
-    --line-2:rgba(160,180,220,.07);
+    /* the hero's glass, restated here because this shell does not load flux.css */
+    --glass:rgba(14,19,32,.58);
+    --glass-2:rgba(22,29,46,.62);
+    --glass-hd:rgba(255,255,255,.045);
+    --glass-line:rgba(226,234,248,.14);
+    --glass-line-2:rgba(226,234,248,.09);
+    --glass-blur:blur(18px) saturate(1.2);
+    --glass-shadow:0 1px 2px rgba(0,0,0,.42), 0 4px 10px -3px rgba(0,0,0,.5), 0 14px 26px -18px rgba(0,0,0,.86);
+    --well:rgba(6,9,17,.5);
+    --line:var(--glass-line);
+    --line-2:var(--glass-line-2);
+    --gold:#f5b93c; --clearing:#3ddc97; --stamp:#ff6f52;
+    --card-buy:#f0b93f; --card-sell:#f0654a; --card-buy-lift:#ffc95a; --card-sell-lift:#ff7f63;
+    --lift-1:0 1px 0 rgba(255,255,255,.04) inset, 0 1px 2px rgba(0,0,0,.5), 0 4px 12px -6px rgba(0,0,0,.7);
+    --lift-2:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 4px rgba(0,0,0,.5), 0 18px 36px -20px rgba(0,0,0,.95);
     --cyan:#f5b93c;
     --cyan-deep:#00b3c4;
     --violet:#7aa7ff;
@@ -40,27 +52,38 @@
   html,body{height:100%;margin:0}
   @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
   body{
-    background:
-      radial-gradient(600px 420px at 12% -6%, rgba(245,185,60,.10), transparent 60%),
-      radial-gradient(620px 440px at 108% 8%, rgba(122,167,255,.12), transparent 60%),
-      radial-gradient(700px 700px at 50% 120%, rgba(245,185,60,.05), transparent 60%),
-      var(--bg);
+    position:relative;background:#070a12;
     color:var(--text);font-family:var(--f-sans);font-size:1rem;line-height:1.5;
     -webkit-font-smoothing:antialiased;
     display:flex;justify-content:center;
+  }
+  /* the room the desk works in, fixed behind the shell: what the glass is glass over */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-color:#070a12;
+    background-image:
+      radial-gradient(1250px 640px at 50% -14%, rgba(245,185,60,.16), transparent 62%),
+      radial-gradient(900px 520px at 88% 4%,  rgba(255,212,121,.10), transparent 58%),
+      linear-gradient(180deg, rgba(7,10,18,.42) 0%, rgba(7,10,18,.66) 60%, rgba(7,10,18,.84) 100%),
+      image-set(url("./assets/img/backdrop.webp") type("image/webp"), url("./assets/img/backdrop.jpg") type("image/jpeg"));
+    background-size:auto,auto,auto,cover;background-position:center,center,center,64% 40%;
+    background-repeat:no-repeat;
   }
   .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   .up{color:var(--emerald)} .down{color:var(--crimson)}
   h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
 
   /* ---- app shell ---- */
-  .shell{width:100%;max-width:var(--shell);min-height:100vh;position:relative;display:flex;flex-direction:column;
-    border-inline:1px solid var(--line-2);background:linear-gradient(180deg,rgba(4,10,23,.4),transparent 200px)}
+  .shell{width:100%;max-width:var(--shell);min-height:100vh;position:relative;z-index:1;display:flex;flex-direction:column;
+    border-inline:1px solid var(--line-2);background:rgba(7,10,18,.36)}
   @media(min-width:560px){.shell{box-shadow:var(--lift-1)}}
 
   /* ---- top bar ---- */
   .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:16px 18px 12px;
-    background:linear-gradient(180deg,rgba(27,25,23,.9),rgba(27,25,23,.5));border-bottom:1px solid var(--line-2)}
+    background:rgba(10,14,24,.62);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-bottom:1px solid var(--line-2)}
+  /* A hint is read, not scanned: no caps, no stencil tracking. */
+  .hint-line{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.005em;color:var(--text-faint);line-height:1.5}
   .ic-btn{width:40px;height:40px;border-radius:4px;border:1px solid var(--line);background:var(--glass);
     display:grid;place-items:center;color:var(--text-dim);cursor:pointer;flex:none}
   .ic-btn:hover{border-color:rgba(245,185,60,.4);color:var(--cyan)}
@@ -79,10 +102,9 @@
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
 
   /* ---- glass module ---- */
-  .glass{position:relative;background:var(--glass);border:1px solid var(--line);
-    border-radius:4px;padding:20px;box-shadow:inset 0 1px 0 rgba(160,180,220,.07), 0 20px 40px -30px #000}
-  .glass::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;
-    background:linear-gradient(135deg,rgba(255,255,255,.05),transparent 40%)}
+  .glass{position:relative;background:var(--glass);border:1px solid var(--glass-line);
+    -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-radius:6px;padding:20px;box-shadow:var(--glass-shadow)}
   .mod-h{display:flex;align-items:center;gap:10px;margin-bottom:16px}
   .mod-h h2{font-size:18px;font-weight:700}
   .mod-h .ico{width:22px;height:22px;color:var(--cyan)}
@@ -120,7 +142,7 @@
 
   /* ---- alpha signals ---- */
   .sig{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line-2);border-radius:4px;
-    background:var(--well);margin-top:10px;cursor:pointer;transition:border-color .2s,transform .12s}
+    background:var(--glass-hd);margin-top:10px;cursor:pointer;transition:border-color .2s,transform .12s}
   .sig:hover{border-color:rgba(245,185,60,.35)} .sig:active{transform:scale(.99)}
   .sig .av{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--f-mono);
     font-weight:700;font-size:13px;border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(245,185,60,.18),rgba(122,167,255,.12))}
@@ -162,7 +184,7 @@
   .sumcell .v{font-family:var(--f-mono);font-size:1.5rem;font-weight:700;margin-top:4px}
 
   /* ---- asset / position rows ---- */
-  .arow{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line-2);border-radius:4px;background:var(--well);margin-top:10px}
+  .arow{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line-2);border-radius:4px;background:var(--glass-hd);margin-top:10px}
   .arow .av{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--f-mono);font-weight:700;
     border:1px solid var(--line);background:rgba(245,185,60,.06);color:var(--cyan)}
   .arow .nm{flex:1;min-width:0}
@@ -175,7 +197,7 @@
   .side-buy{background:rgba(61,220,151,.16);color:var(--emerald)} .side-sell{background:rgba(255,111,82,.16);color:#ff7f63}
 
   /* ---- watchlist ---- */
-  .wl{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line-2);border-radius:4px;background:var(--well);margin-top:10px;cursor:pointer}
+  .wl{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line-2);border-radius:4px;background:var(--glass-hd);margin-top:10px;cursor:pointer}
   .wl:hover{border-color:rgba(245,185,60,.3)}
   .wl .tk{font-family:var(--f-mono);font-weight:700;width:56px}
   .wl .spk{flex:1;height:30px}
@@ -192,7 +214,7 @@
 
   /* ---- bottom nav ---- */
   .nav{position:absolute;left:0;right:0;bottom:0;z-index:30;display:flex;padding:10px 8px calc(10px + env(safe-area-inset-bottom,0px));
-    background:linear-gradient(180deg,transparent,rgba(27,25,23,.92) 30%);border-top:1px solid var(--line-2)}
+    background:linear-gradient(180deg,transparent,rgba(10,14,24,.92) 30%);border-top:1px solid var(--line-2)}
   .nav button{flex:1;background:none;border:none;cursor:pointer;color:var(--text-faint);display:flex;flex-direction:column;align-items:center;gap:4px;
     font-family:var(--f-sans);font-size:12px;font-weight:600;padding:6px 0;position:relative}
   .nav button svg{width:22px;height:22px}
@@ -200,17 +222,18 @@
   .nav button.on::before{content:"";position:absolute;top:-11px;width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:var(--lift-1)}
 
   /* ---- sheet ---- */
-  .scrim{position:fixed;inset:0;z-index:50;background:rgba(27,25,23,.6);opacity:0;pointer-events:none;transition:opacity .25s}
+  .scrim{position:fixed;inset:0;z-index:50;background:rgba(7,10,18,.6);opacity:0;pointer-events:none;transition:opacity .25s}
   .scrim.on{opacity:1;pointer-events:auto}
   .sheet{position:fixed;left:50%;transform:translateX(-50%) translateY(100%);bottom:0;width:100%;max-width:var(--shell);z-index:51;
-    background:rgba(9,14,30,.92);border-radius:4px 4px 0 0;border:1px solid var(--line);border-bottom:none;
+    background:rgba(14,19,32,.9);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-radius:6px 6px 0 0;border:1px solid var(--glass-line);border-bottom:none;box-shadow:var(--glass-shadow);
     padding:10px 18px calc(26px + env(safe-area-inset-bottom,0px));transition:transform .3s cubic-bezier(.2,.7,.2,1);max-height:88vh;overflow:auto}
   .sheet.on{transform:translateX(-50%) translateY(0)}
   .sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:6px auto 16px}
   .sheet-tk{display:flex;align-items:center;gap:12px;margin-bottom:6px}
   .sheet-tk .t{font-family:var(--f-mono);font-size:1.5rem;font-weight:700}
   .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
-  .kv .c{background:var(--well);border:1px solid var(--line-2);border-radius:4px;padding:11px 13px}
+  .kv .c{background:var(--glass-hd);border:1px solid var(--line-2);border-radius:4px;padding:11px 13px}
   .kv .c .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
   .kv .c .v{font-family:var(--f-mono);font-size:1rem;font-weight:700;margin-top:3px}
   .field{margin:12px 0}
@@ -259,7 +282,7 @@
   .ladder,.tape{overflow:auto;min-height:0}
   .ladder{border-right:1px solid var(--line-2)}
   @media(min-width:820px){.ladder{border-right:none;border-bottom:1px solid var(--line-2)}}
-  .panel-h{position:sticky;top:0;background:#050a18;font-family:var(--f-mono);font-size:12px;
+  .panel-h{position:sticky;top:0;background:rgba(8,12,22,.94);font-family:var(--f-mono);font-size:12px;
     letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding:8px 12px;border-bottom:1px solid var(--line-2);z-index:2}
   .lrow{position:relative;display:flex;justify-content:space-between;padding:3px 12px;font-family:var(--f-mono);font-size:12px}
   .lrow .fill{position:absolute;top:0;bottom:0;opacity:.16}
@@ -338,7 +361,7 @@
       <div class="pv-hero">
 </div>
       <div id="watchList"></div>
-      <p class="field-k disclosure" style="margin:22px 0 6px">Tap a symbol to trade or flag it</p>
+      <p class="hint-line" style="margin:22px 0 6px">Tap a symbol to trade or flag it</p>
     </section>
 
     <!-- ============ PORTFOLIO ============ -->
@@ -796,7 +819,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 160); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 160); return; }
     var $ = function(i){ return document.getElementById(i); };
     Promise.all([F.Desk.floor(), F.Desk.agents()]).then(function(r){
       var f = r[0] || {}, a = r[1] || {}, ex = a.executive || {};

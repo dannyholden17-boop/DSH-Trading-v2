@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en" data-surface="market">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Connect Robinhood; Flux</title>
 <meta name="description" content="Flux supports one brokerage: Robinhood, through Claude's own Robinhood connector. Flux never holds your credentials and never places an order; you approve every trade yourself.">
-<meta name="theme-color" content="#f1f3f8">
+<meta name="theme-color" content="#0a0e18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
@@ -14,6 +14,29 @@
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-desk.js?v=28" defer></script>
+<style>
+/* ============================================================
+   brokerage.html: the steps, the two lists and the note are the
+   hero's glass, not the flat boxes flux.css section 18 still draws.
+   ============================================================ */
+
+/* flux.css line 90 re-aliases --glass to the opaque --blotter-2 after
+   section 24 has defined the translucent value, so the page restates
+   the material until that legacy alias is removed. */
+:root{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+
+.bk-step,.bk-can,.bk-warn{
+  background:var(--glass);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border-color:var(--glass-line);box-shadow:var(--glass-shadow);border-radius:var(--radius-lg)}
+.bk-can h2{background:var(--glass-hd);border-bottom-color:var(--glass-line-2)}
+.bk-can li{border-top-color:var(--glass-line-2)}
+.bk-step .where{border-color:var(--glass-line)}
+.bk-step .where.here{border-color:rgba(245,185,60,.4)}
+/* the note keeps its gold hairline; the warm wash sits on the glass */
+.bk-warn{border-color:rgba(245,185,60,.3);box-shadow:var(--glass-shadow-edge);
+  background:linear-gradient(rgba(245,185,60,.05),rgba(245,185,60,.05)),var(--glass)}
+</style>
 </head>
 <body>
 
@@ -131,10 +154,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

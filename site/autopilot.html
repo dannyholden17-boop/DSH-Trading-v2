@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
 <script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-fund.js?v=28" defer></script>
@@ -23,6 +24,17 @@
        These names are not defined by the shared design system, so
        they are declared here rather than redefined.
      ============================================================ */
+
+  /* cells inside a ruled container are transparent; the container is the glass
+     (!important because the shared .glass rule paints every cell otherwise) */
+  .ruled>.glass,.ap-metrics>.glass,.ap-guards>.glass{background:transparent!important;box-shadow:none!important;
+    border-radius:0!important;border-color:var(--glass-line-2)!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .ruled>.glass:hover,.ap-guards>.glass:hover{transform:none!important;background:var(--glass-hd)!important}
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* the four counters, read from the desk record: one ruled row, not a loose column */
 
   /* ---- animation utilities ---- */
   .{background-size:220% 220%;animation:apGrad 7s ease infinite}
@@ -49,7 +61,8 @@
   .ap-mq-item .s{font-weight:700}
   .ap-mq-item .px{color:var(--text-faint)}
   .ap-mq-sep{color:var(--line)}
-  .ap-mq-band{border-block:1px solid var(--line-2);background:rgba(5,10,24,.5);padding-block:16px}
+  .ap-mq-band{border-block:1px solid var(--glass-line-2);background:rgba(5,10,24,.5);padding-block:16px;
+    -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
   .ap-mq-tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
     color:var(--amber);border:1px solid rgba(245,185,60,.3);border-radius:2px;padding:2px 7px;background:rgba(245,185,60,.08)}
 
@@ -73,19 +86,24 @@
   .ap-eq .chg{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
   .ap-cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .ap-fund canvas{width:100%;height:150px;display:block;margin:14px 0 4px}
-  .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px;
-    border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
-  .ap-qs{padding:12px 14px;border-left:1px solid var(--line-2)}
+  /* the three counts are a ruled row inside the card, not a second box on it */
+  .ap-qstats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;
+    border:0!important;border-top:1px solid var(--glass-line-2)!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none;overflow:hidden}
+  .ap-qs{padding:14px 14px 2px;border-left:1px solid var(--glass-line-2)}
   .ap-qs:first-child{border-left:0}
   .ap-qs .n{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
   .ap-qs .l{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
   .ap-fund .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
-    color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+    color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--glass-line-2)}
 
   /* ---- fund showcase (#fund) ---- */
-  .ap-fund-grid{display:grid;grid-template-columns:1.28fr .72fr;gap:24px;align-items:start}
+  /* stretch so the two panels match height; the shorter one's own foot
+     rides to the bottom rather than leaving the pair visibly unequal */
+  .ap-fund-grid{display:grid;grid-template-columns:1.28fr .72fr;gap:24px;align-items:stretch}
   @media(max-width:900px){.ap-fund-grid{grid-template-columns:1fr;gap:20px}}
-  .ap-panel{padding:20px}
+  .ap-panel{padding:20px;display:flex;flex-direction:column}
   .ap-panel > *{position:relative;z-index:1}
   .ap-panel .phd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
   .ap-panel .phd .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;
@@ -93,22 +111,21 @@
   .ap-log-wrap{overflow-x:auto}
   .ap-log{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:13px;min-width:460px}
   .ap-log th{text-align:left;font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
-    font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
+    font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--glass-line-2)}
   .ap-log th.r,.ap-log td.r{text-align:right;padding-right:0}
-  .ap-log td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
+  .ap-log td{padding:10px 12px 10px 0;border-bottom:1px solid var(--glass-line-2);white-space:nowrap}
   .ap-log tbody tr{animation:apRowIn .5s ease}
   @keyframes apRowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   .ap-side{display:inline-block;font-weight:700;font-size:12px;letter-spacing:.06em;padding:2px 7px;border-radius:2px}
   .ap-side.buy{color:var(--emerald);background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.3)}
   .ap-side.sell{color:var(--crimson);background:rgba(255,111,82,.12);border:1px solid rgba(255,111,82,.3)}
   .ap-panel .foot{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
-    color:var(--text-faint);margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+    color:var(--text-faint);margin-top:auto;padding-top:12px;border-top:1px solid var(--glass-line-2)}
 
   .ap-metrics{display:flex;flex-direction:column;
     border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
     box-shadow:var(--lift-1);overflow:hidden}
-  .ap-metrics>.glass{background:none;border:0;box-shadow:none;border-radius:0;
-    border-top:1px solid var(--line-2)}
+  .ap-metrics>.glass{border:0;border-top:1px solid var(--glass-line-2)}
   .ap-metrics>.glass::after{display:none}
   .ap-metrics>.glass:first-child{border-top:0}
   .ap-metric{padding:16px 18px;position:relative}
@@ -133,16 +150,22 @@
 
   .ap-report{padding:0;overflow:hidden}
   .ap-report > *{position:relative;z-index:1}
-  .ap-rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+  .ap-rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--glass-line-2);
+    background:var(--glass-hd)}
   .ap-rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
   .ap-rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
   .ap-rep-body{padding:16px 18px 6px}
-  .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;display:flex;gap:9px}
-  .ap-rline::before{content:"›";color:var(--cyan);font-family:var(--f-mono);font-weight:700;flex:none}
+  /* Not flex: a flex container makes every <b> in the sentence its own
+     column. The marker is absolutely positioned in the indent instead. */
+  .ap-rline{font-size:.9rem;line-height:1.55;color:var(--text-dim);margin-bottom:9px;
+    position:relative;padding-left:18px}
+  .ap-rline::before{content:"›";position:absolute;left:0;top:0;color:var(--cyan);
+    font-family:var(--f-mono);font-weight:700}
   .ap-rline b{color:var(--text);font-weight:600}
   .ap-report.typing .ap-rline{opacity:0;transform:translateY(6px)}
   .ap-report.typing .ap-rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
-  .ap-rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line-2);
+  .ap-rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--glass-line-2);
+    background:var(--glass-hd);
     font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint)}
 
   /* ---- disclaimer strip ---- */
@@ -161,12 +184,11 @@
   .ap-guards{display:grid;grid-template-columns:repeat(3,1fr);margin-top:44px;
     border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
     box-shadow:var(--lift-1);overflow:hidden}
-  .ap-guards>.glass{background:none;border:0;box-shadow:none;border-radius:0;
-    border-left:1px solid var(--line-2);border-top:1px solid var(--line-2);padding:clamp(20px,2.1vw,28px)}
+  .ap-guards>.glass{border:0;
+    border-left:1px solid var(--glass-line-2);border-top:1px solid var(--glass-line-2);padding:clamp(20px,2.1vw,28px)}
   .ap-guards>.glass::after{display:none}
   .ap-guards>.glass:nth-child(-n+3){border-top:0}
   .ap-guards>.glass:nth-child(3n+1){border-left:0}
-  .ap-guards>.glass:hover{transform:none;box-shadow:none;background:var(--blotter-3)}
   @media(max-width:900px){
     .ap-guards{grid-template-columns:repeat(2,1fr)}
     .ap-guards>.glass:nth-child(-n+3){border-top:1px solid var(--line-2)}
@@ -185,27 +207,32 @@
   .ap-sim-warn p{color:var(--text-dim);font-size:13px;line-height:1.55}
   .ap-sim-warn b{color:var(--text)}
   .ap-sim-presets{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
-  .ap-preset{cursor:pointer;text-align:left;flex:1 1 220px;min-width:min(220px,100%);padding:14px 16px;border-radius:4px;
-    border:1px solid var(--line-2);background:var(--well);transition:border-color .2s,transform .2s;font-family:inherit;color:inherit}
+  .ap-preset{cursor:pointer;text-align:left;flex:1 1 220px;min-width:min(220px,100%);padding:14px 16px;border-radius:var(--radius-lg);
+    border:1px solid var(--glass-line);background:var(--glass);
+    -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--glass-shadow);
+    transition:border-color .2s,transform .2s;font-family:inherit;color:inherit}
   .ap-preset:hover{transform:translateY(-2px);border-color:rgba(245,185,60,.35)}
-  .ap-preset.on{border-color:var(--cyan);background:rgba(245,185,60,.07);box-shadow:var(--lift-1)}
+  .ap-preset.on{border-color:var(--cyan);background:rgba(245,185,60,.09)}
   .ap-preset .nm{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
   .ap-preset .nm .dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex:none}
   .ap-preset.on .nm .dot{background:var(--cyan);box-shadow:var(--lift-1)}
   .ap-preset .sub{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:6px}
-  .ap-sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start}
+  .ap-sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:stretch}
   @media(max-width:900px){.ap-sim-grid{grid-template-columns:1fr;gap:20px}}
   .ap-sim-desc{color:var(--text-dim);font-size:.9rem;line-height:1.55;margin-bottom:16px}
   .ap-sim-tbl-wrap{overflow-x:auto}
   .ap-sim-tbl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:13px;min-width:340px}
   .ap-sim-tbl th{text-align:left;font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint);
-    font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--line-2)}
+    font-weight:600;padding:0 12px 10px 0;border-bottom:1px solid var(--glass-line-2)}
   .ap-sim-tbl th.r,.ap-sim-tbl td.r{text-align:right;padding-right:0}
-  .ap-sim-tbl td{padding:10px 12px 10px 0;border-bottom:1px dashed var(--line-2);white-space:nowrap}
+  .ap-sim-tbl td{padding:10px 12px 10px 0;border-bottom:1px solid var(--glass-line-2);white-space:nowrap}
   .ap-sim-tbl td.rs{color:var(--text-dim);white-space:normal;min-width:150px}
   .ap-sim-canvas{width:100%;max-width:100%;height:180px;display:block;margin:4px 0 10px}
-  .ap-sim-res{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:6px 0 4px}
-  .ap-sim-res .box{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:12px 14px}
+  /* the two results are one ruled pair inside the panel, not two wells */
+  .ap-sim-res{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin:6px 0 4px;
+    border-block:1px solid var(--glass-line-2)}
+  .ap-sim-res .box{border:0;border-left:1px solid var(--glass-line-2);background:transparent;padding:12px 14px}
+  .ap-sim-res .box:first-child{border-left:0;padding-left:0}
   .ap-sim-res .l{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .ap-sim-res .v{font-family:var(--f-mono);font-weight:700;font-size:1.18rem;letter-spacing:-.01em;margin-top:5px;font-variant-numeric:tabular-nums}
   .ap-sim-note{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:12px;line-height:1.5}
@@ -509,21 +536,24 @@
         <div class="ap-rep-head">
           <span class="pill pill-violet"><i></i> Daily wrap</span>
           <span class="ttl">Flux Fund</span>
-          <span class="ts" id="repTs">—</span>
+          <span class="ts" id="repTs">example</span>
         </div>
+        <p class="scripted" style="margin:0 18px 4px">A worked example of the wrap's shape. It carries no
+          figures, because <b>this account has not traded</b>. Yours is written off your own paper book at
+          the close of each session.</p>
         <div class="ap-rep-body">
-          <p class="ap-rline">Closed the session at <b>$12,633</b> on the paper account: a simulated
-            <b class="up">+1.3%</b> day across 14 fills.</p>
-          <p class="ap-rline">Best position was <b>NVDA</b> on the morning call sweep; worst was a <b>TSLA</b>
-            short trimmed into the close after the 8-K drift stalled.</p>
-          <p class="ap-rline">Exposure ran at <b>61% gross</b> all afternoon; the Risk engine blocked two
-            correlated semis from being added on top.</p>
-          <p class="ap-rline">Tomorrow's plan: hold <b>4 of 6</b> positions, tighten stops on the two runners,
-            and watch <b>MSFT</b> into the cloud update.</p>
+          <p class="ap-rline"><b>The close.</b> Where the paper account finished, the day's simulated move,
+            and how many fills it took to get there.</p>
+          <p class="ap-rline"><b>Best and worst.</b> The position that carried the day and the one that cost
+            it, with the reason each went the way it did.</p>
+          <p class="ap-rline"><b>Exposure.</b> How much of the book was at risk through the session, and
+            every trade the Risk engine refused to let on top of it.</p>
+          <p class="ap-rline"><b>Tomorrow.</b> What is being held, what is being tightened, and the one
+            scheduled event that could change the answer.</p>
         </div>
         <div class="ap-rep-foot">
-          <span id="repStat">writing wrap…</span>
-          <span style="margin-left:auto">Illustrative sample · simulated</span>
+          <span id="repStat">writing…</span>
+          <span style="margin-left:auto">Example &middot; not advice</span>
         </div>
       </div>
     </div>
@@ -659,10 +689,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -685,14 +715,10 @@ document.addEventListener("DOMContentLoaded", function(){
   function ri(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
   function pad2(n){ n = String(n); return n.length<2 ? "0"+n : n; }
 
-  /* ---------- report timestamp ---------- */
-  var ts = $("#repTs");
-  if(ts){
-    var d = new Date(), hh = d.getHours();
-    var ap = hh >= 12 ? "PM" : "AM";
-    var h12 = hh % 12; if(h12 === 0) h12 = 12;
-    ts.textContent = "filed " + h12 + ":" + pad2(d.getMinutes()) + " " + ap;
-  }
+  /* No timestamp on the example. A live clock over an example wrap says it
+     was filed just now, which is the whole trick this page stopped playing.
+     The real wrap gets its filed time from the record, not from the reader's
+     own clock. */
 
   /* ---------- report line reveal (research.html pattern) ---------- */
   var report = $("#report");
@@ -701,14 +727,14 @@ document.addEventListener("DOMContentLoaded", function(){
   var stat = $("#repStat");
   if(reduce){
     lines.forEach(function(l){ l.classList.add("in"); });
-    if(stat) stat.textContent = "wrap complete · 14 fills · simulated";
+    if(stat) stat.textContent = "example complete";
   } else {
     var delay = 260;
     lines.forEach(function(l, i){
       setTimeout(function(){ l.classList.add("in"); }, delay + i * 220);
     });
     setTimeout(function(){
-      if(stat) stat.textContent = "wrap complete · 14 fills · simulated";
+      if(stat) stat.textContent = "example complete";
     }, delay + lines.length * 220 + 400);
     var phases = ["tallying fills…","scoring P/L…","ranking positions…","writing wrap…"];
     var pi = 0;
@@ -1447,7 +1473,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150); return; }
     var $ = function(i){ return document.getElementById(i); };
     F.Desk.floor().then(function(f){
       if(!f) return;

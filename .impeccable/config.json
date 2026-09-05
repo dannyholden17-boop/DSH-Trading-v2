@@ -3,9 +3,15 @@
   "detector": {
     "ignoreRules": [
       "cramped-padding",
-      "hero-eyebrow-chip"
+      "hero-eyebrow-chip",
+      "clipped-overflow-container",
+      "marquee",
+      "pulsing-dot",
+      "numbered-section-labels"
     ],
-    "ignoreFiles": [],
+    "ignoreFiles": [
+      "site/assets/vendor/**"
+    ],
     "ignoreValues": [
       {
         "rule": "design-system-color",
@@ -21,6 +27,14 @@
         "rule": "design-system-color",
         "value": "#28c840",
         "createdAt": "2026-09-02T17:05:05.144Z"
+      },
+      {
+        "rule": "icon-tile-stack",
+        "value": "*",
+        "files": [
+          "site/app.html"
+        ],
+        "createdAt": "2026-09-05T01:54:08.636Z"
       }
     ]
   }

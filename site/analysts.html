@@ -14,6 +14,23 @@
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-desk.js?v=28" defer></script>
+<style>
+/* The station's glass, page-scoped. flux.css declares the hero's rgba glass
+   token and then re-declares --glass as the opaque --blotter-2 in its legacy
+   alias block, so the shared glass pass renders flat. Setting the intended
+   values on the page wrapper lets the shared .st-panel and .st-cards rules
+   read as the same substance as the front page here. */
+.st-wrap{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+/* every hairline and hover inside the glass is light, never the dark-room line */
+.st-card:hover{background:var(--glass-hd)}
+.st-fig,.st-note{border-color:var(--glass-line-2)}
+/* the desk list and the wire share the row; the wire and the record stack
+   beside it so a quiet wire does not leave a column of nothing */
+.st-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.st-split>*{margin-top:0}
+.st-col{display:grid;gap:16px;align-content:start;min-width:0}
+.st-col>.st-panel{margin-top:0}
+</style>
 </head>
 <body>
 
@@ -99,16 +116,17 @@
       <div class="st-panel-h">On the desk right now <em id="aNamesCap">—</em></div>
       <ul class="st-rows" id="aNames"><li>Reading the round…</li></ul>
     </section>
-    <section class="st-panel">
-      <div class="st-panel-h">On the wire <em id="aWireCap">—</em></div>
-      <ul class="st-rows" id="aWire"><li>Loading the wire…</li></ul>
-    </section>
+    <div class="st-col">
+      <section class="st-panel">
+        <div class="st-panel-h">On the wire <em id="aWireCap">—</em></div>
+        <ul class="st-rows" id="aWire"><li>Loading the wire…</li></ul>
+      </section>
+      <section class="st-panel">
+        <div class="st-panel-h">The record <em id="aScoreCap">—</em></div>
+        <ul class="st-rows" id="aScore"><li>Reading the scoreboard…</li></ul>
+      </section>
+    </div>
   </div>
-
-  <section class="st-panel">
-    <div class="st-panel-h">The record <em id="aScoreCap">—</em></div>
-    <ul class="st-rows" id="aScore"><li>Reading the scoreboard…</li></ul>
-  </section>
 
   <section class="st-panel">
     <div class="st-panel-h">The filings <em id="aGateCap">members only</em></div>
@@ -125,10 +143,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -138,7 +156,7 @@
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 140); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 140); return; }
     var D = F.Desk;
     if(F.initNav) F.initNav();
     if(F.initFX) F.initFX();
@@ -193,13 +211,13 @@ document.addEventListener("DOMContentLoaded", function(){
               'text-transform:uppercase;color:var(--text-faint);min-width:9ch">' + esc(r.horizon || "all") + '</span>' +
               '<span style="font-family:var(--f-mono);font-size:13px;color:var(--text-dim)">' +
               esc(r.resolved || 0) + ' resolved</span>' +
-              '<span style="margin-left:auto;font-family:var(--f-mono);font-size:15px;font-weight:600;color:' +
+              '<span style="margin-left:auto;font-family:var(--f-mono);font-size:1rem;font-weight:600;color:' +
               (r.hit_rate == null ? "var(--text-faint)" : r.hit_rate >= 0.5 ? "var(--clearing)" : "var(--stamp)") +
               '">' + rate + '</span></li>';
           }).join("");
         } else {
           $("#aScoreCap").textContent = open_ ? open_ + " open" : "nothing due yet";
-          host.innerHTML = '<li style="color:var(--text-dim);font-size:.94rem;line-height:1.65">' +
+          host.innerHTML = '<li style="color:var(--text-dim);font-size:.9rem;line-height:1.65">' +
             (open_
               ? 'No prediction has reached its resolve date yet, so there is no hit rate to show. ' +
                 (open_ === 1 ? 'One call is' : '<b style="color:var(--text)">' + open_ + '</b> calls are') +

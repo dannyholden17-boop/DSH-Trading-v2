@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en" data-surface="market">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flux: the research desk that shows its work</title>
 <meta name="description" content="Three analysts research a name and file dated, scoreable predictions. Their trading boss throws out most of it. One executive rules on what survives. Every filing is stored and graded against the tape. Simulated money, real market data, not investment advice.">
-<meta name="theme-color" content="#f1f3f8">
+<meta name="theme-color" content="#0a0e18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Cg stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='11' y1='13' x2='11' y2='19' stroke='%23f5b93c'/%3E%3Cline x1='16' y1='9' x2='16' y2='23' stroke='%23f2eee4'/%3E%3Cline x1='21' y1='13' x2='21' y2='19' stroke='%233ddc97'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./assets/fonts.css?v=28">
 <link rel="stylesheet" href="./assets/flux.css?v=28">
@@ -163,6 +163,10 @@ body.at-top .nav .glyph{background:var(--gold-soft)}
   text-transform:uppercase;color:#8d9ab6;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .board-rows .bd-rt.buy{color:var(--clearing)} .board-rows .bd-rt.sell{color:var(--stamp)}
+/* The board falls back to this when the desk is unreachable. A sentence
+   is read, not scanned, so it drops the rating cell's caps and clipping. */
+.board-rows .bd-note{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.005em;
+  line-height:1.5;color:#8d9ab6;white-space:normal;text-transform:none}
 .board-rows .bd-px{font-family:var(--f-mono);font-size:13px;color:#f2f5fb;
   font-variant-numeric:tabular-nums;text-align:right;
   border-radius:var(--radius);transition:background .45s var(--ease),color .45s var(--ease)}
@@ -358,7 +362,9 @@ body.at-top .nav .glyph{background:var(--gold-soft)}
 .ch-doc{
   position:absolute;top:0;left:16.66%;width:126px;
   transform-style:preserve-3d;
-  border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);
+  border:1px solid var(--glass-line);border-radius:var(--radius);background:var(--glass-2);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow);
   padding:10px 12px 11px;
   animation:chDoc 16s var(--ease) infinite;
 }
@@ -396,11 +402,11 @@ body.at-top .nav .glyph{background:var(--gold-soft)}
   96%  {opacity:.55; transform:translateZ(-1px) scale(1)}
   100% {opacity:0;   transform:translateZ(-1px) scale(1.5)}
 }
-.ch-doc .sym{display:block;font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:-.02em}
+.ch-doc .sym{display:block;font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:-.02em;color:var(--text)}
 .ch-doc .meta{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;
   text-transform:uppercase;color:var(--text-faint);margin-top:3px}
 .ch-doc .marks{display:flex;gap:4px;margin-top:10px}
-.ch-doc .marks i{width:100%;height:3px;border-radius:2px;background:var(--well);
+.ch-doc .marks i{width:100%;height:3px;border-radius:2px;background:rgba(226,234,248,.14);
   animation:chMark 16s steps(1,end) infinite}
 .ch-doc .marks i:nth-child(1){animation-delay:.6s}
 .ch-doc .marks i:nth-child(2){animation-delay:5.9s}
@@ -912,10 +918,10 @@ body.at-top .nav .glyph{background:var(--gold-soft)}
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -939,7 +945,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 160); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 160); return; }
     var D = F.Desk;
     var $ = function(i){ return document.getElementById(i); };
     var esc = function(t){ return String(t == null ? "" : t).replace(/[&<>"]/g, function(c){
@@ -1230,7 +1236,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.addEventListener("DOMContentLoaded", function(){
   function boot(){
     var F = window.FLUX;
-    if(!F || !F.Desk){ return setTimeout(boot, 150); }
+    if(!F || !F.Desk){ if((boot.n=(boot.n||0)+1) < 60) setTimeout(boot, 150); return; }
     var D = F.Desk, $ = function(i){ return document.getElementById(i); };
     var esc = function(t){ return String(t==null?"":t).replace(/[&<>"]/g, function(c){
       return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); };
@@ -1283,7 +1289,7 @@ document.addEventListener("DOMContentLoaded", function(){
         $("bdRule").textContent = tot ? tot.toLocaleString() + " rulings on record" : "";
       }).catch(function(){
         $("bdRound").textContent = "unreachable";
-        $("bdRows").innerHTML = '<li style="grid-template-columns:1fr"><span class="bd-rt" style="white-space:normal">Could not reach the desk record. Nothing here is filled in with an example.</span></li>';
+        $("bdRows").innerHTML = '<li style="grid-template-columns:1fr"><span class="bd-note">Could not reach the desk record. Nothing here is filled in with an example.</span></li>';
         $("bdStage").textContent = "reload to try again";
       });
     }

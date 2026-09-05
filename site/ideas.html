@@ -32,7 +32,11 @@
 
   /* fit area — content scales to fit, never scrolls */
   .id-fit{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:10px}
-  .id-stack{width:100%;display:flex;flex-direction:column;gap:9px;transform-origin:top center}
+  /* flexbox centers this box using its pre-transform (unscaled) size, so a
+     top-anchored scale shrinks it away from that centered position and the
+     top rows end up clipped by the shell's overflow:hidden; anchoring the
+     scale to the same center flexbox already chose keeps it in place */
+  .id-stack{width:100%;display:flex;flex-direction:column;gap:9px;transform-origin:center center}
 
   /* compact stacked idea row */
   .irow{display:grid;grid-template-columns:170px 1fr auto;gap:16px;align-items:center;padding:12px 16px;cursor:pointer;
@@ -71,11 +75,12 @@
 
   /* brief modal */
   .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px;
-    background:rgba(27,25,23,.72);}
+    background:rgba(7,10,18,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
   .brief-modal.show{display:flex}
-  .brief-sheet{width:min(600px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:4px}
-  .bm-head{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line-2);
-    position:sticky;top:0;background:var(--glass);z-index:1}
+  .brief-sheet{width:min(600px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:var(--radius-lg)}
+  /* sticky head and foot sit over scrolling text, so they are nearly solid */
+  .bm-head{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--glass-line-2);
+    position:sticky;top:0;background:rgba(14,19,32,.94);z-index:1}
   .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:4px;width:32px;height:32px;cursor:pointer;font-size:.9rem}
   .bm-x:hover{color:var(--text);border-color:var(--cyan)}
   .bm-body{padding:18px}
@@ -85,7 +90,7 @@
   .bm-k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
   .bm-v{font-size:.9rem;line-height:1.55;color:var(--text-dim)}
   .bm-disc{margin-top:14px;font-size:12px;color:var(--text-faint);line-height:1.5}
-  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--line-2);position:sticky;bottom:0;background:var(--glass);}
+  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:13px 18px;border-top:1px solid var(--glass-line-2);position:sticky;bottom:0;background:rgba(14,19,32,.94)}
 </style>
 </head>
 <body>

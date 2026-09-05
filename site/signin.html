@@ -17,6 +17,14 @@
 <script src="./assets/flux-kronos.js?v=28" defer></script>
 <style>
   /* ---- page-only layout: signin.html ---- */
+
+  /* flux.css line 90 re-aliases --glass to the opaque --blotter-2 after
+     section 24 has defined the translucent value, so the page restates
+     the material until that legacy alias is removed. */
+  :root{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+  /* a well sunk into glass is darker glass, not an opaque pit */
+  .si-well{background:rgba(7,10,18,.46)}
+
   .si-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:40px;align-items:stretch}
   @media(max-width:820px){.si-grid{grid-template-columns:1fr;gap:26px}}
 
@@ -28,6 +36,11 @@
 
   /* left marketing panel */
   .si-left{padding:clamp(24px,3.4vw,36px);display:flex;flex-direction:column}
+  .si-left .pill{background:var(--glass-hd);border-color:var(--glass-line)}
+  /* the signal rows the shared script draws are glass bands inside the panel */
+  .si-sigs .sig{background:var(--glass-hd);border-color:var(--glass-line-2)}
+  .si-sigs .sig .av{background:rgba(7,10,18,.46);border-color:var(--glass-line)}
+  .si-sigs .sig .bar{background:rgba(7,10,18,.5)}
   .si-left h2{font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);margin-top:18px;line-height:1.08}
   .si-left .lede{margin-top:14px;font-size:1rem}
   .si-bullets{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:14px}
@@ -47,8 +60,8 @@
   .si-card{padding:clamp(22px,3vw,32px)}
   .si-card h1{font-size:1.5rem}
   .si-sub{color:var(--text-dim);font-size:.9rem;margin-top:8px;margin-bottom:22px}
-  .si-tabs{display:flex;gap:6px;padding:5px;border:1px solid var(--line-2);border-radius:4px;
-    background:var(--well);margin-bottom:22px}
+  .si-tabs{display:flex;gap:6px;padding:5px;border:1px solid var(--glass-line-2);border-radius:4px;
+    background:rgba(7,10,18,.46);margin-bottom:22px}
   .si-tab{flex:1;padding:11px 10px;border:0;border-radius:4px;background:transparent;
     color:var(--text-dim);font-weight:700;font-size:13.5px;cursor:pointer;font-family:var(--f-sans);
     transition:color .18s,background .18s}
@@ -58,8 +71,8 @@
   .si-field{margin-bottom:15px}
   .si-field label{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--text-faint);margin-bottom:8px}
-  .si-input{width:100%;padding:13px 15px;border-radius:4px;border:1px solid var(--line);
-    background:var(--well);color:var(--text);font-size:1rem;font-family:var(--f-sans);line-height:1.3}
+  .si-input{width:100%;padding:13px 15px;border-radius:4px;border:1px solid var(--glass-line);
+    background:rgba(7,10,18,.46);color:var(--text);font-size:1rem;font-family:var(--f-sans);line-height:1.3}
   .si-input::placeholder{color:var(--text-faint)}
   .si-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(245,185,60,.15)}
 
@@ -73,7 +86,8 @@
 
   .si-or{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text-faint);
     font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
-  .si-or::before,.si-or::after{content:"";flex:1;height:1px;background:var(--line-2)}
+  .si-or::before,.si-or::after{content:"";flex:1;height:1px;background:var(--glass-line-2)}
+  .si-social .btn-ghost{border-color:var(--glass-line)}
   .si-social{display:flex;flex-direction:column;gap:10px}
   .si-social .btn{width:100%;color:var(--text)}
   .si-glyph{width:18px;height:18px;flex:none}
@@ -150,7 +164,7 @@
           <li>
             <span class="k">⌖</span>
             <span class="bd"><b>Ranked AI trade recommendations</b>
-              <p>Every live signal re-scored against years of outcomes, ordered by conviction, estimates, never advice.</p></span>
+              <p>Every filing scored against the analyst's own graded record, ordered by how far the desk agreed with itself. Estimates, never advice.</p></span>
           </li>
           <li>
             <span class="k">◎</span>
@@ -159,8 +173,8 @@
           </li>
           <li>
             <span class="k">⧗</span>
-            <span class="bd"><b>The Flux Fund track record</b>
-              <p>Follow how the autonomous desk trades inside its guardrails, logged and replayable.</p></span>
+            <span class="bd"><b>The Flux Fund, in the open</b>
+              <p>Follow how the autonomous desk trades inside its guardrails, on a simulated account, with every decision logged.</p></span>
           </li>
         </ul>
 
@@ -260,10 +274,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>

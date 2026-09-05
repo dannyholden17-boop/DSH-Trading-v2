@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="./assets/flux.css?v=28">
 <script src="./assets/flux-supa.js?v=28" defer></script>
 <script src="./assets/flux-site.js?v=28" defer></script>
+<script src="./assets/flux-desk.js?v=28" defer></script>
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-fund.js?v=28" defer></script>
@@ -20,6 +21,22 @@
      redefines a variable or restyles a shared component.
      ========================================================== */
 
+  /* cells inside a ruled container are transparent; the container is the glass
+     (!important because the shared .glass rule paints every cell otherwise) */
+  .ruled>.glass{background:transparent!important;box-shadow:none!important;
+    border-radius:0!important;border-color:var(--glass-line-2)!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .ruled>.glass:hover{transform:none!important;background:var(--glass-hd)!important}
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* signal rows on the phone mock: one ruled list, never cards on a card */
+  .ph-feed{gap:0;border:1px solid var(--glass-line-2);border-radius:var(--radius);overflow:hidden;margin:0 12px 16px;padding:0}
+  .ph-feed .sig{background:transparent;border:0;border-top:1px solid var(--glass-line-2);border-radius:0;box-shadow:none}
+  .ph-feed .sig:first-child{border-top:0}
+  .sig .av{background:rgba(226,234,248,.06);border-color:var(--glass-line)}
+  .sig .bar{background:rgba(226,234,248,.08)}
+
   /* ---- hero ---- */
   .dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
   .dl-meta{margin-top:15px;font-size:12px;letter-spacing:.05em;color:var(--text-faint)}
@@ -29,6 +46,8 @@
   .dl-note.show{display:flex;animation:pop .35s both}
   .dl-note .nk{font-family:var(--f-mono);color:var(--cyan);font-weight:700;flex:none;line-height:1.5}
   .dl-note b{color:var(--text)}
+  .dl-waitlabel{margin:22px 0 10px;color:var(--text-faint);font-size:.9rem}
+  .dl-actions-2{gap:10px}
 
   /* ---- store badges (inline SVG, no external assets) ---- */
   .store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
@@ -47,12 +66,12 @@
   .rel-card h3,.rel-card h2{font-size:1rem}
   .rc-rows{margin-top:18px;display:flex;flex-direction:column;gap:0}
   .rc-row{display:flex;justify-content:space-between;align-items:center;gap:16px;
-    padding:11px 0;border-bottom:1px solid var(--line-2);font-size:.9rem}
+    padding:11px 0;border-bottom:1px solid var(--glass-line-2);font-size:.9rem}
   .rc-row:last-child{border-bottom:0}
   .rc-row span{color:var(--text-dim)}
   .rc-row b{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--text)}
-  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:4px;background:var(--well);
-    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;
+  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:4px;background:rgba(6,9,17,.35);
+    border:1px solid var(--glass-line-2);font-family:var(--f-mono);font-size:12px;
     color:var(--text-faint);word-break:break-all;line-height:1.5}
   .rc-sha b{color:var(--cyan);font-weight:600}
 
@@ -70,7 +89,7 @@
 
   .win{padding:0;overflow:hidden}
   .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
-    border-bottom:1px solid var(--line-2);background:var(--well)}
+    border-bottom:1px solid var(--glass-line-2);background:var(--glass-hd)}
   .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:var(--line)}
   .win-bar i:nth-child(1){background:rgba(255,111,82,.55)}
   .win-bar i:nth-child(2){background:rgba(245,185,60,.55)}
@@ -84,7 +103,8 @@
 
   /* ---- platform cards ---- */
   .dl-card{display:flex;flex-direction:column}
-  .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;
+  /* the list takes the slack so the three buttons sit on one baseline */
+  .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;flex:1;
     font-size:.9rem;color:var(--text-dim)}
   .dl-list li{display:flex;gap:9px;align-items:flex-start}
   .dl-list li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;font-size:13px;flex:none;line-height:1.6}
@@ -107,9 +127,9 @@
   /* ---- comparison table ---- */
   .cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:4px;padding:2px}
   .cmp{width:100%;min-width:580px;border-collapse:collapse;font-size:.9rem}
-  .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--line-2)}
+  .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--glass-line-2)}
   .cmp thead th{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--line)}
+    color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--glass-line)}
   .cmp thead th:not(:first-child){color:var(--text-dim)}
   .cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:15%}
   .cmp tbody tr:last-child td{border-bottom:0}
@@ -123,10 +143,10 @@
   /* ---- system requirements ---- */
   .req{padding:22px;display:flex;flex-direction:column}
   .req .os{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
-  .req h3,.req h2{font-size:1rem;margin-top:9px}
+  .req h3,.req h2{font-size:1.18rem;font-weight:700;letter-spacing:-.015em;margin-top:9px}
   .req ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:0}
   .req li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;
-    border-bottom:1px dashed var(--line-2);font-size:13px;color:var(--text-dim)}
+    border-bottom:1px solid var(--glass-line-2);font-size:13px;color:var(--text-dim)}
   .req li:last-child{border-bottom:0}
   .req li b{color:var(--text);font-weight:600;text-align:right}
 
@@ -150,7 +170,7 @@
   .shead p{margin-top:16px}
   .shead.c{margin-inline:auto;text-align:center}
   .shead.c .lede{margin-inline:auto}
-  .dl-h{font-size:1rem;margin:0}
+  .dl-h{font-size:1.18rem;font-weight:700;letter-spacing:-.015em;margin:0}
 </style>
 </head>
 <body>
@@ -195,67 +215,51 @@
   <div class="wrap split wide-l">
     <div class="reveal">
 <h1 class="h1" style="margin-top:18px">Your desk.<br><span class="">Every device.</span></h1>
-      <p class="lede">The full workstation on Mac and Windows. The same research desk in your
-        pocket. And nothing to install at all if you'd rather just open a tab, your
-        watchlists, signals and paper book sync across all three.</p>
+      <p class="lede">Flux runs in your browser today, with nothing to install and nothing to
+        update. The Mac, Windows and Linux clients are being built, and so are the phone apps.
+        Put your name down and we will send you a link the day yours is ready.</p>
 
       <div class="dl-actions">
         <a class="btn btn-lg btn-primary" href="./dashboard.html">Launch Flux on web →</a>
-        <a class="btn btn-lg btn-ghost" href="#" id="dlMac" data-dl="mac" data-os="macOS">Mac app (beta)</a>
-        <a class="btn btn-lg btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Windows (beta)</a>
-        <a class="btn btn-lg btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux (beta)</a>
       </div>
-      <p class="mono" style="margin-top:10px;color:var(--emerald);font-size:13px">Nothing to install; Flux runs in your browser. Trade now on web, sync to your phone.</p>
-      <p class="mono dl-meta" id="dlMetaLine">version 2.4.1 · 84 MB · macOS 12+ (Apple Silicon &amp; Intel)</p>
+      <p class="dl-waitlabel">Or be told when a client ships:</p>
+      <div class="dl-actions dl-actions-2">
+        <a class="btn btn-ghost" href="#" id="dlMac" data-dl="mac" data-os="macOS">Mac</a>
+        <a class="btn btn-ghost" href="#" id="dlWin" data-dl="win" data-os="Windows">Windows</a>
+        <a class="btn btn-ghost" href="#" id="dlLinux" data-dl="linux" data-os="Linux">Linux</a>
+      </div>
+      <p class="mono dl-meta" id="dlMetaLine">No desktop build has shipped yet. Flux Web is the whole desk, today.</p>
 
       <div class="dl-note" id="betaNote" role="status" aria-live="polite">
         <span class="nk">›</span><span id="betaNoteText"></span>
       </div>
 
-      <div class="store-row">
-        <a class="store-badge" href="#" id="badgeIOS" data-dl="ios" data-os="iOS" aria-label="Download on the App Store">
-          <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#070a12"/>
-            <g transform="translate(17,13) scale(1.08)" fill="#f2f5fb">
-              <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.9-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.75-4.11z" transform="translate(-3,-4)"/>
-              <path d="M14.6 4.5c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-3 1.54-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.3-.58 3.02-1.44z" transform="translate(-3,-4)"/>
-            </g>
-            <text x="47" y="22" fill="#a8b4cd" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">Download on the</text>
-            <text x="46" y="39" fill="#f2f5fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">App Store</text>
-          </svg>
-        </a>
-        <a class="store-badge" href="#" id="badgeAndroid" data-dl="android" data-os="Android" aria-label="Get it on Google Play">
-          <svg viewBox="0 0 172 52" role="img" aria-hidden="true" focusable="false">
-            <rect width="172" height="52" rx="12" fill="#070a12"/>
-            <g transform="translate(15,15)">
-              <polygon points="3,2 14,10 3,10" fill="#00d67f"/>
-              <polygon points="3,18 14,10 3,10" fill="#00a0ff"/>
-              <polygon points="3,2 19.4,10 14,10" fill="#ff3a44"/>
-              <polygon points="3,18 19.4,10 14,10" fill="#ffce00"/>
-            </g>
-            <text x="47" y="22" fill="#a8b4cd" font-family="Inter,system-ui,sans-serif" font-size="9.5" letter-spacing="1.1">GET IT ON</text>
-            <text x="46" y="39" fill="#f2f5fb" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="600" letter-spacing="-.2">Google Play</text>
-          </svg>
-        </a>
+      <p class="dl-waitlabel">And when the phone apps land:</p>
+      <div class="dl-actions dl-actions-2">
+        <a class="btn btn-ghost" href="#" id="badgeIOS" data-dl="ios" data-os="iOS">iPhone</a>
+        <a class="btn btn-ghost" href="#" id="badgeAndroid" data-dl="android" data-os="Android">Android</a>
       </div>
-      <p class="store-caption">iOS and Android apps are in beta, web and desktop are available now.</p>
+      <p class="store-caption">Flux is not in the App Store or on Google Play. The store badges go
+        here when there are listings to link to, and not before.</p>
     </div>
 
     <div class="glass rel-card reveal">
       <div class="rc-h">
-        <h2 class="dl-h">Latest release</h2>
-        <span class="pill"><i></i> 2.4.1 stable</span>
+        <p class="dl-h">What exists today</p>
+        <span class="pill"><i></i> web</span>
       </div>
       <div class="rc-rows">
-        <div class="rc-row"><span>macOS · universal .dmg</span><b>84 MB</b></div>
-        <div class="rc-row"><span>Windows · .exe installer</span><b>96 MB</b></div>
-        <div class="rc-row"><span>Linux · .AppImage</span><b>78 MB</b></div>
-        <div class="rc-row"><span>Published</span><b>11 Aug 2026</b></div>
-        <div class="rc-row"><span>Update channel</span><b>stable</b></div>
+        <div class="rc-row"><span>Flux Web</span><b>live now</b></div>
+        <div class="rc-row"><span>macOS &middot; Windows &middot; Linux</span><b>in build</b></div>
+        <div class="rc-row"><span>iOS &middot; Android</span><b>in build</b></div>
+        <div class="rc-row"><span>Published builds</span><b>none yet</b></div>
       </div>
-      <div class="rc-sha"><b>SHA-256</b> · flux-2.4.1-universal.dmg<br>9f2c 41ab 77d0 e6c3 8b15 aa92 3fd7 0c48 e1b6 5a29 cc74 90f1 2d83 be55 617a 04df</div>
-      <p class="muted" style="margin-top:16px;font-size:.9rem">Every build is signed and notarized, and the
-        desktop app verifies its own signature before it updates itself. <a href="#whats-new" style="color:var(--cyan)">See what changed →</a></p>
+      <p class="scripted" style="margin-top:16px">No version number, file size or checksum is
+        listed here, because <b>there is no build to describe yet</b>. When there is one, this
+        card carries its real version, its real size and its real checksum, and not before.</p>
+      <p class="muted" style="margin-top:14px;font-size:.9rem">Everything on the desk works in a
+        browser right now, including the paper terminal.
+        <a href="./dashboard.html" style="color:var(--cyan)">Open it &rarr;</a></p>
     </div>
   </div>
 </section>
@@ -282,7 +286,7 @@
     <div class="ruled r-3" style="margin-top:44px">
       <div class="glass feat glass-hover dl-card reveal">
         <div class="ic">▤</div>
-        <h2 class="dl-h">Flux Desktop</h2>
+        <h3 class="dl-h">Flux Desktop</h3>
         <p>The full workstation. Native, GPU-accelerated charts and the whole terminal
           with nothing hidden behind a tab.</p>
         <ul class="dl-list">
@@ -297,7 +301,7 @@
 
       <div class="glass feat glass-hover dl-card reveal">
         <div class="ic">▮</div>
-        <h2 class="dl-h">Flux Mobile</h2>
+        <h3 class="dl-h">Flux Mobile</h3>
         <p>The autonomous desk in your pocket. Signals arrive as push notifications the
           moment an engine fires, with the reasoning attached.</p>
         <ul class="dl-list">
@@ -312,7 +316,7 @@
 
       <div class="glass feat glass-hover dl-card reveal">
         <div class="ic">◇</div>
-        <h3>Flux Web</h3>
+        <h3 class="dl-h">Flux Web</h3>
         <p>Nothing to install, nothing to update. Open a tab on any machine you're sitting
           at and the desk is already running.</p>
         <ul class="dl-list">
@@ -357,7 +361,7 @@
       <div class="glass win reveal">
         <div class="win-bar">
           <i></i><i></i><i></i>
-          <span class="win-title">Flux Desktop 2.4.1, NVDA · 15m</span>
+          <span class="win-title">Flux Desktop, NVDA · 15m</span>
         </div>
         <div class="win-body">
           <canvas id="dlChart" aria-label="Illustrative candlestick chart"></canvas>
@@ -377,16 +381,17 @@
     <div class="glass qr reveal">
       <div class="qr-card" id="qrCard"></div>
       <div>
-<h2 class="h2" style="font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);margin-top:14px">Scan to install on your phone.</h2>
-        <p class="muted" style="margin-top:12px;font-size:1rem;max-width:46ch">Point your camera
-          at the code. It opens the Flux beta page on your device: one field, no download
-          manager, no sideloading.</p>
+<h2 class="h2" style="font-size:clamp(1.85rem,1.3rem + 2.1vw,2.8rem);margin-top:14px">Open Flux on your phone.</h2>
+        <p class="muted" style="margin-top:12px;font-size:1rem;max-width:46ch">There is nothing to
+          install. Flux Web runs in the phone's browser, and the same watchlists and paper book
+          are there when you open it.</p>
         <ol class="qr-steps">
-          <li>Open the camera app and hold it over the code.</li>
-          <li>Tap the link and enter the email on your Flux account.</li>
-          <li>TestFlight or Play beta invite lands the same day.</li>
+          <li>Open dsh-trading.com in your phone's browser.</li>
+          <li>Sign in with the email on your Flux account.</li>
+          <li>Add it to the home screen if you want it to open like an app.</li>
         </ol>
-        <p class="faint mono" style="margin-top:18px;font-size:12px">decorative code · beta invites are sent by email</p>
+        <p class="faint mono" style="margin-top:18px;font-size:12px">The code is decorative. When
+          there is an app to install, this is where the store link will be.</p>
       </div>
     </div>
   </div>
@@ -404,7 +409,7 @@
     <div class="glass reveal" style="margin-top:40px;padding:6px">
       <div class="cmp-scroll">
         <table class="cmp">
-          <caption class="faint" style="caption-side:bottom;text-align:left;padding:14px 18px;font-size:12px">Feature availability by client, Flux 2.4.1.</caption>
+          <caption class="faint" style="caption-side:bottom;text-align:left;padding:14px 18px;font-size:12px">Feature availability by client. Web is what exists today; the rest is what the clients are being built to do.</caption>
           <thead>
             <tr>
               <th scope="col">Feature</th>
@@ -468,8 +473,9 @@
   <div class="wrap">
     <div class="shead reveal">
 <h2 class="h2">It runs on the machine you already have.</h2>
-      <p class="lede">The heavy work happens on our engines. Flux Desktop is a client, not a
-        render farm, these are floors, not recommendations for comfort.</p>
+      <p class="lede">The heavy work happens on our engines, so the client stays light. These are
+        the floors the desktop build is being written against; none of it is needed for Flux Web,
+        which is what you can use today.</p>
     </div>
 
     <div class="ruled r-3" style="margin-top:40px">
@@ -480,7 +486,7 @@
           <li><span>Chip</span><b class="mono">Apple Silicon / Intel</b></li>
           <li><span>Memory</span><b class="mono">8 GB (16 GB rec.)</b></li>
           <li><span>Disk</span><b class="mono">1.2 GB free</b></li>
-          <li><span>Package</span><b class="mono">universal .dmg · 84 MB</b></li>
+          <li><span>Package</span><b class="mono">universal .dmg</b></li>
         </ul>
       </div>
       <div class="glass req reveal">
@@ -490,7 +496,7 @@
           <li><span>CPU</span><b class="mono">x64, 4 cores</b></li>
           <li><span>Memory</span><b class="mono">8 GB (16 GB rec.)</b></li>
           <li><span>Disk</span><b class="mono">1.4 GB free</b></li>
-          <li><span>Package</span><b class="mono">signed .exe · 96 MB</b></li>
+          <li><span>Package</span><b class="mono">signed .exe</b></li>
         </ul>
       </div>
       <div class="glass req reveal">
@@ -500,7 +506,7 @@
           <li><span>Runtime</span><b class="mono">glibc 2.31+, GTK 3</b></li>
           <li><span>Memory</span><b class="mono">8 GB</b></li>
           <li><span>Disk</span><b class="mono">1.1 GB free</b></li>
-          <li><span>Package</span><b class="mono">.AppImage · 78 MB</b></li>
+          <li><span>Package</span><b class="mono">.AppImage</b></li>
         </ul>
       </div>
     </div>
@@ -510,40 +516,30 @@
   </div>
 </section>
 
-<!-- ===================== RELEASE NOTES ===================== -->
+<!-- ===================== ROADMAP ===================== -->
 <section class="section" id="whats-new">
   <div class="wrap">
     <div class="shead reveal">
-<h2 class="h2">What's new.</h2>
-      <p class="lede">Desktop ships on a two-week cadence. Every build is signed, and you can
-        pin to the previous version from Settings → Updates.</p>
+<h2 class="h2">What is being built.</h2>
+      <p class="lede">There is no release history here because nothing has been released. This is
+        the order the clients are being written in, and it is a plan, not a promise of a date.</p>
     </div>
 
     <div class="rel-line reveal">
       <div class="rel-i">
-        <div class="rel-h"><span class="rel-v">2.4.1</span><span class="rel-d">11 Aug 2026</span><span class="tag">current</span></div>
-        <p>Fixed a chart redraw stall when waking a Mac from sleep with four workspaces open.
-          Order-ladder scroll now keeps the mid price pinned.</p>
+        <div class="rel-h"><span class="rel-v">Now</span><span class="tag">shipping</span></div>
+        <p>Flux Web. The desk, the paper terminal, the watchlists and the research record, in a
+          browser tab, on any machine, with nothing to install.</p>
       </div>
       <div class="rel-i past">
-        <div class="rel-h"><span class="rel-v">2.4.0</span><span class="rel-d">28 Jul 2026</span></div>
-        <p>Multi-monitor workspaces: save a per-session layout and restore it on launch.
-          Adds RSI divergence markers and a compact depth view.</p>
+        <div class="rel-h"><span class="rel-v">Next</span></div>
+        <p>The desktop client: the same desk in a native window, with multi-monitor workspaces and
+          a layout that survives a restart. Mac first, then Windows, then Linux.</p>
       </div>
       <div class="rel-i past">
-        <div class="rel-h"><span class="rel-v">2.3.2</span><span class="rel-d">09 Jul 2026</span></div>
-        <p>Backtest replay is roughly 40% faster on long ranges. Fixed duplicate push alerts
-          when the same signal fired on two engines.</p>
-      </div>
-      <div class="rel-i past">
-        <div class="rel-h"><span class="rel-v">2.3.0</span><span class="rel-d">17 Jun 2026</span></div>
-        <p>Flux AI chat moved into the terminal sidebar, so you can ask about the symbol
-          you're looking at without leaving the chart.</p>
-      </div>
-      <div class="rel-i past">
-        <div class="rel-h"><span class="rel-v">2.2.4</span><span class="rel-d">30 May 2026</span></div>
-        <p>Risk engine now gates live orders before they leave the client. Added Linux
-          .AppImage builds and hardware-accelerated rendering on Windows.</p>
+        <div class="rel-h"><span class="rel-v">After</span></div>
+        <p>The phone apps: the watchlist, the desk's rulings and push alerts. Reading, not the
+          full terminal, because the full terminal does not belong on a phone.</p>
       </div>
     </div>
   </div>
@@ -605,10 +601,10 @@
       <a class="brand" href="./index.html"><span class="glyph"></span>Flux</a>
       <p class="muted" style="margin-top:14px;max-width:32ch;font-size:.9rem">A research desk that files its work, keeps score, and never touches your money.</p>
     </div>
-    <div><h2>The desk</h2><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
-    <div><h2>Product</h2><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
-    <div><h2>Get Flux</h2><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
-    <div><h2>Company</h2><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
+    <div><p class="ft-h">The desk</p><a href="./desk.html">Desk</a><a href="./analysts.html">Analysts</a><a href="./traders.html">Traders</a><a href="./executive.html">Executive</a><a href="./fund.html">Fund</a></div>
+    <div><p class="ft-h">Product</p><a href="./ai.html">Flux AI</a><a href="./terminal.html">Paper terminal</a><a href="./autopilot.html">Autopilot</a><a href="./portfolio.html">Portfolio</a><a href="./options.html">Options</a><a href="./markets.html">Markets</a></div>
+    <div><p class="ft-h">Get Flux</p><a href="./brokerage.html">Connect Robinhood</a><a href="./download.html">Download</a><a href="./pricing.html">Pricing</a></div>
+    <div><p class="ft-h">Company</p><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:support@dsh-trading.com">Contact</a></div>
   </div>
   <p class="disclaimer" style="margin-top:36px">Flux is research and automation software, not investment advice, and is not a broker-dealer. The Flux Fund is a simulated $10,000 paper account using virtual money; results are hypothetical, do not represent real trading, and do not guarantee future outcomes. Autopilot never trades a real account. Trading involves risk of loss, including loss of principal. Market data shown may be delayed.</p>
   <div class="footer-bottom"><span>© 2026 DSH Trading · Flux</span><span class="mono">Not advice · <a href="./privacy.html" style="color:inherit">Privacy</a> · <a href="./terms.html" style="color:inherit">Terms</a></span></div>
@@ -633,9 +629,9 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   var META = {
-    mac:   "version 2.4.1 · 84 MB · macOS 12+ (Apple Silicon & Intel)",
-    win:   "version 2.4.1 · 96 MB · Windows 10/11, 64-bit",
-    linux: "version 2.4.1 · 78 MB · Ubuntu 20.04+ (.AppImage)"
+    mac:   "No Mac build has shipped yet. Flux Web is the whole desk, today.",
+    win:   "No Windows build has shipped yet. Flux Web is the whole desk, today.",
+    linux: "No Linux build has shipped yet. Flux Web is the whole desk, today."
   };
 
   var os = detectOS();
@@ -658,7 +654,7 @@ document.addEventListener("DOMContentLoaded", function(){
     promote("");
     var badge = $(os === "ios" ? "#badgeIOS" : "#badgeAndroid");
     if(badge) badge.classList.add("on");
-    if(metaLine) metaLine.textContent = (os === "ios" ? "iOS 16+ · beta via TestFlight" : "Android 10+ · beta via Google Play")
+    if(metaLine) metaLine.textContent = (os === "ios" ? "No iOS app has shipped yet. Flux Web runs in Safari today." : "No Android app has shipped yet. Flux Web runs in Chrome today.")
       + " · desktop builds below";
   } else {
     promote("mac");
@@ -667,13 +663,13 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---------- download handlers (no installer exists yet) ---------- */
   var note = $("#betaNote"), noteText = $("#betaNoteText");
   var MSG = {
-    ios:     "Coming to the App Store, join the beta. Drop your Flux account email on the beta page and we'll send a TestFlight invite the same day.",
-    android: "Coming to Google Play, join the beta. Add your Flux account email and we'll send a Play beta invite the same day.",
+    ios:     "The iOS app is being built and is not in the App Store. Leave your email and we will tell you the day it lands. <b>Flux Web works in Safari right now</b>.",
+    android: "The Android app is being built and is not on Google Play. Leave your email and we will tell you the day it lands. <b>Flux Web works in Chrome right now</b>.",
     mobile:  "Coming to the App Store and Google Play, join the beta. iOS and Android builds go out to beta testers first; web and desktop are available now.",
-    mac:     "The signed macOS build ships with the 2.4.1 rollout. Join the beta and we'll email you the .dmg link. <b>Flux Web works right now</b> in the meantime.",
-    win:     "The signed Windows installer ships with the 2.4.1 rollout. Join the beta and we'll email you the .exe link. <b>Flux Web works right now</b> in the meantime.",
-    linux:   "The Linux .AppImage ships with the 2.4.1 rollout. Join the beta and we'll email you the link. <b>Flux Web works right now</b> in the meantime.",
-    desktop: "Desktop installers ship with the 2.4.1 rollout. Join the beta and we'll email you the link for your platform. <b>Flux Web works right now</b> in the meantime."
+    mac:     "The Mac client is being built and has not shipped. Leave your email and we will send the .dmg link the day it does. <b>Flux Web works right now</b> in the meantime.",
+    win:     "The Windows client is being built and has not shipped. Leave your email and we will send the .exe link the day it does. <b>Flux Web works right now</b> in the meantime.",
+    linux:   "The Linux .AppImage is being built and has not shipped. Leave your email and we will send the link the day it does. <b>Flux Web works right now</b> in the meantime.",
+    desktop: "No desktop installer has shipped yet. Leave your email and we will send the link for your platform the day one does. <b>Flux Web works right now</b> in the meantime."
   };
 
   $$("[data-dl]").forEach(function(el){
@@ -795,7 +791,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   var qrCard = $("#qrCard");
-  if(qrCard) qrCard.innerHTML = buildQR("flux-download-2.4.1", 25);
+  if(qrCard) qrCard.innerHTML = buildQR("https://dsh-trading.com/download.html", 25);
 
   /* newly injected .reveal nodes (none today, but safe if content grows) */
   if(F.initReveal) F.initReveal();
