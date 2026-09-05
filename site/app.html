@@ -524,11 +524,16 @@ document.addEventListener("DOMContentLoaded", function(){
       '<div class="rt"><div class="conf" style="color:'+col+'">'+(f.c||'—')+'%</div><div class="cl">conf</div></div>';
     return el;}
   var sigWrap=$("#signals");
-  D.FINDINGS.slice(0,4).forEach(function(f){sigWrap.appendChild(sigEl(f));});
-  function pushSignal(){var f=rnd(D.FINDINGS),el=sigEl(f);el.style.animation="fade .4s both";sigWrap.insertBefore(el,sigWrap.firstChild);
-    while(sigWrap.children.length>7)sigWrap.removeChild(sigWrap.lastChild);
-    var n=(+$("#sigCount").textContent.replace(/\D/g,'')||127)+1;$("#sigCount").textContent=n;}
-  setInterval(pushSignal,5200);
+  /* This seeded four invented findings and then pushed a random one every
+     5.2 seconds, incrementing "Filings on record" off a hardcoded 127 seed —
+     a counter that climbed while the reader watched, counting nothing. The
+     real figure comes off the desk record in boot() below. */
+  if(D.FINDINGS.length){
+    D.FINDINGS.slice(0,4).forEach(function(f){sigWrap.appendChild(sigEl(f));});
+  } else {
+    sigWrap.innerHTML = D.noFindings("No signal has been filed yet.");
+    var lt=$("#liveScan"); if(lt) lt.remove();
+  }
   sigWrap.addEventListener("click",function(e){var s=e.target.closest(".sig");if(!s)return;var f=cardData[s.dataset.fid];if(f)openTerminal(f.t,f);});
 
   /* This used to rotate a random line from a list of seven ("neural scan
@@ -612,6 +617,17 @@ document.addEventListener("DOMContentLoaded", function(){
     else if(/breakout|scan|setup|volume/.test(ql)){intro="Top breakout the scanner sees:";f=D.FINDINGS.find(function(x){return x.e==="Scanner"});}
     else{var m=q.toUpperCase().match(/[A-Z]{2,5}/);f=(m&&D.FINDINGS.find(function(x){return x.t===m[0]}));intro=f?("Flux read on <b>"+f.t+"</b>:"):("Sharpest thing on the tape:");if(!f)f=rnd(D.FINDINGS);}
     S.log&&S.log("ask","Asked Flux: "+q);
+    /* No finding matched. Say that, rather than dressing an empty record as
+       an answer — a fabricated read is worse than no read. */
+    if(!f){
+      openSheet('<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="feedpill" style="border-color:rgba(122,167,255,.5);color:var(--violet)"><span class="dot" style="background:var(--violet)"></span>Flux</span>'+
+        '<span style="margin-left:auto;font-size:12px;color:var(--text-faint)">\u201C'+q.replace(/[<>&]/g,"")+'\u201D</span></div>'+
+        '<p style="font-size:1rem;line-height:1.55;margin-bottom:6px">Nothing on the record answers that yet.</p>'+
+        '<p style="color:var(--text-dim);font-size:.92rem;line-height:1.6;margin:0">Flux answers from what the desk has actually filed. '+
+        'It has filed nothing on this, and it will not invent a read to fill the gap. '+
+        '<a href="./desk.html" style="color:var(--cyan)">Watch the desk work</a>.</p>');
+      return;
+    }
     var col=sigColor(f),px=S.price(f.t);
     openSheet('<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="feedpill" style="border-color:rgba(122,167,255,.5);color:var(--violet)"><span class="dot" style="background:var(--violet)"></span>Flux</span>'+
       '<span style="margin-left:auto;font-size:12px;color:var(--text-faint)">“'+q+'”</span></div>'+

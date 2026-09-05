@@ -14,25 +14,28 @@
 
   F.CY="#e8b33c"; F.VI="#6f9ad6"; F.EM="#56b97f"; F.CR="#e8674a"; F.AM="#e8b33c";
 
-  /* ---- shared demo signals ---- */
-  F.SIGNALS=[
-    {t:"NVDA",e:"Options",lbl:"Unusual Flow",mv:"+2.1%",u:1,c:88,
-     i:"Call sweep, 14,200 contracts at the $185 strike, 3DTE, all at ask (~$4.6M premium)."},
-    {t:"AMD",e:"Scanner",lbl:"Breakout",mv:"+3.4%",u:1,c:74,
-     i:"Breaking out of a six-week base on 2.7× average volume. Cleared $172, room to $186."},
-    {t:"TSLA",e:"Catalyst",lbl:"Catalyst",mv:"-1.8%",u:0,c:69,
-     i:"New 8-K: guidance cut on delivery outlook. Historically a −2.3% five-day drift."},
-    {t:"AAPL",e:"Technicals",lbl:"VWAP reclaim",mv:"+0.6%",u:1,c:66,
-     i:"Reclaimed VWAP after the morning flush; MACD crossed bullish on the 15-minute."},
-    {t:"SMCI",e:"Scanner",lbl:"Squeeze",mv:"+5.9%",u:1,c:63,
-     i:"Top 1% of the universe for unusual volume. Short float 18% and rising."},
-    {t:"MSFT",e:"Options",lbl:"Gamma wall",mv:"+1.2%",u:1,c:71,
-     i:"Put/call skew flipped bullish into the cloud update. Gamma wall building at $430."},
-    {t:"COIN",e:"Catalyst",lbl:"High-beta proxy",mv:"+4.1%",u:1,c:70,
-     i:"BTC cleared $72k. COIN moves 2.4× spot on up-days like this one."},
-    {t:"PLTR",e:"Technicals",lbl:"Divergence",mv:"+2.8%",u:1,c:64,
-     i:"RSI divergence resolved higher; 50/200 EMA golden cross confirmed on the daily."}
-  ];
+  /* ---- market signals -----------------------------------------------------
+
+     This was eight hardcoded objects describing market events that never
+     happened: an NVDA call sweep of 14,200 contracts at a named strike for
+     ~$4.6M of premium, a TSLA 8-K cutting delivery guidance, BTC clearing
+     $72k. They were rendered as live across seven pages, ranked by
+     "engine agreement" on the dashboard, and filtered against the member's
+     own holdings on the portfolio page — which turns an invented filing into
+     something that looks like personalised research about a name they own.
+
+     There is no wording that makes an invented 8-K publishable, so the array
+     is empty rather than rewritten. It stays as a binding so the seven
+     consumers keep their shape; each one renders F.sigNone() instead of a
+     row when it is empty, and fills only when a real signal source exists.  */
+  F.SIGNALS=[];
+
+  /* The honest empty state for any panel that renders signal rows. */
+  F.sigNone=function(what){
+    return '<p class="deskempty">' + (what || 'No signals to show.') + ' ' +
+      'Flux publishes a signal only when a live source produces one, so this ' +
+      'panel stays empty rather than filling with an example.</p>';
+  };
 
   F.ENGINES=[
     {ic:"⌖",id:"Scanner",d:"Sweeps the desk's 114-name universe for breakouts, volume spikes, gaps and squeeze conditions.",c:"15s",o:"breakouts"},

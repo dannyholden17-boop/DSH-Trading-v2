@@ -689,7 +689,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ---------- phone mock: signal feed + status ---------- */
   var feed = $("#phFeed");
-  if(feed && F.SIGNALS && F.sigHTML){
+  if(feed && F.SIGNALS && F.SIGNALS.length && F.sigHTML){
     feed.innerHTML = F.SIGNALS.slice(0,3).map(F.sigHTML).join("");
     var i = 3;
     setInterval(function(){
@@ -701,6 +701,8 @@ document.addEventListener("DOMContentLoaded", function(){
       feed.insertBefore(row, feed.firstChild);
       while(feed.children.length > 3) feed.removeChild(feed.lastChild);
     }, 3600);
+  } else if(feed && F.sigNone){
+    feed.innerHTML = F.sigNone("No signal on the wire.");
   }
   var status = $("#phStatus");
   if(status){

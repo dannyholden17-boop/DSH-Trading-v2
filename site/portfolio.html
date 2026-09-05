@@ -895,11 +895,16 @@ document.addEventListener("DOMContentLoaded", function(){
   if(sigWrap && F.SIGNALS && F.sigHTML){
     var names = {};
     HOLD.forEach(function(s){ names[s.t] = 1; });
-    F.SIGNALS.filter(function(s){ return names[s.t]; }).slice(0, 2).forEach(function(s){
-      var box = document.createElement("div");
-      box.innerHTML = F.sigHTML(s);
-      if(box.firstChild) sigWrap.appendChild(box.firstChild);
-    });
+    var mine = F.SIGNALS.filter(function(s){ return names[s.t]; }).slice(0, 2);
+    if(!mine.length && F.sigNone){
+      sigWrap.innerHTML = F.sigNone("Nothing has been filed on the names in this book.");
+    } else {
+      mine.forEach(function(s){
+        var box = document.createElement("div");
+        box.innerHTML = F.sigHTML(s);
+        if(box.firstChild) sigWrap.appendChild(box.firstChild);
+      });
+    }
   }
 
   /* ---------------- live-ticking total value ---------------- */

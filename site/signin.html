@@ -435,13 +435,17 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---- left panel: live signal rows ---- */
   var sigWrap = $("#siSigs");
   if(sigWrap && F.SIGNALS && F.sigHTML){
-    [0, 1, 2].forEach(function(i){
-      var s = F.SIGNALS[i];
-      if(!s) return;
-      var box = document.createElement("div");
-      box.innerHTML = F.sigHTML(s);
-      if(box.firstChild) sigWrap.appendChild(box.firstChild);
-    });
+    if(!F.SIGNALS.length && F.sigNone){
+      sigWrap.innerHTML = F.sigNone("The desk has not filed a signal yet.");
+    } else {
+      [0, 1, 2].forEach(function(i){
+        var s = F.SIGNALS[i];
+        if(!s) return;
+        var box = document.createElement("div");
+        box.innerHTML = F.sigHTML(s);
+        if(box.firstChild) sigWrap.appendChild(box.firstChild);
+      });
+    }
   }
 
   /* ---- debounced resize redraw ---- */

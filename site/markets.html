@@ -315,11 +315,12 @@
           <h2 class="h3">Live signals</h2>
           <p class="faint" style="font-size:13px;margin-top:4px">One feed, read by every desk</p>
         </div>
-        <span class="pill"><i></i> streaming</span>
+        <span class="pill pill-note"><i></i> research signals · not advice</span>
       </div>
       <div class="feed" id="feed"></div>
       <p class="mono" style="margin-top:14px;font-size:12px;color:var(--text-faint)">
-        Sample output. Confidence is the ensemble's score, not a promise.</p>
+        Confidence is how far the engines agreed, not a probability of profit. Rows appear only when a
+        live source produces one.</p>
     </div>
 
     <div class="glass panel reveal">
@@ -713,7 +714,11 @@ document.addEventListener("DOMContentLoaded", function(){
     feed.insertBefore(node, feed.firstChild);
     while(feed.children.length > 7) feed.removeChild(feed.lastChild);
   }
-  SIGS.slice(0,6).forEach(function(s){ pushSig(s); });
+  if(!SIGS.length && feed && F.sigNone){
+    feed.innerHTML = F.sigNone("Nothing is on the wire right now.");
+  } else {
+    SIGS.slice(0,6).forEach(function(s){ pushSig(s); });
+  }
 
   /* ---------------- clock ---------------- */
   var clock = $("#clock");

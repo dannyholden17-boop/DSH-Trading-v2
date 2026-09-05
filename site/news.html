@@ -514,11 +514,15 @@ document.addEventListener("DOMContentLoaded", function(){
   /* ---------- top movers (shared signals) ---------- */
   var movers = $("#nwMovers");
   if(movers && F.sigHTML && F.SIGNALS){
-    F.SIGNALS.slice(0, 5).forEach(function(s){
-      var h = document.createElement("div");
-      h.innerHTML = F.sigHTML(s);
-      movers.appendChild(h.firstChild);
-    });
+    if(!F.SIGNALS.length && F.sigNone){
+      movers.innerHTML = F.sigNone("No mover has been flagged today.");
+    } else {
+      F.SIGNALS.slice(0, 5).forEach(function(s){
+        var h = document.createElement("div");
+        h.innerHTML = F.sigHTML(s);
+        movers.appendChild(h.firstChild);
+      });
+    }
   }
 
   /* ---------- trending tickers ---------- */
