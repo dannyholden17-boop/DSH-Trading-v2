@@ -17,8 +17,20 @@ design concepts, the always-on **[[DSH Sentinel]]** bot, its background engines,
 and the architecture that makes it real.
 
 > [!tip] Start here
-> New to the project? Read [[DSH Sentinel]] first — it's the heart of v2 — then
-> skim the [[Roadmap]].
+> For what actually shipped, read [[Flux]] — and [[Truthfulness constraints]]
+> before changing anything on it. For the original v2 thinking, read
+> [[DSH Sentinel]] then skim the [[Roadmap]].
+
+## Shipped
+
+[[Flux]] is the product this vault was designing. It is live at
+dsh-trading.com, and its notes live in `Flux/`:
+
+- [[Truthfulness constraints]] — what Flux may and may not say
+- [[The trading floor]] — the desk hierarchy and its 46 agents
+- [[Live system state]] — what is running, and what is blocked
+- [[Market data]] — where quotes come from
+- [[Front-end performance]] — layout stability
 
 ## Design concepts
 

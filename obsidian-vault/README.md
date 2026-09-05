@@ -22,6 +22,7 @@ linked notes, a database, and a visual canvas.
 | Path | What it is |
 |------|-----------|
 | `DSH.md` | Home / map of content — start here |
+| `Flux/` | The shipped product — start at [[Flux]] |
 | `Concepts/` | The three design directions ([[Aurora]], [[Aurora v2]], [[Conversational Cockpit]]) |
 | `Sentinel/` | The [[DSH Sentinel]] bot + its six engine notes |
 | `Architecture/` | [[Live Trading Blueprint]] and [[Realtime Data Flow]] |
