@@ -24,6 +24,9 @@
      Shared design-system classes/tokens are reused, never redefined.
      ============================================================ */
 
+  /* tiles on glass are a light tint, not a second dark box */
+  .db-eng,.db-kv,.db-rec-spark{background:var(--glass-hd)!important;border-color:var(--glass-line-2)!important}
+
   /* ---- welcome bar ---- */
   .db-welcome{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;flex-wrap:wrap}
   .db-hello{min-width:0}

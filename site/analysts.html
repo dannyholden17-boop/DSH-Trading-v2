@@ -14,6 +14,23 @@
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-desk.js?v=28" defer></script>
+<style>
+/* The station's glass, page-scoped. flux.css declares the hero's rgba glass
+   token and then re-declares --glass as the opaque --blotter-2 in its legacy
+   alias block, so the shared glass pass renders flat. Setting the intended
+   values on the page wrapper lets the shared .st-panel and .st-cards rules
+   read as the same substance as the front page here. */
+.st-wrap{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+/* every hairline and hover inside the glass is light, never the dark-room line */
+.st-card:hover{background:var(--glass-hd)}
+.st-fig,.st-note{border-color:var(--glass-line-2)}
+/* the desk list and the wire share the row; the wire and the record stack
+   beside it so a quiet wire does not leave a column of nothing */
+.st-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.st-split>*{margin-top:0}
+.st-col{display:grid;gap:16px;align-content:start;min-width:0}
+.st-col>.st-panel{margin-top:0}
+</style>
 </head>
 <body>
 
@@ -99,16 +116,17 @@
       <div class="st-panel-h">On the desk right now <em id="aNamesCap">—</em></div>
       <ul class="st-rows" id="aNames"><li>Reading the round…</li></ul>
     </section>
-    <section class="st-panel">
-      <div class="st-panel-h">On the wire <em id="aWireCap">—</em></div>
-      <ul class="st-rows" id="aWire"><li>Loading the wire…</li></ul>
-    </section>
+    <div class="st-col">
+      <section class="st-panel">
+        <div class="st-panel-h">On the wire <em id="aWireCap">—</em></div>
+        <ul class="st-rows" id="aWire"><li>Loading the wire…</li></ul>
+      </section>
+      <section class="st-panel">
+        <div class="st-panel-h">The record <em id="aScoreCap">—</em></div>
+        <ul class="st-rows" id="aScore"><li>Reading the scoreboard…</li></ul>
+      </section>
+    </div>
   </div>
-
-  <section class="st-panel">
-    <div class="st-panel-h">The record <em id="aScoreCap">—</em></div>
-    <ul class="st-rows" id="aScore"><li>Reading the scoreboard…</li></ul>
-  </section>
 
   <section class="st-panel">
     <div class="st-panel-h">The filings <em id="aGateCap">members only</em></div>

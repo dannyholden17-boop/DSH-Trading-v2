@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function(){
             fld("Horizon", esc(d.horizon || "—")) +
           '</dl>' +
           '<p class="tkt-headline">' + esc(d.headline) + '</p>' +
-          (d.reason ? '<p style="margin-top:9px;font-size:.9rem;line-height:1.5;color:rgba(21,16,10,.78);max-width:62ch">' + esc(d.reason) + '</p>' : "") +
+          (d.reason ? '<p style="margin-top:9px;font-size:.9rem;line-height:1.5;color:var(--text-dim);max-width:62ch">' + esc(d.reason) + '</p>' : "") +
         '</div>' +
         '<aside class="tkt-chain">' +
           stage("Analysts", "Filed", "stamp-ok") +

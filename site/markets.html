@@ -15,12 +15,25 @@
 <script src="./assets/flux-kronos.js?v=28" defer></script>
 <script src="./assets/flux-tv.js?v=28" defer></script>
 <style>
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* signal rows: one ruled list inside the panel, never cards on a card */
+  .feed{gap:0;border:1px solid var(--glass-line-2);border-radius:var(--radius);overflow:hidden}
+  .feed .sig{background:transparent;border:0;border-top:1px solid var(--glass-line-2);border-radius:0;box-shadow:none}
+  .feed .sig:first-child{border-top:0}
+  .sig .av{background:rgba(226,234,248,.06);border-color:var(--glass-line)}
+  .sig .bar{background:rgba(226,234,248,.08)}
+
   /* ---- page-specific layout only ---- */
   .idx-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
     border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
     box-shadow:var(--lift-1);overflow:hidden}
-  .idx-strip>.glass{background:none;border:0;box-shadow:none;border-radius:0;
-    border-left:1px solid var(--line-2)}
+  /* cells inside the ruled strip are transparent; the strip is the glass
+     (!important because the shared .glass rule paints every cell otherwise) */
+  .idx-strip>.glass{background:transparent!important;box-shadow:none!important;border-radius:0!important;
+    border-color:var(--glass-line-2)!important;-webkit-backdrop-filter:none;backdrop-filter:none;
+    border:0;border-left:1px solid var(--glass-line-2)}
   .idx-strip>.glass::after{display:none}
   .idx{padding:15px 16px}
   .idx .sy{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
@@ -37,7 +50,7 @@
   .tabs{display:flex;gap:8px;flex-wrap:wrap}
   .tab{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
     padding:8px 15px;border-radius:2px;cursor:pointer;color:var(--text-dim);
-    border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
+    border:1px solid var(--glass-line);background:rgba(226,234,248,.06);transition:color .2s,border-color .2s,background .2s}
   .tab:hover{color:var(--text)}
   .tab[aria-selected="true"]{color:var(--cyan);border-color:rgba(245,185,60,.45);background:rgba(245,185,60,.08)}
 
@@ -47,7 +60,11 @@
     color:var(--text-faint);font-weight:600;text-align:right;padding:0 12px 10px;white-space:nowrap}
   table.mk th:first-child,table.mk td:first-child{text-align:left;padding-left:4px}
   table.mk th:last-child,table.mk td:last-child{padding-right:4px}
-  table.mk td{text-align:right;padding:10px 12px;border-top:1px solid var(--line-2);white-space:nowrap}
+  table.mk td{text-align:right;padding:10px 12px;border-top:1px solid var(--glass-line-2);white-space:nowrap}
+  /* the screener lists the whole universe: it scrolls inside its panel instead of
+     running the page to twelve thousand pixels, with the header pinned */
+  .tscroll:has(#scrTable){max-height:640px;overflow-y:auto}
+  #scrTable thead th{position:sticky;top:0;z-index:1;background:rgba(14,19,32,.96);padding-top:8px}
   table.mk tbody tr{cursor:pointer;transition:background .15s}
   table.mk tbody tr:hover{background:rgba(245,185,60,.05)}
   table.mk tbody tr:focus-visible{outline:1px solid var(--cyan);outline-offset:-1px}
@@ -70,7 +87,7 @@
   table.cal{width:100%;min-width:440px;border-collapse:collapse;font-size:.9rem}
   table.cal th{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--text-faint);font-weight:600;text-align:left;padding:0 10px 10px}
-  table.cal td{padding:11px 10px;border-top:1px solid var(--line-2);vertical-align:middle}
+  table.cal td{padding:11px 10px;border-top:1px solid var(--glass-line-2);vertical-align:middle}
   table.cal th:first-child,table.cal td:first-child{padding-left:2px}
   table.cal th:last-child,table.cal td:last-child{padding-right:2px;text-align:right}
   .imp{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
@@ -87,8 +104,9 @@
   .scr-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
   .scr-field{position:relative;display:flex;align-items:center}
   .scr-input,.scr-select{font-family:inherit;font-size:.9rem;color:var(--text);
-    background:var(--well);border:1px solid var(--line);border-radius:4px;padding:9px 12px;outline:none;
+    background:rgba(6,9,17,.5);border:1px solid var(--glass-line);border-radius:4px;padding:9px 12px;outline:none;
     transition:border-color .18s,box-shadow .18s}
+  .scr-select option{background:#0e1320;color:var(--text)}
   .scr-input{min-width:190px}
   .scr-input::placeholder{color:var(--text-faint)}
   .scr-input:focus,.scr-select:focus{border-color:rgba(245,185,60,.5);box-shadow:0}

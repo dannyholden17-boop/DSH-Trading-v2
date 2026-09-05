@@ -20,6 +20,22 @@
      redefines a variable or restyles a shared component.
      ========================================================== */
 
+  /* cells inside a ruled container are transparent; the container is the glass
+     (!important because the shared .glass rule paints every cell otherwise) */
+  .ruled>.glass{background:transparent!important;box-shadow:none!important;
+    border-radius:0!important;border-color:var(--glass-line-2)!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .ruled>.glass:hover{transform:none!important;background:var(--glass-hd)!important}
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* signal rows on the phone mock: one ruled list, never cards on a card */
+  .ph-feed{gap:0;border:1px solid var(--glass-line-2);border-radius:var(--radius);overflow:hidden;margin:0 12px 16px;padding:0}
+  .ph-feed .sig{background:transparent;border:0;border-top:1px solid var(--glass-line-2);border-radius:0;box-shadow:none}
+  .ph-feed .sig:first-child{border-top:0}
+  .sig .av{background:rgba(226,234,248,.06);border-color:var(--glass-line)}
+  .sig .bar{background:rgba(226,234,248,.08)}
+
   /* ---- hero ---- */
   .dl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
   .dl-meta{margin-top:15px;font-size:12px;letter-spacing:.05em;color:var(--text-faint)}
@@ -47,12 +63,12 @@
   .rel-card h3,.rel-card h2{font-size:1rem}
   .rc-rows{margin-top:18px;display:flex;flex-direction:column;gap:0}
   .rc-row{display:flex;justify-content:space-between;align-items:center;gap:16px;
-    padding:11px 0;border-bottom:1px solid var(--line-2);font-size:.9rem}
+    padding:11px 0;border-bottom:1px solid var(--glass-line-2);font-size:.9rem}
   .rc-row:last-child{border-bottom:0}
   .rc-row span{color:var(--text-dim)}
   .rc-row b{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--text)}
-  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:4px;background:var(--well);
-    border:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;
+  .rc-sha{margin-top:16px;padding:11px 13px;border-radius:4px;background:rgba(6,9,17,.35);
+    border:1px solid var(--glass-line-2);font-family:var(--f-mono);font-size:12px;
     color:var(--text-faint);word-break:break-all;line-height:1.5}
   .rc-sha b{color:var(--cyan);font-weight:600}
 
@@ -70,7 +86,7 @@
 
   .win{padding:0;overflow:hidden}
   .win-bar{display:flex;align-items:center;gap:7px;padding:12px 15px;
-    border-bottom:1px solid var(--line-2);background:var(--well)}
+    border-bottom:1px solid var(--glass-line-2);background:var(--glass-hd)}
   .win-bar i{width:10px;height:10px;border-radius:50%;flex:none;font-style:normal;background:var(--line)}
   .win-bar i:nth-child(1){background:rgba(255,111,82,.55)}
   .win-bar i:nth-child(2){background:rgba(245,185,60,.55)}
@@ -84,7 +100,8 @@
 
   /* ---- platform cards ---- */
   .dl-card{display:flex;flex-direction:column}
-  .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;
+  /* the list takes the slack so the three buttons sit on one baseline */
+  .dl-list{list-style:none;padding:0;margin:16px 0 4px;display:flex;flex-direction:column;gap:9px;flex:1;
     font-size:.9rem;color:var(--text-dim)}
   .dl-list li{display:flex;gap:9px;align-items:flex-start}
   .dl-list li::before{content:"";width:.78em;height:.78em;display:inline-block;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--cyan);font-weight:800;font-size:13px;flex:none;line-height:1.6}
@@ -107,9 +124,9 @@
   /* ---- comparison table ---- */
   .cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:4px;padding:2px}
   .cmp{width:100%;min-width:580px;border-collapse:collapse;font-size:.9rem}
-  .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--line-2)}
+  .cmp th,.cmp td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--glass-line-2)}
   .cmp thead th{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--line)}
+    color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--glass-line)}
   .cmp thead th:not(:first-child){color:var(--text-dim)}
   .cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:15%}
   .cmp tbody tr:last-child td{border-bottom:0}
@@ -126,7 +143,7 @@
   .req h3,.req h2{font-size:1rem;margin-top:9px}
   .req ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:0}
   .req li{display:flex;justify-content:space-between;gap:14px;padding:9px 0;
-    border-bottom:1px dashed var(--line-2);font-size:13px;color:var(--text-dim)}
+    border-bottom:1px solid var(--glass-line-2);font-size:13px;color:var(--text-dim)}
   .req li:last-child{border-bottom:0}
   .req li b{color:var(--text);font-weight:600;text-align:right}
 

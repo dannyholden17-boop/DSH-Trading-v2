@@ -17,6 +17,16 @@
 <script src="./assets/flux-kronos.js?v=28" defer></script>
 <script src="./assets/flux-news.js?v=28" defer></script>
 <style>
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* signal rows: one ruled list inside the panel, never cards on a card */
+  .nw-movers{gap:0;border:1px solid var(--glass-line-2);border-radius:var(--radius);overflow:hidden}
+  .nw-movers .sig{background:transparent;border:0;border-top:1px solid var(--glass-line-2);border-radius:0;box-shadow:none}
+  .nw-movers .sig:first-child{border-top:0}
+  .sig .av{background:rgba(226,234,248,.06);border-color:var(--glass-line)}
+  .sig .bar{background:rgba(226,234,248,.08)}
+
   /* ---- page-only layout: news.html ---- */
   .nw-hero{max-width:66ch}
   .nw-hero .h2{margin-top:16px}
@@ -30,7 +40,7 @@
   .nw-chips{display:flex;gap:8px;flex-wrap:wrap;min-width:0}
   .nw-chip{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
     padding:8px 14px;border-radius:2px;cursor:pointer;color:var(--text-dim);
-    border:1px solid var(--line);background:var(--well);transition:color .2s,border-color .2s,background .2s}
+    border:1px solid var(--glass-line);background:rgba(226,234,248,.06);transition:color .2s,border-color .2s,background .2s}
   .nw-chip:hover{color:var(--text)}
   .nw-chip[aria-pressed="true"]{color:var(--cyan);border-color:rgba(245,185,60,.45);background:rgba(245,185,60,.08)}
   .nw-chip:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
@@ -40,7 +50,9 @@
   /* ---- feed layout ---- */
   .nw-main{align-items:start}
   .nw-feed{display:flex;flex-direction:column;gap:14px;min-height:340px}
-  .nw-empty{padding:26px;text-align:center;color:var(--text-faint);font-size:.9rem}
+  /* an empty wire is a placed panel, not a line floating in a blank column */
+  .nw-empty{flex:1;min-height:340px;display:grid;place-items:center;padding:26px;text-align:center;
+    color:var(--text-dim);font-size:.9rem;border:1px dashed var(--glass-line);border-radius:var(--radius-lg)}
 
   /* ---- news card ---- */
   .nw-card{padding:18px}
@@ -61,7 +73,7 @@
   .nw-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
   .nw-tks{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
   .nw-tk{font-family:var(--f-mono);font-size:12px;font-weight:700;padding:3px 8px;border-radius:2px;
-    border:1px solid var(--line-2);background:var(--well)}
+    border:1px solid var(--glass-line-2);background:rgba(226,234,248,.06)}
   .nw-tk em{font-style:normal;font-weight:600;font-size:12px;margin-left:5px}
   .nw-src{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
   .nw-impact{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);
@@ -94,7 +106,7 @@
   .nw-movers{display:flex;flex-direction:column;gap:9px}
 
   .nw-trend{display:flex;flex-direction:column}
-  .nw-trow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--line-2)}
+  .nw-trow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid var(--glass-line-2)}
   .nw-trow:first-child{border-top:0}
   .nw-trow .r{font-family:var(--f-mono);font-size:12px;color:var(--text-faint);width:16px;flex:none}
   .nw-trow .t{font-family:var(--f-mono);font-weight:700;font-size:.9rem}
@@ -104,7 +116,7 @@
   /* ---- sector sentiment strip ---- */
   .nw-sect{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
-  .nw-sec{padding:14px 16px;min-width:0;border-left:1px solid var(--line-2)}
+  .nw-sec{padding:14px 16px;min-width:0;border-left:1px solid var(--glass-line-2)}
   .nw-sec .nm{font-size:.9rem;font-weight:600;line-height:1.25}
   .nw-sec .lb{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:9px}
   .nw-sec .track{height:5px;border-radius:2px;background:rgba(160,180,220,.10);overflow:hidden;margin-top:9px}

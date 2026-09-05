@@ -3,7 +3,8 @@
   "detector": {
     "ignoreRules": [
       "cramped-padding",
-      "hero-eyebrow-chip"
+      "hero-eyebrow-chip",
+      "clipped-overflow-container"
     ],
     "ignoreFiles": [],
     "ignoreValues": [

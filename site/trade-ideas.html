@@ -16,6 +16,28 @@
 <script src="./assets/flux-fund.js?v=28" defer></script>
 <script src="./assets/flux-kronos.js?v=28" defer></script>
 <style>
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* signal rows in the hero card: one ruled list, never cards on a card */
+  .feed-rows{gap:0;border:1px solid var(--glass-line-2);border-radius:var(--radius);overflow:hidden}
+  .feed-rows .sig{background:transparent;border:0;border-top:1px solid var(--glass-line-2);border-radius:0;box-shadow:none}
+  .feed-rows .sig:first-child{border-top:0}
+  .sig .av{background:rgba(226,234,248,.06);border-color:var(--glass-line)}
+  .sig .bar{background:rgba(226,234,248,.08)}
+  /* the four counters, read from the desk record: one ruled row, not a loose column */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+    background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    box-shadow:var(--glass-shadow);overflow:hidden}
+  .stat{padding:clamp(18px,2vw,24px) clamp(16px,2vw,24px);border-left:1px solid var(--glass-line-2);min-width:0}
+  .stat:first-child{border-left:0}
+  .stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);
+    font-weight:750;letter-spacing:-.02em;line-height:1}
+  .stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:8px}
+  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}
+    .stat:nth-child(2n+1){border-left:0}
+    .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
+
   /* ---- page-only layout: trade-ideas.html ---- */
   .t-hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
   @media(max-width:960px){.t-hero{grid-template-columns:1fr;gap:36px}}
@@ -42,7 +64,7 @@
   .idea-top .tk{font-family:var(--f-mono);font-weight:700;font-size:1rem;letter-spacing:-.01em}
   .idea-top .sub{font-size:13px;color:var(--text-faint);margin-top:2px}
   .eng-tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
-    padding:4px 9px;border-radius:2px;border:1px solid var(--line);color:var(--text-dim);background:var(--well)}
+    padding:4px 9px;border-radius:2px;border:1px solid var(--glass-line);color:var(--text-dim);background:rgba(226,234,248,.06)}
   .idea-top .cf{margin-left:auto;text-align:right;flex:none}
   .idea-top .cf .n{font-family:var(--f-mono);font-weight:700;font-size:1.18rem;line-height:1}
   .idea-top .cf .l{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
@@ -51,21 +73,25 @@
   .idea-body{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:start}
   @media(max-width:760px){.idea-body{grid-template-columns:1fr;gap:16px}}
   .thesis{font-size:1rem;color:var(--text-dim);line-height:1.6}
+  /* the levels are a ruled row inside the card, not a well sitting on it */
   .kvs{display:grid;grid-template-columns:repeat(4,1fr);margin-top:16px;
-    border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
+    border:0!important;border-block:1px solid var(--glass-line-2)!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none;overflow:hidden}
   @media(max-width:480px){.kvs{grid-template-columns:1fr 1fr}
     .kv:nth-child(2n+1){border-left:0}
-    .kv:nth-child(n+3){border-top:1px solid var(--line-2)}}
-  .kv{padding:10px 12px;min-width:0;border-left:1px solid var(--line-2)}
-  .kv:first-child{border-left:0}
+    .kv:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
+  .kv{padding:10px 12px;min-width:0;border-left:1px solid var(--glass-line-2)}
+  .kv:first-child{border-left:0;padding-left:0}
   .kv .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);font-family:var(--f-mono)}
   .kv .v{font-family:var(--f-mono);font-weight:700;font-size:.9rem;margin-top:3px;overflow:hidden;text-overflow:ellipsis}
-  .idea-chart{border:1px solid var(--line-2);border-radius:4px;background:var(--well);padding:10px}
-  .idea-chart canvas{width:100%;height:118px;display:block}
+  /* the trace sits on the card directly, no frame */
+  .idea-chart{padding:4px 0 0}
+  .idea-chart canvas{width:100%;height:132px;display:block}
   .idea-chart .cl{font-family:var(--f-mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
     color:var(--text-faint);margin-top:8px}
   .idea-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;
-    padding-top:15px;border-top:1px solid var(--line-2)}
+    padding-top:15px;border-top:1px solid var(--glass-line-2)}
   .idea-foot .gate{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:7px}
   .idea-foot .gate b{color:var(--emerald);font-weight:700}
@@ -88,11 +114,12 @@
 
   /* brief modal */
   .brief-modal{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;
-    padding:20px;background:rgba(27,25,23,.72);}
+    padding:20px;background:rgba(7,10,18,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
   .brief-modal.show{display:flex}
-  .brief-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:4px}
-  .bm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-2);
-    position:sticky;top:0;background:var(--glass);z-index:1}
+  .brief-sheet{width:min(620px,100%);max-height:86vh;overflow:auto;padding:0;border-radius:var(--radius-lg)}
+  /* sticky head and foot sit over scrolling text, so they are nearly solid */
+  .bm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--glass-line-2);
+    position:sticky;top:0;background:rgba(14,19,32,.94);z-index:1}
   .bm-x{margin-left:auto;background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:4px;
     width:32px;height:32px;cursor:pointer;font-size:.9rem}
   .bm-x:hover{color:var(--text);border-color:var(--cyan)}
@@ -103,13 +130,13 @@
   .bm-k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);padding-top:2px}
   .bm-v{font-size:.9rem;line-height:1.55;color:var(--text-dim)}
   .bm-disc{margin-top:16px;font-size:12px;color:var(--text-faint);line-height:1.5}
-  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line-2);
-    position:sticky;bottom:0;background:var(--glass);}
+  .bm-foot{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--glass-line-2);
+    position:sticky;bottom:0;background:rgba(14,19,32,.94)}
 
   /* ---- anatomy ---- */
   .anno{padding:18px}
   .anno > *{position:relative;z-index:1}
-  .anno-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line-2)}
+  .anno-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--glass-line-2)}
   .anno-row:last-child{border-bottom:0}
   .anno-row .n{width:24px;height:24px;flex:none;border-radius:4px;display:grid;place-items:center;
     font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--cyan);
@@ -122,11 +149,14 @@
   .gates{display:grid;grid-template-columns:repeat(4,1fr);margin-top:40px;
     border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
     box-shadow:var(--lift-1);overflow:hidden}
-  .gates>.glass{background:none;border:0;box-shadow:none;border-radius:0;
-    border-left:1px solid var(--line-2);padding:clamp(20px,2.1vw,28px)}
+  /* cells inside the ruled row are transparent; the row is the glass
+     (!important because the shared .glass rule paints every cell otherwise) */
+  .gates>.glass{background:transparent!important;box-shadow:none!important;border-radius:0!important;
+    border-color:var(--glass-line-2)!important;-webkit-backdrop-filter:none;backdrop-filter:none;
+    border:0;border-left:1px solid var(--glass-line-2);padding:clamp(20px,2.1vw,28px)}
   .gates>.glass::after{display:none}
   .gates>.glass:first-child{border-left:0}
-  .gates>.glass:hover{transform:none;box-shadow:none;background:var(--blotter-3)}
+  .gates>.glass:hover{transform:none!important;background:var(--glass-hd)!important}
   @media(max-width:980px){.gates{grid-template-columns:repeat(2,1fr)}
     .gates>.glass:nth-child(2n+1){border-left:0}
     .gates>.glass:nth-child(n+3){border-top:1px solid var(--line-2)}}

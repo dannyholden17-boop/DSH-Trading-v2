@@ -22,6 +22,12 @@
      ============================================================ */
 
   .op-shell{max-width:1320px;margin-inline:auto;padding-inline:var(--gutter);padding-block:clamp(18px,3vw,30px)}
+  /* tiles on glass are a light tint, inputs are recessed wells; the contract
+     ticket carries many small numbers so it takes denser glass */
+  .op-chip,.op-selrow,.op-gk .cellwrap{background:var(--glass-hd)!important;border-color:var(--glass-line-2)!important}
+  td.op-strike{background:rgba(255,255,255,.04)!important;border-color:var(--glass-line-2)!important}
+  .op-sel,.op-in,.op-step,.op-seg button{background:rgba(6,9,17,.55)}
+  .op-rightcol .glass.op-pane{background:rgba(20,27,44,.86)!important}
 
   /* ---- top strip ---- */
   .op-top{display:flex;align-items:center;gap:14px 20px;flex-wrap:wrap;padding:15px 20px}

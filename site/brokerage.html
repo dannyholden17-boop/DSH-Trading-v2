@@ -14,6 +14,29 @@
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-desk.js?v=28" defer></script>
+<style>
+/* ============================================================
+   brokerage.html: the steps, the two lists and the note are the
+   hero's glass, not the flat boxes flux.css section 18 still draws.
+   ============================================================ */
+
+/* flux.css line 90 re-aliases --glass to the opaque --blotter-2 after
+   section 24 has defined the translucent value, so the page restates
+   the material until that legacy alias is removed. */
+:root{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+
+.bk-step,.bk-can,.bk-warn{
+  background:var(--glass);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border-color:var(--glass-line);box-shadow:var(--glass-shadow);border-radius:var(--radius-lg)}
+.bk-can h2{background:var(--glass-hd);border-bottom-color:var(--glass-line-2)}
+.bk-can li{border-top-color:var(--glass-line-2)}
+.bk-step .where{border-color:var(--glass-line)}
+.bk-step .where.here{border-color:rgba(245,185,60,.4)}
+/* the note keeps its gold hairline; the warm wash sits on the glass */
+.bk-warn{border-color:rgba(245,185,60,.3);
+  background:linear-gradient(rgba(245,185,60,.05),rgba(245,185,60,.05)),var(--glass)}
+</style>
 </head>
 <body>
 

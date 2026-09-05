@@ -87,8 +87,14 @@
 
   /* --- legacy aliases: every page still speaks these names --- */
   --bg:var(--blotter);
-  --glass:var(--blotter-2);
-  --glass-2:var(--blotter-3);
+  /* --glass and --glass-2 were aliased to the opaque surfaces here, AFTER the
+     translucent values in the glass block above. The later declaration won,
+     so every panel that asked for glass got a solid box and every
+     backdrop-filter had nothing to filter. The two names now belong to the
+     glass block; --surface and --surface-3 carry the opaque meaning for the
+     handful of places that genuinely want a solid fill. */
+  --surface:var(--blotter-2);
+  --surface-3:var(--blotter-3);
   --surface-2:var(--well);
   --cyan:var(--gold);
   --cyan-deep:#c8912a;
@@ -1553,3 +1559,52 @@ table.cmp th,table.cmp td,.fl-names li,.fl-wire li{border-color:var(--glass-line
 .ticker{background:rgba(7,11,20,.72)!important;border-bottom-color:var(--glass-line-2)!important}
 .footer{background:rgba(5,8,15,.72)!important;border-top-color:var(--glass-line-2)!important;
   -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+
+/* ---------------------------------------------------------- *
+   25. THE TICKET, IN GLASS
+
+   The ruling used to be printed on ochre card stock and tilted
+   half a degree: the paper metaphor. That metaphor was rejected
+   on the front page and it does not survive on the desk either.
+   The ruling is now a glass panel of the same material as the
+   hero's board. Markup and the desk's JS are untouched; only the
+   substance changes.
+ * ---------------------------------------------------------- */
+.ticket{background:var(--glass-2)!important;color:var(--text)!important;
+  border:1px solid var(--glass-line);border-radius:var(--radius-lg)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow)!important;transform:none!important}
+.ticket.is-sell{background:var(--glass-2)!important}
+.ticket.punched::before{display:none}
+.ticket .field-k{color:var(--text-faint)!important}
+.tkt-head{background:var(--glass-hd);border-bottom:1px solid var(--glass-line-2)!important;padding-left:20px!important}
+.tkt-org{color:var(--text)} .tkt-org span{color:var(--text-faint);opacity:1}
+.tkt-no{color:var(--text-faint)!important} .tkt-no b{color:var(--text)!important}
+.tkt-main{padding-left:20px!important}
+.tkt-sym{color:var(--text)}
+.tkt-name{color:var(--text-dim)!important}
+.tkt-fields{border-top-color:var(--glass-line-2)!important;border-bottom-color:var(--glass-line-2)!important}
+.tkt-fields>div{border-right-color:var(--glass-line-2)!important}
+.tkt-fields dd{color:var(--text)}
+.tkt-headline{color:var(--text)}
+.tkt-chain{border-left:1px solid var(--glass-line-2)!important;background:var(--glass-hd)}
+@media(max-width:620px){.tkt-chain{border-left:0!important;border-top:1px solid var(--glass-line-2)!important}}
+.tkt-foot{border-top-color:var(--glass-line-2)!important;padding-left:20px!important;background:var(--glass-hd)}
+.tkt-sim{color:var(--text-faint)!important}
+.tkt-foot .btn{background:var(--act)!important;color:var(--act-ink)!important}
+.tkt-foot .btn:hover{background:var(--card-buy-lift)!important;color:var(--ink)!important}
+/* stamps take the dark-ledger inks, which were mixed for exactly this ground */
+.ticket .stamp-ok{color:#6fe3b0!important}
+.ticket .stamp-cut{color:#f5b93c!important}
+.ticket .stamp-no{color:#ff8f78!important}
+.ticket .stamp-pending,.tkt-chain .stamp-pending{color:var(--text-faint)!important;
+  border-color:var(--glass-line)!important;opacity:1}
+
+/* the home workstation joins the same material */
+.wk{background:var(--glass)!important;border-color:var(--glass-line)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow)!important}
+.wk-tape{background:var(--glass-hd)!important;border-bottom-color:var(--glass-line-2)!important}
+.wk-pane{border-left-color:var(--glass-line-2)!important}
+.rl-levels{border-color:var(--glass-line-2)!important}
+.rl-levels>div{border-color:var(--glass-line-2)!important}

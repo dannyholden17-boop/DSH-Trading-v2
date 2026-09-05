@@ -19,15 +19,37 @@
 <script src="./assets/flux-tv.js?v=28" defer></script>
 <script src="./assets/flux-jarvis.js?v=28" defer></script>
 <style>
+  /* cells inside a ruled container are transparent; the container is the glass
+     (!important because the shared .glass rule paints every cell otherwise) */
+  .ruled>.glass{background:transparent!important;box-shadow:none!important;
+    border-radius:0!important;border-color:var(--glass-line-2)!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .ruled>.glass:hover{transform:none!important;background:var(--glass-hd)!important}
+  /* the closing call is the same material as everything else */
+  .cta{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:var(--glass-line);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow)}
+  /* the four counters, read from the desk record: one ruled row, not a loose column */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--glass-line);border-radius:var(--radius-lg);
+    background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    box-shadow:var(--glass-shadow);overflow:hidden}
+  .stat{padding:clamp(18px,2vw,24px) clamp(16px,2vw,24px);border-left:1px solid var(--glass-line-2);min-width:0}
+  .stat:first-child{border-left:0}
+  .stat .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);
+    font-weight:750;letter-spacing:-.02em;line-height:1}
+  .stat .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-top:8px}
+  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}
+    .stat:nth-child(2n+1){border-left:0}
+    .stat:nth-child(n+3){border-top:1px solid var(--glass-line-2)}}
+
   /* interactive research tool */
-  .rtool{display:flex;gap:9px;margin:16px 0 6px;flex-wrap:wrap}
-  .rtool input{flex:1;min-width:160px;background:#080c16;border:1px solid var(--line);border-radius:4px;color:var(--text);
+  .rtool{display:flex;gap:9px;margin:16px 16px 6px;flex-wrap:wrap}
+  .rtool input{flex:1;min-width:160px;background:rgba(6,9,17,.5);border:1px solid var(--glass-line);border-radius:4px;color:var(--text);
     padding:12px 14px;font-family:var(--f-mono);font-size:1rem;letter-spacing:.04em;text-transform:uppercase;outline:none}
   .rtool input:focus{border-color:rgba(245,185,60,.55);box-shadow:0}
   .rout{white-space:pre-wrap;font-size:1rem;line-height:1.65;color:var(--text);margin-top:6px}
-  .rchips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .rchips{display:flex;gap:7px;flex-wrap:wrap;margin:10px 16px 0}
   .rchip{font-family:var(--f-mono);font-size:12px;padding:6px 11px;border-radius:2px;cursor:pointer;
-    border:1px solid var(--line);background:var(--well);color:var(--text-dim);transition:.15s}
+    border:1px solid var(--glass-line);background:rgba(226,234,248,.06);color:var(--text-dim);transition:.15s}
   .rchip:hover{border-color:rgba(245,185,60,.5);color:var(--cyan)}
   /* ---- page-only layout: research.html ---- */
   .r-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:start}
@@ -41,7 +63,8 @@
   /* report mock */
   .report{overflow:hidden}
   .rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-    padding:14px 16px;border-bottom:1px solid var(--line-2);position:relative;z-index:1}
+    padding:14px 16px;border-bottom:1px solid var(--glass-line-2);position:relative;z-index:1}
+  .report>.rep-head{background:var(--glass-hd)}
   .rep-head .ttl{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
   .rep-head .ts{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
   .rep-body{padding:16px 16px 6px;position:relative;z-index:1}
@@ -54,12 +77,13 @@
   .report.typing .rline{opacity:0;transform:translateY(6px)}
   .report.typing .rline.in{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
   .mrow{display:flex;align-items:baseline;gap:10px;font-family:var(--f-mono);font-size:13px;
-    padding:6px 0;border-bottom:1px dashed var(--line-2)}
+    padding:6px 0;border-bottom:1px solid var(--glass-line-2)}
   .mrow .nm{color:var(--text);font-weight:700;min-width:92px}
   .mrow .dd{color:var(--text-faint);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mrow .vv{font-weight:700;margin-left:auto}
   .rep-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;
-    border-top:1px solid var(--line-2);font-family:var(--f-mono);font-size:12px;color:var(--text-faint);position:relative;z-index:1}
+    border-top:1px solid var(--glass-line-2);font-family:var(--f-mono);font-size:12px;color:var(--text-faint);position:relative;z-index:1}
+  .report>.rep-foot{background:var(--glass-hd)}
   .caret{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:-2px;
     box-shadow:var(--lift-1);animation:blink 1s steps(1) infinite}
   .caret.done{display:none}
@@ -95,8 +119,10 @@
   .chart-card canvas{width:100%;height:260px;display:block}
   @media(max-width:640px){.chart-card canvas{height:200px}}
   .chart-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-  .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px}
-  .mcell{border:1px solid var(--line);border-radius:4px;padding:14px 15px;background:var(--glass)}
+  /* macro readings: one ruled grid inside the panel, cells transparent */
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;margin-top:18px;
+    border-top:1px solid var(--glass-line-2);border-left:1px solid var(--glass-line-2);border-radius:var(--radius);overflow:hidden}
+  .mcell{border:0;border-right:1px solid var(--glass-line-2);border-bottom:1px solid var(--glass-line-2);padding:14px 15px;background:transparent}
   .mcell .k{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-faint)}
   .mcell .v{display:block;margin-top:7px;font-size:1.5rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .mcell .v.up{color:var(--emerald)}.mcell .v.down{color:var(--crimson)}

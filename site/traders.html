@@ -14,6 +14,20 @@
 <script src="./assets/flux-universe.js?v=28" defer></script>
 <script src="./assets/flux-feed.js?v=28" defer></script>
 <script src="./assets/flux-desk.js?v=28" defer></script>
+<style>
+/* The station's glass, page-scoped. flux.css declares the hero's rgba glass
+   token and then re-declares --glass as the opaque --blotter-2 in its legacy
+   alias block, so the shared glass pass renders flat. Setting the intended
+   values on the page wrapper lets the shared .st-panel and .st-cards rules
+   read as the same substance as the front page here. */
+.st-wrap{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+/* every hairline, track and hover inside the glass is light, never the dark-room line */
+.st-card:hover{background:var(--glass-hd)}
+.st-fig,.st-note{border-color:var(--glass-line-2)}
+.st-bar{background:rgba(226,234,248,.07);border-color:var(--glass-line-2)}
+/* the two traders' rationales sit side by side only where there is room */
+@media(max-width:560px){#tRecent>li>div+div{grid-template-columns:1fr!important}}
+</style>
 </head>
 <body>
 

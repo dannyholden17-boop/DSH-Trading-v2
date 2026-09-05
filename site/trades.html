@@ -23,9 +23,11 @@
   .trow-top .stat{font-family:var(--f-mono);font-size:13px;color:var(--text-dim)}
   .trow-top .stat b{color:var(--text)}
   .trow-top .spacer{margin-left:auto}
-  .xlwrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--glass)}
+  .xlwrap{overflow-x:auto;border:1px solid var(--glass-line);border-radius:var(--radius-lg);background:var(--glass);
+    -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--glass-shadow)}
   table.xl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:13px;min-width:640px}
-  table.xl thead th{position:sticky;top:0;background:#040b1a;color:var(--text-faint);text-align:right;
+  /* the sticky head stays near-opaque so scrolled rows never show through it */
+  table.xl thead th{position:sticky;top:0;background:rgba(8,12,22,.94);color:var(--text-faint);text-align:right;
     font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
   table.xl thead th:first-child,table.xl tbody td:first-child{text-align:left}
   table.xl thead th:nth-child(2),table.xl tbody td:nth-child(2),

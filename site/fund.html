@@ -31,9 +31,13 @@
     font-weight:750;letter-spacing:-.03em;border-radius:4px;padding:1px 6px;margin-left:-6px;width:max-content}
   .fd-aumrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:4px}
   .fd-ret{font-family:var(--f-mono);font-weight:700;font-size:1rem}
+  /* the three figures under the curve are a ruled row inside the card, not a
+     second box sitting on it: one hairline above, hairlines between */
   .fd-heromini{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;
-    border:1px solid var(--line-2);border-radius:var(--radius);background:var(--well);overflow:hidden}
-  .fd-mini{padding:12px 14px;min-width:0;border-left:1px solid var(--line-2)}
+    border:0!important;border-top:1px solid var(--glass-line-2)!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none;overflow:hidden}
+  .fd-mini{padding:14px 14px 2px;min-width:0;border-left:1px solid var(--glass-line-2)}
   .fd-mini:first-child{border-left:0}
   .fd-mini .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
   .fd-mini .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:1rem;margin-top:5px;letter-spacing:-.01em}
@@ -44,8 +48,12 @@
   .fd-stats{display:grid;grid-template-columns:repeat(6,1fr);margin-top:26px;
     border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
     box-shadow:var(--lift-1);overflow:hidden}
-  .fd-stats>.glass{background:none;border:0;box-shadow:none;border-radius:0;
-    border-left:1px solid var(--line-2)}
+  /* cells inside a ruled container are transparent: the container is the glass.
+     (!important because the shared .glass rule paints every cell otherwise.) */
+  .fd-stats>.glass,.fd-pnl>.glass{background:transparent!important;box-shadow:none!important;
+    border-radius:0!important;border-color:var(--glass-line-2)!important;
+    -webkit-backdrop-filter:none;backdrop-filter:none;transform:none!important}
+  .fd-stats>.glass{border:0;border-left:1px solid var(--glass-line-2)}
   .fd-stats>.glass::after{display:none}
   .fd-stats>.glass:first-child{border-left:0}
   @media(max-width:900px){.fd-stats{grid-template-columns:repeat(3,1fr)}
@@ -64,16 +72,18 @@
   .fd-chartwrap canvas{width:100%;height:240px;display:block;margin-top:8px}
 
   /* desk grid: tape + holdings */
-  .fd-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start;margin-top:22px}
+  /* the two panes share one height: the book sets it, the tape fills it and scrolls */
+  .fd-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch;margin-top:22px}
   @media(max-width:940px){.fd-grid{grid-template-columns:1fr}}
-  .fd-pane{padding:0;overflow:hidden}
-  .fd-ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid var(--line-2)}
+  .fd-pane{padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+  .fd-ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid var(--glass-line-2)}
+  .fd-pane>.fd-ph{background:var(--glass-hd);flex:none}
   .fd-ph h3{font-size:1rem}
   .fd-ph .k{margin-left:auto;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
 
   /* live tape */
-  .fd-tape{max-height:520px;overflow-y:auto}
-  .fd-row{display:grid;grid-template-columns:60px 66px 1fr auto;gap:10px;align-items:center;padding:11px 18px;border-bottom:1px solid var(--line-2)}
+  .fd-tape{flex:1 1 0;min-height:320px;overflow-y:auto}
+  .fd-row{display:grid;grid-template-columns:60px 66px 1fr auto;gap:10px;align-items:center;padding:11px 18px;border-bottom:1px solid var(--glass-line-2)}
   .fd-row .tm{font-family:var(--f-mono);font-size:12px;color:var(--text-faint)}
   .fd-row .sd{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
   .fd-row .sd.buy{color:var(--emerald)} .fd-row .sd.sell{color:var(--crimson)}
@@ -88,22 +98,28 @@
   .fd-hscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table.fd-hold{width:100%;border-collapse:collapse;font-size:.9rem;min-width:340px}
   table.fd-hold th{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
-    font-weight:600;text-align:right;padding:10px 14px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+    font-weight:600;text-align:right;padding:10px 14px;border-bottom:1px solid var(--glass-line-2);white-space:nowrap}
   table.fd-hold th:first-child,table.fd-hold td:first-child{text-align:left}
-  table.fd-hold td{text-align:right;padding:10px 14px;border-bottom:1px solid var(--line-2);font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  table.fd-hold td{text-align:right;padding:10px 14px;border-bottom:1px solid var(--glass-line-2);font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
   table.fd-hold .tk b{font-weight:700;letter-spacing:.03em}
   table.fd-hold .tk span{display:block;color:var(--text-faint);font-size:12px;font-family:var(--f-sans)}
 
 
   .fd-strip{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:16px 18px;border:1px solid rgba(245,185,60,.28);
-    background:rgba(245,185,60,.08);border-radius:4px}
+    background:rgba(245,185,60,.08);border-radius:var(--radius-lg);
+    -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--glass-shadow)}
+  /* the scripted-demo disclosure is glass with a gold hairline, full width, so it
+     reads as a first-class panel in the stack rather than a footnote */
+  .scripted{background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    border-color:rgba(245,185,60,.42);border-radius:var(--radius-lg);box-shadow:var(--glass-shadow);
+    max-width:none;padding:15px 18px;font-size:13.5px}
   .fd-strip .ic{color:var(--gold);font-size:1rem;line-height:1.3}
   .fd-strip p{font-size:13px;line-height:1.6;color:var(--text-dim)}
   .fd-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 
   /* allocation bar chart — "where the money is" */
   .fd-alloc{padding:18px 18px 10px;margin-top:22px}
-  .fd-alloc .row{display:grid;grid-template-columns:96px 1fr 128px 108px;gap:14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line-2)}
+  .fd-alloc .row{display:grid;grid-template-columns:96px 1fr 128px 108px;gap:14px;align-items:center;padding:9px 0;border-bottom:1px solid var(--glass-line-2)}
   .fd-alloc .row:last-child{border-bottom:none}
   @media(max-width:640px){.fd-alloc .row{grid-template-columns:72px 1fr 92px}.fd-alloc .row .pl{display:none}}
   .fd-alloc .tk b{font-family:var(--f-mono);font-weight:700;font-size:.9rem;letter-spacing:.03em}
@@ -118,8 +134,7 @@
   .fd-pnl{display:grid;grid-template-columns:repeat(4,1fr);margin-top:22px;
     border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--blotter-2);
     box-shadow:var(--lift-1);overflow:hidden}
-  .fd-pnl>.glass{background:none;border:0;box-shadow:none;border-radius:0;
-    border-left:1px solid var(--line-2)}
+  .fd-pnl>.glass{border:0;border-left:1px solid var(--glass-line-2)}
   .fd-pnl>.glass::after{display:none}
   .fd-pnl>.glass:first-child{border-left:0}
   @media(max-width:640px){.fd-pnl{grid-template-columns:repeat(2,1fr)}

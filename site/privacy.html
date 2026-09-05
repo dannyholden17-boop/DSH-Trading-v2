@@ -22,7 +22,16 @@
   .legal p,.legal li{color:var(--text-dim);font-size:1rem;line-height:1.7}
   .legal ul{padding-left:20px;display:flex;flex-direction:column;gap:6px;margin:10px 0}
   .legal a{color:var(--cyan)}
-  .legal .note{border:1px solid rgba(var(--glow-c),.28);background:rgba(var(--glow),.06);border-radius:4px;padding:16px 18px;margin:22px 0}
+  /* flux.css line 90 re-aliases --glass to the opaque --blotter-2 after
+     section 24 has defined the translucent value, so the page restates
+     the material until that legacy alias is removed. */
+  :root{--glass:rgba(14,19,32,.58);--glass-2:rgba(22,29,46,.62)}
+  /* the note is the hero's glass with a gold hairline and a warm wash */
+  .legal .note{border:1px solid rgba(var(--glow-c),.3);border-radius:var(--radius-lg);
+    background:linear-gradient(rgba(var(--glow),.05),rgba(var(--glow),.05)),var(--glass);
+    -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    box-shadow:var(--glass-shadow);color:var(--text);
+    padding:16px 18px;margin:22px 0}
 </style>
 </head>
 <body>
