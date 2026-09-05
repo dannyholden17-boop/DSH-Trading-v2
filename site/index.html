@@ -163,6 +163,10 @@ body.at-top .nav .glyph{background:var(--gold-soft)}
   text-transform:uppercase;color:#8d9ab6;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .board-rows .bd-rt.buy{color:var(--clearing)} .board-rows .bd-rt.sell{color:var(--stamp)}
+/* The board falls back to this when the desk is unreachable. A sentence
+   is read, not scanned, so it drops the rating cell's caps and clipping. */
+.board-rows .bd-note{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.005em;
+  line-height:1.5;color:#8d9ab6;white-space:normal;text-transform:none}
 .board-rows .bd-px{font-family:var(--f-mono);font-size:13px;color:#f2f5fb;
   font-variant-numeric:tabular-nums;text-align:right;
   border-radius:var(--radius);transition:background .45s var(--ease),color .45s var(--ease)}
@@ -1285,7 +1289,7 @@ document.addEventListener("DOMContentLoaded", function(){
         $("bdRule").textContent = tot ? tot.toLocaleString() + " rulings on record" : "";
       }).catch(function(){
         $("bdRound").textContent = "unreachable";
-        $("bdRows").innerHTML = '<li style="grid-template-columns:1fr"><span class="bd-rt" style="white-space:normal">Could not reach the desk record. Nothing here is filled in with an example.</span></li>';
+        $("bdRows").innerHTML = '<li style="grid-template-columns:1fr"><span class="bd-note">Could not reach the desk record. Nothing here is filled in with an example.</span></li>';
         $("bdStage").textContent = "reload to try again";
       });
     }
